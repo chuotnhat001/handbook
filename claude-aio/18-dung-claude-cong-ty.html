@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dùng Claude Ở Công Ty Mà Không Bị Sa Thải - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Claude AIO
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung</div>
+    <div class="nav-items">
+      <a href="#overview">Tổng quan</a>
+      <a href="#training">Tắt AI training</a>
+      <a href="#legal">Rủi ro pháp lý</a>
+      <a href="#banned-data">8 loại dữ liệu cấm</a>
+      <a href="#anonymize">Ẩn danh dữ liệu</a>
+      <a href="#temp-chat">Chat tạm thời</a>
+      <a href="#connectors">Connector nguy hiểm</a>
+      <a href="#solution">Giải pháp</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Dùng Claude Ở Công Ty Mà Không Bị Sa Thải</h1>
+<p class="subtitle">Best practices dùng AI trong môi trường enterprise — compliance, security, policy</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/dung-claude-o-cong-ty-ma-khong-bi-sa-thai" target="_blank">phandonggiang.com</a> — Cấp độ 4, Chuyên sâu</span>
+</div>
+
+<div class="callout callout-red">
+<strong>Câu hỏi tự kiểm tra:</strong> "Nếu đoạn văn bản này xuất hiện công khai, tôi có ổn không?" — Hỏi câu này trước khi paste BẤT CỨ THỨ GÌ vào AI cá nhân tại công ty.
+</div>
+
+<p>Hơn 90% công ty có nhân viên dùng chatbot AI cá nhân (nghiên cứu MIT). Rủi ro rò rỉ dữ liệu là thực tế, không phải lý thuyết.</p>
+
+<h2 id="training">Bước 1: Tắt tính năng AI training</h2>
+
+<table>
+  <thead><tr><th>Nền tảng</th><th>Đường dẫn</th></tr></thead>
+  <tbody>
+    <tr><td>Claude</td><td>Settings → tắt model training</td></tr>
+    <tr><td>ChatGPT</td><td>Settings → Data Controls → tắt "Improve the model for everyone"</td></tr>
+    <tr><td>Grok</td><td>Settings → tắt data training</td></tr>
+    <tr><td>Gemini</td><td>Settings → tắt lưu activity/training</td></tr>
+  </tbody>
+</table>
+
+<h2 id="legal">Bạn có thể bị sa thải hoặc bị kiện</h2>
+
+<h3>Trường hợp Samsung (tháng 4/2023)</h3>
+<p>Ba lần rò rỉ mã nguồn trong 20 ngày qua ChatGPT cá nhân. Hậu quả: Samsung ban dùng AI cá nhân toàn công ty.</p>
+
+<h3>Các vấn đề pháp lý</h3>
+<ul>
+  <li>Vi phạm NDA (Non-Disclosure Agreement)</li>
+  <li>Vi phạm bảo mật bí mật thương mại (trade secrets)</li>
+  <li>Vi phạm GDPR (dữ liệu người dùng châu Âu)</li>
+  <li>Kiện tụng từ phía công ty</li>
+</ul>
+
+<h2 id="banned-data">8 loại dữ liệu TUYỆT ĐỐI không paste vào AI cá nhân</h2>
+
+<ol>
+  <li><strong>Mã nguồn</strong> sản phẩm công ty</li>
+  <li><strong>Dữ liệu khách hàng</strong> / dữ liệu bệnh nhân</li>
+  <li><strong>Kế hoạch chưa công bố</strong> (unreleased plans)</li>
+  <li><strong>Số liệu tài chính nội bộ</strong></li>
+  <li><strong>Tài liệu có đánh dấu NDA</strong></li>
+  <li><strong>Thông tin đăng nhập</strong> (credentials, passwords, API keys)</li>
+  <li><strong>Hợp đồng</strong> (contracts)</li>
+  <li><strong>Bản ghi âm cuộc họp</strong></li>
+</ol>
+
+<h2 id="anonymize">Ẩn danh dữ liệu trước khi paste</h2>
+
+<h3>Ba bước ẩn danh</h3>
+<ol>
+  <li><strong>Đổi tên thành vai trò:</strong> "Nguyễn Văn A" → "khách hàng A", "công ty XYZ" → "công ty"</li>
+  <li><strong>Dùng số liệu giả:</strong> thay số thực bằng placeholder</li>
+  <li><strong>Chỉ paste phần cần thiết:</strong> không paste toàn bộ tài liệu, chỉ đoạn liên quan</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Quy tắc vàng:</strong> Nếu không thể ẩn danh hoàn toàn (ví dụ mã nguồn), thì ĐỪNG paste. Không có ngoại lệ.
+</div>
+
+<h2 id="temp-chat">Dùng chế độ chat tạm thời</h2>
+
+<table>
+  <thead><tr><th>Nền tảng</th><th>Chế độ</th><th>Lợi ích</th></tr></thead>
+  <tbody>
+    <tr><td>Claude</td><td>Incognito</td><td>Không lưu lịch sử, không dùng training</td></tr>
+    <tr><td>ChatGPT</td><td>Temporary Chat</td><td>Conversation không được lưu lại</td></tr>
+  </tbody>
+</table>
+
+<h2 id="connectors">Điều nguy hiểm nhất: Connector</h2>
+
+<div class="callout callout-red">
+<strong>"Bộ ba tử thần":</strong> Khi AI cá nhân có đủ 3 yếu tố: (1) truy cập dữ liệu nội bộ, (2) đọc nội dung từ nguồn ngoài kiểm soát, (3) có khả năng gửi dữ liệu ra ngoài — rủi ro là cực đại.
+</div>
+
+<p>Kết nối tài khoản AI cá nhân với Gmail, Google Drive, Slack của công ty = hành động rủi ro CAO NHẤT.</p>
+
+<h3>4 khuyến cáo</h3>
+<ol>
+  <li>Không kết nối tài khoản công việc vào AI cá nhân</li>
+  <li>Nếu buộc phải dùng connector: giới hạn quyền ở mức hẹp nhất</li>
+  <li>Chỉ dùng connector chính thức, đã được kiểm duyệt</li>
+  <li>Rà soát định kỳ các quyền đã cấp</li>
+</ol>
+
+<h2 id="solution">Giải pháp</h2>
+
+<p><strong>Ngắn hạn (10 phút hôm nay):</strong></p>
+<ul>
+  <li>Tắt AI training trên tất cả nền tảng</li>
+  <li>Bật chế độ incognito/temporary cho công việc</li>
+  <li>Không kết nối connector tài khoản công ty</li>
+</ul>
+
+<p><strong>Dài hạn:</strong> Đề xuất công ty trả tiền cho công cụ AI chính thức có bảo mật enterprise-grade. Đây là giải pháp bền vững duy nhất.</p>
+
+<blockquote>Giải pháp dài hạn không phải là cấm dùng AI, mà là công ty đầu tư công cụ AI chính thức có bảo mật.</blockquote>
+
+<div class="prev-next">
+  <a href="17-claude-code-khong-biet-code.html">&larr; Bài 17: Claude Code Không Cần Code</a>
+  <span></span>
+</div>
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html" class="current">18. Dùng Claude Công Ty</a>
+</aside>
+
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

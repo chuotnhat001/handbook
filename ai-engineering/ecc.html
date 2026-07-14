@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECC - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">ECC là gì</a>
+      <a href="#architecture">Kiến trúc</a>
+      <a href="#platforms">Cross-platform</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thành Phần Chính</div>
+    <div class="nav-items">
+      <a href="#agents">Agents (63+)</a>
+      <a href="#skills">Skills (249+)</a>
+      <a href="#rules">Rules (29+)</a>
+      <a href="#hooks">Hooks</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính Năng</div>
+    <div class="nav-items">
+      <a href="#agentshield">AgentShield</a>
+      <a href="#instinct">Instinct Learning v2</a>
+      <a href="#token">Token Optimization</a>
+      <a href="#ecc2">ECC 2.0 (Rust)</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài Đặt</div>
+    <div class="nav-items">
+      <a href="#install">Installation</a>
+      <a href="#mcp">MCP Servers</a>
+      <a href="#dashboard">Dashboard</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">ECC — The Harness-Native Operator System</h1>
+<p class="subtitle">Hệ thống operator cho agentic work — tối ưu hiệu suất AI coding agents trên nhiều harnesses</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/affaan-m/ECC" target="_blank">github.com/affaan-m/ECC</a> — MIT License, v2.0.0-rc.1 (April 2026) | 182K+ stars, 170+ contributors</span>
+</div>
+
+<p>ECC (viết tắt của <strong>Enhanced Claude Code</strong>) là hệ thống operator toàn diện cho AI coding agents. Thay vì dùng AI agent với prompt mặc định, ECC cung cấp một lớp trung gian giữa developer và AI — bao gồm <strong>63+ agents chuyên biệt</strong>, <strong>249+ skills</strong>, <strong>29+ bộ rules</strong> cho <strong>20+ ngôn ngữ/framework</strong>, và hệ thống hooks tự động — giúp agent hoạt động chính xác, hiệu quả, và an toàn hơn đáng kể.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> AI agent mạnh nhất khi được cung cấp context đúng vào đúng thời điểm. ECC là lớp "operator system" nằm giữa developer và AI harness — tự động cung cấp agents, skills, rules, và hooks phù hợp cho từng loại task, từng ngôn ngữ, từng giai đoạn của workflow.
+</div>
+
+<p>ECC được xây dựng từ quy trình kỹ thuật thực tế trên nhiều harnesses, không phải lý thuyết. Mọi component đều đã được kiểm chứng trong production với <strong>997+ bài test nội bộ</strong> và hệ thống CI/CD toàn diện.</p>
+
+<h3>Những gì ECC giải quyết</h3>
+<ul>
+<li><strong>Phân mảnh context</strong> — Agent không biết best practices của ngôn ngữ/framework đang dùng → ECC tự động load rules phù hợp</li>
+<li><strong>Quá tải tác vụ</strong> — Main agent làm tất cả mọi thứ → ECC ủy quyền cho agents chuyên biệt</li>
+<li><strong>Mất kiến thức</strong> — Patterns hay bị quên giữa các sessions → Instinct Learning lưu và tái sử dụng</li>
+<li><strong>Lỗ hổng bảo mật</strong> — Code được sinh ra mà không qua review → AgentShield quét tự động với 102 rules</li>
+<li><strong>Lãng phí token</strong> — Load toàn bộ context không cần thiết → Chỉ load chiến lược những gì cần</li>
+</ul>
+
+<h2 id="architecture">Kiến trúc tổng thể</h2>
+
+<p>ECC được tổ chức thành <strong>6 core components</strong>, mỗi component đảm nhận một vai trò riêng biệt trong hệ thống:</p>
+
+<table>
+<tr><th>Component</th><th>Thư mục</th><th>Vai trò</th></tr>
+<tr><td><strong>Agents</strong></td><td><code>agents/</code></td><td>63+ subagents chuyên biệt — được ủy quyền cho các tác vụ cụ thể (review code, bảo mật, sửa lỗi build, theo ngôn ngữ...)</td></tr>
+<tr><td><strong>Skills</strong></td><td><code>skills/</code></td><td>249+ định nghĩa workflow — mẫu coding, kiến thức domain, hướng dẫn framework, chiến lược testing</td></tr>
+<tr><td><strong>Rules</strong></td><td><code>rules/</code></td><td>29+ bộ quy tắc bắt buộc — chung cho mọi ngôn ngữ + riêng theo ngôn ngữ, tự động load theo context</td></tr>
+<tr><td><strong>Hooks</strong></td><td><code>hooks/</code></td><td>Tự động hóa theo sự kiện — kích hoạt tại các điểm lifecycle (SessionStart, PostToolUse, Stop...)</td></tr>
+<tr><td><strong>Commands</strong></td><td><code>commands/</code></td><td>79 slash-commands cũ — duy trì tương thích trong quá trình chuyển sang kiến trúc skills-first</td></tr>
+<tr><td><strong>MCP Configs</strong></td><td><code>mcp-configs/</code></td><td>Tích hợp bên ngoài — GitHub, Context7, Exa, Playwright, Sequential Thinking, Memory, Supabase</td></tr>
+</table>
+
+<h3>Cấu trúc thư mục</h3>
+<pre><code>ECC/
+├── agents/               ← 63+ subagents chuyên biệt
+├── skills/               ← 249+ định nghĩa workflow
+│   ├── coding-standards/
+│   ├── backend-patterns/
+│   ├── frontend-patterns/
+│   ├── frameworks/       ← Django, Spring Boot, Laravel, Quarkus...
+│   ├── testing/
+│   ├── security/
+│   ├── continuous-learning/
+│   └── domain-specific/  ← DeFi, năng lượng, hải quan, ML/MLOps...
+├── rules/
+│   ├── common/           ← Chung cho mọi ngôn ngữ (coding-style, git, testing, security, performance)
+│   ├── typescript/
+│   ├── python/
+│   ├── golang/
+│   ├── rust/
+│   ├── java/
+│   ├── kotlin/
+│   ├── swift/
+│   ├── cpp/
+│   ├── csharp/
+│   ├── php/
+│   ├── ruby/
+│   ├── dart/
+│   ├── fsharp/
+│   ├── perl/
+│   ├── angular/
+│   ├── react/
+│   ├── arkts/            ← HarmonyOS
+│   └── web/
+├── hooks/                ← Tự động hóa theo sự kiện (hooks.json)
+├── commands/             ← 79 slash-command cũ
+├── mcp-configs/          ← Cấu hình máy chủ MCP
+├── contexts/             ← Context hệ thống động
+├── config/               ← Tệp cấu hình
+├── ecc2/                 ← ECC 2.0 alpha (Rust control-plane)
+├── src/                  ← Mã nguồn (AgentShield, state store...)
+├── tests/                ← 997+ bộ test
+├── docs/                 ← Tài liệu & hướng dẫn (đa ngôn ngữ)
+├── scripts/              ← Tiện ích Node.js đa nền tảng
+├── integrations/         ← Tích hợp bên thứ ba
+├── manifests/            ← Manifest thành phần
+├── .claude/              ← Cấu hình Claude Code
+├── .cursor/              ← Adapter Cursor IDE
+├── .codex/               ← Adapter Codex app/CLI
+├── .opencode/            ← Adapter plugin OpenCode
+├── .gemini/              ← Adapter Gemini CLI
+├── .github/              ← Hướng dẫn GitHub Copilot
+├── .zed/                 ← Adapter Zed IDE
+├── .kiro/                ← Adapter Kiro IDE
+├── .trae/                ← Adapter Trae IDE
+├── .qwen/                ← Adapter Qwen CLI
+├── .vscode/              ← Cài đặt VS Code
+├── install.sh            ← Trình cài đặt Unix (ủy quyền cho Node.js)
+├── install.ps1           ← Trình cài đặt Windows
+├── ecc_dashboard.py      ← Bảng điều khiển GUI (Tkinter)
+├── package.json          ← Dependencies Node.js
+└── pyproject.toml        ← Cấu hình Python</code></pre>
+
+<h3 id="platforms">Hỗ trợ đa nền tảng</h3>
+<p>ECC hoạt động trên <strong>7+ AI coding harnesses</strong> thông qua các adapters riêng cho từng nền tảng:</p>
+
+<table>
+<tr><th>Harness</th><th>Adapter</th><th>Đặc điểm</th></tr>
+<tr><td><strong>Claude Code</strong></td><td><code>.claude/</code></td><td>Hỗ trợ native — plugin marketplace, truy cập đầy đủ mọi component</td></tr>
+<tr><td><strong>Cursor</strong></td><td><code>.cursor/</code></td><td>48 agents, 34 rules, hooks qua adapter pattern</td></tr>
+<tr><td><strong>Codex</strong></td><td><code>.codex/</code></td><td>Tham chiếu Config.toml, hỗ trợ multi-agent role, skills tại <code>.agents/skills/</code></td></tr>
+<tr><td><strong>OpenCode</strong></td><td><code>.opencode/</code></td><td>Hỗ trợ plugin đầy đủ với 20+ hook events</td></tr>
+<tr><td><strong>GitHub Copilot</strong></td><td><code>.github/</code></td><td><code>copilot-instructions.md</code> + <code>.github/prompts/*.prompt.md</code></td></tr>
+<tr><td><strong>Zed</strong></td><td><code>.zed/</code></td><td>Cài đặt cục bộ theo project</td></tr>
+<tr><td><strong>Gemini</strong></td><td><code>.gemini/</code></td><td>Adapter Gemini CLI</td></tr>
+<tr><td><strong>Kiro</strong></td><td><code>.kiro/</code></td><td>Adapter Kiro IDE</td></tr>
+<tr><td><strong>Trae</strong></td><td><code>.trae/</code></td><td>Adapter Trae IDE</td></tr>
+<tr><td><strong>Qwen</strong></td><td><code>.qwen/</code></td><td>Adapter Qwen CLI</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Mô hình adapter:</strong> Mỗi harness có format riêng (YAML frontmatter, JSON config, markdown prompts...). ECC duy trì các adapters chuyển đổi giữa format nội bộ và format của từng platform — viết một lần, chạy mọi nơi.
+</div>
+
+<h3>Phát hiện Package Manager</h3>
+<p>ECC tự động phát hiện package manager theo thứ tự ưu tiên:</p>
+<ol>
+<li>Environment variable <code>CLAUDE_PACKAGE_MANAGER</code></li>
+<li>Project config files</li>
+<li><code>package.json</code> <code>packageManager</code> field</li>
+<li>Lock files (<code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, <code>yarn.lock</code>, <code>bun.lockb</code>)</li>
+<li>Global settings</li>
+</ol>
+<p>Hỗ trợ: npm, pnpm, yarn, và bun.</p>
+
+<h3>Format Standards</h3>
+<table>
+<tr><th>Component</th><th>Format</th><th>Cấu trúc</th></tr>
+<tr><td>Agents</td><td>Markdown + YAML frontmatter</td><td>Fields: name, description, tools, model</td></tr>
+<tr><td>Skills</td><td>Markdown</td><td>Sections: When to Use, How It Works, Examples</td></tr>
+<tr><td>Hooks</td><td>JSON (<code>hooks.json</code>)</td><td>Matcher conditions + hooks array</td></tr>
+<tr><td>Rules</td><td>Markdown</td><td>Kế thừa từ common/ + ghi đè theo ngôn ngữ</td></tr>
+<tr><td>File naming</td><td>Kebab-case</td><td>Ví dụ: <code>python-reviewer.md</code>, <code>backend-patterns.md</code></td></tr>
+</table>
+
+<h2 id="agents">Agents (63+)</h2>
+
+<p>ECC sử dụng <strong>mô hình ủy quyền (delegation model)</strong>: thay vì main agent xử lý mọi thứ, nó ủy quyền task cho subagents chuyên biệt. Mỗi agent có context, chuyên môn, và bộ công cụ riêng — tối ưu cho loại task được giao.</p>
+
+<div class="callout callout-green">
+<strong>Mô hình ủy quyền:</strong> Main agent nhận task → xác định loại task → ủy quyền cho agent phù hợp → agent chuyên biệt thực thi với context tối ưu. Review code → code-review agent. Quét bảo mật → security agent. Lỗi build → language-specific resolver.
+</div>
+
+<h3>Agent Format</h3>
+<p>Mỗi agent là file Markdown với YAML frontmatter:</p>
+<pre><code>---
+name: python-reviewer
+description: Reviews Python code for idioms, type safety, and PEP compliance
+tools: [Read, Grep, Glob]
+model: sonnet
+---
+
+## Instructions
+Review the provided Python code for...
+
+## Checklist
+- [ ] Type hints on all public functions
+- [ ] No bare except clauses
+...</code></pre>
+
+<h3>Phân loại Agents theo Category</h3>
+
+<table>
+<tr><th>Phân loại</th><th>Agents</th><th>Mô tả</th></tr>
+<tr><td><strong>Review Code</strong></td><td>Code Reviewer, Code Simplifier, Code Explorer</td><td>Review tổng quát, đơn giản hóa code, và điều hướng code</td></tr>
+<tr><td><strong>Review theo ngôn ngữ</strong></td><td>Python, Java, Go, Rust, C++, C#, Swift, Kotlin, TypeScript, FastAPI, Django, React, Flutter, Dart</td><td>Review chuyên sâu theo idioms và best practices của từng ngôn ngữ/framework</td></tr>
+<tr><td><strong>Kiến trúc</strong></td><td>Architect, Code Architect, A11y Architect, Network Architect, Homelab Architect</td><td>Thiết kế hệ thống, kiến trúc khả năng truy cập, cấu trúc mạng</td></tr>
+<tr><td><strong>Bảo mật</strong></td><td>Security Reviewer, Healthcare Security</td><td>Quét lỗ hổng, phát hiện OWASP, bảo mật chuyên ngành (HIPAA...)</td></tr>
+<tr><td><strong>Sửa lỗi Build</strong></td><td>Java Resolver, Rust Resolver, Go Resolver, C++ Resolver, Python Resolver, React Resolver, PyTorch Resolver, Kotlin Resolver, Swift Resolver, Dart Resolver, Django Resolver, HarmonyOS Resolver</td><td>Tự động phân tích và sửa lỗi build theo ngôn ngữ</td></tr>
+<tr><td><strong>Testing</strong></td><td>TDD Guide, E2E Testing, PR Test Analyzer</td><td>Hướng dẫn TDD, tạo E2E test, phân tích test coverage từ PRs</td></tr>
+<tr><td><strong>Tài liệu</strong></td><td>Doc Updater, Docs Lookup</td><td>Tự động cập nhật docs khi code thay đổi, tìm kiếm tài liệu</td></tr>
+<tr><td><strong>Hiệu năng</strong></td><td>Performance Optimizer, Silent Failure Hunter</td><td>Tối ưu hiệu năng, phát hiện lỗi im lặng không throw errors</td></tr>
+<tr><td><strong>Vận hành</strong></td><td>Chief of Staff, Planner, Loop Operator</td><td>Điều phối, lập kế hoạch, thực thi vòng lặp tự động</td></tr>
+<tr><td><strong>Nội dung & Marketing</strong></td><td>Marketing Agent, SEO Specialist</td><td>Tạo nội dung, tối ưu SEO</td></tr>
+<tr><td><strong>Hệ thống GAN</strong></td><td>GAN Generator, GAN Evaluator, GAN Planner</td><td>Sinh code đối kháng — Generator tạo code, Evaluator đánh giá chất lượng, Planner điều phối</td></tr>
+<tr><td><strong>Phân tích</strong></td><td>Conversation Analyzer, Comment Analyzer, Type Design Analyzer</td><td>Phân tích hội thoại, code comments, thiết kế type system</td></tr>
+<tr><td><strong>Tái cấu trúc</strong></td><td>Refactor Cleaner, Harness Optimizer</td><td>Dọn dẹp sau refactoring, tối ưu cấu hình harness</td></tr>
+<tr><td><strong>Mã nguồn mở</strong></td><td>Forker, Packager, Sanitizer</td><td>Quản lý fork, chuẩn bị xuất bản package, xóa dữ liệu nhạy cảm</td></tr>
+<tr><td><strong>Cơ sở dữ liệu</strong></td><td>Database Reviewer</td><td>Review schema, tối ưu truy vấn, kiểm tra migration an toàn</td></tr>
+<tr><td><strong>ML/AI</strong></td><td>MLE Agent</td><td>Kỹ thuật Machine Learning — huấn luyện model, đánh giá, mẫu triển khai</td></tr>
+</table>
+
+<h3>Delegation Flow Example</h3>
+<pre><code># Người dùng yêu cầu review Python code
+User: "Review this Python file for issues"
+
+# Luồng ủy quyền ECC:
+1. Main agent nhận yêu cầu
+2. Phát hiện: Python file → ủy quyền cho python-reviewer agent
+3. python-reviewer agent tải:
+   - Rules riêng cho Python (PEP, type hints, idioms)
+   - Checklist review Python
+   - Patterns riêng của project (nếu có)
+4. Agent thực thi review với đầy đủ context
+5. Trả kết quả cho main agent → người dùng
+
+# Nếu phát hiện vấn đề bảo mật trong review:
+6. Chuyển tiếp cho security-reviewer agent
+7. Security agent chạy phân tích sâu hơn
+8. Báo cáo tổng hợp → người dùng</code></pre>
+
+<div class="callout callout-amber">
+<strong>Chọn model:</strong> Mỗi agent có thể chỉ định model trong frontmatter. Tác vụ đơn giản (tra cứu docs, formatting) dùng model nhẹ hơn (sonnet/haiku). Tác vụ phức tạp (review kiến trúc, phân tích bảo mật) dùng model mạnh hơn (opus). Điều này tối ưu cả chi phí lẫn chất lượng.
+</div>
+
+<h2 id="skills">Skills (249+)</h2>
+
+<p>Skills là bề mặt workflow chính của ECC — mỗi skill là một định nghĩa workflow hoàn chỉnh bao gồm hướng dẫn khi nào dùng, cách thức hoạt động, và ví dụ cụ thể. Skills được tổ chức theo domain và tự động gán dựa trên loại file đang làm việc.</p>
+
+<h3>Skill Format</h3>
+<p>Mỗi skill là file Markdown với cấu trúc chuẩn:</p>
+<pre><code>---
+name: backend-patterns
+description: API design, database, caching patterns
+---
+
+## When to Use
+- Khi thiết kế REST/GraphQL API endpoints
+- Khi cần database query optimization
+- Khi implement caching strategies
+
+## How It Works
+1. Analyze current architecture...
+2. Apply relevant patterns...
+
+## Examples
+...</code></pre>
+
+<h3>Phân loại Skills theo Domain</h3>
+
+<table>
+<tr><th>Domain</th><th>Ví dụ Skills</th><th>Mô tả</th></tr>
+<tr><td><strong>Chuẩn mực code</strong></td><td>coding-standards, code-quality, code-simplification</td><td>Best practices, quy ước đặt tên, nguyên tắc clean code cho từng ngôn ngữ</td></tr>
+<tr><td><strong>Mẫu Backend</strong></td><td>backend-patterns, api-design, database-migrations</td><td>Thiết kế API, tối ưu database, caching, hàng đợi tin nhắn</td></tr>
+<tr><td><strong>Mẫu Frontend</strong></td><td>frontend-patterns, react-patterns, angular-developer</td><td>Kiến trúc component, quản lý state, thiết kế responsive</td></tr>
+<tr><td><strong>Theo Framework</strong></td><td>django-patterns, fastapi-patterns, dotnet-patterns, golang-patterns</td><td>Idioms, quy ước, và anti-patterns cho Django, Spring Boot, Laravel, Quarkus, FastAPI, .NET...</td></tr>
+<tr><td><strong>Testing</strong></td><td>django-tdd, django-verification, cpp-testing, csharp-testing, fsharp-testing, e2e-testing, browser-qa, eval-harness</td><td>Quy trình TDD, chiến lược unit/integration/E2E, sinh test, QA trên trình duyệt</td></tr>
+<tr><td><strong>Bảo mật</strong></td><td>defi-amm-security, security-review, agent-introspection-debugging</td><td>Mẫu OWASP, phát hiện lỗ hổng, bảo mật DeFi, bảo mật agent</td></tr>
+<tr><td><strong>Agent & Tự động</strong></td><td>agent-architecture-audit, agent-eval, agent-harness-construction, agentic-engineering, agentic-os, autonomous-agent-harness, autonomous-loops, continuous-agent-loop</td><td>Xây dựng, đánh giá, và vận hành AI agents, vòng lặp tự động</td></tr>
+<tr><td><strong>AI & ML</strong></td><td>ai-first-engineering, ai-regression-testing, foundation-models-on-device, deep-research</td><td>Phát triển AI-first, kiểm thử ML, model trên thiết bị, quy trình nghiên cứu</td></tr>
+<tr><td><strong>Học liên tục</strong></td><td>continuous-learning, continuous-learning-v2</td><td>Trích xuất patterns, tiến hóa skill, học dựa trên bản năng</td></tr>
+<tr><td><strong>Hạ tầng</strong></td><td>docker-patterns, deployment-patterns, flox-environments</td><td>Container hóa, CI/CD, chiến lược triển khai, quản lý môi trường</td></tr>
+<tr><td><strong>Nội dung & Tài liệu</strong></td><td>article-writing, brand-voice, codebase-onboarding, code-tour, documentation-lookup</td><td>Viết kỹ thuật, sinh tài liệu, hướng dẫn onboarding</td></tr>
+<tr><td><strong>Chuyên ngành</strong></td><td>energy-procurement, customs-trade-compliance, carrier-relationship-management</td><td>Quy trình chuyên ngành — năng lượng, logistics, tuân thủ</td></tr>
+<tr><td><strong>Kiến trúc</strong></td><td>android-clean-architecture, agent-architecture-audit</td><td>Mẫu clean architecture, kiểm tra kiến trúc</td></tr>
+<tr><td><strong>Media & Video</strong></td><td>video-processing, manim, remotion</td><td>Tạo video (Manim, Remotion), xử lý media</td></tr>
+<tr><td><strong>Tối ưu hóa</strong></td><td>optimization skill pack</td><td>Song song hóa, đo hiệu năng, tinh chỉnh performance</td></tr>
+</table>
+
+<h3>Skill Assignment by File Type</h3>
+<p>ECC tự động ánh xạ skills dựa trên loại file đang chỉnh sửa:</p>
+
+<table>
+<tr><th>Loại File / Context</th><th>Skills được tải</th></tr>
+<tr><td><code>.tsx</code>, <code>.jsx</code> (React)</td><td>react-patterns, react-testing, frontend-patterns</td></tr>
+<tr><td><code>.py</code> (dự án Django)</td><td>django-patterns, django-tdd, chuẩn mực coding Python</td></tr>
+<tr><td><code>.go</code></td><td>golang-patterns, go testing</td></tr>
+<tr><td><code>.rs</code></td><td>rust coding standards, rust testing</td></tr>
+<tr><td>File CI workflow</td><td>ci-workflow, deployment-patterns</td></tr>
+<tr><td>README, tài liệu</td><td>documentation-lookup, article-writing</td></tr>
+<tr><td>Docker files</td><td>docker-patterns, deployment-patterns</td></tr>
+</table>
+
+<h3>Skill Evolution</h3>
+<p>Skills không tĩnh — chúng tiến hóa qua hệ thống Học liên tục:</p>
+<ol>
+<li><strong>Phát hiện pattern</strong> — Hệ thống nhận diện workflow patterns lặp lại trong sessions</li>
+<li><strong>Trích xuất</strong> — Patterns được trích xuất thành skill ứng viên</li>
+<li><strong>Xác thực</strong> — Ứng viên được xác thực trước khi kích hoạt</li>
+<li><strong>Kích hoạt</strong> — Skills mới trở thành một phần của hệ thống</li>
+<li><strong>Tinh chỉnh</strong> — Skills được cập nhật dựa trên phản hồi sử dụng</li>
+</ol>
+
+<div class="callout callout-blue">
+<strong>Gói Skill:</strong> Không phải lúc nào cũng cần tải toàn bộ 249+ skills. ECC hỗ trợ tải chọn lọc — chỉ tải skills liên quan cho project hiện tại, giảm đáng kể lượng token tiêu thụ.
+</div>
+
+<h2 id="rules">Rules (29+)</h2>
+
+<p>Rules là quy tắc bắt buộc tuân theo — được tải tự động và áp dụng liên tục trong suốt session. Khác với skills (workflow theo yêu cầu), rules luôn active và áp đặt tiêu chuẩn cho mọi code được sinh ra.</p>
+
+<h3>Hệ thống kế thừa (Inheritance)</h3>
+<p>Rules được tổ chức theo hai cấp với cơ chế kế thừa:</p>
+
+<pre><code>rules/
+├── common/              ← Lớp nền tảng (chung cho mọi ngôn ngữ)
+│   ├── coding-style.md  ← Đặt tên, định dạng, cấu trúc
+│   ├── git-workflow.md   ← Phân nhánh, commits, PRs
+│   ├── testing.md        ← Chiến lược test, coverage
+│   ├── performance.md    ← Nguyên tắc tối ưu
+│   ├── patterns.md       ← Mẫu thiết kế, anti-patterns
+│   ├── security.md       ← Nguyên tắc bảo mật, OWASP
+│   ├── hooks.md          ← Hướng dẫn viết hooks
+│   └── agents.md         ← Tiêu chuẩn phát triển agents
+│
+└── [ngôn ngữ]/          ← Lớp mở rộng (ghi đè common)
+    ├── typescript/
+    ├── python/
+    ├── golang/
+    ...
+    └── web/</code></pre>
+
+<div class="callout callout-blue">
+<strong>Nguyên tắc ghi đè:</strong> Mỗi file riêng theo ngôn ngữ mở đầu bằng "This file extends [common/xxx.md] with [Language] specific content." Khi có xung đột giữa common và language-specific, <strong>rules riêng theo ngôn ngữ luôn được ưu tiên</strong> — vì idioms của ngôn ngữ quan trọng hơn nguyên tắc chung.
+</div>
+
+<h3>Common Rules (Chung cho mọi ngôn ngữ)</h3>
+
+<table>
+<tr><th>File Rule</th><th>Phạm vi</th></tr>
+<tr><td><code>coding-style.md</code></td><td>Quy ước đặt tên, định dạng code, cấu trúc file, chuẩn tài liệu</td></tr>
+<tr><td><code>git-workflow.md</code></td><td>Chiến lược phân nhánh, format commit message, quy trình PR, chính sách merge</td></tr>
+<tr><td><code>testing.md</code></td><td>Tổ chức test, yêu cầu coverage, hướng dẫn mocking, nguyên tắc TDD</td></tr>
+<tr><td><code>performance.md</code></td><td>Nguyên tắc tối ưu, profiling, chiến lược caching, quản lý tài nguyên</td></tr>
+<tr><td><code>patterns.md</code></td><td>Mẫu thiết kế, mẫu kiến trúc, anti-patterns cần tránh</td></tr>
+<tr><td><code>security.md</code></td><td>Xác thực đầu vào, authentication, authorization, phòng ngừa OWASP Top 10</td></tr>
+<tr><td><code>hooks.md</code></td><td>Hướng dẫn viết hooks, exit codes, mẫu matcher</td></tr>
+<tr><td><code>agents.md</code></td><td>Tiêu chuẩn phát triển agent, format frontmatter, mẫu ủy quyền</td></tr>
+</table>
+
+<h3>Rules theo ngôn ngữ</h3>
+
+<table>
+<tr><th>Ngôn ngữ</th><th>Nội dung chính</th></tr>
+<tr><td><strong>TypeScript</strong></td><td>An toàn kiểu (strict mode), mẫu async/await, cấu trúc module, không lạm dụng any, discriminated unions</td></tr>
+<tr><td><strong>Python</strong></td><td>Tuân thủ PEP 8/257, type hints (mypy strict), đóng gói (pyproject.toml), môi trường ảo</td></tr>
+<tr><td><strong>Go</strong></td><td>Idioms Go, xử lý lỗi (không panic trong thư viện), đồng thời (goroutines/channels), thiết kế interface</td></tr>
+<tr><td><strong>Rust</strong></td><td>Ownership & borrowing, lifetime annotations, hướng dẫn unsafe, thiết kế trait, xử lý lỗi (thiserror/anyhow)</td></tr>
+<tr><td><strong>Java</strong></td><td>Mẫu OOP, quy ước Spring, checked exceptions, generics, records (Java 17+)</td></tr>
+<tr><td><strong>Kotlin</strong></td><td>Coroutines, null safety (không dùng !!), mẫu DSL, data classes, sealed classes</td></tr>
+<tr><td><strong>Swift</strong></td><td>Lập trình hướng protocol, value types vs reference types, mẫu SwiftUI, Sendable/actors</td></tr>
+<tr><td><strong>C++</strong></td><td>RAII, smart pointers (không dùng raw new/delete), move semantics, C++ hiện đại (17/20), constexpr</td></tr>
+<tr><td><strong>C#</strong></td><td>Quy ước .NET, async/await, LINQ, nullable reference types, pattern matching</td></tr>
+<tr><td><strong>PHP</strong></td><td>Chuẩn PSR-1/4/12, mẫu Laravel, khai báo kiểu, best practices Composer</td></tr>
+<tr><td><strong>Ruby</strong></td><td>Mẫu Ruby/Rails, quy ước duck typing, blocks/procs, Bundler</td></tr>
+<tr><td><strong>Dart</strong></td><td>Mẫu Flutter widget, null safety, async streams, quy ước package</td></tr>
+<tr><td><strong>F#</strong></td><td>Mẫu functional-first, discriminated unions, computation expressions, toán tử pipeline</td></tr>
+<tr><td><strong>Perl</strong></td><td>Perl hiện đại (5.36+), quy ước CPAN, strict/warnings, OO qua Moose/Moo</td></tr>
+<tr><td><strong>Angular</strong></td><td>Kiến trúc component, mẫu RxJS, dependency injection, NgModules vs standalone</td></tr>
+<tr><td><strong>React</strong></td><td>Mẫu Hooks, kết hợp component, quản lý state, hiệu năng (memo/useMemo)</td></tr>
+<tr><td><strong>ArkTS</strong></td><td>Phát triển HarmonyOS, ArkUI components, stage model, khả năng phân tán</td></tr>
+<tr><td><strong>Web</strong></td><td>Ngữ nghĩa HTML, kiến trúc CSS (BEM/utility), khả năng truy cập (WCAG), thiết kế responsive</td></tr>
+</table>
+
+<h3>Cách Rules được tải</h3>
+<ol>
+<li><strong>Bắt đầu session</strong> — Common rules luôn được tải</li>
+<li><strong>Phát hiện project</strong> — Nhận diện ngôn ngữ/framework từ config files (package.json, Cargo.toml, go.mod...)</li>
+<li><strong>Tải rules ngôn ngữ</strong> — Tải rules riêng theo ngôn ngữ tương ứng</li>
+<li><strong>Ghi đè cấp file</strong> — Khi chỉnh sửa file cụ thể, rules của ngôn ngữ đó được ưu tiên cao nhất</li>
+</ol>
+
+<h2 id="hooks">Hooks</h2>
+
+<p>Hooks là các tự động hóa theo sự kiện, chạy tự động tại các điểm lifecycle của session. Được triển khai bằng Node.js scripts (đa nền tảng), cấu hình qua <code>hooks.json</code> với các điều kiện matcher.</p>
+
+<h3>Hook Lifecycle Events</h3>
+<p>ECC hỗ trợ 8+ điểm lifecycle:</p>
+
+<table>
+<tr><th>Sự kiện</th><th>Khi nào</th><th>Mục đích</th></tr>
+<tr><td><strong>SessionStart</strong></td><td>Session bắt đầu</td><td>Tải context, phát hiện package manager, khôi phục trạng thái</td></tr>
+<tr><td><strong>PreToolUse</strong></td><td>Trước khi tool được gọi</td><td>Chặn lệnh nguy hiểm, cảnh báo, xác thực</td></tr>
+<tr><td><strong>PostToolUse</strong></td><td>Sau khi tool chạy xong</td><td>Format code, chạy kiểm tra, ghi nhật ký</td></tr>
+<tr><td><strong>PreCompact</strong></td><td>Trước khi context bị nén</td><td>Lưu trạng thái trước khi mất context</td></tr>
+<tr><td><strong>Stop</strong></td><td>Agent dừng lại</td><td>Lưu session, trích xuất patterns, thông báo</td></tr>
+<tr><td><strong>SessionEnd</strong></td><td>Session kết thúc</td><td>Dọn dẹp, đánh dấu lifecycle</td></tr>
+</table>
+
+<h3>Exit Codes</h3>
+<table>
+<tr><th>Mã</th><th>Ý nghĩa</th><th>Hành vi</th></tr>
+<tr><td><code>0</code></td><td>Thành công</td><td>Hook đã pass, tiếp tục bình thường</td></tr>
+<tr><td><code>2</code></td><td>Chặn</td><td>Chỉ PreToolUse — ngăn tool thực thi hoàn toàn</td></tr>
+<tr><td>Khác 0</td><td>Lỗi</td><td>Được ghi log nhưng không chặn, hiện cảnh báo</td></tr>
+</table>
+
+<h3>PreToolUse Hooks (chạy trước khi tool thực thi)</h3>
+
+<table>
+<tr><th>Hook</th><th>Matcher</th><th>Chức năng</th></tr>
+<tr><td><strong>Chặn dev server</strong></td><td>Bash</td><td>Chặn <code>npm run dev</code>, <code>yarn dev</code>... nếu không trong tmux — tránh treo session</td></tr>
+<tr><td><strong>Nhắc dùng tmux</strong></td><td>Bash</td><td>Gợi ý dùng tmux cho lệnh chạy lâu</td></tr>
+<tr><td><strong>Nhắc trước khi push</strong></td><td>Bash</td><td>Nhắc xem lại thay đổi trước khi push</td></tr>
+<tr><td><strong>Kiểm tra chất lượng pre-commit</strong></td><td>Bash</td><td>Chạy lint, xác thực format commit, phát hiện <code>console.log</code> — exit 2 nếu nghiêm trọng</td></tr>
+<tr><td><strong>Cảnh báo file tài liệu</strong></td><td>Write</td><td>Cảnh báo khi tạo file <code>.md</code>/<code>.txt</code> không theo chuẩn project</td></tr>
+<tr><td><strong>Nén context chiến lược</strong></td><td>Edit|Write</td><td>Gợi ý <code>/compact</code> thủ công mỗi ~50 lần gọi tool để quản lý context window</td></tr>
+</table>
+
+<h3>PostToolUse Hooks (chạy sau khi tool thực thi)</h3>
+
+<table>
+<tr><th>Hook</th><th>Matcher</th><th>Chức năng</th></tr>
+<tr><td><strong>Ghi nhật ký PR</strong></td><td>Bash</td><td>Ghi URL của PR và lệnh review sau <code>gh pr create</code></td></tr>
+<tr><td><strong>Phân tích build</strong></td><td>Bash</td><td>Phân tích bất đồng bộ nền sau lệnh build</td></tr>
+<tr><td><strong>Cổng chất lượng</strong></td><td>Edit|Write|MultiEdit</td><td>Chạy kiểm tra chất lượng nhanh sau mỗi chỉnh sửa</td></tr>
+<tr><td><strong>Kiểm tra chất lượng thiết kế</strong></td><td>Edit|Write|MultiEdit</td><td>Cảnh báo khi chỉnh sửa frontend có xu hướng dùng template chung chung</td></tr>
+<tr><td><strong>Format Prettier</strong></td><td>Edit</td><td>Tự động format file JS/TS bằng Prettier sau chỉnh sửa</td></tr>
+<tr><td><strong>Kiểm tra TypeScript</strong></td><td>Edit</td><td>Chạy <code>tsc --noEmit</code> sau khi chỉnh sửa <code>.ts</code>/<code>.tsx</code></td></tr>
+<tr><td><strong>Cảnh báo console.log</strong></td><td>Edit</td><td>Cảnh báo khi chỉnh sửa chứa <code>console.log</code></td></tr>
+</table>
+
+<h3>Lifecycle Hooks (Sự kiện session)</h3>
+
+<table>
+<tr><th>Hook</th><th>Sự kiện</th><th>Chức năng</th></tr>
+<tr><td><strong>Khởi đầu session</strong></td><td>SessionStart</td><td>Tải context trước đó, phát hiện package manager, khôi phục trạng thái</td></tr>
+<tr><td><strong>Trước khi nén</strong></td><td>PreCompact</td><td>Lưu trạng thái trước khi context bị nén</td></tr>
+<tr><td><strong>Kiểm tra console.log</strong></td><td>Stop</td><td>Kiểm tra tất cả file đã sửa tìm câu lệnh <code>console.log</code></td></tr>
+<tr><td><strong>Tóm tắt session</strong></td><td>Stop</td><td>Lưu trạng thái session khi transcript path khả dụng</td></tr>
+<tr><td><strong>Trích xuất pattern</strong></td><td>Stop</td><td>Đánh giá session tìm patterns có thể trích xuất (nạp vào Instinct Learning)</td></tr>
+<tr><td><strong>Theo dõi chi phí</strong></td><td>Stop</td><td>Phát ra markers đo lường chi phí chạy nhẹ</td></tr>
+<tr><td><strong>Thông báo desktop</strong></td><td>Stop</td><td>Thông báo desktop macOS với tóm tắt tác vụ</td></tr>
+<tr><td><strong>Đánh dấu kết thúc</strong></td><td>SessionEnd</td><td>Đánh dấu lifecycle và dọn dẹp</td></tr>
+</table>
+
+<h3>Memory Persistence</h3>
+<p>Hooks có thư mục con <code>hooks/memory-persistence/</code> chuyên xử lý:</p>
+<ul>
+<li>Lưu kiến thức học được xuyên suốt các sessions</li>
+<li>Khôi phục context khi session mới bắt đầu</li>
+<li>Nén context chiến lược — tối ưu context window khi session dài</li>
+</ul>
+
+<h3>Runtime Controls</h3>
+<p>Cấu hình hooks qua biến môi trường (không cần sửa <code>hooks.json</code>):</p>
+
+<table>
+<tr><th>Biến</th><th>Giá trị</th><th>Mô tả</th></tr>
+<tr><td><code>ECC_HOOK_PROFILE</code></td><td><code>minimal</code> | <code>standard</code> | <code>strict</code></td><td>Profile xác định hooks nào được kích hoạt</td></tr>
+<tr><td><code>ECC_DISABLED_HOOKS</code></td><td>Danh sách ID cách nhau bởi dấu phẩy</td><td>Tắt các hooks cụ thể theo ID</td></tr>
+<tr><td><code>ECC_SESSION_START_MAX_CHARS</code></td><td>Số (mặc định: 8000)</td><td>Giới hạn context được tải khi session bắt đầu</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Hồ sơ Hook:</strong> <code>minimal</code> = chỉ lưu trữ session + bảo mật. <code>standard</code> = thêm kiểm tra chất lượng + format. <code>strict</code> = tất cả hooks kích hoạt, chặn mọi vi phạm. Chọn profile phù hợp với mức độ chấp nhận của bạn.
+</div>
+
+<h2 id="agentshield">AgentShield & Security</h2>
+
+<p>AgentShield là hệ thống quét bảo mật tích hợp của ECC — chạy tự động, không cần gọi thủ công. Với <strong>102 quy tắc phân tích tĩnh</strong> và <strong>1282 bài test</strong>, nó quét mọi thành phần của project trước khi code được commit.</p>
+
+<div class="callout callout-red">
+<strong>Bảo mật trước tiên:</strong> AgentShield không chỉ quét code được sinh ra — nó quét cả CLAUDE.md, cấu hình MCP, hooks, và định nghĩa agent. Mọi bề mặt tấn công đều được bao phủ, từ prompt injection đến lỗ hổng dependencies.
+</div>
+
+<h3>Scan Scope</h3>
+
+<table>
+<tr><th>Mục tiêu</th><th>Kiểm tra gì</th></tr>
+<tr><td><strong>Code được sinh ra</strong></td><td>OWASP Top 10, mẫu injection, mã hóa không an toàn, secrets hardcode</td></tr>
+<tr><td><strong>CLAUDE.md</strong></td><td>Cố gắng prompt injection, hướng dẫn leo thang quyền</td></tr>
+<tr><td><strong>Cấu hình MCP</strong></td><td>Kết nối server trái phép, điểm cuối rò rỉ dữ liệu</td></tr>
+<tr><td><strong>Hooks</strong></td><td>Script hook độc hại, command injection trong định nghĩa hook</td></tr>
+<tr><td><strong>Định nghĩa Agent</strong></td><td>Truy cập tool vượt quyền, cấu hình model không an toàn</td></tr>
+<tr><td><strong>Dependencies</strong></td><td>Lỗ hổng đã biết (CVE), rủi ro chuỗi cung ứng, typosquatting</td></tr>
+</table>
+
+<h3>102 Static Analysis Rules</h3>
+<p>Tổ chức theo danh mục:</p>
+
+<ul>
+<li><strong>Phòng chống injection</strong> — SQL injection, command injection, XSS, LDAP injection, template injection</li>
+<li><strong>Xác thực & Phân quyền</strong> — Mẫu auth yếu, thiếu kiểm soát truy cập, lỗi quản lý session</li>
+<li><strong>Mật mã học</strong> — Thuật toán không an toàn, khóa hardcode, sinh số ngẫu nhiên yếu</li>
+<li><strong>Rò rỉ dữ liệu</strong> — Secrets trong code, rò rỉ PII, thông báo lỗi chi tiết, debug mode trong production</li>
+<li><strong>Xác thực đầu vào</strong> — Thiếu sanitization, path traversal, deserialization không an toàn</li>
+<li><strong>Cấu hình</strong> — Sai cấu hình CORS, thiếu security headers, thông tin mặc định</li>
+<li><strong>Bảo mật dependency</strong> — CVE đã biết, packages không được duy trì, phát hiện typosquatting</li>
+<li><strong>Riêng cho Agent</strong> — Prompt injection, leo thang quyền tool, kết nối MCP không an toàn</li>
+</ul>
+
+<h3>Cách hoạt động</h3>
+<pre><code># AgentShield chạy tự động qua hooks:
+1. Hook PostToolUse kích hoạt sau mỗi Edit/Write
+2. AgentShield quét file vừa được sửa đổi
+3. Nếu phát hiện vi phạm:
+   - Mức NGHIÊM TRỌNG/CRITICAL → Chặn (exit 2), yêu cầu sửa
+   - Mức TRUNG BÌNH → Cảnh báo, gợi ý sửa
+   - Mức THẤP → Ghi log, báo cáo cuối session
+
+# Quét thủ công (nếu cần):
+/security-scan              ← Quét toàn bộ project
+/security-scan --file x.ts  ← Quét file cụ thể</code></pre>
+
+<h3>Test Coverage</h3>
+<p>AgentShield tự kiểm tra với <strong>1282 bài test</strong> bao gồm:</p>
+<ul>
+<li>Test tích cực — xác nhận phát hiện đúng lỗ hổng</li>
+<li>Test tiêu cực — không báo sai trên code an toàn</li>
+<li>Test biên — patterns phức tạp, code bị che giấu</li>
+<li>Test đa ngôn ngữ — cùng mẫu lỗ hổng trên nhiều ngôn ngữ</li>
+</ul>
+
+<h2 id="instinct">Continuous Learning — Instinct v2</h2>
+
+<p>Instinct Learning là hệ thống học liên tục của ECC — tự động trích xuất patterns từ sessions thành skills có thể tái sử dụng. Càng dùng nhiều, hệ thống càng hiểu project và workflow của developer, giảm lặp lại và tăng tính nhất quán theo thời gian.</p>
+
+<div class="callout callout-green">
+<strong>Học tích lũy:</strong> Mỗi session là cơ hội học. Patterns thành công được trích xuất, xác thực, và trở thành skills mới. Patterns thất bại được ghi nhận để tránh lặp lại. Kiến thức tích lũy dồn theo thời gian.
+</div>
+
+<h3>Cách hoạt động</h3>
+<pre><code># Vòng đời Instinct Learning:
+
+1. QUAN SÁT SESSION
+   - Theo dõi workflow patterns trong session hiện tại
+   - Ghi nhận quyết định, cách tiếp cận, và kết quả
+
+2. TRÍCH XUẤT PATTERN (Stop hook)
+   - Cuối session, đánh giá patterns đáng trích xuất
+   - Nhận diện: workflows lặp lại, bản sửa thành công, idioms riêng của project
+
+3. HÌNH THÀNH BẢN NĂNG
+   - Chuyển đổi patterns thô thành instincts có cấu trúc
+   - Mỗi instinct = điều kiện kích hoạt + hành động khuyến nghị + điểm tin cậy
+
+4. XÁC THỰC
+   - Instincts mới được xác thực trước khi kích hoạt
+   - Đối chiếu với skills hiện có để tránh xung đột
+   - Ngưỡng tin cậy phải đạt trước khi được thăng hạng
+
+5. THĂNG HẠNG THÀNH SKILL
+   - Instincts có độ tin cậy cao trở thành skills đầy đủ
+   - Skills mới được thêm vào registry
+   - Sẵn sàng cho tất cả sessions tương lai</code></pre>
+
+<h3>Commands</h3>
+
+<table>
+<tr><th>Lệnh</th><th>Chức năng</th></tr>
+<tr><td><code>/instinct-status</code></td><td>Xem trạng thái hiện tại — instincts đang hoạt động, điểm tin cậy, xác thực đang chờ</td></tr>
+<tr><td><code>/instinct-import</code></td><td>Nhập instincts từ file/nguồn khác — chia sẻ kiến thức giữa các projects</td></tr>
+<tr><td><code>/instinct-export</code></td><td>Xuất instincts để sao lưu hoặc chia sẻ với thành viên nhóm</td></tr>
+<tr><td><code>/evolve</code></td><td>Kích hoạt tiến hóa thủ công — buộc đánh giá và thăng hạng instincts đang chờ</td></tr>
+<tr><td><code>/learn</code></td><td>Dạy pattern trực tiếp — "từ giờ khi gặp X, hãy làm Y"</td></tr>
+<tr><td><code>/skill-create</code></td><td>Tạo skill mới từ instinct đã được xác thực</td></tr>
+</table>
+
+<h3>State Management</h3>
+<p>Dữ liệu Instinct được lưu trữ qua <strong>kho trạng thái dựa trên SQLite</strong>:</p>
+<ul>
+<li><strong>Session adapters</strong> — Kết nối kho trạng thái với vòng đời session</li>
+<li><strong>CLI truy vấn</strong> — Truy vấn instincts, patterns, và lịch sử</li>
+<li><strong>Nền tảng tiến hóa skill</strong> — Kho trạng thái là nền tảng cho pipeline tiến hóa skill</li>
+<li><strong>Lưu trữ xuyên session</strong> — Instincts tồn tại giữa các sessions qua hooks/memory-persistence</li>
+</ul>
+
+<h3>Pattern Extraction Example</h3>
+<pre><code># Tình huống: Developer luôn sửa lỗi lint theo cùng một cách
+
+Session 1: Sửa ESLint "no-unused-vars" → xóa import
+Session 2: Sửa ESLint "no-unused-vars" → xóa import
+Session 3: Sửa ESLint "no-unused-vars" → xóa import
+
+# Instinct được hình thành:
+{
+  "trigger": "Lỗi ESLint no-unused-vars trên câu lệnh import",
+  "action": "Xóa import không dùng thay vì tắt bằng eslint-disable",
+  "confidence": 0.92,
+  "source_sessions": 3,
+  "status": "validated"
+}
+
+# Sau khi thăng hạng → trở thành phần của skill coding-standards của project</code></pre>
+
+<h2 id="token">Token Optimization & Model Routing</h2>
+
+<p>ECC tối ưu chi phí và hiệu suất thông qua nhiều chiến lược — từ tinh giản system prompt đến lựa chọn model thông minh. Mục tiêu: đạt chất lượng output tương đương hoặc tốt hơn với ít tokens hơn.</p>
+
+<h3>Model Routing</h3>
+<p>Không phải mọi tác vụ đều cần model mạnh nhất. ECC hướng dẫn chọn model phù hợp:</p>
+
+<table>
+<tr><th>Loại tác vụ</th><th>Model khuyến nghị</th><th>Lý do</th></tr>
+<tr><td>Review kiến trúc, suy luận phức tạp</td><td>Opus</td><td>Cần suy nghĩ sâu, phân tích nhiều bước</td></tr>
+<tr><td>Sinh code, tái cấu trúc</td><td>Sonnet</td><td>Cân bằng giữa chất lượng và tốc độ/chi phí</td></tr>
+<tr><td>Tra cứu tài liệu, format</td><td>Haiku</td><td>Tác vụ đơn giản, phản hồi nhanh, chi phí thấp</td></tr>
+<tr><td>Phân tích bảo mật</td><td>Opus</td><td>Quan trọng — cần độ chính xác cao, ít bỏ sót</td></tr>
+<tr><td>Sửa lỗi build</td><td>Sonnet</td><td>Đối chiếu mẫu từ thông báo lỗi, không cần suy luận sâu</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Định tuyến ở cấp agent:</strong> Mỗi agent có thể chỉ định model trong YAML frontmatter. Khi ủy quyền tác vụ, agent phù hợp tự động dùng model phù hợp — không cần developer chọn thủ công.
+</div>
+
+<h3>System Prompt Slimming</h3>
+<p>Giảm lượng token overhead từ system prompts:</p>
+<ul>
+<li><strong>Tải có điều kiện</strong> — Chỉ tải rules/skills liên quan cho context hiện tại, không dump toàn bộ</li>
+<li><strong>Nén ngôn ngữ</strong> — Rules được viết súc tích, tránh giải thích dài dòng trong system prompts</li>
+<li><strong>Context phân lớp</strong> — Rules nền tảng luôn hiện diện, rules theo domain tải khi cần</li>
+<li><strong>Giới hạn context</strong> — <code>ECC_SESSION_START_MAX_CHARS=8000</code> giới hạn context tải khi bắt đầu session</li>
+</ul>
+
+<h3>Context Management Strategies</h3>
+
+<table>
+<tr><th>Chiến lược</th><th>Cách thức</th><th>Khi nào dùng</th></tr>
+<tr><td><strong>Gói Skill</strong></td><td>Chỉ tải nhóm skills cần thiết cho loại project</td><td>Luôn — mặc định không tải 249+ skills cùng lúc</td></tr>
+<tr><td><strong>Nén chiến lược</strong></td><td>Hook gợi ý <code>/compact</code> mỗi ~50 lần gọi tool</td><td>Session dài, context window đầy</td></tr>
+<tr><td><strong>Hook PreCompact</strong></td><td>Lưu trạng thái quan trọng trước khi nén xóa context</td><td>Tự động khi compact được kích hoạt</td></tr>
+<tr><td><strong>Định tuyến theo loại file</strong></td><td>Gán skills dựa trên file đang chỉnh sửa</td><td>Mọi lúc — .tsx → React skills, .py → Python skills</td></tr>
+<tr><td><strong>Context agent chọn lọc</strong></td><td>Mỗi agent chỉ nhận context cần cho tác vụ của nó</td><td>Khi ủy quyền — agent không cần toàn bộ lịch sử hội thoại</td></tr>
+</table>
+
+<h3>Cost Tracking</h3>
+<p>Hook <strong>Theo dõi chi phí</strong> (sự kiện Stop) phát ra markers đo lường nhẹ cuối mỗi session:</p>
+<ul>
+<li>Tổng tokens tiêu thụ</li>
+<li>Phân bổ token theo agent (nếu có ủy quyền)</li>
+<li>Phân bổ sử dụng model (opus vs sonnet vs haiku)</li>
+<li>Thời lượng session và số lần gọi tool</li>
+</ul>
+
+<h2 id="ecc2">ECC 2.0 Alpha — Rust Control-Plane</h2>
+
+<p>ECC 2.0 là thế hệ tiếp theo — một <strong>khung điều khiển (control-plane)</strong> viết bằng Rust, quản lý nhiều agent sessions từ một giao diện thống nhất. Đây là "lớp phía trên các harness install riêng lẻ" — lớp điều phối cho multi-session, multi-agent workflows.</p>
+
+<div class="callout callout-amber">
+<strong>Chất lượng alpha:</strong> ECC 2.0 hiện tại là alpha — phù hợp cho thử nghiệm cục bộ, chưa phải bản phát hành chính thức. Core ECC (plugin v1) vẫn là hệ thống chính sẵn sàng cho production.
+</div>
+
+<h3>Architecture</h3>
+
+<table>
+<tr><th>Thành phần</th><th>Công nghệ</th><th>Vai trò</th></tr>
+<tr><td><strong>Control-plane</strong></td><td>Rust</td><td>Điều phối lõi, quản lý vòng đời session</td></tr>
+<tr><td><strong>Kho trạng thái</strong></td><td>SQLite</td><td>Trạng thái session bền vững, theo dõi output</td></tr>
+<tr><td><strong>Giao diện Terminal</strong></td><td>TUI dashboard</td><td>Trực quan hóa session, giám sát thời gian thực</td></tr>
+<tr><td><strong>Chế độ daemon</strong></td><td>Tiến trình nền</td><td>Vận hành headless, tác vụ theo lịch</td></tr>
+</table>
+
+<h3>Current Features (Alpha)</h3>
+<ul>
+<li><strong>Bảng điều khiển TUI</strong> — Trực quan hóa tất cả sessions đang hoạt động, trạng thái, và output</li>
+<li><strong>Kho trạng thái SQLite</strong> — Quản lý trạng thái bền vững qua các lần khởi động lại</li>
+<li><strong>Luồng vòng đời session</strong> — Khởi tạo, dừng, tiếp tục sessions theo chương trình</li>
+<li><strong>Chế độ daemon</strong> — Chạy nền, không cần mở terminal</li>
+<li><strong>Chấm điểm rủi ro</strong> — Đánh giá mức rủi ro của các thao tác</li>
+<li><strong>Khả năng quan sát</strong> — Logging, metrics, tracing cho agent sessions</li>
+<li><strong>Nhận biết worktree</strong> — Hiểu git worktrees, sessions nhận biết context</li>
+<li><strong>Theo dõi đa session</strong> — Theo dõi output từ nhiều sessions song song</li>
+</ul>
+
+<h3>Lệnh CLI</h3>
+<pre><code># Khởi chạy bảng điều khiển (TUI)
+cargo run -- dashboard
+
+# Quản lý session
+cargo run -- session create --task "Review PR #42" --agent code-reviewer
+cargo run -- session list
+cargo run -- session status &lt;session-id&gt;
+cargo run -- session stop &lt;session-id&gt;
+cargo run -- session resume &lt;session-id&gt;
+
+# Chế độ daemon
+cargo run -- daemon start
+cargo run -- daemon stop</code></pre>
+
+<h3>Roadmap — Missing Layers for GA</h3>
+<p>Những thành phần chưa có, cần hoàn thiện trước khi phát hành chính thức:</p>
+<ul>
+<li><strong>Điều phối multi-agent nâng cao</strong> — Biên đạo phức tạp giữa nhiều agents</li>
+<li><strong>Ủy quyền giữa agents</strong> — Agents ủy quyền cho nhau, kèm tóm tắt</li>
+<li><strong>Giao diện review trực quan</strong> — UI cho diffs và worktrees</li>
+<li><strong>Tương thích harness bên ngoài nâng cao</strong> — Mở rộng ngoài Claude Code</li>
+<li><strong>Lập kế hoạch nhận biết bộ nhớ</strong> — Tích hợp với bộ nhớ dài hạn</li>
+<li><strong>Đóng gói production</strong> — Hạ tầng cài đặt, phân phối binary</li>
+</ul>
+
+<h2 id="install">Installation & Configuration</h2>
+
+<h3>Installation Methods</h3>
+
+<p><strong>1. Cài đặt qua Plugin (Khuyến nghị — Claude Code)</strong></p>
+<pre><code># Thêm marketplace và cài đặt
+/plugin install ecc@ecc</code></pre>
+
+<p><strong>2. Cài đặt thủ công</strong></p>
+<pre><code># Clone repo
+git clone https://github.com/affaan-m/ECC.git
+cd ECC
+
+# Cài đặt đầy đủ (tất cả thành phần)
+./install.sh --profile full
+
+# Hoặc với profile cụ thể:
+./install.sh --profile minimal    # Chỉ Rules + agents
+./install.sh --profile core       # + hooks
+./install.sh --profile full       # Mọi thứ (skills, commands, MCP...)</code></pre>
+
+<p><strong>3. Cài đặt chọn lọc</strong></p>
+<pre><code># Tư vấn — AI khuyến nghị thành phần phù hợp cho project
+npx ecc consult
+
+# Cài đặt chỉ thành phần theo ngôn ngữ
+./install.sh --language python
+./install.sh --language typescript,golang</code></pre>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng:</strong> Không chồng nhiều phương thức cài đặt để tránh trùng lặp. Chọn một cách cài đặt và giữ nguyên. Nếu đã dùng plugin install, không cần cài đặt thủ công thêm.
+</div>
+
+<h3>Install Profiles</h3>
+
+<table>
+<tr><th>Profile</th><th>Thành phần</th><th>Trường hợp sử dụng</th></tr>
+<tr><td><code>minimal</code></td><td>Rules + Agents</td><td>Chỉ cần chuẩn mực coding và ủy quyền — nhẹ, ít token overhead</td></tr>
+<tr><td><code>core</code></td><td>Rules + Agents + Hooks</td><td>Thêm tự động hóa — lưu session, kiểm tra chất lượng, thông báo</td></tr>
+<tr><td><code>full</code></td><td>Tất cả (Rules + Agents + Hooks + Skills + Commands + MCP)</td><td>Trải nghiệm đầy đủ — toàn bộ 249+ skills, 79 commands, tích hợp MCP</td></tr>
+</table>
+
+<h3>Installer Technical Details</h3>
+<p>File <code>install.sh</code> là wrapper bash (32 dòng):</p>
+<ul>
+<li><strong>Giải quyết symlink</strong> — Tìm thư mục gốc thực của repo khi được gọi qua npm bin symlink</li>
+<li><strong>Tự cài dependency</strong> — Tự chạy <code>npm install</code> nếu thiếu <code>node_modules</code></li>
+<li><strong>Xử lý đường dẫn đa nền tảng</strong> — Phát hiện MSYS2/Git Bash, chuyển đổi đường dẫn POSIX sang Windows</li>
+<li><strong>Ủy quyền</strong> — Gọi <code>scripts/install-apply.js</code> (Node.js runtime) cho logic cài đặt thực tế</li>
+</ul>
+<p>Người dùng Windows dùng <code>install.ps1</code> (tương đương PowerShell).</p>
+
+<h3 id="mcp">Cấu hình máy chủ MCP</h3>
+<p>ECC tích hợp <strong>7 máy chủ MCP</strong> với đồng bộ đầy đủ:</p>
+
+<table>
+<tr><th>Máy chủ MCP</th><th>Chức năng</th></tr>
+<tr><td><strong>GitHub</strong></td><td>Thao tác repository, quản lý PR, theo dõi issue</td></tr>
+<tr><td><strong>Context7</strong></td><td>Tra cứu tài liệu, tham chiếu thư viện</td></tr>
+<tr><td><strong>Exa</strong></td><td>Tìm kiếm web, nghiên cứu, truy xuất thông tin</td></tr>
+<tr><td><strong>Playwright</strong></td><td>Tự động hóa trình duyệt, testing E2E, chụp màn hình</td></tr>
+<tr><td><strong>Sequential Thinking</strong></td><td>Chuỗi suy luận phức tạp, phân tích từng bước</td></tr>
+<tr><td><strong>Memory</strong></td><td>Lưu trữ bộ nhớ xuyên session</td></tr>
+<tr><td><strong>Supabase</strong></td><td>Thao tác database, xác thực, lưu trữ</td></tr>
+</table>
+
+<p>Cấu hình nằm trong <code>mcp-configs/mcp-servers.json</code> — được tải tự động khi profile cài đặt bao gồm MCP.</p>
+
+<h3 id="dashboard">Bảng điều khiển Desktop</h3>
+<p>ECC cung cấp bảng điều khiển GUI (<code>ecc_dashboard.py</code>, dựa trên Tkinter):</p>
+<ul>
+<li><strong>Trình duyệt thành phần</strong> — Xem tất cả agents, skills, rules theo danh mục</li>
+<li><strong>Chuyển đổi giao diện sáng/tối</strong></li>
+<li><strong>Tổng quan trạng thái</strong> — Hooks đang hoạt động, skills đã tải, trạng thái session</li>
+<li><strong>Thao tác nhanh</strong> — Bật/tắt thành phần, chuyển đổi profiles</li>
+</ul>
+
+<pre><code># Khởi chạy bảng điều khiển
+python ecc_dashboard.py</code></pre>
+
+<h3>ECC Pro (Optional)</h3>
+<p>Phiên bản Pro là GitHub App hỗ trợ <strong>private repositories</strong>. Core ECC hoàn toàn miễn phí theo giấy phép MIT cho mọi mục đích sử dụng bao gồm thương mại. Pro chỉ thêm:</p>
+<ul>
+<li>Tích hợp private repo</li>
+<li>Đồng bộ instincts chia sẻ trong nhóm</li>
+<li>Hỗ trợ ưu tiên</li>
+</ul>
+
+<h3>Documentation (Multi-language)</h3>
+<p>Tài liệu đầy đủ trong thư mục <code>docs/</code> với bản dịch nhiều ngôn ngữ:</p>
+
+<table>
+<tr><th>Danh mục</th><th>Tệp</th></tr>
+<tr><td>Kiến trúc</td><td>ECC-2.0-REFERENCE-ARCHITECTURE.md, ARCHITECTURE-IMPROVEMENTS.md</td></tr>
+<tr><td>Cài đặt & Di chuyển</td><td>HERMES-SETUP.md, HERMES-OPENCLAW-MIGRATION.md</td></tr>
+<tr><td>Phát triển</td><td>SKILL-DEVELOPMENT-GUIDE.md, MANUAL-ADAPTATION-GUIDE.md</td></tr>
+<tr><td>Tham chiếu</td><td>COMMAND-REGISTRY.json, COMMAND-AGENT-MAP.md, SESSION-ADAPTER-CONTRACT.md</td></tr>
+<tr><td>Lộ trình</td><td>ECC-2.0-GA-ROADMAP.md, thư mục releases/</td></tr>
+<tr><td>Xử lý sự cố</td><td>TROUBLESHOOTING.md, token-optimization.md, hook-bug-workarounds.md</td></tr>
+<tr><td>Bản dịch</td><td>de-DE, ja-JP, ko-KR, pt-BR, ru, th, tr, vi-VN, zh-CN, zh-TW</td></tr>
+</table>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

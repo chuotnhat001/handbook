@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 - Shopping & Money - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./13-self-introduction.html">13. Self Introduction</a>
+      <a href="./14-daily-routine.html">14. Daily Routine</a>
+      <a href="./15-shopping-money.html" class="active">15. Shopping & Money</a>
+      <a href="./16-food-restaurant.html">16. Food & Restaurant</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 15
+  </div>
+  <div class="card-nav">
+    <a href="./14-daily-routine.html">← Previous: Daily Routine</a>
+    <a href="./16-food-restaurant.html">Next: Food & Restaurant →</a>
+  </div>
+
+  <h1>Shopping & Money</h1>
+  <p class="subtitle">Mua sam va tien bac — tu vung va mau cau khi mua hang, tra gia, thanh toan</p>
+
+  <h2>Mau cau co ban</h2>
+
+  <h3>Hoi gia / Tim san pham</h3>
+  <div class="formula">
+    <strong>How much is this?</strong> — Cai nay bao nhieu?<br>
+    <strong>How much are these?</strong> — Nhung cai nay bao nhieu?<br>
+    <strong>Do you have this in [size/color]?</strong> — Ban co cai nay mau/size [X] khong?<br>
+    <strong>I'm looking for...</strong> — Toi dang tim...<br>
+    <strong>Can I try this on?</strong> — Toi thu cai nay duoc khong?<br>
+    <strong>Where's the fitting room?</strong> — Phong thu do o dau?
+  </div>
+
+  <h3>Mua / Quyet dinh</h3>
+  <ul>
+    <li><strong>I'll take it.</strong> — Toi lay cai nay.</li>
+    <li><strong>I'll take two of these.</strong> — Toi lay 2 cai nay.</li>
+    <li><strong>I'm just looking, thanks.</strong> — Toi chi xem thoi, cam on.</li>
+    <li><strong>I'll think about it.</strong> — De toi suy nghi da.</li>
+    <li><strong>Can I get a discount?</strong> — Giam gia duoc khong?</li>
+    <li><strong>Is this on sale?</strong> — Cai nay dang giam gia khong?</li>
+  </ul>
+
+  <h3>Thanh toan</h3>
+  <ul>
+    <li><strong>Can I pay by card?</strong> — Toi tra bang the duoc khong?</li>
+    <li><strong>Do you accept credit cards?</strong> — Ban nhan the tin dung khong?</li>
+    <li><strong>I'll pay in cash.</strong> — Toi tra tien mat.</li>
+    <li><strong>Can I have a receipt?</strong> — Cho toi hoa don duoc khong?</li>
+    <li><strong>Keep the change.</strong> — Giu lai tien thua.</li>
+  </ul>
+
+  <h3>Doi/Tra hang</h3>
+  <ul>
+    <li><strong>I'd like to return this.</strong> — Toi muon tra cai nay.</li>
+    <li><strong>Can I exchange this for a different size?</strong> — Toi doi size khac duoc khong?</li>
+    <li><strong>I have the receipt.</strong> — Toi co hoa don.</li>
+    <li><strong>What's your return policy?</strong> — Chinh sach doi tra the nao?</li>
+  </ul>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu hoi gia, mac ca, va xac nhan mua tuong tu.</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"How much"</strong> cho gia ca (khong dem duoc) va <strong>"How many"</strong> cho so luong (dem duoc). Tieng Viet dung "bao nhieu" cho ca hai.</li>
+      <li>Tieng Anh phan biet <strong>"this" (so it) / "these" (so nhieu)</strong>. Tieng Viet: "cai nay" / "nhung cai nay".</li>
+      <li>Mac ca o nuoc ngoai <strong>khong pho bien</strong> nhu o Viet Nam. Chi mac ca o cho troi, garage sale.</li>
+      <li>Tieng Anh noi <strong>"I'll take it"</strong> (tuong lai) khi quyet dinh mua. Tieng Viet: "Toi lay cai nay" (hien tai).</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>price</td><td>/praɪs/</td><td>n.</td><td>gia</td></tr>
+    <tr><td>discount</td><td>/ˈdɪs.kaʊnt/</td><td>n.</td><td>giam gia</td></tr>
+    <tr><td>receipt</td><td>/rɪˈsiːt/</td><td>n.</td><td>hoa don</td></tr>
+    <tr><td>change</td><td>/tʃeɪndʒ/</td><td>n.</td><td>tien thua/tien le</td></tr>
+    <tr><td>bargain</td><td>/ˈbɑːr.ɡɪn/</td><td>n./v.</td><td>mon hoi, mac ca</td></tr>
+    <tr><td>refund</td><td>/ˈriː.fʌnd/</td><td>n.</td><td>hoan tien</td></tr>
+    <tr><td>cashier</td><td>/kæˈʃɪər/</td><td>n.</td><td>thu ngan</td></tr>
+    <tr><td>fitting room</td><td>/ˈfɪt.ɪŋ ruːm/</td><td>n.</td><td>phong thu do</td></tr>
+    <tr><td>on sale</td><td>/ɒn seɪl/</td><td>adj.</td><td>dang giam gia</td></tr>
+    <tr><td>afford</td><td>/əˈfɔːrd/</td><td>v.</td><td>du kha nang (tai chinh)</td></tr>
+    <tr><td>budget</td><td>/ˈbʌdʒ.ɪt/</td><td>n.</td><td>ngan sach</td></tr>
+    <tr><td>expensive</td><td>/ɪkˈspen.sɪv/</td><td>adj.</td><td>dat</td></tr>
+    <tr><td>cheap</td><td>/tʃiːp/</td><td>adj.</td><td>re</td></tr>
+    <tr><td>reasonable</td><td>/ˈriː.zən.ə.bəl/</td><td>adj.</td><td>hop ly (gia)</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Mua quan ao</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Staff:</span> Hi! Can I help you with anything?</p>
+    <p><span class="speaker">You:</span> Yes, I'm looking for a jacket. Something casual.</p>
+    <p><span class="speaker">Staff:</span> Sure! We have these over here. What size are you?</p>
+    <p><span class="speaker">You:</span> I'm a medium. Do you have this one in black?</p>
+    <p><span class="speaker">Staff:</span> Let me check... Yes, here you go. Would you like to try it on?</p>
+    <p><span class="speaker">You:</span> Yes, please. Where's the fitting room?</p>
+    <p><span class="speaker">Staff:</span> Just around the corner on your left.</p>
+    <p><span class="speaker">You:</span> (after trying) It fits perfectly. How much is it?</p>
+    <p><span class="speaker">Staff:</span> It's $89, but it's 20% off today.</p>
+    <p><span class="speaker">You:</span> Great, I'll take it. Can I pay by card?</p>
+    <p><span class="speaker">Staff:</span> Of course! Tap or insert?</p>
+  </div>
+
+  <h3>Tinh huong 2: Mua sam online — hoi ban</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> I'm thinking of buying a new laptop. Any recommendations?</p>
+    <p><span class="speaker">B:</span> What's your budget?</p>
+    <p><span class="speaker">A:</span> Around $1,000. I mainly use it for coding and some light gaming.</p>
+    <p><span class="speaker">B:</span> Have you looked at the MacBook Air? It's on sale right now — about $999.</p>
+    <p><span class="speaker">A:</span> That's a bit over my budget. Can I find it cheaper somewhere else?</p>
+    <p><span class="speaker">B:</span> Check the refurbished section on Amazon. You can save 15-20% and they still come with a warranty.</p>
+    <p><span class="speaker">A:</span> Good idea! I'll look into it. Thanks!</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "How much money is this?" → <strong>Dung:</strong> "How much <em>is</em> this?" (khong can "money")</li>
+      <li><strong>Sai:</strong> "It's too much expensive." → <strong>Dung:</strong> "It's <em>too expensive</em>." (too + adj, khong them "much")</li>
+      <li><strong>Sai:</strong> "Can you cheap?" → <strong>Dung:</strong> "Can you give me a <em>discount</em>?" (cheap la tinh tu, khong dung lam dong tu)</li>
+      <li><strong>Sai:</strong> "I want to buy it more cheap." → <strong>Dung:</strong> "I want to buy it <em>cheaper</em>." hoac "Can I get it for less?"</li>
+      <li><strong>Sai:</strong> "The price is how much?" → <strong>Dung:</strong> "<em>How much</em> is it?" (How much dung dau cau hoi)</li>
+      <li><strong>Sai:</strong> "I can't afford to buy it" (khi chi muon noi dat) → <strong>Dung:</strong> "It's <em>out of my budget</em>." (lich su hon)</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>"I'm just looking"</strong> — cau than ky khi nhan vien hoi ma ban chua muon mua.</li>
+      <li><strong>Hoi gia lich su:</strong> "How much is this?" tot hon "What's the price?" (tu nhien hon).</li>
+      <li><strong>Khong mac ca</strong> o cua hang co gia niem yet (retail stores). Chi mac ca o flea market, garage sale.</li>
+      <li><strong>"That's a bit over my budget"</strong> — cach tu choi lich su khi thay dat.</li>
+      <li><strong>Tip:</strong> O My/Anh, khong can tip khi mua sam (chi tip o nha hang, taxi).</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Dien vao cho trong: "How much ___ these shoes?" (is / are)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>are</strong> (these shoes = so nhieu)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "It's too much expensive for me."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">It's <strong>too expensive</strong> for me.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Ban muon thu ao. Noi gi?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Can I try this on? / Where's the fitting room?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Dien vao cho trong: "Do you have this ___ a smaller size?" (in / on / at)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>in</strong> a smaller size</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Nhan vien hoi "Can I help you?" nhung ban chi muon xem. Tra loi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'm just looking, thanks. / No thanks, I'm just browsing.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Sua loi: "Can you cheap the price?"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Can you give me a <strong>discount</strong>? / Can you lower the price?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Ban muon tra bang the. Hoi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Can I pay by card? / Do you accept credit cards?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Phan biet "on sale" va "for sale":<br>a) This house is ___ (dang rao ban)<br>b) These jeans are ___ — 50% off! (dang giam gia)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">a) <strong>for sale</strong> (dang rao ban)<br>b) <strong>on sale</strong> (dang giam gia)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Ban mua ao nhung ve nha thay khong vua. Noi gi khi quay lai cua hang?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'd like to exchange this for a different size. / Can I return this? I have the receipt.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Viet hoi thoai ngan (4-6 cau) giua ban va nhan vien ban hang khi ban muon mua mot doi giay.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du:<br>You: Hi, I'm looking for running shoes.<br>Staff: What size do you need?<br>You: Size 42. Do you have anything under $100?<br>Staff: These are $85 and very popular. Would you like to try them on?<br>You: Yes, please. (tries) They fit well. I'll take them.<br>Staff: Great! Cash or card?</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./14-daily-routine.html">← Previous: Daily Routine</a>
+    <a href="./16-food-restaurant.html">Next: Food & Restaurant →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

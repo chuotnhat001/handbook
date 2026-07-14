@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge & Dependency Graph - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.82rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Navigation</div>
+    <div class="nav-items">
+      <a href="#knowledge-graph">Knowledge Graph</a>
+      <a href="#dependency-graph">Dependency Graph</a>
+      <a href="#learning-path">Learning Path</a>
+      <a href="#reading-order">Reading Order</a>
+      <a href="#implementation-roadmap">Implementation Roadmap</a>
+      <a href="#milestones">Milestone học tập</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture</a>
+  <a href="04-implementation.html">Phase 4: Implementation</a>
+  <a href="05-operations.html">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html" class="current">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Knowledge & Dependency Graph</h1>
+<p class="subtitle">Bản đồ tri thức, dependency graph, learning path và reading order</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>
+<span>Tổng quan liên kết giữa 60+ documents, dependency chains, và đường đi học tập tối ưu</span>
+</div>
+
+<h2 id="knowledge-graph">Knowledge Graph — Bản đồ tri thức</h2>
+
+<div class="callout callout-blue">
+<strong>Cấu trúc 6 tầng</strong>
+Level 1: Learning Phases → Level 2: Knowledge Domains → Level 3: Modules → Level 4: Documents → Level 5: Chapters → Level 6: Topics. Mỗi node liên kết với nodes cùng tầng (lateral) và nodes tầng khác (vertical).
+</div>
+
+<pre><code>CRM KNOWLEDGE BASE
+├── Phase 1: FOUNDATION (80h)
+│   ├── Domain 1.1: Business Fundamentals
+│   │   ├── Module 1.1.1: CRM Concepts & Strategy
+│   │   │   └── DOC-101: CRM Foundation & Evolution
+│   │   │   └── DOC-102: Customer Lifecycle Management
+│   │   │   └── DOC-103: Business Model & Value Proposition
+│   │   └── Module 1.1.2: CRM Ecosystem
+│   │       └── DOC-104: CRM Market Landscape
+│   ├── Domain 1.2: Requirements & Analysis
+│   │   ├── Module 1.2.1: Business Analysis
+│   │   │   └── DOC-105: Requirements Engineering
+│   │   │   └── DOC-106: Business Process Analysis
+│   │   └── Module 1.2.2: Data & Information
+│   │       └── DOC-107: CRM Data Strategy
+│   └── Domain 1.3: Methodology & Governance
+│       ├── Module 1.3.1: Implementation Methodology
+│       │   └── DOC-108: CRM Project Methodology
+│       ├── Module 1.3.2: Stakeholder Management
+│       │   └── DOC-109: Stakeholder Management
+│       └── Module 1.3.3: Change Management
+│           └── DOC-110: Organizational Change Management
+│
+├── Phase 2: DOMAIN KNOWLEDGE (120h)
+│   ├── Domain 2.1: Sales Management
+│   │   └── DOC-201 → DOC-203
+│   ├── Domain 2.2: Marketing Automation
+│   │   └── DOC-204 → DOC-206
+│   ├── Domain 2.3: Customer Service
+│   │   └── DOC-207 → DOC-209
+│   └── Domain 2.4: Data & Analytics
+│       └── DOC-210 → DOC-212
+│
+├── Phase 3: ARCHITECTURE & DESIGN (120h)
+│   ├── Domain 3.1: Enterprise Architecture
+│   │   └── DOC-301, DOC-302
+│   ├── Domain 3.2: Solution Architecture
+│   │   └── DOC-303 → DOC-305
+│   ├── Domain 3.3: Data Architecture
+│   │   └── DOC-306, DOC-307
+│   └── Domain 3.4: Security Architecture
+│       └── DOC-308, DOC-309
+│
+├── Phase 4: IMPLEMENTATION (140h)
+│   ├── Domain 4.1: Development
+│   │   └── DOC-401 → DOC-403
+│   ├── Domain 4.2: Configuration
+│   │   └── DOC-404, DOC-405
+│   ├── Domain 4.3: Quality Assurance
+│   │   └── DOC-406, DOC-407
+│   └── Domain 4.4: DevOps & Deployment
+│       └── DOC-408 → DOC-410
+│
+├── Phase 5: OPERATIONS (100h)
+│   ├── Domain 5.1: Administration
+│   │   └── DOC-501, DOC-502
+│   ├── Domain 5.2: Performance
+│   │   └── DOC-503 → DOC-505
+│   ├── Domain 5.3: Security Operations
+│   │   └── DOC-506, DOC-507
+│   └── Domain 5.4: Governance
+│       └── DOC-508, DOC-509
+│
+└── Phase 6: ADVANCED (80h)
+    ├── Domain 6.1: AI & ML
+    │   └── DOC-601 → DOC-603
+    ├── Domain 6.2: Platform Engineering
+    │   └── DOC-604 → DOC-606
+    └── Domain 6.3: Emerging Technologies
+        └── DOC-607 → DOC-609</code></pre>
+
+<h2 id="dependency-graph">Dependency Graph — Đồ thị phụ thuộc</h2>
+
+<p>Mỗi document có prerequisites rõ ràng. Dependency graph cho phép parallel learning khi documents không có dependency chain.</p>
+
+<h3>Critical Path (longest dependency chain)</h3>
+<div class="flow">
+<span class="flow-step">DOC-101</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-102</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-105</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-303</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-305</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-401</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-601</span>
+</div>
+
+<h3>Dependency Matrix (Key Documents)</h3>
+<table>
+<tr><th>Document</th><th>Depends On</th><th>Enables</th></tr>
+<tr><td>DOC-101 (CRM Foundation)</td><td>None — entry point</td><td>DOC-102, 103, 104</td></tr>
+<tr><td>DOC-105 (Requirements)</td><td>DOC-101, 102</td><td>DOC-201, 204, 207, 303</td></tr>
+<tr><td>DOC-107 (Data Strategy)</td><td>DOC-101</td><td>DOC-210, 212, 306</td></tr>
+<tr><td>DOC-303 (DDD)</td><td>DOC-105, 106</td><td>DOC-304, 305, 306</td></tr>
+<tr><td>DOC-306 (Data Architecture)</td><td>DOC-107, 303</td><td>DOC-401, 410</td></tr>
+<tr><td>DOC-308 (Security)</td><td>DOC-304, 305</td><td>DOC-506, 507</td></tr>
+<tr><td>DOC-401 (Backend Dev)</td><td>DOC-303, 304, 306</td><td>DOC-402, 403, 404, 406</td></tr>
+<tr><td>DOC-408 (DevOps)</td><td>DOC-401, 406</td><td>DOC-409, 501, 503</td></tr>
+<tr><td>DOC-601 (AI/ML)</td><td>DOC-210, 211, 401</td><td>DOC-602, 603</td></tr>
+<tr><td>DOC-604 (SaaS)</td><td>DOC-305, 308, 401</td><td>DOC-605, 606</td></tr>
+</table>
+
+<h3>Parallel Learning Opportunities</h3>
+<div class="callout callout-green">
+<strong>Có thể học song song</strong>
+Trong cùng một phase, các domains thường độc lập: Domain 2.1 (Sales) ∥ 2.2 (Marketing) ∥ 2.3 (Service). Tương tự: DOC-201 ∥ DOC-204 ∥ DOC-207 vì chúng chỉ share DOC-105 làm prerequisite.
+</div>
+
+<h2 id="learning-path">Learning Path — Lộ trình học tập</h2>
+
+<h3>Path A: Full Sequential (đề xuất cho beginners)</h3>
+<p>Thời gian: ~640 giờ (16 tuần full-time hoặc 32 tuần part-time)</p>
+<ol>
+<li>Phase 1 tuần tự (80h) → Gate: Business Case + Requirements Document</li>
+<li>Phase 2 có thể parallel 4 domains (120h) → Gate: Process Diagrams + KPI Framework</li>
+<li>Phase 3 tuần tự (120h) → Gate: Architecture Decision Records + C4 Diagrams</li>
+<li>Phase 4 tuần tự (140h) → Gate: Working Prototype + Test Suite</li>
+<li>Phase 5 tuần tự (100h) → Gate: Runbooks + SLO Dashboard</li>
+<li>Phase 6 chọn lọc (80h) → Gate: Innovation Proof of Concept</li>
+</ol>
+
+<h3>Path B: Role-Based (cho chuyên gia chuyên ngành)</h3>
+<table>
+<tr><th>Vai trò</th><th>Tập trung</th><th>Thời gian</th></tr>
+<tr><td>Business Analyst</td><td>P1 (all) → P2 (2.1-2.3) → P3 (3.1 only)</td><td>~200h</td></tr>
+<tr><td>Solution Architect</td><td>P1 (1.1, 1.2) → P3 (all) → P4 (4.1-4.2)</td><td>~280h</td></tr>
+<tr><td>Developer</td><td>P1 (1.1) → P3 (3.2-3.3) → P4 (all) → P5 (5.2)</td><td>~320h</td></tr>
+<tr><td>CRM Admin</td><td>P1 (1.1) → P2 (overview) → P4 (4.2) → P5 (all)</td><td>~220h</td></tr>
+<tr><td>CIO/Decision Maker</td><td>P1 (1.1, 1.3) → P3 (3.1) → P5 (5.4) → P6 (overview)</td><td>~120h</td></tr>
+</table>
+
+<h3>Path C: Fast Track (minimum viable knowledge)</h3>
+<div class="flow">
+<span class="flow-step">DOC-101</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-105</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-108</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-303</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-401</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DOC-408</span>
+</div>
+<p>~60 giờ — minimum để hiểu end-to-end flow, không đủ sâu cho production implementation.</p>
+
+<h2 id="reading-order">Reading Order — Thứ tự đọc đề xuất</h2>
+
+<table>
+<tr><th>#</th><th>Document</th><th>Lý do thứ tự</th></tr>
+<tr><td>1</td><td>DOC-101: CRM Foundation</td><td>Entry point, zero dependencies</td></tr>
+<tr><td>2</td><td>DOC-102: Customer Lifecycle</td><td>Core mental model</td></tr>
+<tr><td>3</td><td>DOC-104: Market Landscape</td><td>Context for build decisions</td></tr>
+<tr><td>4</td><td>DOC-103: Business Model</td><td>Links CRM to value creation</td></tr>
+<tr><td>5</td><td>DOC-105: Requirements Engineering</td><td>Foundation for all design work</td></tr>
+<tr><td>6</td><td>DOC-106: Business Process Analysis</td><td>Models the "what" before "how"</td></tr>
+<tr><td>7</td><td>DOC-107: CRM Data Strategy</td><td>Data is lifeblood of CRM</td></tr>
+<tr><td>8</td><td>DOC-108: Project Methodology</td><td>How to execute the rest</td></tr>
+<tr><td>9-10</td><td>DOC-109, 110: Stakeholder & Change</td><td>People side of implementation</td></tr>
+<tr><td>11-16</td><td>DOC-201 → 206: Sales & Marketing</td><td>Revenue-generating domains first</td></tr>
+<tr><td>17-19</td><td>DOC-207 → 209: Service</td><td>Retention & support</td></tr>
+<tr><td>20-22</td><td>DOC-210 → 212: Data & Analytics</td><td>Cross-cutting insights layer</td></tr>
+<tr><td>23-31</td><td>DOC-301 → 309: Architecture</td><td>Design before build</td></tr>
+<tr><td>32-40</td><td>DOC-401 → 410: Implementation</td><td>Build phase</td></tr>
+<tr><td>41-49</td><td>DOC-501 → 509: Operations</td><td>Run & optimize</td></tr>
+<tr><td>50-58</td><td>DOC-601 → 609: Advanced</td><td>Innovate & differentiate</td></tr>
+</table>
+
+<h2 id="implementation-roadmap">Implementation Roadmap</h2>
+
+<table>
+<tr><th>Quarter</th><th>Focus</th><th>Key Deliverables</th></tr>
+<tr><td>Q1</td><td>Discovery & Foundation</td><td>Business Case, Requirements, Architecture Vision</td></tr>
+<tr><td>Q2</td><td>Design & Architecture</td><td>Domain Model, API Specs, Data Model, Security Design</td></tr>
+<tr><td>Q3</td><td>Core Development</td><td>MVP (Contact, Account, Opportunity), CI/CD Pipeline</td></tr>
+<tr><td>Q4</td><td>Extended Features</td><td>Marketing Automation, Service Module, Reporting</td></tr>
+<tr><td>Q5</td><td>Production & Migration</td><td>Go-Live, Data Migration, Training, Adoption</td></tr>
+<tr><td>Q6</td><td>Optimization & Innovation</td><td>Performance Tuning, AI Features, Platform Extensions</td></tr>
+</table>
+
+<h2 id="milestones">Milestone Học Tập</h2>
+
+<table>
+<tr><th>Milestone</th><th>Sau Documents</th><th>Kiểm tra năng lực</th></tr>
+<tr><td>M1: CRM Literacy</td><td>DOC-101 → 104</td><td>Trình bày CRM Strategy cho stakeholders</td></tr>
+<tr><td>M2: Analysis Ready</td><td>DOC-105 → 110</td><td>Tạo SRS + Process Diagrams cho 1 module</td></tr>
+<tr><td>M3: Domain Expert</td><td>DOC-201 → 212</td><td>Thiết kế Sales/Marketing/Service workflow</td></tr>
+<tr><td>M4: Architecture</td><td>DOC-301 → 309</td><td>Tạo C4 Diagrams + ADRs cho CRM system</td></tr>
+<tr><td>M5: Build Capable</td><td>DOC-401 → 410</td><td>Deliver working CRM module with tests + CI/CD</td></tr>
+<tr><td>M6: Production Ready</td><td>DOC-501 → 509</td><td>Demonstrate SLO monitoring + incident response</td></tr>
+<tr><td>M7: Innovation</td><td>DOC-601 → 609</td><td>Build AI-powered feature with production guardrails</td></tr>
+</table>
+
+<div class="prev-next">
+  <a href="06-advanced-innovation.html">← Phase 6: Advanced</a>
+  <a href="architecture-maps.html">Architecture & Capability Maps →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

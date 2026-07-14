@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handbook</title>
+  <style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#f8fafc;color:#1a1a2e;min-height:100vh;font-size:16px}
+.top-bar{background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:.75rem 2rem;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:1.5rem}
+.logo{font-size:1.2rem;font-weight:800;color:#1a1a2e;white-space:nowrap}
+.logo span{background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.search-wrap{flex:1;max-width:400px;position:relative}
+.search-input{width:100%;padding:.6rem 1rem .6rem 2.4rem;border:1.5px solid rgba(0,0,0,.08);border-radius:8px;font-size:.9rem;outline:none;transition:all .15s;background:#f8fafc}
+.search-input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1);background:#fff}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#94a3b8}
+.search-shortcut{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);font-size:.65rem;color:#94a3b8;background:#f1f3f5;padding:2px 5px;border-radius:3px;border:1px solid rgba(0,0,0,.06)}
+.top-stats{font-size:.75rem;color:#94a3b8;white-space:nowrap}
+.layout{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:200px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;padding:1.25rem .75rem;border-right:1px solid rgba(0,0,0,.04);background:#fff;flex-shrink:0}
+.sidebar-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;padding:.25rem .5rem;margin-bottom:.5rem}
+.sidebar a{display:flex;align-items:center;gap:.5rem;padding:.45rem .5rem;border-radius:6px;text-decoration:none;color:#64748b;font-size:.85rem;font-weight:500;transition:all .1s;margin-bottom:2px}
+.sidebar a:hover{background:#f0f4ff;color:#4c51bf}
+.sidebar a .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar a .cnt{margin-left:auto;font-size:.68rem;color:#94a3b8}
+.main-content{flex:1;padding:1.5rem 2rem 4rem;max-width:960px}
+.group{margin-bottom:2.5rem}
+.group-header{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;padding:.6rem .85rem;background:linear-gradient(135deg,#f8fafc 0%,#f0f4ff 100%);border-radius:10px;border:1px solid rgba(102,126,234,.1)}
+.group-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.group-icon svg{width:14px;height:14px;color:#fff}
+.group-name{font-size:1.05rem;font-weight:700;color:#1a1a2e}
+.group-count{font-size:.72rem;color:#fff;background:#667eea;padding:2px 8px;border-radius:10px;margin-left:auto;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.card{display:flex;align-items:flex-start;gap:.75rem;padding:.8rem 1rem;background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;text-decoration:none;color:inherit;transition:all .12s;cursor:pointer}
+.card:hover{border-color:rgba(102,126,234,.3);box-shadow:0 2px 8px rgba(102,126,234,.08);transform:translateY(-1px)}
+.card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;background:#f1f3f5;border:1px solid rgba(0,0,0,.06)}
+.card-icon svg{width:16px;height:16px;color:#475569}
+.card-body{flex:1;min-width:0}
+.card-title{font-size:.92rem;font-weight:600;color:#1a1a2e;line-height:1.3;margin-bottom:3px}
+.card-desc{font-size:.82rem;color:#64748b;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.no-results{text-align:center;padding:3rem;color:#94a3b8;font-size:.88rem;display:none}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{display:none}.main-content{padding:1rem}.top-bar{padding:.75rem 1rem}}
+  </style>
+</head>
+<body>
+<header class="top-bar">
+  <div class="logo"><span>Handbook</span></div>
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input class="search-input" type="text" placeholder="Tìm kiếm thẻ..." id="search" autofocus>
+    <span class="search-shortcut">/</span>
+  </div>
+  <div class="top-stats" id="stats"></div>
+</header>
+<div class="layout">
+<nav class="sidebar" id="sidebar"></nav>
+<main class="main-content">
+  <div id="content"></div>
+  <div class="no-results" id="no-results">Không tìm thấy kết quả</div>
+</main>
+</div>
+  <script>
+    var groups = [
+      {
+        name: "AI Engineering",
+        topics: [
+          { title: "Claude AIO", url: "claude-aio/index.html", desc: "Giáo trình sử dụng Claude toàn diện — 18 bài học từ nhập môn đến chuyên sâu (Phan Đông Giang)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h6M8 15h4"/></svg>', color: "#7c3aed" },
+          { title: "Claude Code Handbook", url: "ai-engineering/claude-code-handbook.html", desc: "Tài liệu học tập hoàn chỉnh về Claude Code — từ cơ bản đến nâng cao, workflow thực chiến", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 9l3 3-3 3"/><path d="M13 15h3"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>', color: "#667eea" },
+          { title: "Superpowers", url: "ai-engineering/superpowers.html", desc: "Agentic Skills Framework — composable skills định hướng coding agents qua structured workflows: brainstorm, plan, TDD, review", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>', color: "#dc2626" },
+          { title: "GStack Sprint Playbook", url: "ai-engineering/gstack-sprint-playbook.html", desc: "Phân tích & thực hành tốt nhất từ triết lý Sprint của Garry Tan (YC)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h6"/></svg>', color: "#06d6a0" },
+          { title: "GSD Framework", url: "ai-engineering/gsd-framework.html", desc: "Get Stuff Done — hệ thống meta-prompting và context-engineering cho AI coding assistants", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', color: "#10b981" },
+          { title: "Skills Stack", url: "ai-engineering/skills-stack.html", desc: "Kết hợp Superpowers, GStack và GSD — mô hình 3 lớp decision/context/execution", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', color: "#f59e0b" },
+          { title: "GStack Sprint Practice", url: "ai-engineering/gstack-sprint-practice.html", desc: "Hướng dẫn thực hành 7 bước Sprint với prompt sẵn sàng sử dụng", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>', color: "#e94560" },
+          { title: "Multica", url: "ai-engineering/multica.html", desc: "Nền tảng open-source biến AI coding agents thành đồng đội thực sự", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', color: "#8b5cf6" },
+          { title: "ECC", url: "ai-engineering/ecc.html", desc: "Harness-native operator system — 63 agents, 249 skills, 12+ ngôn ngữ, tối ưu hiệu suất AI agent", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 15l-2-5 2-2 2 2-2 5z"/><circle cx="12" cy="12" r="10"/><path d="M2 12h4M18 12h4M12 2v4M12 18v4"/></svg>', color: "#0ea5e9" },
+          { title: "The Agency", url: "ai-engineering/agency-agents.html", desc: "144+ AI agent personalities chuyên biệt — 12 divisions từ Engineering đến Game Development", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', color: "#ec4899" },
+          { title: "Skills for Real Engineers", url: "ai-engineering/skills-real-engineers.html", desc: "Bộ agent skills composable của Matt Pocock — TDD, debugging, architecture, handoff", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>', color: "#6366f1" },
+          { title: "Spec Kit", url: "ai-engineering/spec-kit.html", desc: "Spec-Driven Development by GitHub — biến specifications thành executable, generate implementations", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6M9 16h6M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z"/><path d="M13 2v7h7"/></svg>', color: "#2563eb" },
+          { title: "Claude Code Best Practice", url: "ai-engineering/claude-code-best-practice.html", desc: "Tổng hợp 83 best practices — context management, session strategy, agent architecture", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>', color: "#059669" },
+          { title: "Open Design", url: "ai-engineering/open-design.html", desc: "Open-source design workspace — local-first, agent-native, 150+ design systems, 100+ skills, export HTML/PDF/PPTX/MP4", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', color: "#f472b6" },
+          { title: "GitHub MCP Server", url: "ai-engineering/github-mcp-server.html", desc: "MCP server chính thức của GitHub — kết nối AI agents với repositories, issues, PRs, Actions qua 100+ tools", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>', color: "#1d4ed8" },
+          { title: "GStack", url: "ai-engineering/gstack.html", desc: "30+ slash commands cho AI development workflow — planning, design, review, deploy và monitoring từ Garry Tan (YC)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>', color: "#7c3aed" },
+          { title: "Anthropic Skills", url: "ai-engineering/anthropic-skills.html", desc: "Agent Skills chính thức từ Anthropic — folder-based instructions mở rộng năng lực Claude cho 17 tác vụ chuyên biệt", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>', color: "#d946ef" },
+        ]
+      },
+      {
+        name: "English",
+        topics: [
+          { title: "English Learning Roadmap", url: "english/index.html", desc: "Lộ trình tự học tiếng Anh — 12 bài ngữ pháp + ôn tập + quick reference", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>', color: "#059669" },
+          { title: "Quick Reference", url: "english/quick-reference.html", desc: "Bảng tóm tắt ngữ pháp tiếng Anh — cheat sheet tra cứu nhanh", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>', color: "#0891b2" }
+        ]
+      },
+      {
+        name: "Project Management",
+        topics: [
+          { title: "Agile Practice Guide", url: "agile-practice/index.html", desc: "Giáo trình thực hành Agile — 12 bài từ tư duy Agile Manifesto đến scaling frameworks (PMI)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>', color: "#0891b2" },
+          { title: "CRM Knowledge Base", url: "crm-knowledge-base/index.html", desc: "Nền tảng tri thức toàn diện — 6 phases, 22 domains, 60+ documents cho CRM doanh nghiệp", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', color: "#5b21b6" }
+        ]
+      },
+      {
+        name: "Cloud Native",
+        topics: [
+          { title: "Cloud Native Handbook", url: "cloud-native/index.html", desc: "Giáo trình toàn diện — 11 bài từ Container, Kubernetes, Kafka đến kiến trúc ngân hàng trên OKD", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>', color: "#0f172a" }
+        ]
+      },
+      {
+        name: "Productivity",
+        topics: [
+          { title: "Obsidian", url: "productivity/obsidian.html", desc: "Ứng dụng ghi chú và quản lý kiến thức cá nhân, local-first, Markdown", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>', color: "#7c3aed" },
+          { title: "Super Productivity", url: "productivity/super-productivity.html", desc: "Quản lý công việc và theo dõi thời gian, open-source, tích hợp Jira/GitHub/GitLab", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', color: "#e53e3e" }
+        ]
+      },
+      {
+        name: "Database",
+        topics: [
+          { title: "Oracle TimesTen Cache", url: "database/timesten-cache.html", desc: "In-memory relational database cache cho Oracle DB — microsecond latency, cache groups, replication, HA", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>', color: "#dc2626" }
+        ]
+      }
+    ];
+
+    var groupIcons = {
+      "AI Engineering": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg>',
+      "English": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"/></svg>',
+      "Project Management": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>',
+      "Cloud Native": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>',
+      "Productivity": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+      "Database": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>'
+    };
+    var groupColors = {
+      "AI Engineering": "#667eea",
+      "English": "#059669",
+      "Project Management": "#0891b2",
+      "Cloud Native": "#0f172a",
+      "Productivity": "#7c3aed",
+      "Database": "#dc2626"
+    };
+
+    var contentEl = document.getElementById("content");
+    var noResults = document.getElementById("no-results");
+    var searchInput = document.getElementById("search");
+    var statsEl = document.getElementById("stats");
+    var sidebarEl = document.getElementById("sidebar");
+    var totalCount = 0;
+    for (var i = 0; i < groups.length; i++) totalCount += groups[i].topics.length;
+
+    function buildSidebar() {
+      var html = '<div class="sidebar-title">Nhóm</div>';
+      for (var i = 0; i < groups.length; i++) {
+        var g = groups[i];
+        html += '<a href="#group-' + i + '"><span class="dot" style="background:' + (groupColors[g.name]||'#667eea') + '"></span>' + g.name + '<span class="cnt">' + g.topics.length + '</span></a>';
+      }
+      sidebarEl.innerHTML = html;
+      sidebarEl.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+
+    function render(query) {
+      var q = (query || "").toLowerCase();
+      var html = "";
+      var hasResults = false;
+      var visibleCount = 0;
+
+      for (var i = 0; i < groups.length; i++) {
+        var group = groups[i];
+        var cards = "";
+        for (var j = 0; j < group.topics.length; j++) {
+          var t = group.topics[j];
+          if (q && t.title.toLowerCase().indexOf(q) === -1 && t.desc.toLowerCase().indexOf(q) === -1) continue;
+          visibleCount++;
+          cards += '<a class="card" href="' + t.url + '">' +
+            '<div class="card-icon">' + t.icon + '</div>' +
+            '<div class="card-body">' +
+            '<div class="card-title">' + t.title + '</div>' +
+            '<div class="card-desc">' + t.desc + '</div>' +
+            '</div></a>';
+        }
+        if (cards) {
+          hasResults = true;
+          var color = groupColors[group.name] || '#667eea';
+          var icon = groupIcons[group.name] || '';
+          html += '<section class="group" id="group-' + i + '">' +
+            '<div class="group-header">' +
+            '<div class="group-icon" style="background:' + color + '">' + icon + '</div>' +
+            '<span class="group-name">' + group.name + '</span>' +
+            '<span class="group-count">' + group.topics.length + '</span>' +
+            '</div>' +
+            '<div class="cards">' + cards + '</div></section>';
+        }
+      }
+
+      contentEl.innerHTML = html;
+      noResults.style.display = hasResults ? "none" : "block";
+      statsEl.textContent = q ? visibleCount + ' kết quả' : totalCount + ' thẻ · ' + groups.length + ' nhóm';
+    }
+
+    searchInput.addEventListener("input", function() { render(this.value); });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === '/' && document.activeElement !== searchInput) { e.preventDefault(); searchInput.focus(); }
+      if (e.key === 'Escape') { searchInput.value = ''; render(''); searchInput.blur(); }
+    });
+    buildSidebar();
+    render("");
+  </script>
+</body>
+</html>

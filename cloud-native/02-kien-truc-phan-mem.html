@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiến Trúc Phần Mềm - Cloud Native Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Cloud Native Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Kiến Trúc</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#monolith">Monolith</a>
+      <a href="#soa">SOA</a>
+      <a href="#microservices">Microservices</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">So Sánh</div>
+    <div class="nav-items">
+      <a href="#comparison">So sánh 3 mô hình</a>
+      <a href="#when">Khi nào áp dụng</a>
+      <a href="#banking">Case Study ngân hàng</a>
+      <a href="#summary">Tóm tắt</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Cloud Native Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-tong-quan-cntt.html">01. Tổng Quan CNTT</a>
+  <a href="02-kien-truc-phan-mem.html" class="current">02. Kiến Trúc Phần Mềm</a>
+  <a href="03-he-sinh-thai-cloud-native.html">03. Hệ Sinh Thái Cloud Native</a>
+  <div class="level-label">Container & Orchestration</div>
+  <a href="04-container-docker.html">04. Container & Docker</a>
+  <a href="05-kubernetes.html">05. Kubernetes</a>
+  <a href="06-okd-openshift.html">06. OKD / OpenShift</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-kafka-event-driven.html">07. Kafka & Event-Driven</a>
+  <a href="08-devops-cicd.html">08. DevOps & CI/CD</a>
+  <a href="09-monitoring-observability.html">09. Monitoring</a>
+  <a href="10-security.html">10. Security</a>
+  <div class="level-label">Thực chiến</div>
+  <a href="11-banking-architecture.html">11. Kiến Trúc Ngân Hàng</a>
+</aside>
+<main class="main">
+<h1 id="overview">Kiến Trúc Phần Mềm</h1>
+<p class="subtitle">Monolith → SOA → Microservices: so sánh, ưu nhược điểm và khi nào áp dụng</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://microservices.io/" target="_blank">microservices.io</a>, <a href="https://martinfowler.com/microservices/" target="_blank">Martin Fowler</a>, <a href="https://learn.microsoft.com/en-us/azure/architecture/" target="_blank">Azure Architecture Center</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành chương này, bạn sẽ:</strong>
+Phân biệt 3 kiến trúc phần mềm chính: Monolith, SOA, Microservices. Hiểu ưu/nhược điểm của từng mô hình. Biết khi nào nên chọn kiến trúc nào dựa trên yếu tố đội ngũ, sản phẩm và tổ chức.
+</div>
+
+<h2 id="monolith">Monolithic Architecture</h2>
+
+<h3>Khái niệm nền tảng</h3>
+<p>Monolith là kiến trúc truyền thống — toàn bộ ứng dụng được xây dựng, triển khai và vận hành như một đơn vị duy nhất. Tất cả modules (UI, business logic, data access) chạy trong cùng một process.</p>
+
+<h3>Cấu trúc</h3>
+<div class="flow">
+<span class="flow-step">UI Layer</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Business Logic</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Data Access</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Single Database</span>
+</div>
+
+<h3>Ưu điểm</h3>
+<ul>
+<li><strong>Đơn giản để phát triển</strong> — một codebase, một IDE, một debug session</li>
+<li><strong>Đơn giản để test</strong> — end-to-end test chạy trên 1 process</li>
+<li><strong>Đơn giản để deploy</strong> — 1 artifact (WAR, JAR, EXE)</li>
+<li><strong>Performance tốt</strong> — in-process calls, không network overhead</li>
+<li><strong>Transactional integrity</strong> — ACID transactions dễ dàng</li>
+</ul>
+
+<h3>Nhược điểm</h3>
+<ul>
+<li><strong>Codebase phình to</strong> — khó hiểu, khó maintain sau 2-3 năm</li>
+<li><strong>Scale toàn bộ</strong> — không thể scale riêng phần nào cần thiết</li>
+<li><strong>Deploy = rủi ro</strong> — thay đổi nhỏ phải deploy lại toàn bộ</li>
+<li><strong>Technology lock-in</strong> — toàn bộ app dùng 1 stack, khó adopt công nghệ mới</li>
+<li><strong>Team coupling</strong> — nhiều đội cùng làm 1 codebase, merge conflicts, coordination overhead</li>
+<li><strong>Single point of failure</strong> — 1 bug crash toàn bộ hệ thống</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Monolith không phải luôn xấu</strong>
+Monolith là lựa chọn đúng cho startup, prototype, team nhỏ (&lt;10 người). Vấn đề chỉ xuất hiện khi team và product grows — khi đó mới cần decouple.
+</div>
+
+<h2 id="soa">Service-Oriented Architecture (SOA)</h2>
+
+<h3>Khái niệm nền tảng</h3>
+<p>SOA tổ chức phần mềm thành các services có thể tái sử dụng (reusable), giao tiếp qua ESB (Enterprise Service Bus). Mỗi service cung cấp chức năng nghiệp vụ cụ thể.</p>
+
+<h3>Thành phần chính</h3>
+<ul>
+<li><strong>Service Provider</strong> — cung cấp business capability</li>
+<li><strong>Service Consumer</strong> — sử dụng service</li>
+<li><strong>ESB (Enterprise Service Bus)</strong> — middleware routing, transformation, orchestration</li>
+<li><strong>Service Registry</strong> — catalog dịch vụ, discovery</li>
+<li><strong>WSDL/SOAP</strong> — contract và protocol giao tiếp (XML-based)</li>
+</ul>
+
+<h3>Ưu điểm</h3>
+<ul>
+<li><strong>Tái sử dụng</strong> — services dùng chung giữa nhiều ứng dụng</li>
+<li><strong>Tích hợp hệ thống legacy</strong> — ESB bridge giữa systems cũ và mới</li>
+<li><strong>Governance</strong> — quản lý tập trung qua ESB</li>
+<li><strong>Protocol translation</strong> — ESB chuyển đổi giữa SOAP, REST, JMS...</li>
+</ul>
+
+<h3>Nhược điểm</h3>
+<ul>
+<li><strong>ESB là bottleneck</strong> — single point of failure, performance chokepoint</li>
+<li><strong>Phức tạp</strong> — XML, WSDL, SOAP overhead lớn</li>
+<li><strong>Tight coupling qua ESB</strong> — services phụ thuộc ESB rules</li>
+<li><strong>Vendor lock-in</strong> — IBM, Oracle, TIBCO ESB products đắt đỏ</li>
+<li><strong>Deploy vẫn phức tạp</strong> — ESB configuration là central point</li>
+</ul>
+
+<h2 id="microservices">Microservices Architecture</h2>
+
+<h3>Khái niệm nền tảng</h3>
+<p>Microservices chia ứng dụng thành tập hợp các services nhỏ, độc lập, mỗi service chạy trong process riêng, giao tiếp qua lightweight mechanisms (HTTP/REST, gRPC, messaging).</p>
+
+<blockquote>
+"Microservices — an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms." — Martin Fowler
+</blockquote>
+
+<h3>Đặc điểm cốt lõi</h3>
+<ul>
+<li><strong>Single Responsibility</strong> — mỗi service làm 1 việc, làm tốt</li>
+<li><strong>Independently deployable</strong> — deploy service A không ảnh hưởng service B</li>
+<li><strong>Own database</strong> — mỗi service sở hữu data riêng (Database per Service)</li>
+<li><strong>Technology agnostic</strong> — mỗi service có thể dùng tech stack khác nhau</li>
+<li><strong>Organized around business capabilities</strong> — chia theo domain, không theo layer</li>
+<li><strong>Smart endpoints, dumb pipes</strong> — logic trong services, không trong middleware</li>
+</ul>
+
+<h3>Ưu điểm</h3>
+<ul>
+<li><strong>Independent deployment</strong> — deploy 10 lần/ngày mà không ảnh hưởng services khác</li>
+<li><strong>Scale riêng</strong> — chỉ scale service đang cần (ví dụ: payment service peak Tết)</li>
+<li><strong>Fault isolation</strong> — 1 service down không crash hệ thống</li>
+<li><strong>Team autonomy</strong> — mỗi đội own 1-2 services, ra quyết định độc lập</li>
+<li><strong>Technology diversity</strong> — Java cho payment, Python cho ML, Go cho gateway</li>
+<li><strong>Faster time-to-market</strong> — đội nhỏ di chuyển nhanh hơn</li>
+</ul>
+
+<h3>Nhược điểm</h3>
+<ul>
+<li><strong>Distributed system complexity</strong> — network failures, latency, partial failures</li>
+<li><strong>Data consistency</strong> — eventual consistency thay vì ACID, cần Saga Pattern</li>
+<li><strong>Testing khó hơn</strong> — cần contract tests, integration tests across services</li>
+<li><strong>Operational overhead</strong> — nhiều services = nhiều thứ cần monitor, deploy, debug</li>
+<li><strong>Service discovery</strong> — services cần tìm nhau, load balancing</li>
+<li><strong>Debugging distributed traces</strong> — 1 request đi qua 5 services, lỗi ở đâu?</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Lỗi thường gặp: Distributed Monolith</strong>
+Chia microservices nhưng vẫn deploy cùng nhau, share database, gọi nhau synchronously → chỉ thêm complexity mà không có benefit. Đây là antipattern nguy hiểm nhất khi adopt microservices.
+</div>
+
+<h2 id="comparison">So Sánh Ba Mô Hình</h2>
+
+<table>
+<tr><th>Tiêu chí</th><th>Monolith</th><th>SOA</th><th>Microservices</th></tr>
+<tr><td><strong>Granularity</strong></td><td>1 ứng dụng lớn</td><td>Services trung bình</td><td>Services nhỏ, focused</td></tr>
+<tr><td><strong>Communication</strong></td><td>In-process</td><td>ESB (heavyweight)</td><td>REST/gRPC/Messaging (lightweight)</td></tr>
+<tr><td><strong>Data</strong></td><td>Shared database</td><td>Shared hoặc riêng</td><td>Database per service</td></tr>
+<tr><td><strong>Deployment</strong></td><td>All-or-nothing</td><td>Service-level</td><td>Independent per service</td></tr>
+<tr><td><strong>Scaling</strong></td><td>Vertical (bigger machine)</td><td>Service-level</td><td>Service-level, container-based</td></tr>
+<tr><td><strong>Team size</strong></td><td>&lt;10 developers</td><td>Multiple teams</td><td>"Two-pizza teams" (5-9)</td></tr>
+<tr><td><strong>Tech stack</strong></td><td>Unified</td><td>Can vary</td><td>Polyglot (mix freely)</td></tr>
+<tr><td><strong>Governance</strong></td><td>Code review</td><td>Centralized (ESB)</td><td>Decentralized</td></tr>
+<tr><td><strong>Complexity</strong></td><td>Code complexity</td><td>Integration complexity</td><td>Operational complexity</td></tr>
+</table>
+
+<h2 id="when">Khi Nào Nên Áp Dụng</h2>
+
+<h3>Chọn Monolith khi</h3>
+<ul>
+<li>Team nhỏ (&lt;10 người), sản phẩm mới, cần ship nhanh</li>
+<li>Domain chưa rõ — chưa biết chia boundary ở đâu</li>
+<li>Startup giai đoạn đầu — validate business model trước</li>
+<li>Ứng dụng đơn giản, không cần scale riêng từng phần</li>
+</ul>
+
+<h3>Chọn SOA khi</h3>
+<ul>
+<li>Enterprise lớn cần tích hợp nhiều hệ thống legacy</li>
+<li>Cần protocol translation giữa systems khác nhau</li>
+<li>Governance tập trung là yêu cầu bắt buộc</li>
+<li>Budget cho middleware products (IBM, Oracle)</li>
+</ul>
+
+<h3>Chọn Microservices khi</h3>
+<ul>
+<li>Team lớn (20+ developers) cần work independently</li>
+<li>Cần scale riêng từng phần (payment peak vs. user profile stable)</li>
+<li>Cần deploy thường xuyên (nhiều lần/ngày)</li>
+<li>Domain đã clear — biết rõ bounded contexts</li>
+<li>Có investment cho DevOps, monitoring, CI/CD platform</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Monolith First Strategy (Martin Fowler)</strong>
+Bắt đầu với monolith, chỉ chuyển sang microservices khi cần. Monolith cho phép bạn hiểu domain trước khi quyết định service boundaries. Chia sai boundary còn tệ hơn monolith.
+</div>
+
+<h2 id="banking">Case Study: Ngân Hàng Chuyển Đổi Kiến Trúc</h2>
+
+<h3>Trước (Monolith)</h3>
+<p>Hệ thống Core Banking truyền thống: 1 ứng dụng Java lớn (2 triệu dòng code), deploy trên WebSphere, shared Oracle database, release mỗi quý.</p>
+
+<h3>Quá trình chuyển đổi</h3>
+<ol>
+<li><strong>Identify bounded contexts</strong> — CRM, Payment, Loan, Account, Card...</li>
+<li><strong>Strangler Fig Pattern</strong> — tách dần services mới, route traffic qua API Gateway</li>
+<li><strong>Database per service</strong> — CRM dùng PostgreSQL, Payment vẫn Oracle, Analytics dùng MongoDB</li>
+<li><strong>Event-driven integration</strong> — Kafka event bus thay vì direct calls giữa services</li>
+</ol>
+
+<h3>Sau (Microservices trên OKD)</h3>
+<ul>
+<li>CRM Service, Payment Service, Loan Service, Notification Service...</li>
+<li>Mỗi service có đội riêng (5-7 người)</li>
+<li>Deploy 5-10 lần/ngày (mỗi service independent)</li>
+<li>Scale payment service x10 vào dịp Tết, lễ</li>
+<li>99.99% availability qua fault isolation</li>
+</ul>
+
+<h2 id="summary">Tóm Tắt Chương</h2>
+
+<h3>Best Practices</h3>
+<ul>
+<li>Không "microservices vì microservices" — phải có business reason</li>
+<li>Domain-Driven Design (DDD) giúp xác định service boundaries</li>
+<li>Start monolith, extract services khi pain points xuất hiện</li>
+<li>Mỗi service phải deployable và testable independently</li>
+<li>Invest vào observability từ ngày 1 (logging, tracing, metrics)</li>
+</ul>
+
+<h3>Thuật ngữ cần nhớ</h3>
+<table>
+<tr><th>Thuật ngữ</th><th>Định nghĩa ngắn</th></tr>
+<tr><td>Monolith</td><td>Ứng dụng single-unit, deploy all-or-nothing</td></tr>
+<tr><td>SOA</td><td>Services giao tiếp qua ESB, focus reuse</td></tr>
+<tr><td>Microservices</td><td>Services nhỏ, độc lập, own data, lightweight comms</td></tr>
+<tr><td>ESB</td><td>Enterprise Service Bus — middleware trung tâm</td></tr>
+<tr><td>Bounded Context</td><td>Ranh giới domain xác định phạm vi service</td></tr>
+<tr><td>Strangler Fig</td><td>Pattern chuyển đổi dần từ monolith sang microservices</td></tr>
+<tr><td>Database per Service</td><td>Mỗi service sở hữu datastore riêng</td></tr>
+</table>
+
+<h3>Câu hỏi ôn tập</h3>
+<ol>
+<li>Distributed Monolith là gì và tại sao nó nguy hiểm?</li>
+<li>Tại sao "Database per Service" quan trọng trong microservices?</li>
+<li>Khi nào nên giữ monolith thay vì chuyển sang microservices?</li>
+<li>Conway's Law ảnh hưởng đến kiến trúc như thế nào?</li>
+<li>Giải thích Strangler Fig Pattern với ví dụ thực tế.</li>
+</ol>
+
+<div class="prev-next">
+  <a href="01-tong-quan-cntt.html">← Bài 01: Tổng Quan CNTT</a>
+  <a href="03-he-sinh-thai-cloud-native.html">Bài 03: Hệ Sinh Thái Cloud Native →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps & CI/CD - Cloud Native Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1);position:relative}
+pre code{background:none;padding:0;color:inherit;border:none}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Cloud Native Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Source Control</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu</a>
+      <a href="#git">Git & Git Flow</a>
+      <a href="#pipeline">Build Pipeline</a>
+      <a href="#artifacts">Artifacts & Registry</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">GitOps & Deploy</div>
+    <div class="nav-items">
+      <a href="#helm">Helm</a>
+      <a href="#gitops">GitOps & ArgoCD</a>
+      <a href="#strategies">Deploy Strategies</a>
+      <a href="#tools">Jenkins vs GitLab CI</a>
+      <a href="#summary">Tóm tắt</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Cloud Native Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-tong-quan-cntt.html">01. Tổng Quan CNTT</a>
+  <a href="02-kien-truc-phan-mem.html">02. Kiến Trúc Phần Mềm</a>
+  <a href="03-he-sinh-thai-cloud-native.html">03. Hệ Sinh Thái Cloud Native</a>
+  <div class="level-label">Container & Orchestration</div>
+  <a href="04-container-docker.html">04. Container & Docker</a>
+  <a href="05-kubernetes.html">05. Kubernetes</a>
+  <a href="06-okd-openshift.html">06. OKD / OpenShift</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-kafka-event-driven.html">07. Kafka & Event-Driven</a>
+  <a href="08-devops-cicd.html" class="current">08. DevOps & CI/CD</a>
+  <a href="09-monitoring-observability.html">09. Monitoring</a>
+  <a href="10-security.html">10. Security</a>
+  <div class="level-label">Thực chiến</div>
+  <a href="11-banking-architecture.html">11. Kiến Trúc Ngân Hàng</a>
+</aside>
+<main class="main">
+<h1 id="overview">DevOps & CI/CD</h1>
+<p class="subtitle">Git Flow, Helm, ArgoCD, GitOps, Jenkins, GitLab CI, Blue/Green, Canary Deployment</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://argo-cd.readthedocs.io/" target="_blank">ArgoCD Docs</a>, <a href="https://helm.sh/docs/" target="_blank">Helm</a>, <a href="https://www.gitops.tech/" target="_blank">GitOps.tech</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành chương này, bạn sẽ:</strong>
+Hiểu Git branching strategies phù hợp cho team. Nắm vững CI/CD pipeline từ code đến production. Biết dùng Helm để package Kubernetes apps. Hiểu GitOps model với ArgoCD. Phân biệt deployment strategies: Blue/Green, Canary, Rolling.
+</div>
+
+<h2 id="git">Git & Branching Strategies</h2>
+
+<h3>Git Flow</h3>
+<table>
+<tr><th>Branch</th><th>Vai trò</th><th>Lifetime</th></tr>
+<tr><td><code>main</code></td><td>Production code, always deployable</td><td>Permanent</td></tr>
+<tr><td><code>develop</code></td><td>Integration branch cho next release</td><td>Permanent</td></tr>
+<tr><td><code>feature/*</code></td><td>New features, branch từ develop</td><td>Temporary</td></tr>
+<tr><td><code>release/*</code></td><td>Prepare release, bug fixes only</td><td>Temporary</td></tr>
+<tr><td><code>hotfix/*</code></td><td>Production fixes, branch từ main</td><td>Temporary</td></tr>
+</table>
+
+<h3>Trunk-Based Development (phổ biến hơn cho CI/CD)</h3>
+<ul>
+<li>Mọi người commit vào <code>main</code> (hoặc short-lived branches merge trong &lt;1 ngày)</li>
+<li>Feature flags thay feature branches cho long-lived work</li>
+<li>Phù hợp với continuous deployment — mỗi commit = potential release</li>
+<li>Yêu cầu: strong CI, automated testing, feature flags</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Ngân hàng thường dùng</strong>
+Git Flow hoặc biến thể (với thêm branch cho environments): develop → staging → UAT → production. Lý do: compliance yêu cầu traceability, approval gates, audit trail cho mỗi release.
+</div>
+
+<h2 id="pipeline">Build Pipeline</h2>
+
+<h3>CI Pipeline (Continuous Integration)</h3>
+<div class="flow">
+<span class="flow-step">Checkout</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Unit Test</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">SAST Scan</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build Image</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Image Scan</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Push Registry</span>
+</div>
+
+<h3>CD Pipeline (Continuous Delivery)</h3>
+<div class="flow">
+<span class="flow-step">Deploy Dev</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Integration Test</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Deploy Staging</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">UAT</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Approval</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Deploy Prod</span>
+</div>
+
+<h2 id="artifacts">Artifacts & Container Registry</h2>
+
+<h3>Artifact Types</h3>
+<table>
+<tr><th>Artifact</th><th>Format</th><th>Registry</th></tr>
+<tr><td>Container Image</td><td>OCI Image</td><td>Harbor, ECR, Docker Hub</td></tr>
+<tr><td>Helm Chart</td><td>.tgz</td><td>ChartMuseum, OCI Registry, Harbor</td></tr>
+<tr><td>Java JAR/WAR</td><td>.jar/.war</td><td>Nexus, Artifactory</td></tr>
+<tr><td>npm package</td><td>.tgz</td><td>npm registry, Verdaccio</td></tr>
+</table>
+
+<h3>Image Tagging Strategy</h3>
+<ul>
+<li><strong>Semantic versioning</strong>: <code>crm-api:1.2.3</code> — cho releases</li>
+<li><strong>Git SHA</strong>: <code>crm-api:abc1234</code> — cho traceability</li>
+<li><strong>Combined</strong>: <code>crm-api:1.2.3-abc1234</code> — best of both</li>
+<li><strong>Tránh</strong>: <code>latest</code> — không biết version nào đang chạy</li>
+</ul>
+
+<h2 id="helm">Helm — Kubernetes Package Manager</h2>
+
+<h3>Khái niệm</h3>
+<p>Helm packages Kubernetes manifests thành reusable charts. Tương tự apt/yum cho Linux, nhưng cho K8s resources.</p>
+
+<h3>Cấu trúc Helm Chart</h3>
+<pre><code>crm-api/
+├── Chart.yaml          # Metadata (name, version)
+├── values.yaml         # Default configuration
+├── values-dev.yaml     # Override cho dev environment
+├── values-prod.yaml    # Override cho production
+└── templates/
+    ├── deployment.yaml # K8s Deployment template
+    ├── service.yaml    # K8s Service template
+    ├── ingress.yaml    # Ingress rules
+    ├── configmap.yaml  # ConfigMap
+    └── hpa.yaml        # Autoscaler</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Lợi ích</h3>
+<ul>
+<li><strong>Templating</strong> — 1 chart, nhiều environments (dev/staging/prod via values files)</li>
+<li><strong>Versioning</strong> — chart versions track cùng app versions</li>
+<li><strong>Dependency management</strong> — chart phụ thuộc charts khác</li>
+<li><strong>Rollback</strong> — <code>helm rollback</code> quay lại revision trước</li>
+<li><strong>Ecosystem</strong> — Bitnami, Artifact Hub cung cấp charts cho common apps</li>
+</ul>
+
+<h2 id="gitops">GitOps & ArgoCD</h2>
+
+<h3>GitOps Principles</h3>
+<blockquote>
+GitOps: Git là single source of truth cho cả application code VÀ infrastructure/deployment configuration. Mọi thay đổi production đều qua Git commit.
+</blockquote>
+
+<h3>Push-based vs. Pull-based</h3>
+<table>
+<tr><th>Push-based (Traditional CI/CD)</th><th>Pull-based (GitOps)</th></tr>
+<tr><td>CI pipeline push changes đến cluster</td><td>Agent trong cluster pull changes từ Git</td></tr>
+<tr><td>CI cần cluster credentials</td><td>Chỉ agent cần access, không expose ra ngoài</td></tr>
+<tr><td>Jenkins, GitLab CI push kubectl</td><td>ArgoCD, Flux watch Git repo</td></tr>
+<tr><td>Drift có thể xảy ra undetected</td><td>Continuous reconciliation — drift tự heal</td></tr>
+</table>
+
+<h3>ArgoCD</h3>
+<p>CNCF graduated project — GitOps continuous delivery tool cho Kubernetes.</p>
+
+<h3>ArgoCD Workflow</h3>
+<div class="flow">
+<span class="flow-step">Git Repo (manifests)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">ArgoCD detects diff</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Sync to cluster</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Health check</span>
+</div>
+
+<h3>Key Features</h3>
+<ul>
+<li><strong>Auto-sync</strong> — tự deploy khi Git changes (hoặc manual sync)</li>
+<li><strong>Self-healing</strong> — ai đó kubectl edit trực tiếp → ArgoCD revert về Git state</li>
+<li><strong>Multi-cluster</strong> — quản lý nhiều clusters từ 1 ArgoCD instance</li>
+<li><strong>RBAC</strong> — ai sync app nào, environment nào</li>
+<li><strong>Rollback</strong> — sync về bất kỳ Git commit nào trước đó</li>
+<li><strong>Diff visualization</strong> — UI hiển thị rõ desired vs. actual state</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>GitOps trong ngân hàng</strong>
+Git = audit trail tự nhiên. Mỗi deployment = Git commit với author, reviewer, timestamp. Compliance team có thể trace bất kỳ change nào đến người thực hiện và người approve. ArgoCD RBAC đảm bảo chỉ authorized people sync production.
+</div>
+
+<h2 id="strategies">Deployment Strategies</h2>
+
+<h3>Rolling Update (Default K8s)</h3>
+<ul>
+<li>Replace pods dần dần — old pods removed khi new pods ready</li>
+<li>Zero downtime, gradual transition</li>
+<li>Không cần infrastructure thêm</li>
+<li>Rollback: <code>kubectl rollout undo</code></li>
+</ul>
+
+<h3>Blue/Green Deployment</h3>
+<table>
+<tr><th>Aspect</th><th>Mô tả</th></tr>
+<tr><td><strong>Cách hoạt động</strong></td><td>2 environments identities (Blue = current, Green = new). Switch traffic instantaneously.</td></tr>
+<tr><td><strong>Ưu</strong></td><td>Instant rollback (switch back), full testing trên Green trước switch</td></tr>
+<tr><td><strong>Nhược</strong></td><td>2x resources (cả Blue và Green running đồng thời)</td></tr>
+<tr><td><strong>Dùng khi</strong></td><td>Cần instant rollback, database migration không backward-compatible</td></tr>
+</table>
+
+<h3>Canary Deployment</h3>
+<table>
+<tr><th>Aspect</th><th>Mô tả</th></tr>
+<tr><td><strong>Cách hoạt động</strong></td><td>Route small % traffic (5-10%) đến new version. Monitor. Dần tăng lên 100%.</td></tr>
+<tr><td><strong>Ưu</strong></td><td>Detect issues với real traffic, limit blast radius, data-driven decisions</td></tr>
+<tr><td><strong>Nhược</strong></td><td>Cần sophisticated routing, monitoring phải tốt để detect issues</td></tr>
+<tr><td><strong>Dùng khi</strong></td><td>High-traffic services, cần validate với real users trước full rollout</td></tr>
+</table>
+
+<h3>So sánh</h3>
+<table>
+<tr><th>Strategy</th><th>Downtime</th><th>Rollback</th><th>Resource</th><th>Risk</th></tr>
+<tr><td>Rolling</td><td>Zero</td><td>Slow (redeploy)</td><td>1x + surge</td><td>Medium</td></tr>
+<tr><td>Blue/Green</td><td>Zero</td><td>Instant (switch)</td><td>2x</td><td>Low</td></tr>
+<tr><td>Canary</td><td>Zero</td><td>Fast (route back)</td><td>1x + canary</td><td>Lowest</td></tr>
+</table>
+
+<h2 id="tools">CI Tools: Jenkins vs. GitLab CI</h2>
+
+<table>
+<tr><th>Aspect</th><th>Jenkins</th><th>GitLab CI</th></tr>
+<tr><td><strong>Type</strong></td><td>Standalone CI server</td><td>Integrated trong GitLab</td></tr>
+<tr><td><strong>Configuration</strong></td><td>Jenkinsfile (Groovy DSL)</td><td>.gitlab-ci.yml (YAML)</td></tr>
+<tr><td><strong>Plugins</strong></td><td>1800+ plugins, ecosystem khổng lồ</td><td>Built-in features, ít cần plugins</td></tr>
+<tr><td><strong>Scaling</strong></td><td>Agents (static hoặc dynamic)</td><td>Runners (easily scalable trên K8s)</td></tr>
+<tr><td><strong>Learning curve</strong></td><td>Cao (Groovy, plugin conflicts)</td><td>Thấp hơn (YAML declarative)</td></tr>
+<tr><td><strong>Maintenance</strong></td><td>Cao (updates, plugins, security)</td><td>Thấp (SaaS) hoặc medium (self-hosted)</td></tr>
+<tr><td><strong>Phù hợp</strong></td><td>Legacy, complex pipelines</td><td>Modern teams, GitOps-native</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Trend 2024-2025</strong>
+Xu hướng chuyển từ Jenkins sang GitLab CI/Tekton + ArgoCD. Lý do: Jenkins maintenance overhead cao, plugin conflicts, security issues. GitOps model (ArgoCD) tách CI (build) khỏi CD (deploy) — mỗi phần dùng tool tốt nhất.
+</div>
+
+<h2 id="summary">Tóm Tắt</h2>
+
+<h3>Best Practices</h3>
+<ul>
+<li>Tách CI (build + test + scan + push image) khỏi CD (deploy to environments)</li>
+<li>Git repo riêng cho app code và deployment config (GitOps best practice)</li>
+<li>Mọi environment diff chỉ ở values file, không ở templates</li>
+<li>Image immutable — same image qua dev → staging → prod, chỉ config khác</li>
+<li>Automated rollback khi health check fail</li>
+</ul>
+
+<h3>Thuật ngữ cần nhớ</h3>
+<table>
+<tr><th>Thuật ngữ</th><th>Định nghĩa ngắn</th></tr>
+<tr><td>GitOps</td><td>Git = source of truth cho deployment state</td></tr>
+<tr><td>Helm Chart</td><td>Package of K8s manifests with templating</td></tr>
+<tr><td>ArgoCD</td><td>GitOps CD tool — pull-based, self-healing</td></tr>
+<tr><td>Blue/Green</td><td>2 identical environments, instant switch</td></tr>
+<tr><td>Canary</td><td>Gradual traffic shift to new version</td></tr>
+<tr><td>Trunk-Based</td><td>All developers commit to main, short-lived branches</td></tr>
+</table>
+
+<h3>Câu hỏi ôn tập</h3>
+<ol>
+<li>GitOps pull-based model an toàn hơn push-based ở điểm nào?</li>
+<li>Tại sao nên tách CI pipeline khỏi CD pipeline?</li>
+<li>Canary deployment cần gì từ monitoring để hoạt động hiệu quả?</li>
+<li>Helm values-dev.yaml và values-prod.yaml thường khác nhau ở đâu?</li>
+<li>ArgoCD self-healing là gì và tại sao quan trọng?</li>
+</ol>
+
+<div class="prev-next">
+  <a href="07-kafka-event-driven.html">← Bài 07: Kafka & Event-Driven</a>
+  <a href="09-monitoring-observability.html">Bài 09: Monitoring & Observability →</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 16 - Present Perfect vs Past Simple - English Exercises</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:1.5rem}
+.info-bar{display:flex;gap:1.5rem;margin-bottom:2rem;font-size:.85rem;color:#64748b}
+.info-bar span{display:flex;align-items:center;gap:.4rem}
+h2{font-size:1.1rem;font-weight:700;margin:2rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+.q{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.6rem 0}
+.q p{margin-bottom:.5rem;font-size:.93rem}
+.q label{display:block;padding:.3rem .5rem;margin:.2rem 0;border-radius:4px;cursor:pointer;font-size:.9rem;transition:background .1s}
+.q label:hover{background:rgba(102,126,234,.08)}
+.q input[type="radio"],.q input[type="text"]{margin-right:.5rem}
+.q input[type="text"]{border:1px solid #cbd5e1;border-radius:4px;padding:4px 8px;font-size:.9rem;width:120px}
+.q .correct{color:#059669;font-weight:500;display:none;margin-top:.4rem;font-size:.85rem}
+.q .wrong{color:#ef4444;font-weight:500;display:none;margin-top:.4rem;font-size:.85rem}
+.score-box{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-radius:12px;padding:2rem;text-align:center;margin:2rem 0;display:none}
+.score-box h3{font-size:1.4rem;margin-bottom:.5rem}
+.score-box .score-num{font-size:3rem;font-weight:800;margin:.5rem 0}
+.score-box .score-detail{font-size:.9rem;opacity:.9}
+.btn-submit{background:#667eea;color:#fff;border:none;padding:.75rem 2rem;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;display:block;margin:2rem auto;transition:background .15s}
+.btn-submit:hover{background:#4c51bf}
+.btn-submit:disabled{background:#cbd5e1;cursor:not-allowed}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-top:2rem;border-top:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tuần 1: Present Tenses</div>
+    <div class="nav-items">
+      <a href="./day-01.html">Day 01</a>
+      <a href="./day-02.html">Day 02</a>
+      <a href="./day-03.html">Day 03</a>
+      <a href="./day-04.html">Day 04</a>
+      <a href="./day-05.html">Day 05</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tuần 2: Past Tenses</div>
+    <div class="nav-items">
+      <a href="./day-06.html">Day 06</a>
+      <a href="./day-07.html">Day 07</a>
+      <a href="./day-08.html">Day 08</a>
+      <a href="./day-09.html">Day 09</a>
+      <a href="./day-10.html">Day 10</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tuần 3: Future & Perfect</div>
+    <div class="nav-items">
+      <a href="./day-11.html">Day 11</a>
+      <a href="./day-12.html">Day 12</a>
+      <a href="./day-13.html">Day 13</a>
+      <a href="./day-14.html">Day 14</a>
+      <a href="./day-15.html">Day 15</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tuần 4: Modals & More</div>
+    <div class="nav-items">
+      <a href="./day-16.html" class="active">Day 16</a>
+      <a href="./day-17.html">Day 17</a>
+      <a href="./day-18.html">Day 18</a>
+      <a href="./day-19.html">Day 19</a>
+      <a href="./day-20.html">Day 20</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tuần 5: Mixed & Prep</div>
+    <div class="nav-items">
+      <a href="./day-21.html">Day 21</a>
+      <a href="./day-22.html">Day 22</a>
+      <a href="./day-23.html">Day 23</a>
+      <a href="./day-24.html">Day 24</a>
+      <a href="./day-25.html">Day 25</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tuần 6: Final Tests</div>
+    <div class="nav-items">
+      <a href="./day-26.html">Day 26</a>
+      <a href="./day-27.html">Day 27</a>
+      <a href="./day-28.html">Day 28</a>
+      <a href="./day-29.html">Day 29</a>
+      <a href="./day-30.html">Day 30</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../../index.html">Handbook</a> / <a href="../index.html">English</a> / <a href="#">Exercises</a> / Day 16
+  </div>
+
+  <h1>Day 16: Present Perfect vs Past Simple</h1>
+  <p class="subtitle">Phân biệt thì hiện tại hoàn thành và quá khứ đơn — dấu hiệu thời gian, thời gian kết thúc vs chưa kết thúc</p>
+  <div class="info-bar">
+    <span>25 câu</span>
+    <span>~30 phút</span>
+    <span>Chủ đề: Present Perfect vs Past Simple</span>
+  </div>
+
+  <form id="quiz">
+    <h2>Phần A: Chọn thì đúng</h2>
+
+    <div class="q" data-answer="b">
+      <p>1. I ___ to Japan twice. (experience, no specific time)</p>
+      <label><input type="radio" name="q1" value="a"> went</label>
+      <label><input type="radio" name="q1" value="b"> have been</label>
+      <label><input type="radio" name="q1" value="c"> was</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="a">
+      <p>2. She ___ to Paris last summer. (specific time in the past)</p>
+      <label><input type="radio" name="q2" value="a"> went</label>
+      <label><input type="radio" name="q2" value="b"> has gone</label>
+      <label><input type="radio" name="q2" value="c"> has been</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="b">
+      <p>3. They ___ here since 2018.</p>
+      <label><input type="radio" name="q3" value="a"> lived</label>
+      <label><input type="radio" name="q3" value="b"> have lived</label>
+      <label><input type="radio" name="q3" value="c"> are living</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="a">
+      <p>4. He ___ his job two weeks ago.</p>
+      <label><input type="radio" name="q4" value="a"> lost</label>
+      <label><input type="radio" name="q4" value="b"> has lost</label>
+      <label><input type="radio" name="q4" value="c"> have lost</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="b">
+      <p>5. I ___ never ___ such a beautiful sunset.</p>
+      <label><input type="radio" name="q5" value="a"> did ... see</label>
+      <label><input type="radio" name="q5" value="b"> have ... seen</label>
+      <label><input type="radio" name="q5" value="c"> was ... seeing</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="a">
+      <p>6. We ___ a great time at the party yesterday.</p>
+      <label><input type="radio" name="q6" value="a"> had</label>
+      <label><input type="radio" name="q6" value="b"> have had</label>
+      <label><input type="radio" name="q6" value="c"> has had</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="b">
+      <p>7. She ___ three cups of coffee today.</p>
+      <label><input type="radio" name="q7" value="a"> drank</label>
+      <label><input type="radio" name="q7" value="b"> has drunk</label>
+      <label><input type="radio" name="q7" value="c"> drunk</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="a">
+      <p>8. Mozart ___ more than 600 pieces of music.</p>
+      <label><input type="radio" name="q8" value="a"> wrote</label>
+      <label><input type="radio" name="q8" value="b"> has written</label>
+      <label><input type="radio" name="q8" value="c"> have written</label>
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <h2>Phần B: Điền đúng dạng động từ</h2>
+
+    <div class="q" data-answer="have you ever tried">
+      <p>9. ___ (you / ever / try) bungee jumping?</p>
+      <input type="text" placeholder="..." style="width:220px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="bought">
+      <p>10. I ___ (buy) this phone last month.</p>
+      <input type="text" placeholder="..." style="width:150px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="has worked">
+      <p>11. She ___ (work) at this company for five years.</p>
+      <input type="text" placeholder="..." style="width:150px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="did you go">
+      <p>12. Where ___ (you / go) on holiday last year?</p>
+      <input type="text" placeholder="..." style="width:180px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="have not finished">
+      <p>13. We ___ (not / finish) the project yet.</p>
+      <input type="text" placeholder="..." style="width:180px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="met">
+      <p>14. I ___ (meet) her at a conference in 2022.</p>
+      <input type="text" placeholder="..." style="width:150px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="has just arrived">
+      <p>15. The train ___ (just / arrive). Let's get on.</p>
+      <input type="text" placeholder="..." style="width:180px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="graduated">
+      <p>16. He ___ (graduate) from university in 2020.</p>
+      <input type="text" placeholder="..." style="width:150px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <h2>Phần C: Sửa lỗi sai</h2>
+
+    <div class="q" data-answer="i have lived here for ten years">
+      <p>17. "I lived here for ten years." (still living here) → Sửa lại:</p>
+      <input type="text" placeholder="I..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="she went to london last week">
+      <p>18. "She has gone to London last week." → Sửa lại:</p>
+      <input type="text" placeholder="She..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="i saw that movie yesterday">
+      <p>19. "I have seen that movie yesterday." → Sửa lại:</p>
+      <input type="text" placeholder="I..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="he has been a teacher since 2015">
+      <p>20. "He was a teacher since 2015." (still a teacher) → Sửa lại:</p>
+      <input type="text" placeholder="He..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <h2>Phần D: Viết câu hoàn chỉnh</h2>
+
+    <div class="q" data-answer="i have known him for ten years">
+      <p>21. (I / know / him / for ten years) → Present Perfect (still know):</p>
+      <input type="text" placeholder="I..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="she visited rome in 2019">
+      <p>22. (she / visit / Rome / in 2019) → Past Simple:</p>
+      <input type="text" placeholder="She..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="we have not seen her today">
+      <p>23. (we / not / see / her / today) → Present Perfect:</p>
+      <input type="text" placeholder="We..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="did you eat breakfast this morning">
+      <p>24. (you / eat / breakfast / this morning?) → Past Simple (morning is over):</p>
+      <input type="text" placeholder="Did..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <div class="q" data-answer="they have already left">
+      <p>25. (they / already / leave) → Present Perfect:</p>
+      <input type="text" placeholder="They..." style="width:300px">
+      <div class="correct"></div><div class="wrong"></div>
+    </div>
+
+    <button type="button" class="btn-submit" id="submitBtn" onclick="gradeQuiz()">Chấm điểm</button>
+  </form>
+
+  <div class="score-box" id="scoreBox">
+    <h3>Kết quả</h3>
+    <div class="score-num" id="scoreNum"></div>
+    <div class="score-detail" id="scoreDetail"></div>
+  </div>
+
+  <div class="card-nav">
+    <a href="./day-15.html">← Previous: Day 15</a>
+    <a href="./day-17.html">Next: Day 17 →</a>
+  </div>
+</div>
+</div>
+
+<script>
+function gradeQuiz() {
+  var questions = document.querySelectorAll('.q');
+  var correct = 0;
+  var total = questions.length;
+
+  questions.forEach(function(q) {
+    var answer = q.getAttribute('data-answer').toLowerCase().trim();
+    var userAnswer = '';
+
+    var textInput = q.querySelector('input[type="text"]');
+    var radioInputs = q.querySelectorAll('input[type="radio"]');
+
+    if (textInput) {
+      userAnswer = textInput.value.toLowerCase().trim().replace(/[?.!,]/g, '');
+    } else if (radioInputs.length > 0) {
+      radioInputs.forEach(function(r) {
+        if (r.checked) userAnswer = r.value;
+      });
+    }
+
+    var correctEl = q.querySelector('.correct');
+    var wrongEl = q.querySelector('.wrong');
+    correctEl.style.display = 'none';
+    wrongEl.style.display = 'none';
+
+    if (userAnswer === answer) {
+      correct++;
+      correctEl.textContent = '✓ Đúng!';
+      correctEl.style.display = 'block';
+      q.style.borderColor = '#059669';
+    } else {
+      wrongEl.textContent = '✗ Sai. Đáp án: ' + q.getAttribute('data-answer');
+      wrongEl.style.display = 'block';
+      q.style.borderColor = '#ef4444';
+    }
+  });
+
+  var percent = Math.round((correct / total) * 100);
+  var scoreBox = document.getElementById('scoreBox');
+  scoreBox.style.display = 'block';
+  document.getElementById('scoreNum').textContent = correct + '/' + total;
+  document.getElementById('scoreDetail').textContent = percent + '% đúng' + (percent >= 80 ? ' — Tốt lắm!' : percent >= 60 ? ' — Khá! Ôn lại phần sai.' : ' — Cần ôn lại bài học Present Perfect vs Past Simple.');
+  scoreBox.scrollIntoView({behavior: 'smooth'});
+  document.getElementById('submitBtn').disabled = true;
+}
+</script>
+</body>
+</html>

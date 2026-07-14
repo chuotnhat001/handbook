@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superpowers - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#dc2626;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+/* SKILL BADGE */
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.skill-card{background:#f8fafc;border:1px solid rgba(0,0,0,.07);border-radius:8px;padding:.75rem 1rem}
+.skill-card strong{display:block;font-size:.85rem;color:#1a1a2e;margin-bottom:.25rem}
+.skill-card span{font-size:.8rem;color:#555b6e}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Superpowers là gì</a>
+      <a href="#philosophy">Triết lý cốt lõi</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Skills Library</div>
+    <div class="nav-items">
+      <a href="#skills-testing">Testing</a>
+      <a href="#skills-debugging">Debugging</a>
+      <a href="#skills-collaboration">Collaboration</a>
+      <a href="#skills-meta">Meta</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Workflow</div>
+    <div class="nav-items">
+      <a href="#workflow">Core Workflow</a>
+      <a href="#brainstorming">Brainstorming</a>
+      <a href="#planning">Writing Plans</a>
+      <a href="#execution">Execution</a>
+      <a href="#tdd">Test-Driven Dev</a>
+      <a href="#review">Code Review</a>
+      <a href="#finishing">Branch Finishing</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài Đặt</div>
+    <div class="nav-items">
+      <a href="#platforms">Platforms</a>
+      <a href="#install">Installation</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">⚡ Superpowers</h1>
+<p class="subtitle">Agentic Skills Framework — composable skills định hướng coding agents qua structured workflows, autonomous nhưng có kiểm soát</p>
+
+<div class="source-box">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+  <span>Nguồn: <a href="https://github.com/obra/Superpowers" target="_blank">github.com/obra/Superpowers</a> — by Jesse Vincent / Prime Radiant, MIT License</span>
+</div>
+
+<p>Superpowers là một software development methodology được thiết kế dành riêng cho coding agents. Thay vì để agents tự do thực thi ngay lập tức, Superpowers hướng dẫn agents đi qua các bước có cấu trúc: từ clarify requirements, present designs để validate theo từng phần nhỏ, lập kế hoạch chi tiết, rồi mới execute với các review cycles nghiêm ngặt.</p>
+
+<p>Project được duy trì bởi Jesse Vincent và Prime Radiant, với community support qua Discord, GitHub Issues và release announcements tại primeradiant.com.</p>
+
+<div class="callout callout-blue">
+  <strong>Tư duy cốt lõi:</strong> Agents không nên tự quyết định và code ngay — hãy đưa chúng đi qua deliberate process: clarify, design, plan, implement, verify. "Verify before declaring success" là nguyên tắc bất biến.
+</div>
+
+<h2 id="philosophy">Triết lý cốt lõi</h2>
+
+<p>Superpowers xây dựng trên bốn nguyên tắc nền tảng:</p>
+
+<table>
+<tr><th>Nguyên tắc</th><th>Ý nghĩa</th></tr>
+<tr><td><strong>Test-Driven Development</strong></td><td>RED-GREEN-REFACTOR cycles bắt buộc. Xóa code pre-test, viết test trước, rồi mới implement để test pass</td></tr>
+<tr><td><strong>Systematic over ad-hoc</strong></td><td>Quy trình có cấu trúc thay vì quyết định tùy hứng. Mọi bước đều có workflow được định nghĩa rõ</td></tr>
+<tr><td><strong>Simplicity as primary goal</strong></td><td>Giảm complexity là mục tiêu, không phải hệ quả phụ. Luôn tìm cách đơn giản nhất giải quyết vấn đề</td></tr>
+<tr><td><strong>Evidence-based verification</strong></td><td>Không tự tuyên bố "done" — phải có bằng chứng cụ thể trước khi báo cáo thành công</td></tr>
+</table>
+
+<blockquote>
+  "Verify before declaring success" — nguyên tắc dẫn đường của toàn bộ methodology
+</blockquote>
+
+<h2 id="skills-testing">Skills: Testing</h2>
+
+<div class="skill-grid">
+  <div class="skill-card">
+    <strong>test-driven-development</strong>
+    <span>Enforces RED-GREEN-REFACTOR cycles. Bắt buộc xóa pre-test code, viết failing test trước khi implement</span>
+  </div>
+</div>
+
+<h2 id="skills-debugging">Skills: Debugging</h2>
+
+<div class="skill-grid">
+  <div class="skill-card">
+    <strong>systematic-debugging</strong>
+    <span>Tiếp cận debugging có hệ thống — xác định root cause, không chỉ fix symptom</span>
+  </div>
+  <div class="skill-card">
+    <strong>verification-before-completion</strong>
+    <span>Quy trình kiểm tra bằng chứng trước khi tuyên bố task hoàn thành</span>
+  </div>
+</div>
+
+<h2 id="skills-collaboration">Skills: Collaboration</h2>
+
+<div class="skill-grid">
+  <div class="skill-card">
+    <strong>brainstorming</strong>
+    <span>Refine ideas qua câu hỏi, khám phá alternatives, validate designs theo từng phần nhỏ</span>
+  </div>
+  <div class="skill-card">
+    <strong>writing-plans</strong>
+    <span>Tạo kế hoạch với tasks 2-5 phút, exact file paths và verification steps</span>
+  </div>
+  <div class="skill-card">
+    <strong>executing-plans</strong>
+    <span>Thực thi plan đã được phê duyệt theo từng bước có kiểm soát</span>
+  </div>
+  <div class="skill-card">
+    <strong>subagent-driven-development</strong>
+    <span>Dispatch fresh agents cho từng task với two-stage review (spec compliance, rồi code quality)</span>
+  </div>
+  <div class="skill-card">
+    <strong>dispatching-parallel-agents</strong>
+    <span>Chạy nhiều agents song song cho các tasks độc lập để tăng tốc độ</span>
+  </div>
+  <div class="skill-card">
+    <strong>using-git-worktrees</strong>
+    <span>Tạo isolated workspace trên new branch với clean test baseline trước khi bắt đầu</span>
+  </div>
+  <div class="skill-card">
+    <strong>requesting-code-review</strong>
+    <span>Quy trình yêu cầu code review sau khi implementation hoàn tất</span>
+  </div>
+  <div class="skill-card">
+    <strong>receiving-code-review</strong>
+    <span>Xử lý feedback từ code review theo severity-based approach</span>
+  </div>
+  <div class="skill-card">
+    <strong>finishing-a-development-branch</strong>
+    <span>Kết thúc branch: trình bày các lựa chọn merge/PR/keep/discard với cleanup</span>
+  </div>
+</div>
+
+<h2 id="skills-meta">Skills: Meta</h2>
+
+<div class="skill-grid">
+  <div class="skill-card">
+    <strong>writing-skills</strong>
+    <span>Tạo custom skills mới cho hệ thống Superpowers</span>
+  </div>
+  <div class="skill-card">
+    <strong>using-superpowers</strong>
+    <span>Hướng dẫn cách sử dụng và kết hợp các skills trong hệ thống</span>
+  </div>
+</div>
+
+<h2 id="workflow">Core Workflow — 6 giai đoạn</h2>
+
+<div class="flow">
+  <span class="flow-step">Brainstorm</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Git Isolate</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Plan</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Execute</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">TDD</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Review &amp; Merge</span>
+</div>
+
+<h2 id="brainstorming">Giai đoạn 1: Brainstorming</h2>
+
+<p>Trước khi viết bất kỳ dòng code nào, agent phải đi qua bước clarify requirements:</p>
+<ul>
+  <li>Refine ideas thông qua câu hỏi có mục đích</li>
+  <li>Khám phá các alternatives — không chốt ngay giải pháp đầu tiên</li>
+  <li>Validate designs theo từng phần nhỏ, tiêu hóa được (digestible sections)</li>
+  <li>Chỉ tiến lên bước tiếp theo khi design đã được phê duyệt</li>
+</ul>
+
+<div class="callout callout-amber">
+  <strong>Lưu ý:</strong> Brainstorming không phải bước tùy chọn. Đây là gate đảm bảo agent hiểu đúng yêu cầu trước khi đầu tư effort vào implementation.
+</div>
+
+<h2 id="planning">Giai đoạn 2 &amp; 3: Git Isolation + Writing Plans</h2>
+
+<h3>Git Isolation</h3>
+<ul>
+  <li>Tạo isolated workspace trên <strong>new branch</strong> trước khi bắt đầu</li>
+  <li>Verify clean test baseline — tất cả tests phải pass trước khi thêm code mới</li>
+  <li>Đảm bảo môi trường clean, không bị ảnh hưởng bởi work-in-progress khác</li>
+</ul>
+
+<h3>Writing Plans</h3>
+<p>Kế hoạch tốt phải đáp ứng các tiêu chí sau:</p>
+<ul>
+  <li><strong>2-5 minute tasks</strong> — mỗi task đủ nhỏ để hoàn thành nhanh và verify ngay</li>
+  <li><strong>Exact file paths</strong> — không mơ hồ về nơi thực hiện thay đổi</li>
+  <li><strong>Verification steps</strong> — mỗi task có cách kiểm tra kết quả cụ thể</li>
+  <li>Xác định dependencies giữa các tasks</li>
+  <li>Lên kế hoạch cho edge cases và error scenarios</li>
+</ul>
+
+<h2 id="execution">Giai đoạn 4: Execution</h2>
+
+<p>Superpowers cung cấp hai mode execution:</p>
+
+<table>
+<tr><th>Mode</th><th>Khi nào dùng</th><th>Cơ chế</th></tr>
+<tr><td><strong>Subagent-Driven Development</strong></td><td>Tasks phức tạp, cần isolation cao</td><td>Dispatch fresh agent cho mỗi task; two-stage review: (1) spec compliance, (2) code quality</td></tr>
+<tr><td><strong>Parallel Agents</strong></td><td>Nhiều tasks độc lập cùng lúc</td><td>Chạy song song để giảm tổng thời gian; merge kết quả sau khi tất cả pass</td></tr>
+</table>
+
+<div class="callout callout-green">
+  <strong>Subagent two-stage review:</strong> Stage 1 kiểm tra agent có làm đúng spec không. Stage 2 đánh giá chất lượng code. Hai giai đoạn tách biệt giúp phát hiện vấn đề sớm hơn.
+</div>
+
+<h2 id="tdd">Giai đoạn 5: Test-Driven Development</h2>
+
+<p>TDD trong Superpowers không phải tùy chọn — đây là requirement bắt buộc:</p>
+
+<div class="flow">
+  <span class="flow-step">RED (Fail)</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">GREEN (Pass)</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">REFACTOR</span>
+</div>
+
+<ol>
+  <li><strong>RED</strong> — Viết failing test trước. Nếu có pre-existing code, xóa đi và bắt đầu lại từ test</li>
+  <li><strong>GREEN</strong> — Viết implementation tối thiểu để test pass — không hơn không kém</li>
+  <li><strong>REFACTOR</strong> — Cải thiện code quality trong khi giữ nguyên tests xanh</li>
+</ol>
+
+<div class="callout callout-red">
+  <strong>Anti-pattern:</strong> Không được viết implementation rồi mới viết test để "cover" code đã có. Thứ tự phải là: test trước, implementation sau. Đây là điểm phân biệt TDD thật sự với test-after.
+</div>
+
+<h2 id="review">Giai đoạn 5: Code Review</h2>
+
+<p>Code review trong Superpowers được thực hiện đối chiếu trực tiếp với plan:</p>
+<ul>
+  <li>Review từng thay đổi so với task trong plan đã phê duyệt</li>
+  <li>Severity-based issue reporting — phân loại mức độ nghiêm trọng của từng vấn đề</li>
+  <li>Không merge cho đến khi tất cả critical issues được giải quyết</li>
+</ul>
+
+<h2 id="finishing">Giai đoạn 6: Branch Finishing</h2>
+
+<p>Khi implementation hoàn tất, agent trình bày các lựa chọn rõ ràng:</p>
+
+<table>
+<tr><th>Lựa chọn</th><th>Khi nào phù hợp</th></tr>
+<tr><td><strong>Merge</strong></td><td>Feature hoàn chỉnh, tests pass, review approved</td></tr>
+<tr><td><strong>Pull Request</strong></td><td>Cần human review trước khi merge vào main</td></tr>
+<tr><td><strong>Keep (as-is)</strong></td><td>Work-in-progress, chưa sẵn sàng merge</td></tr>
+<tr><td><strong>Discard</strong></td><td>Approach sai, cần bắt đầu lại</td></tr>
+</table>
+
+<p>Branch cleanup được thực hiện sau khi quyết định được đưa ra.</p>
+
+<h2 id="platforms">Platforms được hỗ trợ</h2>
+
+<p>Superpowers tích hợp với nhiều coding environments phổ biến:</p>
+
+<table>
+<tr><th>Platform</th><th>Ghi chú</th></tr>
+<tr><td>Claude Code</td><td>CLI-based, installation qua marketplace hoặc command-line registration</td></tr>
+<tr><td>Cursor</td><td>IDE-based</td></tr>
+<tr><td>GitHub Copilot CLI</td><td>CLI-based</td></tr>
+<tr><td>Codex App / CLI</td><td>Hỗ trợ cả app và CLI mode</td></tr>
+<tr><td>Gemini CLI</td><td>CLI-based</td></tr>
+<tr><td>Kimi Code</td><td>—</td></tr>
+<tr><td>OpenCode</td><td>—</td></tr>
+<tr><td>Factory Droid</td><td>—</td></tr>
+<tr><td>Antigravity</td><td>—</td></tr>
+<tr><td>Pi</td><td>—</td></tr>
+</table>
+
+<div class="callout callout-amber">
+  <strong>Lưu ý:</strong> Mỗi platform có installation method riêng — marketplace installs, command-line registration, hoặc plugin repository links. Xem README chính thức để biết hướng dẫn cụ thể cho platform bạn dùng.
+</div>
+
+<h2 id="install">Installation</h2>
+
+<h3>Tổng quan</h3>
+<p>Superpowers được cài theo từng platform cụ thể. Dưới đây là hướng dẫn chung:</p>
+
+<pre><code># Clone repo về local
+git clone https://github.com/obra/Superpowers.git
+
+# Hoặc xem hướng dẫn cài đặt trực tiếp tại:
+# https://github.com/obra/Superpowers</code></pre>
+
+<h3>Cho Claude Code</h3>
+<p>Claude Code là một trong những platforms chính được hỗ trợ. Cài đặt thông qua marketplace hoặc command-line registration theo hướng dẫn trong repo.</p>
+
+<div class="callout callout-green">
+  <strong>Community:</strong> Discord, GitHub Issues, và release announcements tại primeradiant.com. Project là MIT License — open source, tự do sử dụng và đóng góp.
+</div>
+
+<h3>Viết Custom Skills</h3>
+<p>Superpowers cho phép viết và chia sẻ custom skills thông qua meta-skill <code>writing-skills</code>. Community có thể publish skills riêng để mở rộng hệ thống.</p>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Huấn Luyện Claude Nói Giọng Của Bạn - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Claude AIO
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung</div>
+    <div class="nav-items">
+      <a href="#overview">Tổng quan</a>
+      <a href="#extract">Trích xuất giọng nói</a>
+      <a href="#compress">Nén file</a>
+      <a href="#structure">Cấu trúc file</a>
+      <a href="#test">Kiểm tra</a>
+      <a href="#resistance">Vượt qua kháng cự</a>
+      <a href="#portable">Portable</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Huấn Luyện Claude Nói Giọng Của Bạn</h1>
+<p class="subtitle">Tạo file "giọng nói cá nhân" để AI viết đúng phong cách của bạn — portable trên mọi nền tảng</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/huan-luyen-claude-noi-giong-ban" target="_blank">phandonggiang.com</a> — Cấp độ 3, ~12 phút</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Giọng văn, thẩm mỹ, cách chọn từ và tư duy của bạn có thể được nén vào một file text duy nhất. Bất kỳ AI nào cũng có thể "trở thành bạn" nếu có file này. Quy trình: phỏng vấn 100 câu hỏi → nén thành file markdown (~2.000-5.000 token).
+</div>
+
+<h2 id="extract">Bước 1: Phỏng vấn 100 câu hỏi (trích xuất)</h2>
+
+<p><strong>Chuẩn bị:</strong> Claude + Cowork, Model Opus, Extended Thinking bật, Wispr Flow (voice-to-text miễn phí).</p>
+
+<p>Giao cho Claude vai trò "Taste Interviewer" — trích xuất DNA tư duy qua 7 danh mục:</p>
+
+<table>
+  <thead><tr><th>Danh mục</th><th>Số câu</th></tr></thead>
+  <tbody>
+    <tr><td>Niềm tin trái chiều &amp; quan điểm</td><td>15</td></tr>
+    <tr><td>Phong cách viết</td><td>20</td></tr>
+    <tr><td>Những điều không thích (thẩm mỹ)</td><td>15</td></tr>
+    <tr><td>Giọng điệu &amp; cá tính</td><td>15</td></tr>
+    <tr><td>Tổ chức nội dung</td><td>15</td></tr>
+    <tr><td>Những điều tuyệt đối từ chối</td><td>10</td></tr>
+    <tr><td>Dấu hiệu cảnh báo</td><td>10</td></tr>
+  </tbody>
+</table>
+
+<div class="callout callout-amber">
+<strong>Quy tắc phỏng vấn:</strong> Hỏi từng câu một. Yêu cầu câu trả lời cụ thể + ví dụ. Chỉ ra mâu thuẫn. Đào sâu câu trả lời bất thường. Không chấp nhận "tôi thích sự đơn giản".
+</div>
+
+<p><strong>Thời gian:</strong> ~2 giờ, hoặc 90 phút nếu dùng speech-to-text.</p>
+
+<h2 id="compress">Bước 2: Nén file (Voice Compiler)</h2>
+
+<p>Chuyển kho lưu trữ thô ~20.000 từ thành file .md nén gọn:</p>
+
+<ul>
+  <li><strong>Độ dài mục tiêu:</strong> 2.000-4.000 token; giới hạn cứng 5.000 token</li>
+  <li><strong>Bài test cốt lõi:</strong> "Nếu dòng này biến mất, AI có viết/chỉnh sửa/phán xét khác đi không?" → Giữ nếu có; cắt nếu không</li>
+</ul>
+
+<h3>File nén cần chứa</h3>
+<ul>
+  <li>Quy tắc viết cụ thể</li>
+  <li>Từ chối cứng kèm ví dụ</li>
+  <li>Ví dụ tốt/xấu để so sánh</li>
+  <li>Cụm từ đặc trưng + từ ưa dùng/từ tránh</li>
+  <li>Cấu trúc câu đặc trưng</li>
+  <li>Thẩm mỹ rõ ràng</li>
+  <li>Quy tắc ra quyết định</li>
+  <li>3-6 ví dụ gold-standard</li>
+</ul>
+
+<h2 id="structure">Cấu trúc file About-Me</h2>
+
+<div class="flow">
+  <span class="flow-step">Hướng dẫn sử dụng</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Voice fingerprint</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Quy tắc viết</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Từ chối cứng</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Ví dụ</span>
+</div>
+
+<p><strong>Voice fingerprint</strong> gồm: nhịp điệu, mật độ, sự trực tiếp, hài hước, nhiệt độ cảm xúc.</p>
+
+<p>Thêm phần cuối: <em>"Áp dụng profile trong im lặng trừ khi được override."</em></p>
+
+<h2 id="test">Kiểm tra thực tế</h2>
+
+<p>Mở phiên chat trống, trỏ thư mục Cowork vào file about-me. Claude đọc file trước mỗi response → output nghe y hệt giọng viết tự nhiên của bạn.</p>
+
+<div class="callout callout-green">
+<strong>Mẹo:</strong> Test bằng cách cho Claude viết một đoạn ngắn về chủ đề bạn hay viết. So sánh với bài thật của bạn — nếu không nhận ra đâu là AI, file đã đạt chuẩn.
+</div>
+
+<h2 id="resistance">Vượt qua kháng cự</h2>
+
+<table>
+  <thead><tr><th>Phản đối</th><th>Phản luận</th></tr></thead>
+  <tbody>
+    <tr><td>Cảm giác bị thu nhỏ</td><td>File làm bạn "tương thích" với AI, không phải làm bạn nhỏ hơn</td></tr>
+    <tr><td>Sợ hãi</td><td>Mọi niềm tin trên trang trở thành cam kết — đây là điều tốt</td></tr>
+    <tr><td>Tin vào khám phá chậm</td><td>File đẩy nhanh quá trình qua sự cụ thể bắt buộc</td></tr>
+    <tr><td>Xây dựng trên sự bí ẩn</td><td>Bí ẩn thường che giấu sự mơ hồ</td></tr>
+  </tbody>
+</table>
+
+<h2 id="portable">Portable — dùng mọi nơi</h2>
+
+<p>Khi có file about-me, bạn trở nên portable:</p>
+<ul>
+  <li>Dùng trên Claude, ChatGPT, Gemini, Grok, hoặc AI tương lai</li>
+  <li>Chia sẻ với ghostwriter hoặc team để viết theo giọng bạn khi vắng mặt</li>
+  <li>Bạn trở thành <strong>tài nguyên thay vì nút thắt cổ chai</strong></li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>Chỉnh sửa thường xuyên:</strong> Thẩm mỹ thay đổi theo thời gian. Dùng Obsidian (miễn phí) để mở và chỉnh sửa file .md dễ dàng — trỏ vào thư mục Cowork, tự đồng bộ.
+</div>
+
+<blockquote>Nắm bắt thẩm mỹ giúp tiết kiệm thời gian soạn thảo, giải phóng thời gian cho chỉnh sửa, tinh chỉnh, và xem xét lại cách tiếp cận.</blockquote>
+
+<div class="prev-next">
+  <a href="09-tao-claude-skill.html">&larr; Bài 09: Tạo Claude Skill</a>
+  <a href="11-tiet-kiem-token.html">Bài 11: Tiết Kiệm Token &rarr;</a>
+</div>
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html" class="current">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html">18. Dùng Claude Công Ty</a>
+</aside>
+
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

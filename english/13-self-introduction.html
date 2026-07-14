@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13 - Self Introduction - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./13-self-introduction.html" class="active">13. Self Introduction</a>
+      <a href="./14-daily-routine.html">14. Daily Routine</a>
+      <a href="./15-shopping-money.html">15. Shopping & Money</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 13
+  </div>
+  <div class="card-nav">
+    <a href="./12-prepositions.html">← Previous: Prepositions</a>
+    <a href="./14-daily-routine.html">Next: Daily Routine →</a>
+  </div>
+
+  <h1>Self Introduction</h1>
+  <p class="subtitle">Gioi thieu ban than — ky nang giao tiep co ban nhat khi gap nguoi moi</p>
+
+  <h2>Mau cau co ban</h2>
+  <div class="formula">
+    <strong>Greeting + Name + Origin + Job + Hobby/Interest</strong><br><br>
+    Hi, I'm [name]. I'm from [place].<br>
+    I work as a [job] / I'm a [job].<br>
+    In my free time, I like [hobby].
+  </div>
+
+  <h3>Greeting (Chao hoi)</h3>
+  <ul>
+    <li><strong>Hi / Hello</strong> — thong dung, moi tinh huong</li>
+    <li><strong>Hey</strong> — than mat, ban be</li>
+    <li><strong>Good morning / afternoon / evening</strong> — trang trong hon</li>
+    <li><strong>Nice to meet you</strong> — khi gap lan dau</li>
+    <li><strong>Pleased to meet you</strong> — trang trong hon "nice to meet you"</li>
+  </ul>
+
+  <h3>Name (Ten)</h3>
+  <ul>
+    <li><strong>I'm Minh.</strong> — ngan gon, pho bien</li>
+    <li><strong>My name is Minh.</strong> — day du hon</li>
+    <li><strong>You can call me Minh.</strong> — khi ten kho doc</li>
+    <li><strong>What's your name?</strong> — hoi ten nguoi khac</li>
+  </ul>
+
+  <h3>Origin (Que quan)</h3>
+  <ul>
+    <li><strong>I'm from Vietnam.</strong></li>
+    <li><strong>I'm Vietnamese.</strong></li>
+    <li><strong>I come from Ho Chi Minh City.</strong></li>
+    <li><strong>I was born in Da Nang but I live in Hanoi now.</strong></li>
+  </ul>
+
+  <h3>Job (Nghe nghiep)</h3>
+  <ul>
+    <li><strong>I'm a software engineer.</strong></li>
+    <li><strong>I work as a teacher.</strong></li>
+    <li><strong>I work at a tech company.</strong></li>
+    <li><strong>I'm currently looking for a job.</strong></li>
+    <li><strong>I'm a student at [university].</strong></li>
+  </ul>
+
+  <h3>Hobby / Interest (So thich)</h3>
+  <ul>
+    <li><strong>I like reading and coding.</strong></li>
+    <li><strong>I enjoy playing football.</strong></li>
+    <li><strong>I'm interested in AI and technology.</strong></li>
+    <li><strong>In my free time, I usually watch movies.</strong></li>
+  </ul>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu gioi thieu theo thu tu: ten → que → nghe → so thich.</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"I'm"</strong> (I am) cho ca ten, nghe, quoc tich. Tieng Viet dung "Toi la / Toi ten la".</li>
+      <li>Tieng Anh phan biet <strong>"I'm a teacher"</strong> (co mao tu "a"). Tieng Viet khong can: "Toi la giao vien".</li>
+      <li>Tieng Anh noi <strong>"I'm from Vietnam"</strong> (gioi tu "from"). Tieng Viet: "Toi den tu Viet Nam" hoac "Toi la nguoi Viet Nam".</li>
+      <li>Khi noi so thich, tieng Anh dung <strong>V-ing</strong> sau "like/enjoy": "I like <em>reading</em>". Tieng Viet khong chia dong tu.</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>introduce</td><td>/ˌɪn.trəˈdjuːs/</td><td>v.</td><td>gioi thieu</td></tr>
+    <tr><td>introduction</td><td>/ˌɪn.trəˈdʌk.ʃən/</td><td>n.</td><td>su gioi thieu</td></tr>
+    <tr><td>nationality</td><td>/ˌnæʃ.əˈnæl.ə.ti/</td><td>n.</td><td>quoc tich</td></tr>
+    <tr><td>occupation</td><td>/ˌɒk.juˈpeɪ.ʃən/</td><td>n.</td><td>nghe nghiep</td></tr>
+    <tr><td>hobby</td><td>/ˈhɒb.i/</td><td>n.</td><td>so thich</td></tr>
+    <tr><td>pleased</td><td>/pliːzd/</td><td>adj.</td><td>vui long</td></tr>
+    <tr><td>currently</td><td>/ˈkʌr.ənt.li/</td><td>adv.</td><td>hien tai</td></tr>
+    <tr><td>experience</td><td>/ɪkˈspɪə.ri.əns/</td><td>n.</td><td>kinh nghiem</td></tr>
+    <tr><td>interested</td><td>/ˈɪn.trəs.tɪd/</td><td>adj.</td><td>quan tam, hung thu</td></tr>
+    <tr><td>background</td><td>/ˈbæk.ɡraʊnd/</td><td>n.</td><td>lai lich, nen tang</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Gap dong nghiep moi</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> Hi! I'm Minh. I just joined the team this week.</p>
+    <p><span class="speaker">B:</span> Hey Minh, nice to meet you! I'm Sarah. How are you finding it so far?</p>
+    <p><span class="speaker">A:</span> It's great! Everyone is really friendly. I'm a backend developer — I'll be working on the API team.</p>
+    <p><span class="speaker">B:</span> Oh cool, I'm on the frontend side. Where are you from originally?</p>
+    <p><span class="speaker">A:</span> I'm from Ho Chi Minh City, Vietnam. I moved here about two years ago.</p>
+    <p><span class="speaker">B:</span> Nice! Well, welcome to the team. Let me know if you need anything.</p>
+    <p><span class="speaker">A:</span> Thanks, Sarah. I appreciate it!</p>
+  </div>
+
+  <h3>Tinh huong 2: Networking event</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> Good evening! I don't think we've met. I'm Lan.</p>
+    <p><span class="speaker">B:</span> Pleased to meet you, Lan. I'm David. What do you do?</p>
+    <p><span class="speaker">A:</span> I work as a product manager at a fintech startup. How about you?</p>
+    <p><span class="speaker">B:</span> I'm a UX designer. I've been freelancing for about three years now.</p>
+    <p><span class="speaker">A:</span> That sounds interesting! What kind of projects do you usually work on?</p>
+    <p><span class="speaker">B:</span> Mostly mobile apps. I'm really interested in accessibility design.</p>
+    <p><span class="speaker">A:</span> That's a growing field. Here's my card — let's keep in touch!</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I am Minh, 25 years old." → <strong>Dung:</strong> "I'm Minh. I'm 25 years old." (tach thanh 2 cau)</li>
+      <li><strong>Sai:</strong> "My hobby is play guitar." → <strong>Dung:</strong> "My hobby is <em>playing</em> guitar." (V-ing sau "is")</li>
+      <li><strong>Sai:</strong> "I'm engineer." → <strong>Dung:</strong> "I'm <em>an</em> engineer." (can mao tu "a/an")</li>
+      <li><strong>Sai:</strong> "I come from Vietnamese." → <strong>Dung:</strong> "I come from <em>Vietnam</em>." (dung ten nuoc, khong dung tinh tu)</li>
+      <li><strong>Sai:</strong> "I interesting in music." → <strong>Dung:</strong> "I'm <em>interested</em> in music." (dung tinh tu, khong dung dong tu)</li>
+      <li><strong>Sai:</strong> "Nice to meet you" khi gap lai → <strong>Dung:</strong> "Nice to <em>see</em> you again." (meet = lan dau, see = gap lai)</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>KISS</strong> — Keep It Short and Simple. Khong can noi qua nhieu thong tin cung luc.</li>
+      <li><strong>Hoi lai</strong> — Sau khi gioi thieu, hoi nguoi khac: "How about you?" / "What about you?"</li>
+      <li><strong>Cuoi va giao tiep mat</strong> — Quan trong khong kem loi noi.</li>
+      <li><strong>Chuan bi san</strong> — Viet san 3-4 cau gioi thieu va luyen noi truoc guong.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Dien vao cho trong: "Hi, I'm Lan. I ___ from Hanoi."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">am / 'm (I'm from Hanoi.)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "My hobby is cook Vietnamese food."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">My hobby is <strong>cooking</strong> Vietnamese food. (V-ing sau "is")</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Dien vao cho trong: "I work ___ a software developer ___ a tech company."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I work <strong>as</strong> a software developer <strong>at</strong> a tech company.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Sua loi: "I interesting in artificial intelligence."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'm <strong>interested</strong> in artificial intelligence.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Viet lai cho dung: "I am teacher."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I am <strong>a</strong> teacher. (can mao tu "a" truoc danh tu chi nghe nghiep)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Dien vao cho trong: "Nice to ___ you! I'm Minh." (gap lan dau)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Nice to <strong>meet</strong> you!</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Sap xep lai: "from / I / Vietnam / come"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I come from Vietnam.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Sua loi: "I come from Vietnamese."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I come from <strong>Vietnam</strong>. (dung ten nuoc, khong dung tinh tu chi quoc tich)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Viet 4 cau gioi thieu ban than (ten, que, nghe, so thich).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du: Hi, I'm Minh. I'm from Ho Chi Minh City, Vietnam. I work as a software engineer. In my free time, I enjoy reading books and playing chess.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Ban gap lai dong nghiep cu. Chon cau dung:<br>a) Nice to meet you again.<br>b) Nice to see you again.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>b) Nice to see you again.</strong> ("meet" chi dung khi gap lan dau)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./12-prepositions.html">← Previous: Prepositions</a>
+    <a href="./14-daily-routine.html">Next: Daily Routine →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

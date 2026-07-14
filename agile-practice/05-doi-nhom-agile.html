@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đội Nhóm Agile - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Agile Practice Guide
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Đội Nhóm</div>
+    <div class="nav-items">
+      <a href="#attributes">Thuộc tính đội thành công</a>
+      <a href="#roles">Vai trò Agile</a>
+      <a href="#generalist">Generalizing specialists</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cấu Trúc</div>
+    <div class="nav-items">
+      <a href="#structures">Cấu trúc đội</a>
+      <a href="#dedicated">Dedicated members</a>
+      <a href="#workspace">Team workspace</a>
+      <a href="#silos">Phá bỏ silos</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Agile Practice Guide</div>
+  <div class="level-label">Nhập môn</div>
+  <a href="01-gioi-thieu-agile.html">01. Giới Thiệu Agile</a>
+  <a href="02-tu-duy-agile.html">02. Tư Duy Agile & Lean</a>
+  <a href="03-vong-doi-du-an.html">03. Vòng Đời Dự Án</a>
+  <div class="level-label">Trung cấp</div>
+  <a href="04-moi-truong-agile.html">04. Môi Trường Agile</a>
+  <a href="05-doi-nhom-agile.html" class="current">05. Đội Nhóm Agile</a>
+  <a href="06-thuc-hanh-cot-loi.html">06. Thực Hành Cốt Lõi</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-phan-phoi-gia-tri.html">07. Phân Phối Giá Trị</a>
+  <a href="08-do-luong-agile.html">08. Đo Lường Agile</a>
+  <a href="09-xu-ly-van-de.html">09. Xử Lý Vấn Đề</a>
+  <div class="level-label">Chuyên sâu</div>
+  <a href="10-to-chuc-agile.html">10. Chuyển Đổi Tổ Chức</a>
+  <a href="11-mo-rong-quy-mo.html">11. Mở Rộng Quy Mô</a>
+  <a href="12-cac-framework-agile.html">12. Frameworks Agile</a>
+</aside>
+<main class="main">
+<h1 id="overview">Đội Nhóm Agile</h1>
+<p class="subtitle">Cấu trúc đội, vai trò Agile, cross-functional teams và generalizing specialists</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://www.pmi.org/pmbok-guide-standards/practice-guides/agile" target="_blank">Agile Practice Guide</a> — Chương 4.3: Team Composition</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Đội Agile thành công là đội cross-functional, self-organizing, 100% dedicated, và có kích thước đủ nhỏ (3-9 người) để duy trì communication hiệu quả.
+</div>
+
+<h2 id="attributes">Thuộc Tính Đội Agile Thành Công</h2>
+
+<table>
+<tr><th>Thuộc tính</th><th>Mô tả</th></tr>
+<tr><td><strong>Self-organizing</strong></td><td>Đội tự quyết định ai làm gì và cách làm, thay vì chờ chỉ đạo</td></tr>
+<tr><td><strong>Cross-functional</strong></td><td>Đội có đủ kỹ năng cần thiết để hoàn thành công việc mà không phụ thuộc bên ngoài</td></tr>
+<tr><td><strong>Collocated (hoặc virtual equivalent)</strong></td><td>Đội ngồi cùng nhau hoặc có công cụ virtual tương đương</td></tr>
+<tr><td><strong>Dedicated</strong></td><td>Thành viên dedicated 100% cho đội, không chia sẻ giữa nhiều dự án</td></tr>
+<tr><td><strong>Small (3-9 người)</strong></td><td>Đủ nhỏ để giao tiếp hiệu quả, đủ lớn để có đủ kỹ năng</td></tr>
+<tr><td><strong>Collaborative</strong></td><td>Làm việc cùng nhau, không giao riêng từng phần rời rạc</td></tr>
+</table>
+
+<h2 id="roles">Vai Trò Trong Đội Agile</h2>
+
+<table>
+<tr><th>Vai trò</th><th>Trách nhiệm</th><th>Tương đương</th></tr>
+<tr><td><strong>Product Owner</strong></td><td>Chịu trách nhiệm về product backlog, ưu tiên features, đại diện stakeholders</td><td>Product Manager, Business Analyst</td></tr>
+<tr><td><strong>Team Facilitator</strong></td><td>Hỗ trợ đội làm việc hiệu quả, gỡ impediments, coaching Agile</td><td>Scrum Master, Agile Coach</td></tr>
+<tr><td><strong>Cross-functional Team Members</strong></td><td>Phát triển, test, tạo ra sản phẩm. Mọi kỹ năng cần thiết nằm trong đội</td><td>Developers, Testers, Designers</td></tr>
+</table>
+
+<h3>Product Owner — Chi tiết</h3>
+<ul>
+<li>Đại diện cho khách hàng và stakeholders</li>
+<li>Quản lý và ưu tiên product backlog</li>
+<li>Quyết định acceptance criteria cho stories</li>
+<li>Có quyền quyết định features nào được build</li>
+<li>Available cho đội để giải đáp thắc mắc</li>
+</ul>
+
+<h3>Team Facilitator — Chi tiết</h3>
+<ul>
+<li>Coach đội trong Agile practices</li>
+<li>Gỡ bỏ impediments (rào cản)</li>
+<li>Tạo môi trường an toàn cho đội</li>
+<li>Facilitate các sự kiện Agile</li>
+<li>Bảo vệ đội khỏi interruptions bên ngoài</li>
+</ul>
+
+<h2 id="generalist">Generalizing Specialists</h2>
+
+<p>Thay vì chuyên gia thuần túy (specialist) hoặc người biết mọi thứ nhưng không sâu (generalist), Agile ưa chuộng <strong>generalizing specialists</strong>:</p>
+
+<ul>
+<li><strong>Có một hoặc vài chuyên môn sâu</strong> (T-shaped hoặc comb-shaped)</li>
+<li><strong>Hiểu biết rộng về các kỹ năng khác</strong> trong đội</li>
+<li><strong>Sẵn sàng đóng góp</strong> ở nhiều lĩnh vực khi cần</li>
+<li><strong>Liên tục mở rộng</strong> phạm vi kỹ năng</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>T-shaped people</strong>
+Chữ T biểu diễn: thanh ngang = breadth (kiến thức rộng về nhiều lĩnh vực), thanh dọc = depth (chuyên môn sâu ở 1-2 lĩnh vực). Đội toàn T-shaped people có thể cover cho nhau và tránh bottleneck.
+</div>
+
+<h3>Lợi ích</h3>
+<ul>
+<li>Giảm bottleneck — không phụ thuộc 1 người duy nhất</li>
+<li>Tăng collaboration — hiểu được công việc của nhau</li>
+<li>Linh hoạt — đội adapt khi workload thay đổi</li>
+<li>Resilient — đội vẫn hoạt động khi có người vắng</li>
+</ul>
+
+<h2 id="structures">Cấu Trúc Đội</h2>
+
+<h3>Dedicated Project Team</h3>
+<p>Mọi người trong đội 100% dedicated cho 1 dự án. Đây là mô hình lý tưởng cho Agile.</p>
+
+<h3>Multiple-Team Structure</h3>
+<p>Khi dự án cần nhiều hơn 9 người, chia thành nhiều đội nhỏ. Mỗi đội tự tổ chức và có đủ kỹ năng cross-functional.</p>
+
+<h3>Coordination giữa các đội</h3>
+<ul>
+<li><strong>Scrum of Scrums</strong> — đại diện từ mỗi đội họp phối hợp</li>
+<li><strong>Integration teams</strong> — đội chuyên về integration</li>
+<li><strong>Communities of practice</strong> — nhóm chia sẻ kiến thức theo chuyên môn</li>
+</ul>
+
+<h2 id="dedicated">Thành Viên Dedicated</h2>
+
+<p>Đội Agile cần thành viên dedicated (toàn thời gian cho đội) vì:</p>
+
+<ul>
+<li><strong>Context switching tốn kém</strong> — chuyển đổi giữa projects giảm năng suất 20-40%</li>
+<li><strong>Trust building mất thời gian</strong> — đội cần thời gian cùng nhau để build trust</li>
+<li><strong>Flow bị gián đoạn</strong> — part-time members phá vỡ flow của đội</li>
+<li><strong>Accountability rõ ràng</strong> — dedicated = committed = accountable</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Thực tế</strong>
+Nếu không thể dedicated 100%, ưu tiên ít nhất developers và testers làm việc cùng nhau hàng ngày. Đó là bước đầu đúng hướng.
+</div>
+
+<h2 id="workspace">Team Workspace</h2>
+
+<p>Đội cần không gian để làm việc cùng nhau, hiểu trạng thái, và cộng tác:</p>
+
+<h3>Co-located teams</h3>
+<ul>
+<li>Làm việc cùng phòng hoặc khu vực</li>
+<li>Có team workspace cho standups và charts</li>
+<li>Cân bằng giữa collaborative areas và quiet spaces ("caves and common")</li>
+</ul>
+
+<h3>Distributed teams</h3>
+<ul>
+<li>Virtual workspaces với document sharing, video conferencing</li>
+<li><strong>Fishbowl windows</strong> — video conferencing links suốt ngày làm việc giữa các locations</li>
+<li><strong>Remote pairing</strong> — screen sharing với voice/video links</li>
+<li>Gặp mặt trực tiếp định kỳ để build trust</li>
+</ul>
+
+<h2 id="silos">Phá Bỏ Organizational Silos</h2>
+
+<p>Tổ chức siloed tạo rào cản cho cross-functional teams. Để vượt qua:</p>
+
+<ol>
+<li><strong>Xây dựng trust và safety</strong> — nền tảng cho mọi thành viên có tiếng nói bình đẳng</li>
+<li><strong>Xây dựng Agile mindset</strong> — underlying success factor cho mọi thách thức</li>
+<li><strong>Làm việc với managers</strong> — để họ dedicate thành viên cho cross-functional team</li>
+<li><strong>Tập trung vào flow efficiency</strong> — thay vì resource efficiency, dùng team-based metrics</li>
+</ol>
+
+<blockquote>
+Nơi tốt nhất để bắt đầu khi hình thành đội Agile là xây dựng foundational trust và môi trường làm việc an toàn — đảm bảo mọi thành viên có tiếng nói bình đẳng.
+</blockquote>
+
+<div class="prev-next">
+  <a href="04-moi-truong-agile.html">← Bài 04: Xây Dựng Môi Trường Agile</a>
+  <a href="06-thuc-hanh-cot-loi.html">Bài 06: Thực Hành Agile Cốt Lõi →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKD / OpenShift - Cloud Native Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1);position:relative}
+pre code{background:none;padding:0;color:inherit;border:none}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Cloud Native Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">OKD Core</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu</a>
+      <a href="#what">OKD vs OpenShift</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#project">Project & Namespace</a>
+      <a href="#route">Route</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Build & Deploy</div>
+    <div class="nav-items">
+      <a href="#imagestream">ImageStream</a>
+      <a href="#buildconfig">BuildConfig</a>
+      <a href="#operator">Operators</a>
+      <a href="#scc">SCC & Security</a>
+      <a href="#cicd">CI/CD tích hợp</a>
+      <a href="#summary">Tóm tắt</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Cloud Native Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-tong-quan-cntt.html">01. Tổng Quan CNTT</a>
+  <a href="02-kien-truc-phan-mem.html">02. Kiến Trúc Phần Mềm</a>
+  <a href="03-he-sinh-thai-cloud-native.html">03. Hệ Sinh Thái Cloud Native</a>
+  <div class="level-label">Container & Orchestration</div>
+  <a href="04-container-docker.html">04. Container & Docker</a>
+  <a href="05-kubernetes.html">05. Kubernetes</a>
+  <a href="06-okd-openshift.html" class="current">06. OKD / OpenShift</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-kafka-event-driven.html">07. Kafka & Event-Driven</a>
+  <a href="08-devops-cicd.html">08. DevOps & CI/CD</a>
+  <a href="09-monitoring-observability.html">09. Monitoring</a>
+  <a href="10-security.html">10. Security</a>
+  <div class="level-label">Thực chiến</div>
+  <a href="11-banking-architecture.html">11. Kiến Trúc Ngân Hàng</a>
+</aside>
+<main class="main">
+<h1 id="overview">OKD / OpenShift</h1>
+<p class="subtitle">Architecture, Route, ImageStream, BuildConfig, Operator, SCC, Multi-tenancy, CI/CD tích hợp</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://docs.okd.io/" target="_blank">OKD Documentation</a>, <a href="https://docs.openshift.com/" target="_blank">Red Hat OpenShift Docs</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành chương này, bạn sẽ:</strong>
+Hiểu OKD/OpenShift là gì và khác Kubernetes thuần như thế nào. Nắm các concepts riêng: Route, ImageStream, BuildConfig, Operator, SCC. Biết cách tổ chức multi-tenancy với Projects và CI/CD tích hợp sẵn.
+</div>
+
+<h2 id="what">OKD vs. OpenShift vs. Kubernetes</h2>
+
+<p>OKD là upstream community distribution của Red Hat OpenShift — tương tự Fedora với RHEL. OpenShift = OKD + enterprise support + certified operators.</p>
+
+<table>
+<tr><th>Aspect</th><th>Kubernetes</th><th>OKD / OpenShift</th></tr>
+<tr><td><strong>Base</strong></td><td>Container orchestration engine</td><td>Kubernetes + platform features</td></tr>
+<tr><td><strong>OS</strong></td><td>Any Linux</td><td>Fedora CoreOS (immutable, auto-update)</td></tr>
+<tr><td><strong>Runtime</strong></td><td>containerd / CRI-O</td><td>CRI-O (only)</td></tr>
+<tr><td><strong>Networking</strong></td><td>Ingress Controller</td><td>Router (HAProxy) + Route objects</td></tr>
+<tr><td><strong>Registry</strong></td><td>External (Harbor, ECR)</td><td>Internal Registry built-in</td></tr>
+<tr><td><strong>Build</strong></td><td>External CI (Jenkins, GitLab)</td><td>BuildConfig + Source-to-Image (S2I)</td></tr>
+<tr><td><strong>Security</strong></td><td>PodSecurityStandards</td><td>SCC (Security Context Constraints)</td></tr>
+<tr><td><strong>Multi-tenancy</strong></td><td>Namespace + RBAC</td><td>Project (= namespace + extra policies)</td></tr>
+<tr><td><strong>Console</strong></td><td>Dashboard (basic)</td><td>Web Console (full-featured)</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Tại sao ngân hàng chọn OKD/OpenShift</strong>
+Enterprise support, hardened security (SCC), integrated CI/CD, compliance certifications, multi-tenancy native, operator ecosystem cho databases và middleware. Phù hợp regulated industries.
+</div>
+
+<h2 id="architecture">OKD Architecture</h2>
+
+<h3>Layers</h3>
+<div class="flow">
+<span class="flow-step">Fedora CoreOS</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">CRI-O</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Kubernetes</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">OKD Platform Services</span>
+</div>
+
+<h3>Platform Services (thêm so với K8s thuần)</h3>
+<ul>
+<li><strong>Router</strong> — HAProxy-based ingress, TLS termination</li>
+<li><strong>Internal Registry</strong> — image storage trong cluster</li>
+<li><strong>OAuth Server</strong> — authentication tích hợp (LDAP, AD, OIDC)</li>
+<li><strong>Web Console</strong> — UI quản lý đầy đủ</li>
+<li><strong>Monitoring Stack</strong> — Prometheus + Grafana built-in</li>
+<li><strong>Logging Stack</strong> — EFK (Elasticsearch, Fluentd, Kibana) hoặc Loki</li>
+<li><strong>Operator Lifecycle Manager (OLM)</strong> — quản lý operators</li>
+</ul>
+
+<h2 id="project">Project & Multi-tenancy</h2>
+
+<h3>Project = Namespace + Policies</h3>
+<p>Project là Kubernetes namespace với thêm:</p>
+<ul>
+<li><strong>Resource Quotas</strong> — giới hạn CPU, RAM, pods, PVCs per project</li>
+<li><strong>Limit Ranges</strong> — default requests/limits cho containers</li>
+<li><strong>Network Policies</strong> — isolate traffic giữa projects</li>
+<li><strong>RBAC</strong> — ai được làm gì trong project</li>
+<li><strong>Self-provisioning</strong> — developers tự tạo project (với quota)</li>
+</ul>
+
+<h3>Tổ chức multi-tenancy ngân hàng</h3>
+<pre><code># Ví dụ tổ chức projects
+crm-dev          # CRM team - development
+crm-staging      # CRM team - staging
+crm-prod         # CRM team - production
+loyalty-dev      # Loyalty team - development
+loyalty-prod     # Loyalty team - production
+shared-infra     # Shared: Kafka, Redis, monitoring</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="route">Route — HTTP Routing</h2>
+
+<p>Route expose Services ra bên ngoài cluster qua hostname. Tương đương Ingress nhưng feature-rich hơn.</p>
+
+<h3>Route vs. Ingress</h3>
+<table>
+<tr><th>Feature</th><th>Route</th><th>Ingress</th></tr>
+<tr><td>TLS termination</td><td>Edge, Passthrough, Re-encrypt</td><td>Depends on controller</td></tr>
+<tr><td>Weighted routing</td><td>Native (A/B testing)</td><td>Annotation-dependent</td></tr>
+<tr><td>Sticky sessions</td><td>Built-in</td><td>Annotation-dependent</td></tr>
+<tr><td>Wildcard domains</td><td>Supported</td><td>Controller-dependent</td></tr>
+</table>
+
+<pre><code>apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: crm-api
+  namespace: crm-prod
+spec:
+  host: crm-api.apps.bank.vn
+  to:
+    kind: Service
+    name: crm-api
+    weight: 100
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  port:
+    targetPort: 8080</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="imagestream">ImageStream</h2>
+
+<p>ImageStream là abstraction layer trên container images — theo dõi image tags và tự động trigger builds/deployments khi image thay đổi.</p>
+
+<h3>Lợi ích</h3>
+<ul>
+<li><strong>Auto-trigger</strong> — deployment tự update khi image mới được push</li>
+<li><strong>Tag management</strong> — tag images trong cluster (latest, stable, v1.2.0)</li>
+<li><strong>Image lookup</strong> — reference images bằng tên ngắn thay vì full URL</li>
+<li><strong>Security scanning</strong> — track CVEs trên images đang dùng</li>
+<li><strong>Rollback</strong> — dễ dàng point lại tag cũ</li>
+</ul>
+
+<pre><code>apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: crm-api
+  namespace: crm-prod
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: harbor.bank.vn/crm/api:latest
+    importPolicy:
+      scheduled: true  # auto-import khi source thay đổi</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="buildconfig">BuildConfig</h2>
+
+<p>BuildConfig định nghĩa cách build container images ngay trong cluster. Không cần external CI cho bước build.</p>
+
+<h3>Build Strategies</h3>
+<table>
+<tr><th>Strategy</th><th>Cách hoạt động</th><th>Use case</th></tr>
+<tr><td><strong>Source (S2I)</strong></td><td>Source code + builder image → app image</td><td>Đơn giản nhất, không cần Dockerfile</td></tr>
+<tr><td><strong>Docker</strong></td><td>Build từ Dockerfile trong repo</td><td>Custom builds, full control</td></tr>
+<tr><td><strong>Pipeline</strong></td><td>Jenkinsfile hoặc Tekton pipeline</td><td>Complex CI/CD workflows</td></tr>
+<tr><td><strong>Custom</strong></td><td>Custom builder image</td><td>Specialized build processes</td></tr>
+</table>
+
+<h3>Source-to-Image (S2I)</h3>
+<div class="flow">
+<span class="flow-step">Source Code</span>
+<span class="flow-arrow">+</span>
+<span class="flow-step">Builder Image</span>
+<span class="flow-arrow">=</span>
+<span class="flow-step">App Image</span>
+</div>
+
+<p>Developer push code → OKD tự build image → push vào internal registry → trigger deployment. Zero Dockerfile knowledge required.</p>
+
+<h2 id="operator">Operators</h2>
+
+<p>Operators encode operational knowledge (cách install, configure, upgrade, backup) vào software. Kubernetes-native way để manage complex applications.</p>
+
+<h3>Operator Pattern</h3>
+<ul>
+<li><strong>Custom Resource (CR)</strong> — khai báo desired state ("tôi muốn PostgreSQL cluster 3 nodes")</li>
+<li><strong>Controller</strong> — watch CR, reconcile actual state = desired state</li>
+<li><strong>Domain expertise</strong> — biết cách failover, backup, upgrade</li>
+</ul>
+
+<h3>Operators phổ biến trong ngân hàng</h3>
+<table>
+<tr><th>Operator</th><th>Quản lý</th></tr>
+<tr><td><strong>Strimzi</strong></td><td>Apache Kafka clusters</td></tr>
+<tr><td><strong>CloudNativePG</strong></td><td>PostgreSQL clusters</td></tr>
+<tr><td><strong>Redis Operator</strong></td><td>Redis Sentinel/Cluster</td></tr>
+<tr><td><strong>Elasticsearch Operator</strong></td><td>ELK stack</td></tr>
+<tr><td><strong>Cert Manager</strong></td><td>TLS certificates (Let's Encrypt, internal CA)</td></tr>
+<tr><td><strong>ArgoCD Operator</strong></td><td>GitOps deployment</td></tr>
+</table>
+
+<h3>Operator Lifecycle Manager (OLM)</h3>
+<p>OKD quản lý operators qua OLM — install, upgrade, manage dependencies giữa operators. OperatorHub cung cấp catalog certified operators.</p>
+
+<h2 id="scc">Security Context Constraints (SCC)</h2>
+
+<p>SCC kiểm soát actions mà Pod có thể thực hiện — mạnh hơn PodSecurityStandards của K8s vanilla.</p>
+
+<h3>Built-in SCCs (từ restrictive → permissive)</h3>
+<table>
+<tr><th>SCC</th><th>Cho phép</th><th>Use case</th></tr>
+<tr><td><strong>restricted</strong></td><td>Non-root, no caps, read-only rootfs</td><td>Default cho mọi workload</td></tr>
+<tr><td><strong>nonroot</strong></td><td>Non-root nhưng some capabilities</td><td>Apps cần bind ports >1024</td></tr>
+<tr><td><strong>anyuid</strong></td><td>Chạy với bất kỳ UID</td><td>Legacy apps cần root</td></tr>
+<tr><td><strong>privileged</strong></td><td>Full access (host network, devices)</td><td>Infrastructure only (monitoring agents)</td></tr>
+</table>
+
+<div class="callout callout-red">
+<strong>Security Best Practice</strong>
+Mặc định mọi workload chạy với SCC "restricted". Chỉ escalate khi có justification rõ ràng. Trong ngân hàng, mọi SCC exception cần security team approval.
+</div>
+
+<h2 id="cicd">CI/CD Tích Hợp</h2>
+
+<h3>Built-in CI/CD Options</h3>
+<ul>
+<li><strong>BuildConfig + Webhooks</strong> — Git push → auto build → auto deploy</li>
+<li><strong>Tekton Pipelines</strong> — Cloud-native CI/CD (CNCF project), chạy native trên K8s</li>
+<li><strong>OpenShift Pipelines (Tekton)</strong> — managed Tekton với UI</li>
+<li><strong>OpenShift GitOps (ArgoCD)</strong> — GitOps deployment operator</li>
+</ul>
+
+<h3>Typical Pipeline trên OKD</h3>
+<div class="flow">
+<span class="flow-step">Git Push</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Webhook</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Tekton Pipeline</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build Image</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Push Registry</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">ArgoCD Sync</span>
+</div>
+
+<h3>Internal Registry Workflow</h3>
+<ol>
+<li>Developer push code lên Git</li>
+<li>BuildConfig trigger (webhook hoặc ImageStream change)</li>
+<li>Build pod chạy, tạo image</li>
+<li>Image push vào Internal Registry</li>
+<li>ImageStream tag update</li>
+<li>Deployment detect new image → rolling update</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Case Study: CRM trên OKD</strong>
+CRM team có 3 projects (dev/staging/prod). Code push → Tekton build trong crm-dev → test → promote image tag sang crm-staging → QA approve → ArgoCD sync sang crm-prod. Mỗi environment isolated qua Network Policies. SCC restricted, non-root containers.
+</div>
+
+<h2 id="summary">Tóm Tắt</h2>
+
+<h3>Lỗi thường gặp</h3>
+<ul>
+<li>Quên SCC → Pod fail start vì "unable to validate against any security context constraint"</li>
+<li>Dùng Ingress thay vì Route → mất features (weighted routing, TLS re-encrypt)</li>
+<li>Không set Resource Quotas → 1 team consume hết cluster resources</li>
+<li>Build image với root user → SCC restricted block</li>
+<li>Không dùng ImageStream → miss auto-rollout khi base image update security patch</li>
+</ul>
+
+<h3>Thuật ngữ cần nhớ</h3>
+<table>
+<tr><th>Thuật ngữ</th><th>Định nghĩa ngắn</th></tr>
+<tr><td>OKD</td><td>Community Kubernetes distribution (upstream of OpenShift)</td></tr>
+<tr><td>Project</td><td>Namespace + quotas + policies + RBAC</td></tr>
+<tr><td>Route</td><td>HTTP routing object (expose Service externally)</td></tr>
+<tr><td>ImageStream</td><td>Abstraction tracking image tags, triggers</td></tr>
+<tr><td>BuildConfig</td><td>Build definition (S2I, Docker, Pipeline)</td></tr>
+<tr><td>S2I</td><td>Source-to-Image: source + builder → app image</td></tr>
+<tr><td>Operator</td><td>Custom controller encoding operational knowledge</td></tr>
+<tr><td>SCC</td><td>Security Context Constraints — Pod security policies</td></tr>
+<tr><td>OLM</td><td>Operator Lifecycle Manager</td></tr>
+</table>
+
+<h3>Câu hỏi ôn tập</h3>
+<ol>
+<li>OKD thêm gì so với Kubernetes thuần mà enterprise cần?</li>
+<li>Route khác Ingress ở điểm nào? Khi nào vẫn dùng Ingress trên OKD?</li>
+<li>ImageStream giải quyết vấn đề gì mà plain image references không làm được?</li>
+<li>Tại sao mặc định nên chạy restricted SCC?</li>
+<li>Mô tả flow CI/CD từ git push đến production trên OKD.</li>
+</ol>
+
+<div class="prev-next">
+  <a href="05-kubernetes.html">← Bài 05: Kubernetes</a>
+  <a href="07-kafka-event-driven.html">Bài 07: Kafka & Event-Driven →</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

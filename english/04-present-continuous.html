@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04 - Present Continuous - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./02-sentence-structure.html">02. Sentence Structure</a>
+      <a href="./03-present-simple.html">03. Present Simple</a>
+      <a href="./04-present-continuous.html" class="active">04. Present Continuous</a>
+      <a href="./05-past-simple.html">05. Past Simple</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 4 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./03-present-simple.html">← Previous: Present Simple</a>
+    <a href="./05-past-simple.html">Next: Past Simple →</a>
+  </div>
+
+  <h1>Present Continuous</h1>
+  <p class="subtitle">Thì hiện tại tiếp diễn — hành động đang xảy ra ngay bây giờ</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Present Continuous dùng để nói về: hành động đang xảy ra ngay lúc nói, kế hoạch đã sắp xếp trong tương lai gần, và xu hướng đang thay đổi.</p>
+
+  <div class="formula">
+    <strong>Công thức:</strong><br><br>
+    <strong>(+) Khẳng định:</strong> Subject + am/is/are + V-ing<br>
+    → I <strong>am working</strong>. / She <strong>is reading</strong>. / They <strong>are playing</strong>.<br><br>
+    <strong>(-) Phủ định:</strong> Subject + am/is/are + not + V-ing<br>
+    → I <strong>am not working</strong>. / She <strong>isn't reading</strong>.<br><br>
+    <strong>(?) Nghi vấn:</strong> Am/Is/Are + Subject + V-ing?<br>
+    → <strong>Are</strong> you <strong>working</strong>? / <strong>Is</strong> she <strong>reading</strong>?
+  </div>
+
+  <h3>Quy tắc thêm -ing</h3>
+  <table>
+    <tr><th>Quy tắc</th><th>Ví dụ</th></tr>
+    <tr><td>Thường: thêm <strong>-ing</strong></td><td>work → working, play → playing</td></tr>
+    <tr><td>Kết thúc -e: bỏ e, thêm <strong>-ing</strong></td><td>make → making, write → writing</td></tr>
+    <tr><td>1 nguyên âm + 1 phụ âm cuối: gấp đôi phụ âm</td><td>run → running, sit → sitting</td></tr>
+    <tr><td>Kết thúc -ie: đổi ie → <strong>y + ing</strong></td><td>die → dying, lie → lying</td></tr>
+    <tr><td>Kết thúc -ee: giữ nguyên + <strong>-ing</strong></td><td>see → seeing, agree → agreeing</td></tr>
+  </table>
+
+  <h3>Present Simple vs Present Continuous</h3>
+  <table>
+    <tr><th>Present Simple</th><th>Present Continuous</th></tr>
+    <tr><td>Thói quen, lặp lại</td><td>Đang xảy ra ngay bây giờ</td></tr>
+    <tr><td>I <strong>drink</strong> coffee every morning.</td><td>I <strong>am drinking</strong> coffee right now.</td></tr>
+    <tr><td>Sự thật luôn đúng</td><td>Tình huống tạm thời</td></tr>
+    <tr><td>She <strong>lives</strong> in Hanoi.</td><td>She <strong>is living</strong> in Hanoi (for now).</td></tr>
+    <tr><td>always, usually, every day</td><td>now, right now, at the moment</td></tr>
+  </table>
+
+  <h3>Động từ KHÔNG dùng với Continuous (Stative Verbs)</h3>
+  <p>Một số động từ diễn tả trạng thái (không phải hành động) nên không dùng -ing:</p>
+  <ul>
+    <li><strong>Cảm xúc:</strong> like, love, hate, want, need, prefer</li>
+    <li><strong>Suy nghĩ:</strong> know, believe, understand, remember, think (= nghĩ rằng)</li>
+    <li><strong>Giác quan:</strong> see, hear, smell, taste (khi = có mùi/vị)</li>
+    <li><strong>Sở hữu:</strong> have (= sở hữu), own, belong</li>
+  </ul>
+  <p>❌ I am knowing the answer. → ✅ I <strong>know</strong> the answer.</p>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Tiếng Việt cũng phân biệt "đang làm" (hiện tại tiếp diễn) vs "thường làm" (hiện tại đơn).</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt dùng từ "<strong>đang</strong>" để chỉ hành động tiếp diễn. Tiếng Anh dùng cấu trúc <strong>be + V-ing</strong> (phức tạp hơn).</li>
+      <li>Tiếng Việt không có khái niệm "stative verbs". "Tôi đang biết" nghe lạ nhưng không sai ngữ pháp. Tiếng Anh cấm hoàn toàn.</li>
+      <li>Tiếng Anh dùng Present Continuous cho <strong>kế hoạch tương lai</strong>: "I'm meeting him tomorrow". Tiếng Việt không dùng "đang" cho tương lai.</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>right now</td><td>/raɪt naʊ/</td><td>phrase</td><td>ngay bây giờ</td></tr>
+    <tr><td>at the moment</td><td>/æt ðə ˈmoʊ.mənt/</td><td>phrase</td><td>lúc này</td></tr>
+    <tr><td>currently</td><td>/ˈkɜːr.ənt.li/</td><td>adv.</td><td>hiện tại</td></tr>
+    <tr><td>temporary</td><td>/ˈtem.pər.er.i/</td><td>adj.</td><td>tạm thời</td></tr>
+    <tr><td>permanent</td><td>/ˈpɜːr.mə.nənt/</td><td>adj.</td><td>vĩnh viễn</td></tr>
+    <tr><td>gradually</td><td>/ˈɡrædʒ.u.ə.li/</td><td>adv.</td><td>dần dần</td></tr>
+    <tr><td>still</td><td>/stɪl/</td><td>adv.</td><td>vẫn còn</td></tr>
+    <tr><td>already</td><td>/ɔːlˈred.i/</td><td>adv.</td><td>đã rồi</td></tr>
+    <tr><td>improve</td><td>/ɪmˈpruːv/</td><td>v.</td><td>cải thiện</td></tr>
+    <tr><td>increase</td><td>/ɪnˈkriːs/</td><td>v.</td><td>tăng lên</td></tr>
+    <tr><td>decrease</td><td>/dɪˈkriːs/</td><td>v.</td><td>giảm xuống</td></tr>
+    <tr><td>change</td><td>/tʃeɪndʒ/</td><td>v.</td><td>thay đổi</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li>I <span class="highlight">am studying</span> English right now. — Đang xảy ra lúc nói.</li>
+    <li>She <span class="highlight">is cooking</span> dinner at the moment. — Hành động hiện tại.</li>
+    <li>They <span class="highlight">are not watching</span> TV. — Phủ định.</li>
+    <li><span class="highlight">Is</span> he <span class="highlight">sleeping</span>? — Câu hỏi.</li>
+    <li>We <span class="highlight">are meeting</span> the client tomorrow. — Kế hoạch tương lai gần.</li>
+    <li>The weather <span class="highlight">is getting</span> colder. — Xu hướng đang thay đổi.</li>
+    <li>I <span class="highlight">am living</span> with my parents for now. — Tình huống tạm thời.</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Quên "be" trước V-ing:</strong> ❌ "I working now" → ✅ "I <strong>am</strong> working now". Phải có am/is/are.</li>
+      <li><strong>Dùng -ing với stative verbs:</strong> ❌ "I am wanting coffee" → ✅ "I <strong>want</strong> coffee". Want là stative verb.</li>
+      <li><strong>Nhầm Present Simple và Continuous:</strong> ❌ "I am go to school every day" → ✅ "I <strong>go</strong> to school every day". Thói quen dùng Present Simple.</li>
+      <li><strong>Sai quy tắc gấp đôi phụ âm:</strong> ❌ "runing" → ✅ "<strong>running</strong>". 1 nguyên âm + 1 phụ âm cuối → gấp đôi.</li>
+      <li><strong>Quên bỏ -e:</strong> ❌ "makeing" → ✅ "<strong>making</strong>". Bỏ -e trước khi thêm -ing.</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Chia động từ ở thì Present Continuous:</em></p>
+
+  <div class="exercise">
+    <p>1. She ___ (read) a book right now.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ is reading (she + is + V-ing)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. They ___ (not/play) football today.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ are not playing / aren't playing</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. ___ you ___ (wait) for me?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Are you waiting (Are + S + V-ing)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. The children ___ (run) in the park.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ are running (gấp đôi n: run → running)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. He ___ (make) a cake for the party.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ is making (bỏ e: make → making)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. I ___ (not/lie) to you!</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ am not lying (ie → ying: lie → lying)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. The price of food ___ (increase) gradually.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ is increasing (xu hướng đang thay đổi)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. We ___ (have) dinner at 7 tonight. [kế hoạch]</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ are having (kế hoạch tương lai gần, "have" ở đây = ăn, không phải sở hữu)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. I ___ (know) the answer. [stative verb]</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ know (KHÔNG dùng continuous! "know" là stative verb → Present Simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. She ___ (sit) next to me in class today.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ is sitting (gấp đôi t: sit → sitting)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./03-present-simple.html">← Previous: Present Simple</a>
+    <a href="./05-past-simple.html">Next: Past Simple →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

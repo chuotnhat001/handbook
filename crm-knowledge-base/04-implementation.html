@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 4: Implementation - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.doc-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.doc-card h4{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.82rem;color:#555b6e}
+.doc-meta span{display:flex;align-items:center;gap:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge-critical{background:#fee2e2;color:#dc2626}
+.badge-high{background:#fef3c7;color:#d97706}
+.badge-medium{background:#e0f2fe;color:#0284c7}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">4.1 Development</div>
+    <div class="nav-items">
+      <a href="#backend-dev">Backend Development</a>
+      <a href="#frontend-dev">Frontend Development</a>
+      <a href="#mobile-dev">Mobile Development</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">4.2 Configuration</div>
+    <div class="nav-items">
+      <a href="#platform-config">Platform Configuration</a>
+      <a href="#workflow-engine">Workflow Engine</a>
+      <a href="#customization">Customization & Extension</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">4.3 Testing</div>
+    <div class="nav-items">
+      <a href="#test-strategy">Test Strategy</a>
+      <a href="#automation-testing">Test Automation</a>
+      <a href="#performance-testing">Performance Testing</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">4.4 DevOps</div>
+    <div class="nav-items">
+      <a href="#cicd">CI/CD Pipeline</a>
+      <a href="#infrastructure">Infrastructure as Code</a>
+      <a href="#deployment">Deployment Strategy</a>
+      <a href="#migration">Data Migration</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture</a>
+  <a href="04-implementation.html" class="current">Phase 4: Implementation</a>
+  <a href="05-operations.html">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Phase 4: Implementation</h1>
+<p class="subtitle">Development, Configuration, Testing và Deployment — từ code đến production</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+<span>4 domains · 16 modules · ~140 giờ học · Vai trò: Software Architect, Developer, DevOps Engineer, QA Lead</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Implementation biến architecture thành sản phẩm thực. Phase này đòi hỏi kỷ luật kỹ thuật cao: Clean Code, TDD, CI/CD, và Infrastructure as Code. Mỗi quyết định implementation phải truy ngược được đến architecture decision (Phase 3).
+</div>
+
+<h2 id="backend-dev">Domain 4.1 — Development</h2>
+<p>Phát triển phần mềm CRM — backend services, frontend applications và mobile clients.</p>
+
+<h3>Module 4.1.1 — Backend Development</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Backend là "engine room" — nơi business rules được enforce, data được persist, và integrations được orchestrate. Module này implement Clean Architecture cho phép thay đổi framework/database mà không ảnh hưởng business logic. Key principle: domain layer không phụ thuộc vào bất kỳ infrastructure nào.
+</div>
+
+<div class="doc-card">
+<h4>DOC-401: CRM Backend Engineering</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng backend services cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 16 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> Clean Architecture, SOLID, 12-Factor App</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Setup Project Structure (Clean Architecture)</strong> — Organize theo layers: Domain (entities, value objects, domain events, repository interfaces), Application (use cases/handlers, DTOs, validators), Infrastructure (DB implementations, external APIs, message bus), Presentation (controllers, middleware). Dependency rule: inner layers NEVER reference outer layers. Mục đích: testable business logic in isolation — swap PostgreSQL for MongoDB without touching a single domain class.</li>
+<li><strong>Implement Domain Layer</strong> — Code DDD tactical patterns từ DOC-303: Aggregates (enforce invariants), Entities (identity-based), Value Objects (equality by value), Domain Events (record state changes), Specifications (encapsulate query logic). Write architecture tests verifying dependency rule. Mục đích: business rules expressed in code, not scattered across controllers/services — one place to find "how does opportunity stage transition work?"</li>
+<li><strong>Implement Application Layer (CQRS)</strong> — Separate Commands (write — CreateOpportunity, ChangeStage) from Queries (read — GetPipelineDashboard, SearchContacts). Use MediatR/similar for handler dispatch. Add cross-cutting: validation (FluentValidation), authorization checks, audit logging via pipeline behaviors. Mục đích: thin, focused handlers — each does ONE thing. Easy to test, easy to trace, easy to add cross-cutting concerns without modifying handlers.</li>
+<li><strong>Implement Infrastructure Layer</strong> — Repository implementations (EF Core/Dapper/TypeORM), event bus publishing, external service adapters (email, file storage, payment), caching (Redis), search indexing (Elasticsearch sync). Mục đích: all "messy" I/O concerns contained here — domain stays pure, infrastructure can be swapped/mocked for testing.</li>
+<li><strong>Implement Multi-tenancy</strong> — Choose pattern: shared DB with tenant discriminator (automatic query filtering), separate schemas, or separate databases. Implement: tenant resolution (from JWT claim, subdomain, or header), automatic tenant scoping on all queries, tenant-aware caching, cross-tenant data leak prevention tests. Mục đích: foundational for SaaS — every query automatically scoped to current tenant, impossible to accidentally serve wrong tenant's data.</li>
+<li><strong>Implement Audit Trail</strong> — Capture: who (user ID), what (entity + field changed), when (timestamp), where (IP, user agent), old value, new value. Implementation options: change tracking interceptor, event sourcing replay, dedicated audit table per entity. Immutable storage. Mục đích: compliance requirement (who changed deal amount from $50K to $500K?) + debugging (what sequence of changes led to this state?).</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Clean Architecture Layers (dependency arrows), Class Diagrams (per bounded context), Sequence Diagrams (per critical use case)</p>
+<p><strong>Deliverables:</strong> Code Repository Structure (documented conventions), Coding Standards Document, Architecture Tests (dependency rule verification)</p>
+<p><strong>Công cụ:</strong> .NET 8/Java 21/Node.js/Go (language choice ADR), PostgreSQL (primary DB), Redis (cache), Docker (containerization), ArchUnit/NetArchTest (architecture tests)</p>
+</div>
+
+<h3 id="frontend-dev">Module 4.1.2 — Frontend Development</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM UI là nơi users spend 8+ hours/day — performance, UX, và reliability trực tiếp impact productivity và adoption. Module này xây dựng scalable frontend: design system cho consistency, state management cho data freshness, real-time cho collaboration, và accessibility cho inclusivity. Poor frontend = poor adoption = CRM failure.
+</div>
+
+<div class="doc-card">
+<h4>DOC-402: CRM Frontend Engineering</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng UI/UX cho CRM platform</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-304 (API Design)</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng Design System & Component Library</strong> — Create: tokens (colors, spacing, typography), atoms (Button, Input, Badge), molecules (FormField, SearchBar, Card), organisms (DataTable, FilterPanel, Timeline). Document in Storybook with all variants and states. Mục đích: UI consistency across 50+ screens without designers reviewing every page — developers compose from proven components.</li>
+<li><strong>Thiết kế State Management Architecture</strong> — Separate concerns: Server State (TanStack Query/SWR — cached API data, auto-refresh, optimistic updates), Client State (Zustand/signals — UI state, form drafts, preferences), URL State (search params — filters, pagination, active tab). Mục đích: no single "global store" that becomes unmaintainable — each state type has appropriate tool with built-in best practices.</li>
+<li><strong>Implement Real-time Updates</strong> — WebSocket for live collaboration: see who's viewing same record, real-time field updates (Google Docs style for notes), presence indicators, notification toasts. Implement: connection management (auto-reconnect, backoff), conflict resolution (last-write-wins vs merge), selective subscriptions (only records currently viewed). Mục đích: CRM feels alive and collaborative — users see changes from colleagues instantly, no "refresh to see updates".</li>
+<li><strong>Implement Accessibility (WCAG 2.1 AA)</strong> — Requirements: keyboard navigation (all actions reachable without mouse), screen reader support (ARIA labels, live regions), color contrast (4.5:1 text, 3:1 UI), focus management (modal traps, skip links), reduced motion support. Automated testing: axe-core in CI. Mục đích: legal requirement in many jurisdictions + inclusive design = larger user base + better UX for everyone (keyboard shortcuts benefit power users too).</li>
+<li><strong>Optimize Performance</strong> — Implement: code splitting (route-based lazy loading), virtualization (render only visible rows in 10K-record lists), image optimization (responsive images, lazy loading), bundle analysis (webpack-bundle-analyzer, tree shaking). Set performance budget: LCP <2.5s, FID <100ms, bundle <300KB gzipped. Mục đích: CRM must feel fast for daily use — 100ms delay on page load × 50 loads/day = user frustration and workaround behaviors.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Component Architecture (atomic design hierarchy), State Flow (server/client/URL separation), Micro-frontend Topology (if applicable)</p>
+<p><strong>Deliverables:</strong> Design System Documentation (Storybook), Component Library (npm package), Performance Budget (measured in CI)</p>
+<p><strong>Công cụ:</strong> React/Next.js (or Angular/Vue — ADR choice), Storybook (component docs), Figma (design tokens), Playwright (E2E), axe-core (a11y)</p>
+</div>
+
+<h3 id="mobile-dev">Module 4.1.3 — Mobile CRM Development</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Sales reps, field service technicians, và managers cần CRM on-the-go. Mobile CRM phải work offline (poor connectivity in field), sync seamlessly khi online, và leverage device capabilities (camera for business cards, GPS for check-ins, biometrics for quick unlock). Module này thiết kế mobile experience that's a productivity multiplier, not a crippled web view.
+</div>
+
+<div class="doc-card">
+<h4>DOC-403: Mobile CRM Application</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Phát triển mobile CRM cho field teams</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-medium">Medium</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-401, DOC-402</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Chọn Platform Strategy</strong> — Evaluate: Native (Swift + Kotlin — best performance, full device access, 2x development cost), Cross-platform (Flutter/React Native — shared codebase 80%+, near-native performance, faster iteration), PWA (web-based, no app store, limited device access). Decision criteria: offline requirements, device API needs, team skills, maintenance budget. Mục đích: right tech for right constraints — don't over-engineer if PWA suffices, don't under-engineer if offline is critical.</li>
+<li><strong>Thiết kế Offline-first Architecture</strong> — Local database (SQLite/Realm) mirroring server data for key entities. Sync strategy: pull on launch + push on change + periodic background sync. Conflict resolution: timestamp-based (last-write-wins for simple fields), merge (append for activity logs), manual (flag conflicts for user resolution on critical data). Mục đích: app fully functional without network — sales rep can view contacts, log calls, update opportunities even in elevator or airplane.</li>
+<li><strong>Implement Push Notifications</strong> — Categories: actionable (deal assigned — tap to view), informational (weekly pipeline summary), urgent (SLA breach imminent — requires action). Architecture: server events → push service (FCM/APNs) → device → notification channels (grouped, priority). User preferences: per-category opt-in/out, quiet hours, snooze. Mục đích: keep users informed without overwhelming — right notification at right time drives engagement, too many = disabled = silent CRM.</li>
+<li><strong>Integrate Device Capabilities</strong> — Camera: business card scanning (OCR → contact creation), document capture (attach to records). Location: check-in/check-out at customer sites, nearby accounts on map, mileage tracking. Calendar: sync CRM activities ↔ device calendar. Contacts: import phone contacts as leads. Mục đích: mobile-specific features that ADD value beyond "web in smaller screen" — reasons to prefer mobile over desktop for field activities.</li>
+<li><strong>Plan Distribution & Security</strong> — Enterprise deployment: MDM (Mobile Device Management) integration, app configuration profiles, remote wipe capability. Security: biometric unlock (Face ID/fingerprint), certificate pinning, encrypted local storage, session timeout. App Store vs enterprise-only distribution. Mục đích: IT admin can manage fleet of devices, enforce security policies, and deploy updates without user action.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Mobile Architecture (offline + online layers), Offline Sync Flow (conflict resolution decision tree), Push Notification Architecture (server → cloud → device)</p>
+<p><strong>Deliverables:</strong> Mobile App Architecture Document, Sync Strategy Specification, Platform Guidelines (iOS + Android)</p>
+<p><strong>Công cụ:</strong> Flutter/React Native (cross-platform), Firebase (push + analytics), SQLite/Realm (local DB), Detox/Appium (mobile testing), Fastlane (CI/CD for mobile)</p>
+</div>
+
+<h2 id="platform-config">Domain 4.2 — Platform Configuration</h2>
+<p>Cấu hình nền tảng, workflow engine và extensibility framework.</p>
+
+<h3 id="workflow-engine">Module 4.2.1 — Workflow & Business Rules Engine</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Workflow engine là "brain" của CRM platform — automate mọi business process đã design ở Phase 2 mà không cần hardcode. Admin có thể thay đổi approval rules, SLA escalations, lead routing mà không deploy code mới. Module này build engine flexible đủ để handle hàng trăm workflows khác nhau, từ simple notifications đến complex multi-step approvals.
+</div>
+
+<div class="doc-card">
+<h4>DOC-404: Workflow Engine Design</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng engine xử lý business workflows</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> BPMN 2.0 execution, DMN</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Chọn Engine Architecture</strong> — Evaluate: State Machine (simple, deterministic — good cho entity lifecycles like case status), BPMN Runtime (full process orchestration — good cho multi-step, multi-actor workflows), Temporal/Saga (distributed, long-running — good cho cross-service orchestration). Many CRMs need combination. Mục đích: right engine type cho right workflow complexity — don't force BPMN on simple field update triggers.</li>
+<li><strong>Thiết kế Visual Workflow Builder</strong> — UI for admins to create workflows: drag-drop nodes (triggers, conditions, actions, delays, splits), connect with arrows, configure each node's properties. Preview mode (simulate execution). Version control (draft → published → archived). Mục đích: business users create workflows without developer involvement — key for agility and reducing IT backlog.</li>
+<li><strong>Implement Trigger Types</strong> — Event-based (record created/updated/deleted, field changed to specific value), Time-based (scheduled — daily report, SLA approaching), Condition-based (field value matches rule — amount > $100K triggers approval), Manual (user clicks button). Support compound triggers (AND/OR combinations). Mục đích: workflows fire automatically when business conditions are met — no human remembering "I need to notify finance when deal > $100K".</li>
+<li><strong>Build Business Rules Engine (DMN)</strong> — Implement Decision Tables: input columns (conditions to evaluate), output columns (actions/values to set). Support: hit policies (first match, collect all, priority), nested decisions (output of one table feeds into another). Visual table editor for business users. Mục đích: complex business logic (pricing rules, discount approvals, territory assignment) expressed as maintainable tables instead of if/else spaghetti code.</li>
+<li><strong>Implement SLA Timers & Escalation</strong> — Timer types: response timer (start when case created, pause when first reply), resolution timer (start on assignment, pause on pending-customer), business hours calculation (exclude weekends, holidays per region). Escalation actions at thresholds (50% — warning, 80% — escalate to manager, 100% — breach notification to VP). Mục đích: SLA compliance automated — agents see countdown, managers get proactive alerts, customers experience consistent service levels.</li>
+<li><strong>Design Error Handling & Compensation</strong> — Handle: action failures (email service down — retry with backoff), timeout (async step didn't complete — escalate or skip), compensation (if step 3 fails, undo step 1 and 2). Dead letter queue for permanently failed workflows. Admin dashboard for workflow health. Mục đích: workflows must be resilient — one failed notification shouldn't block an entire approval chain from proceeding.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Workflow Engine Architecture (components + interactions), State Machine Diagrams (entity lifecycles), DMN Decision Tables (example rules)</p>
+<p><strong>Deliverables:</strong> Workflow Engine Specification, Rule Templates (common patterns), Configuration Guide (for admins)</p>
+<p><strong>Công cụ:</strong> Camunda (BPMN), Temporal (distributed workflows), N8N (low-code automation), custom engine (for tight CRM integration)</p>
+</div>
+
+<h3 id="customization">Module 4.2.2 — Customization & Extension Framework</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Mỗi doanh nghiệp có processes riêng — no CRM fits 100% out-of-box. Module này build platform extensibility: custom entities (thêm objects mới không cần code), custom fields (extend existing objects), plugins (add business logic), webhooks (integrate external systems). Goal: 80% customization by admin configuration, 20% by developer code.
+</div>
+
+<div class="doc-card">
+<h4>DOC-405: Platform Extensibility</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế framework mở rộng cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-401, DOC-404</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Custom Entity/Field Engine</strong> — Dynamic schema: admin tạo "custom object" (e.g., "Project", "Asset", "Warranty") với custom fields (text, number, date, lookup, formula, rollup). Storage: EAV pattern hoặc JSON columns hoặc dynamic DDL. Include: validation rules, default values, field dependencies. Mục đích: every business has unique data needs — real estate CRM needs "Property" entity, healthcare CRM needs "Patient" entity, without code changes.</li>
+<li><strong>Build Plugin Architecture</strong> — Extension points: before/after CRUD operations (triggers), custom API endpoints (actions), scheduled jobs, UI widgets (custom components in record views). Isolation: each plugin runs in sandbox (WASM or container), resource limits (CPU, memory, execution time), no direct DB access (only via platform API). Mục đích: third-party developers extend CRM safely — one bad plugin cannot crash the platform or access other tenants' data.</li>
+<li><strong>Implement Formula & Calculated Fields</strong> — Expression engine: support math (+, -, *, /), text (CONCAT, LEFT, SUBSTITUTE), logic (IF, AND, OR, CASE), date (DATEDIFF, TODAY, ADDDAYS), cross-object (related record fields). Real-time evaluation on read vs batch recalculation. Mục đích: business users create computed fields (e.g., "Days Since Last Contact = TODAY() - Last_Activity_Date") without developer tickets.</li>
+<li><strong>Thiết kế Webhook & Event Subscriptions</strong> — Allow external systems to subscribe to CRM events: entity.created, entity.updated, entity.deleted, workflow.completed. Include: filtering (only fire for specific conditions), retry logic (exponential backoff on failure), payload configuration (which fields to include), signature verification (HMAC). Mục đích: push-based integration — external systems react to CRM events in real-time without polling.</li>
+<li><strong>Build Sandbox & Testing for Extensions</strong> — Developer sandbox: isolated environment with sample data, no production impact. Testing tools: simulate events, mock external calls, assert outcomes. Deployment pipeline: sandbox → review → staging → production. Rollback capability. Mục đích: safe development cycle — developers can experiment freely, admins can review before deploying to production, rollback if issues found.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Plugin Architecture (sandbox + extension points), Extension Points Map (where plugins can hook in), Custom Entity ERD (metadata storage)</p>
+<p><strong>Deliverables:</strong> Extension Developer Guide, API Documentation for Extensions, Marketplace Specification</p>
+<p><strong>Công cụ:</strong> WASM sandboxing (Wasmer/Wasmtime), OAuth 2.0 (marketplace auth), custom plugin SDK</p>
+</div>
+
+<h2 id="test-strategy">Domain 4.3 — Quality Assurance</h2>
+<p>Chiến lược testing toàn diện — từ unit tests đến performance và security testing.</p>
+
+<h3 id="automation-testing">Module 4.3.1 — Test Strategy & Automation</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Bugs trong CRM có business impact trực tiếp: sai pipeline data = forecast sai = hiring decisions sai. Module này build quality safety net toàn diện: automated tests catch regression trước khi reach production, contract tests prevent integration breakage, và shift-left approach phát hiện bugs khi cost-to-fix thấp nhất (coding time vs production hotfix).
+</div>
+
+<div class="doc-card">
+<h4>DOC-406: CRM Testing Strategy</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng chiến lược QA end-to-end</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> ISTQB, Test Pyramid, Shift-Left</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Test Pyramid</strong> — Define ratio: 70% Unit (domain logic, validators, calculations — fast, isolated), 20% Integration (API endpoints, database queries, service interactions — real dependencies), 10% E2E (critical user journeys — browser automation). Add: Contract Tests (API compatibility between services). Mục đích: fast feedback loop — unit tests run in seconds, catch most bugs at lowest cost. E2E only for highest-value paths.</li>
+<li><strong>Implement TDD/BDD Workflow</strong> — TDD cho domain logic: Red (write failing test for business rule) → Green (minimum code to pass) → Refactor. BDD cho user stories: Given-When-Then scenarios written with business stakeholders, automated as acceptance tests. Mục đích: tests are specification — written BEFORE code, ensuring implementation matches requirements. No "tests written after to reach coverage target".</li>
+<li><strong>Build Test Data Management</strong> — Factories (programmatic test data creation — realistic but deterministic), Fixtures (pre-loaded reference data — countries, currencies), Anonymization (production data → safe test data via PII masking). Seed strategy: each test creates its own data, no shared mutable state between tests. Mục đích: reliable, independent tests — test A cannot make test B fail, tests run in any order, parallel execution safe.</li>
+<li><strong>Implement Contract Testing</strong> — Consumer-Driven Contracts (Pact): frontend defines "I need these fields from API" → contract published → backend CI verifies it still satisfies contract. For events: verify published event schema matches consumer expectations. Mục đích: catch integration breaks at build time — deploying service A doesn't break service B if contracts pass.</li>
+<li><strong>Setup Test Environment Strategy</strong> — Ephemeral environments: spin up complete CRM stack per PR (containers, test DB, seeded data), run tests, tear down. Shared environments: staging (integration testing, UAT), performance (load testing with production-like data volumes). Mục đích: every PR tested in isolation — no "works on my machine", no "waiting for shared env to be free".</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Test Pyramid (with percentages and tool per layer), Test Environment Architecture, CI Test Pipeline (stages + gates)</p>
+<p><strong>Deliverables:</strong> Test Strategy Document, Test Plan Templates (per feature), Coverage Reports (integrated in CI)</p>
+<p><strong>Công cụ:</strong> Jest/xUnit/JUnit (unit), Playwright (E2E), Pact (contract), Percy (visual regression), axe-core (accessibility)</p>
+</div>
+
+<h3 id="performance-testing">Module 4.3.2 — Performance & Load Testing</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM phải responsive với 1000+ concurrent users, sub-second page loads, và handle peak periods (month-end pipeline reviews, marketing campaign launches). Module này establish performance baselines, identify bottlenecks trước production, và ensure system scales gracefully under load thay vì collapse suddenly.
+</div>
+
+<div class="doc-card">
+<h4>DOC-407: Performance Engineering</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Đảm bảo CRM xử lý tải production</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-401, DOC-406</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Define Performance Requirements</strong> — SLOs per operation type: page load (<2s P95), API response (<500ms P95), search (<1s P95), report generation (<10s P95). Concurrency targets: 500 simultaneous users (normal), 2000 (peak), 5000 (stress limit). Throughput: 1000 API calls/second sustained. Mục đích: measurable targets — "fast enough" is not a requirement; "P95 < 500ms" is.</li>
+<li><strong>Design Load Test Scenarios</strong> — Normal load (average business day traffic pattern), Peak load (month-end, all managers reviewing pipeline simultaneously), Stress test (2x peak — find breaking point), Soak test (normal load for 24h — find memory leaks, connection pool exhaustion). Model realistic user behavior: read-heavy (80% reads), mixed operations, concurrent report generation. Mục đích: simulate real usage patterns — not just "hit one endpoint 10K times" but realistic user journeys.</li>
+<li><strong>Optimize Database Performance</strong> — Identify slow queries (pg_stat_statements, query execution plans). Index strategy: covering indexes for common queries, partial indexes for filtered scans, composite indexes for multi-column filters. Query patterns: avoid N+1 (use eager loading), paginate large result sets, optimize LIKE queries (trigram indexes). Mục đích: database is usually bottleneck #1 — 80% of performance issues are SQL-related, fix them before scaling hardware.</li>
+<li><strong>Thiết kế Caching Strategy</strong> — L1 cache (in-memory, per-instance — hot config, user sessions), L2 cache (Redis distributed — frequently accessed records, computed values, API responses). Invalidation: event-driven (record updated → cache key evicted), TTL-based (stale data acceptable for N seconds), write-through (cache updated on write). Mục đích: reduce database load 60-80% — most CRM reads are repeat reads (same dashboard, same record list).</li>
+<li><strong>Implement APM & Continuous Profiling</strong> — Instrument: distributed traces (see full request lifecycle across services), code profiling (CPU + memory hotspots), database query analysis (slow query alerts), frontend performance (Core Web Vitals). Set alerts: P95 degradation >20% from baseline triggers investigation. Mục đích: catch performance regressions in real-time — before users complain, before it becomes P1 incident.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Load Test Architecture (test runner → target + monitoring), Caching Layers Diagram (L1/L2 + invalidation flows), Performance Baseline Charts (before/after optimization)</p>
+<p><strong>Deliverables:</strong> Performance Test Plan (scenarios + acceptance criteria), Benchmark Results (documented baseline), Optimization Recommendations (prioritized by impact)</p>
+<p><strong>Công cụ:</strong> K6/Gatling (load testing), Grafana (dashboards), New Relic/Datadog (APM), pganalyze (database performance)</p>
+</div>
+
+<h2 id="cicd">Domain 4.4 — DevOps & Deployment</h2>
+<p>CI/CD pipelines, infrastructure automation và deployment strategy.</p>
+
+<h3 id="infrastructure">Module 4.4.1 — CI/CD & Infrastructure</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+"Works on my machine" → "Works in production" là khoảng cách lớn nhất trong software. Module này eliminate deployment fear: every commit automatically tested, every deployment reproducible, every environment defined as code. Target: deploy to production multiple times per day with confidence, rollback in < 5 minutes if issues found.
+</div>
+
+<div class="doc-card">
+<h4>DOC-408: DevOps Pipeline Design</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng CI/CD pipeline cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> GitOps, Infrastructure as Code, SRE</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Choose Git Branching Strategy</strong> — Evaluate: Trunk-based (everyone commits to main, feature flags for incomplete work — recommended for experienced teams, fastest feedback), GitFlow (develop/release/hotfix branches — traditional, more ceremony, slower releases), GitHub Flow (feature branches → main — good middle ground). Decision criteria: release cadence, team size, regulatory requirements. Mục đích: entire team agrees on ONE workflow — no ambiguity about where to branch from, how to release, how to hotfix.</li>
+<li><strong>Build CI Pipeline</strong> — Stages: Compile/Build (fast feedback on syntax errors) → Unit Tests (run in parallel, <3 min) → Integration Tests (containerized dependencies, <10 min) → Security Scan (SAST + dependency audit) → Container Build (Docker image) → Contract Tests → Publish Artifact. Gate: ALL stages must pass before merge allowed. Mục đích: every commit validated automatically — broken code cannot reach main branch, developers get feedback within 15 minutes.</li>
+<li><strong>Build CD Pipeline</strong> — Stages: Deploy to Dev (auto on merge) → Smoke Tests → Deploy to Staging (auto if smoke pass) → E2E Tests → Manual Gate (for production) → Deploy to Production → Health Checks → Canary Validation (10% → 50% → 100%). Include: automatic rollback if health checks fail post-deploy. Mục đích: deployment is boring, repeatable, and reversible — same process every time, no "special steps for this release".</li>
+<li><strong>Implement Infrastructure as Code</strong> — Terraform/Pulumi for: cloud resources (VPC, databases, caches, load balancers), Kubernetes clusters, DNS, certificates, IAM roles. GitOps: infrastructure changes go through same PR review as application code. State management: remote backend (S3 + DynamoDB lock), state file per environment. Mục đích: environments are reproducible — disaster recovery = "terraform apply", new environment = clone config + change variables.</li>
+<li><strong>Configure Container Orchestration</strong> — Kubernetes: define Deployments (replicas, resource limits, health probes), Services (load balancing), Ingress (routing), ConfigMaps/Secrets, HPA (auto-scaling rules). Helm charts or Kustomize for templating across environments. Mục đích: declarative infrastructure — "I want 3 replicas of service X with 2GB RAM max" → Kubernetes makes it so and heals if instance dies.</li>
+<li><strong>Implement Secrets Management</strong> — HashiCorp Vault or cloud-native (AWS Secrets Manager, Azure Key Vault): store database credentials, API keys, encryption keys. Rotation: automatic rotation on schedule, rotation on suspected compromise. Access: applications pull secrets at runtime (not baked into images), audit log of who accessed what. Mục đích: zero secrets in code, zero secrets in config files, zero secrets in environment variables in CI logs — all dynamic, all audited, all rotatable.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> CI/CD Pipeline Diagram (all stages + gates + feedback loops), Kubernetes Architecture (per environment), GitOps Flow (PR → merge → deploy)</p>
+<p><strong>Deliverables:</strong> Pipeline Configuration (as code in repo), IaC Templates (Terraform modules), Runbooks (deployment procedures + troubleshooting)</p>
+<p><strong>Công cụ:</strong> GitHub Actions/GitLab CI (pipeline), Terraform (IaC), Kubernetes + Helm (orchestration), ArgoCD (GitOps), HashiCorp Vault (secrets)</p>
+</div>
+
+<h3 id="deployment">Module 4.4.2 — Deployment & Release Strategy</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Zero-downtime deployment là non-negotiable cho CRM — users span multiple timezones, no acceptable "maintenance window". Module này implement deployment strategies cho phép release bất kỳ lúc nào mà users không nhận ra, plus instant rollback khi issues phát hiện. Bao gồm disaster recovery planning cho worst-case scenarios.
+</div>
+
+<div class="doc-card">
+<h4>DOC-409: Release Management</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Quản lý release an toàn và hiệu quả</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-408</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Chọn Deployment Strategy</strong> — Blue-Green (two identical environments, instant switch — best cho stateless services), Canary (gradual rollout 5% → 25% → 100% — best cho detecting issues with subset of traffic), Rolling (replace instances one-by-one — Kubernetes default, good for stateless). For database changes: expand-and-contract pattern (add new column → backfill → migrate reads → remove old column). Mục đích: zero-downtime by design — choose strategy matching your risk tolerance and architecture.</li>
+<li><strong>Implement Database Migration Strategy</strong> — Rules: migrations must be backward-compatible (old code can still read new schema), separate deploy from migrate (deploy code that handles both schemas, then run migration, then deploy cleanup code). Tools: versioned migrations (Flyway/Liquibase), automated testing of up + down migrations. Mục đích: database is hardest to rollback — if code rollback = 1 minute, schema rollback = hours of data loss risk. Design migrations to be safe in both directions.</li>
+<li><strong>Build Rollback Procedures</strong> — Automated rollback: health check failures → auto-revert to previous version within 5 minutes. Manual rollback: documented decision criteria (error rate >1%, latency P95 >3x baseline, data corruption detected), execution steps, communication template. Database rollback: pre-tested down migrations, data backup point-in-time recovery. Mục đích: rollback should be one-click, not "emergency all-hands figuring out what to do at 2am".</li>
+<li><strong>Implement Feature Flags</strong> — Flag types: release flags (hide incomplete feature), operational flags (kill switch for problematic feature), experiment flags (A/B testing), permission flags (beta program access). Lifecycle: flag created → feature developed behind flag → gradual rollout → flag removed (cleanup). Mục đích: decouple deploy from release — deploy code to production daily, enable features for users when ready, disable instantly if problems.</li>
+<li><strong>Design Disaster Recovery Plan</strong> — RTO (Recovery Time Objective): 1 hour for full system, 15 minutes for critical paths. RPO (Recovery Point Objective): 5 minutes data loss maximum. Strategy: multi-AZ deployment (survive AZ failure), database replication (sync standby), backup verification (restore drill monthly), runbook for each failure scenario (single service, database, full region). Mục đích: when worst case happens (region outage, data corruption), team knows exactly what to do, recovery is practiced not improvised.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Deployment Topology (blue-green/canary visualization), Rollback Decision Tree (when + how to rollback), DR Architecture (multi-AZ, failover paths)</p>
+<p><strong>Deliverables:</strong> Deployment Runbook (step-by-step), DR Plan (tested quarterly), Release Checklist (pre-deploy verification)</p>
+<p><strong>Công cụ:</strong> Spinnaker/Flux (deployment orchestration), LaunchDarkly/Flagsmith (feature flags), PagerDuty (incident management)</p>
+</div>
+
+<h3 id="migration">Module 4.4.3 — Data Migration</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Data migration là #1 risk factor trong CRM projects — dirty data, lost records, broken relationships can destroy user trust on day 1. Module này build migration pipeline that's tested, validated, and rehearsed multiple times before go-live. Key principle: migration is not a one-time event, it's a repeated, verified process.
+</div>
+
+<div class="doc-card">
+<h4>DOC-410: Data Migration Strategy</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Di chuyển dữ liệu từ legacy sang CRM mới</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-306, DOC-107</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Conduct Migration Assessment</strong> — Inventory source systems: what data exists, how much (row counts, data size), what format, what quality (completeness, accuracy audit), what relationships (foreign keys, implicit links). Identify: what to migrate (active data), what to archive (historical, read-only access needed), what to discard (obsolete, duplicate). Mục đích: scope the effort accurately — don't discover "oh there's also 2M records in that legacy Access database" at week 3 of migration.</li>
+<li><strong>Data Profiling & Cleansing</strong> — Profile: value distribution, null percentages, duplicate detection, referential integrity violations, format inconsistencies. Cleansing rules: standardize formats (phone numbers, addresses), resolve duplicates (merge strategy with master record selection), fill gaps (default values or flag for manual review). Mục đích: "garbage in, garbage out" — clean BEFORE migrating, not after (post-migration cleanup is 10x harder because users already see dirty data).</li>
+<li><strong>Build Field Mapping & Transformation</strong> — For each source field → target field: direct mapping (1:1), transformation (format conversion, concatenation, split), derivation (computed from multiple source fields), enrichment (add data from external source), default (no source equivalent). Document business rules per mapping. Mục đích: explicit, testable mapping — no ambiguity about "how does legacy status code 'A3' map to new system's 'Qualified' stage?"</li>
+<li><strong>Design Migration Pipeline</strong> — Architecture: Extract (connectors to each source system) → Transform (apply mapping rules, cleanse, validate) → Load (write to target CRM via API or direct DB). Include: error handling (log failures, continue processing, retry logic), checkpoint/restart (resume from last successful batch), audit trail (track every record: source → target mapping). Mục đích: repeatable, automated pipeline — run it 10 times in testing before running once in production.</li>
+<li><strong>Implement Validation & Reconciliation</strong> — Post-migration checks: record count matching (source vs target), data integrity (referential integrity in target), business rule validation (all required fields populated, status values valid), sample verification (random 100 records manually spot-checked). Automated reconciliation report. Mục đích: prove migration is correct BEFORE go-live — "we migrated 1.2M accounts, reconciliation shows 99.97% match, 360 records in exception queue for manual review".</li>
+<li><strong>Plan Cutover & Rollback</strong> — Cutover strategy: incremental (migrate nightly, final delta sync on go-live day) vs big-bang (one-time full migration during maintenance window). Cutover timeline: T-24h freeze source edits → T-12h start migration → T-6h validation → T-2h stakeholder sign-off → T-0 switch over. Rollback: maintain source system access for 30 days, data export from new system if needed. Mục đích: go-live is choreographed — everyone knows their role, timing, and decision criteria for go/no-go.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Migration Pipeline Architecture, Field Mapping Matrix, Cutover Timeline</p>
+<p><strong>Deliverables:</strong> Migration Plan, Mapping Document, Validation Report, Cutover Checklist</p>
+<p><strong>Công cụ:</strong> Talend, Informatica, Apache NiFi, custom ETL scripts, dbt</p>
+</div>
+
+<div class="callout callout-green">
+<strong>Tổng kết Phase 4</strong>
+Phase 4 biến blueprint thành production system. Key outputs: working software, automated tests, CI/CD pipeline, và successful data migration. Quality gates: test coverage >80%, performance benchmarks met, security scan clean, và zero-downtime deployment verified.
+</div>
+
+<div class="prev-next">
+  <a href="03-architecture-design.html">← Phase 3: Architecture & Design</a>
+  <a href="05-operations.html">Phase 5: Operations →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

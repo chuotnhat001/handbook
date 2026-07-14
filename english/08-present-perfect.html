@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 - Present Perfect - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./07-future.html">07. Future</a>
+      <a href="./08-present-perfect.html" class="active">08. Present Perfect</a>
+      <a href="./09-modal-verbs.html">09. Modal Verbs</a>
+      <a href="./10-comparatives.html">10. Comparatives</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 8 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./07-future.html">← Previous: Future</a>
+    <a href="./09-modal-verbs.html">Next: Modal Verbs →</a>
+  </div>
+
+  <h1>Present Perfect</h1>
+  <p class="subtitle">Thì hiện tại hoàn thành — kết nối quá khứ với hiện tại</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Present Perfect dùng để nói về: hành động xảy ra trong quá khứ nhưng không nói rõ thời điểm, trải nghiệm trong đời, hành động bắt đầu trong quá khứ và kéo dài đến hiện tại, và hành động vừa mới xảy ra có kết quả ảnh hưởng đến hiện tại.</p>
+
+  <div class="formula">
+    <strong>Công thức:</strong><br><br>
+    <strong>(+) Khẳng định:</strong> Subject + have/has + V3 (past participle)<br>
+    → I <strong>have lived</strong> here for 5 years. / She <strong>has finished</strong> her homework.<br><br>
+    <strong>(-) Phủ định:</strong> Subject + have/has + not + V3<br>
+    → I <strong>haven't seen</strong> that movie. / He <strong>hasn't arrived</strong> yet.<br><br>
+    <strong>(?) Nghi vấn:</strong> Have/Has + Subject + V3?<br>
+    → <strong>Have</strong> you <strong>been</strong> to Japan? / <strong>Has</strong> she <strong>called</strong>?
+  </div>
+
+  <h3>Since vs For</h3>
+  <div class="formula">
+    <strong>Since</strong> + mốc thời gian (điểm bắt đầu):<br>
+    → since 2020, since Monday, since I was a child<br><br>
+    <strong>For</strong> + khoảng thời gian (bao lâu):<br>
+    → for 3 years, for a long time, for two hours<br><br>
+    → I have lived here <strong>since</strong> 2018. (từ năm 2018)<br>
+    → I have lived here <strong>for</strong> 6 years. (được 6 năm)
+  </div>
+
+  <h3>Already / Yet / Just / Ever / Never</h3>
+  <table>
+    <tr><th>Từ</th><th>Vị trí</th><th>Ví dụ</th></tr>
+    <tr><td><strong>already</strong> (đã rồi)</td><td>giữa have và V3</td><td>I have <strong>already</strong> eaten.</td></tr>
+    <tr><td><strong>yet</strong> (chưa)</td><td>cuối câu phủ định/nghi vấn</td><td>I haven't finished <strong>yet</strong>.</td></tr>
+    <tr><td><strong>just</strong> (vừa mới)</td><td>giữa have và V3</td><td>She has <strong>just</strong> left.</td></tr>
+    <tr><td><strong>ever</strong> (đã bao giờ)</td><td>giữa have và V3 (câu hỏi)</td><td>Have you <strong>ever</strong> been to Paris?</td></tr>
+    <tr><td><strong>never</strong> (chưa bao giờ)</td><td>giữa have và V3</td><td>I have <strong>never</strong> seen snow.</td></tr>
+  </table>
+
+  <h3>Present Perfect vs Past Simple</h3>
+  <table>
+    <tr><th>Present Perfect</th><th>Past Simple</th></tr>
+    <tr><td>Không nói thời điểm cụ thể</td><td>Có thời điểm cụ thể</td></tr>
+    <tr><td>I <strong>have been</strong> to London.</td><td>I <strong>went</strong> to London <strong>last year</strong>.</td></tr>
+    <tr><td>Kết quả còn ảnh hưởng hiện tại</td><td>Hành động đã kết thúc hoàn toàn</td></tr>
+    <tr><td>I <strong>have lost</strong> my key. (vẫn chưa tìm thấy)</td><td>I <strong>lost</strong> my key yesterday. (chỉ kể lại)</td></tr>
+  </table>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Tiếng Việt cũng dùng "đã" để nói về quá khứ: "Tôi đã sống ở đây 5 năm".</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt dùng "<strong>đã</strong>" cho cả Past Simple và Present Perfect. Tiếng Anh phân biệt rõ: <strong>Past Simple</strong> = thời điểm cụ thể, <strong>Present Perfect</strong> = không nói thời điểm hoặc kết quả còn ảnh hưởng đến hiện tại.</li>
+      <li>Tiếng Việt: "Tôi đã ăn rồi" = "I have already eaten." Nhưng "Tôi đã ăn lúc 7 giờ" = "I ate at 7." Cùng "đã" nhưng tiếng Anh dùng hai thì khác nhau.</li>
+      <li>Tiếng Việt không phân biệt "since" và "for" — cả hai đều dịch là "từ" hoặc "được". Tiếng Anh bắt buộc chọn đúng.</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>already</td><td>/ɔːlˈred.i/</td><td>adv.</td><td>đã rồi</td></tr>
+    <tr><td>yet</td><td>/jet/</td><td>adv.</td><td>chưa (phủ định/nghi vấn)</td></tr>
+    <tr><td>just</td><td>/dʒʌst/</td><td>adv.</td><td>vừa mới</td></tr>
+    <tr><td>ever</td><td>/ˈev.ər/</td><td>adv.</td><td>đã bao giờ</td></tr>
+    <tr><td>never</td><td>/ˈnev.ər/</td><td>adv.</td><td>chưa bao giờ</td></tr>
+    <tr><td>since</td><td>/sɪns/</td><td>prep./conj.</td><td>từ (mốc thời gian)</td></tr>
+    <tr><td>for</td><td>/fɔːr/</td><td>prep.</td><td>trong (khoảng thời gian)</td></tr>
+    <tr><td>recently</td><td>/ˈriː.sən.tli/</td><td>adv.</td><td>gần đây</td></tr>
+    <tr><td>lately</td><td>/ˈleɪt.li/</td><td>adv.</td><td>dạo gần đây</td></tr>
+    <tr><td>so far</td><td>/soʊ fɑːr/</td><td>phrase</td><td>cho đến nay</td></tr>
+    <tr><td>experience</td><td>/ɪkˈspɪr.i.əns/</td><td>n.</td><td>trải nghiệm</td></tr>
+    <tr><td>achieve</td><td>/əˈtʃiːv/</td><td>v.</td><td>đạt được</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li>I <span class="highlight">have lived</span> in Hanoi <span class="highlight">since</span> 2019. — Since + mốc thời gian.</li>
+    <li>She <span class="highlight">has worked</span> here <span class="highlight">for</span> three years. — For + khoảng thời gian.</li>
+    <li><span class="highlight">Have</span> you <span class="highlight">ever been</span> to Japan? — Hỏi trải nghiệm (ever).</li>
+    <li>I <span class="highlight">have never seen</span> snow in my life. — Chưa bao giờ (never).</li>
+    <li>He <span class="highlight">has just finished</span> his exam. — Vừa mới xong (just).</li>
+    <li>I <span class="highlight">have already eaten</span>, thanks. — Đã rồi (already).</li>
+    <li>They <span class="highlight">haven't replied</span> <span class="highlight">yet</span>. — Chưa (yet).</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Nhầm với Past Simple:</strong> ❌ "I have been to London <strong>last year</strong>." → ✅ "I <strong>went</strong> to London last year." Có thời điểm cụ thể → dùng Past Simple.</li>
+      <li><strong>Quên have/has:</strong> ❌ "I already finished." → ✅ "I <strong>have</strong> already finished." Present Perfect cần have/has.</li>
+      <li><strong>Dùng sai since/for:</strong> ❌ "I have lived here <strong>since</strong> 5 years." → ✅ "I have lived here <strong>for</strong> 5 years." 5 years = khoảng thời gian → for.</li>
+      <li><strong>Dùng Present Perfect với thời gian cụ thể:</strong> ❌ "I have met him <strong>yesterday</strong>." → ✅ "I <strong>met</strong> him yesterday." Yesterday = thời điểm cụ thể → Past Simple.</li>
+      <li><strong>Quên V3 (past participle):</strong> ❌ "She has <strong>go</strong> home." → ✅ "She has <strong>gone</strong> home." Phải dùng V3.</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Chọn Present Perfect hoặc Past Simple, điền dạng đúng của động từ:</em></p>
+
+  <div class="exercise">
+    <p>1. I ___ (live) in this city since 2015.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ have lived (since 2015 = mốc thời gian, kéo dài đến hiện tại)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. She ___ (go) to Paris last summer.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ went (last summer = thời điểm cụ thể → Past Simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. ___ you ever ___ (try) sushi?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Have you ever tried (hỏi trải nghiệm → Present Perfect)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. I ___ (not/finish) my homework yet.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ haven't finished (yet → Present Perfect)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. He ___ (work) at that company for 10 years. He still works there.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ has worked (for 10 years, vẫn còn làm → Present Perfect)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. We ___ (meet) in 2020 at a conference.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ met (in 2020 = thời điểm cụ thể → Past Simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. She ___ (just/arrive). She's taking off her coat now.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ has just arrived (vừa mới, kết quả ảnh hưởng hiện tại)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. I ___ (never/eat) Indian food before.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ have never eaten (trải nghiệm chưa bao giờ → Present Perfect)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. They ___ (buy) a new car last month.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ bought (last month = thời điểm cụ thể → Past Simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. How long ___ you ___ (know) each other?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ have you known (How long + Present Perfect = hỏi khoảng thời gian kéo dài đến hiện tại)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./07-future.html">← Previous: Future</a>
+    <a href="./09-modal-verbs.html">Next: Modal Verbs →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multica - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Multica là gì</a>
+      <a href="#why-name">Tại sao tên Multica</a>
+      <a href="#core-features">Tính năng chính</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài Đặt & Thiết Lập</div>
+    <div class="nav-items">
+      <a href="#install">Cài đặt</a>
+      <a href="#setup">Thiết lập</a>
+      <a href="#first-task">Task đầu tiên</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">CLI & Kiến Trúc</div>
+    <div class="nav-items">
+      <a href="#cli">CLI Commands</a>
+      <a href="#architecture">Kiến trúc hệ thống</a>
+      <a href="#supported-tools">Công cụ AI hỗ trợ</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính Năng Nâng Cao</div>
+    <div class="nav-items">
+      <a href="#squads">Squads</a>
+      <a href="#skills">Reusable Skills</a>
+      <a href="#autopilots">Autopilots</a>
+      <a href="#selfhost">Self-hosting</a>
+      <a href="#development">Development</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Multica</h1>
+<p class="subtitle">Nền tảng mã nguồn mở biến AI coding agents thành đồng đội thực sự — giao việc, theo dõi tiến độ, tích lũy kỹ năng</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/multica-ai/multica" target="_blank">github.com/multica-ai/multica</a> — Open-source, 38.3k stars, 4.8k forks, v0.3.31 (June 26, 2026)</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Multica tích hợp AI coding agents như thành viên team tự trị — giao task, thực thi, theo dõi tiến độ, và tích lũy kỹ năng theo thời gian. Với hệ thống đúng, 2 engineers + một đội agents có thể làm việc như 20 người.
+</div>
+
+<p>Multica là nền tảng infrastructure open-source quản lý toàn bộ vòng đời của AI coding agents: từ giao task, thực thi tự động, giám sát real-time, đến tái sử dụng kỹ năng tích lũy. Thay vì copy-paste prompts hay ngồi canh agent chạy, bạn giao việc cho agent giống như giao cho đồng nghiệp.</p>
+
+<h2 id="why-name">Tại sao tên "Multica"?</h2>
+
+<p>Tên lấy cảm hứng từ <strong>Multics</strong> — hệ điều hành tiên phong thập niên 1960, giới thiệu time-sharing cho phép nhiều người dùng chia sẻ một máy tính. Unix ra đời như phiên bản đơn giản hóa của Multics: một người, một task.</p>
+
+<p>Multica mang time-sharing trở lại cho thời đại mới: "users" chia sẻ hệ thống giờ là cả con người lẫn AI agents. Tên được ghép từ: <strong>Mul</strong>tiplexed <strong>I</strong>nformation and <strong>C</strong>omputing <strong>A</strong>gent.</p>
+
+<h2 id="core-features">Tính năng chính</h2>
+
+<h3>Agents as Teammates</h3>
+<p>Agents hoạt động như thành viên team thực thụ — có profile, xuất hiện trên board, post comments, tạo issues, và báo blockers chủ động. Không phải công cụ thụ động chờ prompt.</p>
+
+<h3>Squads</h3>
+<p>Nhóm agents (và người) dưới một leader agent. Khi giao việc cho squad, leader tự quyết định member nào nhận task — routing ổn định khi team mở rộng. Dùng <code>@FrontendTeam</code> thay vì assign từng người.</p>
+
+<h3>Autonomous Execution</h3>
+<p>Vòng đời task đầy đủ: enqueue → claim → start → complete/fail. Real-time progress streaming qua WebSocket. Agents báo blockers thay vì fail im lặng.</p>
+
+<h3>Autopilots</h3>
+<p>Lên lịch công việc định kỳ cho agents. Cron triggers, webhooks, hoặc chạy thủ công. Daily standups, weekly reports, periodic audits tự chạy không cần can thiệp.</p>
+
+<h3>Reusable Skills</h3>
+<p>Mỗi giải pháp trở thành skill tái sử dụng cho cả team. Deployments, migrations, code reviews đều có thể đóng gói thành skills. Skills tích lũy theo thời gian — giải pháp của một người trở thành khả năng của mọi agent.</p>
+
+<h3>Unified Runtimes</h3>
+<p>Một dashboard cho tất cả compute. Local daemons và cloud runtimes, auto-detect CLIs có sẵn, monitoring real-time. Multi-workspace isolation cho team organization.</p>
+
+<h2 id="install">Cài đặt</h2>
+
+<h3>macOS / Linux — Homebrew</h3>
+<pre><code>brew install multica-ai/tap/multica</code><button class="copy-btn">Copy</button></pre>
+
+<h3>macOS / Linux — Install script</h3>
+<pre><code>curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash</code><button class="copy-btn">Copy</button></pre>
+
+<h3>Windows — PowerShell</h3>
+<pre><code>irm https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.ps1 | iex</code><button class="copy-btn">Copy</button></pre>
+
+<h2 id="setup">Thiết lập</h2>
+
+<h3>Bước 1: Setup và start daemon</h3>
+<pre><code>multica setup</code><button class="copy-btn">Copy</button></pre>
+<p>Một lệnh duy nhất: configure, authenticate, và start daemon. Daemon chạy background và auto-detect các agent CLIs trên PATH.</p>
+
+<h3>Bước 2: Verify runtime</h3>
+<p>Mở workspace trong Multica web app. Vào <strong>Settings → Runtimes</strong> để xem máy của bạn đã kết nối chưa.</p>
+
+<div class="callout callout-green">
+<strong>Runtime là gì?</strong> Runtime là môi trường compute có thể thực thi agent tasks. Có thể là máy local (qua daemon) hoặc cloud instance. Mỗi runtime báo cáo CLIs nào available để Multica biết route work đến đâu.
+</div>
+
+<h3>Bước 3: Tạo agent</h3>
+<p>Vào <strong>Settings → Agents → New Agent</strong>. Chọn runtime, chọn provider (Claude Code, Codex, Copilot, ...), đặt tên cho agent.</p>
+
+<h3 id="first-task">Bước 4: Giao task đầu tiên</h3>
+<p>Tạo issue từ board hoặc dùng <code>multica issue create</code>, assign cho agent. Agent tự động nhận task, thực thi, và báo cáo tiến độ.</p>
+
+<div class="flow">
+  <span class="flow-step">multica setup</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Verify Runtime</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Create Agent</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Assign Task</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Auto Execute</span>
+</div>
+
+<h2 id="cli">CLI Commands</h2>
+
+<table>
+<tr><th>Command</th><th>Mô tả</th></tr>
+<tr><td><code>multica login</code></td><td>Đăng nhập (mở browser)</td></tr>
+<tr><td><code>multica daemon start</code></td><td>Start local agent runtime</td></tr>
+<tr><td><code>multica daemon status</code></td><td>Kiểm tra trạng thái daemon</td></tr>
+<tr><td><code>multica setup</code></td><td>Setup một lệnh: configure + login + start daemon</td></tr>
+<tr><td><code>multica setup self-host</code></td><td>Setup cho môi trường self-hosted</td></tr>
+<tr><td><code>multica workspace list</code></td><td>Liệt kê workspaces</td></tr>
+<tr><td><code>multica workspace switch &lt;id&gt;</code></td><td>Chuyển workspace</td></tr>
+<tr><td><code>multica issue list</code></td><td>Liệt kê issues</td></tr>
+<tr><td><code>multica issue create</code></td><td>Tạo issue / task mới</td></tr>
+<tr><td><code>multica update</code></td><td>Cập nhật lên phiên bản mới nhất</td></tr>
+</table>
+
+<h2 id="architecture">Kiến trúc hệ thống</h2>
+
+<pre><code>┌──────────────┐     ┌──────────────────────┐     ┌──────────────────┐
+│   Next.js    │────▶│     Go Backend       │────▶│   PostgreSQL 17  │
+│  (Frontend)  │◀────│  Chi + WebSocket     │◀────│   (pgvector)     │
+└──────────────┘     └──────────┬───────────┘     └──────────────────┘
+                                │
+                     ┌──────────┴───────────┐
+                     │    Agent Daemon      │  chạy trên máy bạn
+                     └──────────────────────┘  (local hoặc cloud)</code><button class="copy-btn">Copy</button></pre>
+
+<table>
+<tr><th>Layer</th><th>Stack</th></tr>
+<tr><td>Frontend</td><td>Next.js 16 (App Router), TypeScript</td></tr>
+<tr><td>Backend</td><td>Go — Chi router, sqlc, gorilla/websocket</td></tr>
+<tr><td>Database</td><td>PostgreSQL 17 với pgvector extension</td></tr>
+<tr><td>Agent Runtime</td><td>Local daemon thực thi các coding CLIs</td></tr>
+<tr><td>Mobile</td><td>iOS client (<code>apps/mobile/</code>)</td></tr>
+</table>
+
+<p>Language composition của repo: Go 47.9%, TypeScript 43.5%, MDX 7.1%, other 1.5%.</p>
+
+<div class="callout callout-amber">
+<strong>Bảo mật:</strong> Agent execution xảy ra trên máy local hoặc cloud infrastructure của bạn. Code không bao giờ đi qua Multica servers. Platform chỉ điều phối task state và broadcast events qua WebSocket.
+</div>
+
+<h2 id="supported-tools">Công cụ AI được hỗ trợ</h2>
+
+<p>Multica auto-detect các CLIs có sẵn trên PATH và route tasks tới đúng công cụ:</p>
+
+<table>
+<tr><th>Công cụ</th><th>Provider</th></tr>
+<tr><td>Claude Code</td><td>Anthropic</td></tr>
+<tr><td>Codex</td><td>OpenAI</td></tr>
+<tr><td>GitHub Copilot CLI</td><td>GitHub / Microsoft</td></tr>
+<tr><td>OpenClaw</td><td>Community</td></tr>
+<tr><td>OpenCode</td><td>Community</td></tr>
+<tr><td>Hermes</td><td>Community</td></tr>
+<tr><td>Gemini</td><td>Google</td></tr>
+<tr><td>Pi</td><td>Inflection AI</td></tr>
+<tr><td>Cursor Agent</td><td>Cursor</td></tr>
+<tr><td>Kimi</td><td>Moonshot AI</td></tr>
+<tr><td>Kiro CLI</td><td>Amazon</td></tr>
+<tr><td>Antigravity</td><td>Community</td></tr>
+<tr><td>Qoder CLI</td><td>Community</td></tr>
+</table>
+
+<h2 id="squads">Squads</h2>
+
+<p>Squads là nhóm agents (và người) dưới một leader agent. Khi giao việc cho squad, leader tự quyết định member nào nhận task. Routing ổn định khi team mở rộng — không cần biết ai đang available.</p>
+
+<p><strong>Ví dụ:</strong> Thay vì assign cho từng người, assign cho <code>@FrontendTeam</code>. Leader agent phân phối công việc tự động dựa trên load và capability.</p>
+
+<h2 id="skills">Reusable Skills</h2>
+
+<p>Skills là giải pháp được đóng gói (code + config + context) mà bất kỳ agent nào trong team đều có thể thực thi. Skills tích lũy theo thời gian: giải pháp của một người trở thành khả năng của mọi agent.</p>
+
+<p>Ví dụ các skills phổ biến:</p>
+<ul>
+<li>Deployment procedures</li>
+<li>Database migrations</li>
+<li>Code review checklists</li>
+<li>Testing workflows</li>
+</ul>
+
+<h2 id="autopilots">Autopilots</h2>
+
+<p>Lên lịch công việc định kỳ cho agents. Mỗi autopilot tự tạo issue và route đến agent, không cần can thiệp thủ công.</p>
+
+<table>
+<tr><th>Trigger type</th><th>Mô tả</th><th>Use case</th></tr>
+<tr><td>Cron triggers</td><td>Chạy theo lịch cố định</td><td>Daily standups, weekly reports</td></tr>
+<tr><td>Webhooks</td><td>Trigger từ events bên ngoài</td><td>CI/CD events, PR merges</td></tr>
+<tr><td>Manual runs</td><td>Chạy khi cần theo yêu cầu</td><td>On-demand audits</td></tr>
+</table>
+
+<h2 id="selfhost">Self-hosting</h2>
+
+<p>Multica có thể self-host hoàn toàn. Không giới hạn số agents trong phiên bản open-source.</p>
+
+<pre><code># Cài đặt với server component
+curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash -s -- --with-server
+
+# Setup self-hosted
+multica setup self-host</code><button class="copy-btn">Copy</button></pre>
+
+<p><strong>Yêu cầu:</strong> Docker. Hỗ trợ Docker Compose, single binary, hoặc Kubernetes.</p>
+
+<div class="callout callout-green">
+<strong>Open Source:</strong> Codebase hoàn toàn auditable. Hỗ trợ custom LLM providers, swappable agent backends, và community-contributed skills. Không có vendor lock-in.
+</div>
+
+<h2 id="development">Development</h2>
+
+<p>Để chạy Multica locally từ source:</p>
+
+<table>
+<tr><th>Prerequisite</th><th>Phiên bản yêu cầu</th></tr>
+<tr><td>Node.js</td><td>v20+</td></tr>
+<tr><td>pnpm</td><td>v10.28+</td></tr>
+<tr><td>Go</td><td>v1.26+</td></tr>
+<tr><td>Docker</td><td>Bất kỳ phiên bản hiện đại</td></tr>
+</table>
+
+<pre><code>make dev</code><button class="copy-btn">Copy</button></pre>
+
+<p>Lệnh <code>make dev</code> tự động: auto-detect environment, tạo configuration, install dependencies, setup database, chạy migrations, và start tất cả services.</p>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  document.querySelectorAll('pre').forEach(function(pre){
+    if(pre.querySelector('.copy-btn')) return;
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handbook — Mẫu C: Compact Grouped</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.6; min-height: 100vh; }
+
+    /* TOP BAR */
+    .topbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: .75rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-brand { display: flex; align-items: center; gap: .6rem; }
+    .topbar-brand h1 { font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+    .topbar-brand span { font-size: .78rem; color: #94a3b8; }
+    .topbar-search { width: 280px; }
+    .topbar-search input { width: 100%; padding: .45rem .75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: .82rem; background: #f8fafc; outline: none; }
+    .topbar-search input:focus { border-color: #667eea; background: #fff; }
+    .topbar-tabs { display: flex; gap: .25rem; }
+    .topbar-tabs a { padding: .4rem .9rem; font-size: .8rem; font-weight: 500; color: #64748b; text-decoration: none; border-radius: 6px; transition: all .15s; }
+    .topbar-tabs a:hover { background: #f1f5f9; color: #1e293b; }
+    .topbar-tabs a.active { background: #667eea; color: #fff; }
+
+    /* CONTAINER */
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    /* STATS */
+    .stats { display: flex; gap: 1rem; margin-bottom: 2rem; }
+    .stat { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: .75rem 1.25rem; flex: 1; text-align: center; }
+    .stat-num { font-size: 1.4rem; font-weight: 800; color: #667eea; }
+    .stat-label { font-size: .72rem; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
+
+    /* SECTION */
+    .section { margin-bottom: 2.5rem; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .section-header h2 { font-size: .95rem; font-weight: 700; color: #1e293b; }
+    .section-header .count { font-size: .72rem; color: #94a3b8; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
+
+    /* TABLE CARDS */
+    .table-cards { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    .table-row { display: flex; align-items: center; gap: 1rem; padding: .85rem 1.25rem; border-bottom: 1px solid #f1f5f9; text-decoration: none; color: inherit; transition: background .15s; }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: #f8fafc; }
+    .table-row .color-bar { width: 4px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+    .table-row .info { flex: 1; min-width: 0; }
+    .table-row .info h3 { font-size: .88rem; font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table-row .info p { font-size: .78rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table-row .arrow { color: #cbd5e1; font-size: 1rem; flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .topbar { flex-wrap: wrap; gap: .5rem; }
+      .topbar-search { width: 100%; order: 3; }
+      .stats { flex-wrap: wrap; }
+      .stat { min-width: calc(50% - .5rem); }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-brand">
+      <h1>Handbook</h1>
+      <span>Personal knowledge base</span>
+    </div>
+    <div class="topbar-tabs">
+      <a href="#" class="active">All</a>
+      <a href="#">AI Engineering</a>
+      <a href="#">English</a>
+      <a href="#">Productivity</a>
+    </div>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search topics...">
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat"><div class="stat-num">15</div><div class="stat-label">Topics</div></div>
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">Categories</div></div>
+      <div class="stat"><div class="stat-num">12</div><div class="stat-label">AI Engineering</div></div>
+      <div class="stat"><div class="stat-num">2</div><div class="stat-label">English</div></div>
+    </div>
+
+    <!-- AI ENGINEERING -->
+    <div class="section">
+      <div class="section-header">
+        <h2>AI Engineering</h2>
+        <span class="count">12 topics</span>
+      </div>
+      <div class="table-cards">
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#667eea"></div>
+          <div class="info"><h3>Claude Code Handbook</h3><p>Tài liệu học tập hoàn chỉnh — từ cơ bản đến nâng cao, workflow thực chiến</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#dc2626"></div>
+          <div class="info"><h3>Superpowers</h3><p>Phương pháp luận phát triển phần mềm cho AI agents — TDD, planning, execution</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#06d6a0"></div>
+          <div class="info"><h3>GStack Sprint Playbook</h3><p>Phân tích & thực hành tốt nhất từ triết lý Sprint của Garry Tan (YC)</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#10b981"></div>
+          <div class="info"><h3>GSD Framework</h3><p>Git. Ship. Done. — meta-prompting và context-engineering</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#f59e0b"></div>
+          <div class="info"><h3>Skills Stack</h3><p>Mô hình 3 lớp decision/context/execution</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#e94560"></div>
+          <div class="info"><h3>GStack Sprint Practice</h3><p>Hướng dẫn thực hành 7 bước Sprint với prompt sẵn sàng sử dụng</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#8b5cf6"></div>
+          <div class="info"><h3>Multica</h3><p>Nền tảng open-source biến AI coding agents thành đồng đội thực sự</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#0ea5e9"></div>
+          <div class="info"><h3>ECC</h3><p>Harness-native operator system — 63 agents, 249 skills, 12+ ngôn ngữ</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#ec4899"></div>
+          <div class="info"><h3>The Agency</h3><p>144+ AI agent personalities — 12 divisions từ Engineering đến Game Dev</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#6366f1"></div>
+          <div class="info"><h3>Skills for Real Engineers</h3><p>Bộ agent skills composable — TDD, debugging, architecture, handoff</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#2563eb"></div>
+          <div class="info"><h3>Spec Kit</h3><p>Spec-Driven Development by GitHub — specifications thành executable</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#059669"></div>
+          <div class="info"><h3>Claude Code Best Practice</h3><p>83 best practices — context management, session strategy, agent architecture</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ENGLISH -->
+    <div class="section">
+      <div class="section-header">
+        <h2>English</h2>
+        <span class="count">2 topics</span>
+      </div>
+      <div class="table-cards">
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#059669"></div>
+          <div class="info"><h3>English Learning Roadmap</h3><p>Lộ trình tự học tiếng Anh — 12 bài ngữ pháp + ôn tập + quick reference</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#0891b2"></div>
+          <div class="info"><h3>Quick Reference</h3><p>Bảng tóm tắt ngữ pháp tiếng Anh — cheat sheet tra cứu nhanh</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- PRODUCTIVITY -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Productivity</h2>
+        <span class="count">1 topic</span>
+      </div>
+      <div class="table-cards">
+        <a href="#" class="table-row">
+          <div class="color-bar" style="background:#7c3aed"></div>
+          <div class="info"><h3>Obsidian</h3><p>Ứng dụng ghi chú và quản lý kiến thức cá nhân, local-first, Markdown</p></div>
+          <span class="arrow">&rsaquo;</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

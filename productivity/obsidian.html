@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+blockquote{border-left:3px solid #7c3aed;padding:.75rem 1rem;margin:1rem 0;background:#f5f3ff;border-radius:0 8px 8px 0;font-size:.9rem;color:#4a5568;font-style:italic}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-purple{background:#f5f3ff;color:#5b21b6;border-color:#7c3aed}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Giới thiệu</div>
+    <div class="nav-items">
+      <a href="#what">Obsidian là gì?</a>
+      <a href="#philosophy">Triết lý thiết kế</a>
+      <a href="#platforms">Nền tảng hỗ trợ</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính năng</div>
+    <div class="nav-items">
+      <a href="#linking">Linking & Graph</a>
+      <a href="#canvas">Canvas</a>
+      <a href="#plugins">Plugins</a>
+      <a href="#sync">Sync</a>
+      <a href="#publish">Publish</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Bắt đầu</div>
+    <div class="nav-items">
+      <a href="#start">Bắt đầu nhanh</a>
+      <a href="#workflow">Workflow cơ bản</a>
+      <a href="#tips">Tips cho người mới</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giá & Cộng đồng</div>
+    <div class="nav-items">
+      <a href="#pricing">Bảng giá</a>
+      <a href="#community">Cộng đồng</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="what">Obsidian</h1>
+<p class="subtitle">Ứng dụng ghi chú và quản lý kiến thức cá nhân. Miễn phí, local-first, dùng Markdown thuần.</p>
+
+<div class="callout callout-purple">
+<strong>Ý tưởng cốt lõi:</strong> Ghi chú của bạn thuộc về bạn. Obsidian lưu trữ mọi thứ dưới dạng file Markdown trên máy local, không phụ thuộc vào cloud hay vendor nào. Bạn có thể đọc notes bằng bất kỳ text editor nào, mãi mãi.
+</div>
+
+<h2 id="philosophy">Triết lý thiết kế</h2>
+
+<p>Obsidian xây dựng trên 3 nguyên tắc:</p>
+<ul>
+<li><strong>Privacy:</strong> Notes lưu trên thiết bị của bạn. Obsidian không thu thập telemetry, không bán dữ liệu người dùng.</li>
+<li><strong>Flexibility:</strong> Hàng nghìn plugins và themes tùy chỉnh workflow theo ý bạn.</li>
+<li><strong>Longevity:</strong> File format mở (Markdown). Dữ liệu của bạn accessible mãi mãi, không bị lock-in.</li>
+</ul>
+
+<h2 id="platforms">Nền tảng hỗ trợ</h2>
+<ul>
+<li>Windows, macOS, Linux (desktop)</li>
+<li>iOS, Android (mobile)</li>
+<li>Web Clipper (browser extension)</li>
+<li>CLI tool</li>
+</ul>
+
+<h2 id="linking">Linking & Graph View</h2>
+
+<p>Tạo kết nối giữa các notes bằng cú pháp <code>[[tên note]]</code>. Mỗi link tạo ra một backlink tự động ở note đích. Theo thời gian, bạn xây dựng được một mạng lưới kiến thức cá nhân (personal wiki).</p>
+
+<h3>Graph View</h3>
+<p>Hiển thị trực quan tất cả notes và connections dưới dạng đồ thị. Giúp phát hiện patterns và relationships mà bạn không nhận ra khi đọc từng note riêng lẻ.</p>
+
+<h3>Backlinks</h3>
+<p>Mỗi note tự động hiển thị danh sách tất cả notes khác đang link đến nó. Không cần tạo link hai chiều thủ công.</p>
+
+<h2 id="canvas">Canvas</h2>
+<p>Không gian vô hạn để brainstorm, vẽ diagram, và sắp xếp ý tưởng tự do. Kéo thả notes, hình ảnh, và cards trên một canvas không giới hạn.</p>
+
+<h2 id="plugins">Plugins & Tùy chỉnh</h2>
+
+<p>Obsidian có open API hỗ trợ hàng nghìn community plugins. Bạn có thể biến Obsidian thành bất kỳ công cụ nào bạn cần.</p>
+
+<h3>Plugins phổ biến</h3>
+<table>
+<tr><th>Plugin</th><th>Chức năng</th></tr>
+<tr><td>Calendar</td><td>Xem daily notes theo lịch</td></tr>
+<tr><td>Kanban</td><td>Task boards kiểu Trello</td></tr>
+<tr><td>Dataview</td><td>Query notes như database (SQL-like)</td></tr>
+<tr><td>Tasks</td><td>Quản lý tasks xuyên suốt vault</td></tr>
+<tr><td>Outliner</td><td>Quản lý danh sách dạng outline</td></tr>
+<tr><td>Templater</td><td>Templates nâng cao với scripting</td></tr>
+<tr><td>Excalidraw</td><td>Vẽ diagram trực tiếp trong note</td></tr>
+</table>
+
+<h3>Themes</h3>
+<p>Hàng trăm themes cộng đồng thay đổi giao diện hoàn toàn. Có thể tùy chỉnh CSS riêng.</p>
+
+<h2 id="sync">Obsidian Sync</h2>
+
+<p>Dịch vụ đồng bộ chính thức, end-to-end encrypted (AES-256).</p>
+
+<ul>
+<li>Đồng bộ cross-device (desktop + mobile)</li>
+<li>End-to-end encryption (Obsidian không thể đọc dữ liệu của bạn)</li>
+<li>Version history 1 năm</li>
+<li>Shared vaults cho team collaboration</li>
+<li>Selective sync (chọn folders cần đồng bộ)</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Alternatives miễn phí:</strong> Bạn không bắt buộc dùng Obsidian Sync. Vì notes là file Markdown thường, bạn có thể đồng bộ bằng iCloud, Google Drive, Dropbox, Syncthing, hoặc Git.
+</div>
+
+<h2 id="publish">Obsidian Publish</h2>
+
+<p>Biến notes thành website công khai: wiki, knowledge base, hoặc digital garden.</p>
+
+<ul>
+<li>Custom domain</li>
+<li>Themes tùy chỉnh</li>
+<li>Graph view trên web</li>
+<li>Full-text search</li>
+<li>Password protection</li>
+<li>SEO optimized</li>
+</ul>
+
+<h2 id="start">Bắt đầu nhanh</h2>
+
+<ol>
+<li><strong>Download:</strong> Tải từ <code>obsidian.md</code> (miễn phí)</li>
+<li><strong>Tạo Vault:</strong> Chọn một folder trên máy làm vault (nơi chứa tất cả notes)</li>
+<li><strong>Viết note đầu tiên:</strong> Tạo file mới, viết bằng Markdown</li>
+<li><strong>Link notes:</strong> Dùng <code>[[tên note]]</code> để tạo kết nối giữa các notes</li>
+<li><strong>Khám phá Graph:</strong> Mở Graph View để xem mạng lưới kiến thức</li>
+</ol>
+
+<h2 id="workflow">Workflow cơ bản</h2>
+
+<h3>Daily Notes</h3>
+<p>Mỗi ngày tạo 1 note mới (tự động bằng plugin Daily Notes). Ghi lại suy nghĩ, tasks, meetings. Link đến các notes liên quan.</p>
+
+<h3>Zettelkasten Method</h3>
+<p>Viết notes ngắn, mỗi note 1 ý tưởng. Link chúng lại với nhau. Theo thời gian, mạng lưới kiến thức tự hình thành.</p>
+
+<h3>Project-based</h3>
+<p>Tạo folder cho mỗi project. Dùng MOC (Map of Content) note làm index cho project đó.</p>
+
+<h2 id="tips">Tips cho người mới</h2>
+
+<ul>
+<li><strong>Đừng over-organize:</strong> Bắt đầu viết trước, tổ chức sau. Links quan trọng hơn folders.</li>
+<li><strong>Dùng templates:</strong> Tạo template cho meeting notes, daily notes, project notes để tiết kiệm thời gian.</li>
+<li><strong>Backlinks > Folders:</strong> Thay vì phân loại note vào folder, link chúng lại. Graph View sẽ tự tổ chức.</li>
+<li><strong>Bắt đầu nhỏ:</strong> Cài 2-3 plugins thôi. Thêm dần khi cần.</li>
+<li><strong>Viết cho mình:</strong> Notes không cần hoàn hảo. Viết nhanh, link nhiều, refine sau.</li>
+</ul>
+
+<h2 id="pricing">Bảng giá</h2>
+
+<table>
+<tr><th>Plan</th><th>Giá</th><th>Bao gồm</th></tr>
+<tr><td>Personal</td><td>Miễn phí</td><td>App đầy đủ tính năng, plugins, themes, không giới hạn</td></tr>
+<tr><td>Sync</td><td>$4/tháng (annual)</td><td>Đồng bộ cross-device, E2E encryption, version history</td></tr>
+<tr><td>Publish</td><td>$8/tháng (annual)</td><td>Publish notes lên web, custom domain, SEO</td></tr>
+<tr><td>Catalyst</td><td>$25 (một lần)</td><td>Beta access, community badges, VIP channel</td></tr>
+<tr><td>Commercial</td><td>$50/năm/user</td><td>License cho doanh nghiệp</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Miễn phí là đủ:</strong> App core hoàn toàn miễn phí, không giới hạn notes, plugins, hay tính năng. Sync và Publish là dịch vụ tùy chọn, không bắt buộc.
+</div>
+
+<h2 id="community">Cộng đồng</h2>
+
+<ul>
+<li><strong>Discord:</strong> Cộng đồng chính thức, hỗ trợ nhanh</li>
+<li><strong>Forum:</strong> Thảo luận sâu, chia sẻ workflows</li>
+<li><strong>Plugin marketplace:</strong> Hàng nghìn plugins cộng đồng</li>
+<li><strong>Developer docs:</strong> API documentation cho plugin developers</li>
+</ul>
+
+<blockquote>Nguồn: obsidian.md</blockquote>
+</main>
+</div>
+
+<script>
+(function(){
+var links=document.querySelectorAll('.nav-items a');
+function setActive(){
+var scrollY=window.scrollY+80;
+var current='';
+document.querySelectorAll('[id]').forEach(function(el){
+if(el.offsetTop<=scrollY)current=el.id;
+});
+links.forEach(function(a){
+a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+});
+}
+window.addEventListener('scroll',setActive);
+setActive();
+
+document.querySelectorAll('pre').forEach(function(pre){
+var btn=document.createElement('button');
+btn.className='copy-btn';
+btn.textContent='Copy';
+btn.addEventListener('click',function(){
+var code=pre.querySelector('code');
+var text=code?code.textContent:pre.textContent;
+navigator.clipboard.writeText(text).then(function(){
+btn.textContent='Copied!';
+btn.classList.add('copied');
+setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied');},2000);
+});
+});
+pre.appendChild(btn);
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Làm Chủ Giao Diện Claude Design - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Bắt Đầu</div>
+    <div class="nav-items">
+      <a href="#truy-cap">Cách truy cập</a>
+      <a href="#ba-test">Ba bài test nhanh</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Mẹo & Quy Trình</div>
+    <div class="nav-items">
+      <a href="#bai-viet-thanh-video">Bài viết thành video</a>
+      <a href="#quy-trinh-nang-cao">Quy trình nâng cao</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng Cao</div>
+    <div class="nav-items">
+      <a href="#sao-chep-phong-cach">Sao chép phong cách</a>
+      <a href="#gu-tham-my">Gu thẩm mỹ</a>
+      <a href="#han-che">Hạn chế</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Làm Chủ Giao Diện Claude Design</h1>
+<p class="subtitle">Hướng dẫn thực chiến từ Phan Đồng Giang — truy cập, test nhanh, quy trình 6 bước từ 0 đến 1, sao chép thương hiệu và vai trò của gu thẩm mỹ</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/lam-chu-giao-dien-claude-moi" target="_blank">phandonggiang.com</a> — Khóa học AI · Cấp độ 2 · Trung cấp · 9 phút</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Claude Design tỏa sáng khi bạn có design system rõ ràng và prompt đủ cụ thể — nhưng gu thẩm mỹ là thứ AI không thể thay thế: chọn đúng 1 trong 10 phiên bản vẫn là quyết định của người.
+</div>
+
+<h2 id="truy-cap">Cách truy cập Claude Design</h2>
+
+<p>Claude Design là sản phẩm tách biệt với hệ sinh thái Claude khác, có URL riêng: <code>claude.ai/design</code></p>
+
+<table>
+<tr><th>Gói</th><th>Cách truy cập</th></tr>
+<tr><td>Pro hoặc Max</td><td>Vào <code>claude.ai/design</code> và đăng nhập trực tiếp</td></tr>
+<tr><td>Team hoặc Enterprise</td><td>Quản trị viên vào Organization settings → Capabilities → Anthropic Labs để bật tính năng</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng:</strong> Claude Design tiêu tốn token rất nhanh. Hãy theo dõi sát hạn mức sử dụng để tránh phí ngoài ý muốn.
+</div>
+
+<h2 id="ba-test">Ba bài test nhanh đầu tiên</h2>
+
+<p>Mỗi bài dưới 2 phút — giúp làm quen với các tính năng chính của Claude Design.</p>
+
+<h3>Test 1: Tạo website ấn tượng</h3>
+<ol>
+  <li>Vào tab Wireframe, chọn <strong>High fidelity</strong></li>
+  <li>Dán prompt gồm: số tiền gọi vốn, nhà đầu tư mục tiêu, tên sản phẩm, mô tả, đối tượng mục tiêu, tông giọng</li>
+  <li>Bấm <strong>Present</strong> để xem toàn bộ</li>
+  <li>Sử dụng nút <strong>Comment</strong> để chọn phần muốn chỉnh sửa thay vì viết lại toàn prompt</li>
+</ol>
+
+<h3>Test 2: Làm bộ slide thuyết trình</h3>
+<ol>
+  <li>Chọn <strong>Slide deck</strong> từ trang chủ</li>
+  <li>Dán prompt yêu cầu pitch deck</li>
+  <li>Claude hỏi làm rõ, bạn trả lời rồi bấm <strong>Continue</strong></li>
+  <li>Kết quả là file PDF có thể xuất được</li>
+</ol>
+
+<h3>Test 3: Tạo video hoạt hình</h3>
+<ol>
+  <li>Bấm <strong>From template</strong></li>
+  <li>Viết prompt kể câu chuyện có hình ảnh hoặc vẽ phác thảo tay</li>
+  <li>Prompt nên gồm: độ dài, tỉ lệ, cấu trúc chi tiết (chia theo giây), phong cách hình ảnh</li>
+</ol>
+
+<h2 id="bai-viet-thanh-video">Mẹo hay: Biến bài viết thành video để có slide đẹp hơn</h2>
+
+<p>Thay vì tạo slide trực tiếp, hãy đi vòng qua video — kết quả slide đẹp hơn vì Claude phải tư duy hình ảnh trước.</p>
+
+<div class="flow">
+  <span class="flow-step">Claude Research</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Markdown report</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Video hoạt hình</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Pitch deck</span>
+</div>
+
+<h3>Bước 1: Dùng Claude Research</h3>
+<ul>
+  <li>Bấm dấu cộng trong khung chat để tìm Research</li>
+  <li>Chờ khoảng 13 phút để có báo cáo chi tiết dạng markdown</li>
+</ul>
+
+<h3>Bước 2: Đưa markdown vào Claude Design</h3>
+<ul>
+  <li>Yêu cầu làm video hoạt hình 30 giây tóm tắt bài blog</li>
+  <li>Kết quả: video hoạt hình có chuyển động, hiệu ứng chuyển cảnh, nhịp điệu rõ ràng</li>
+</ul>
+
+<h3>Bước 3: Chuyển video thành slide</h3>
+<ul>
+  <li>Yêu cầu chuyển video thành pitch deck</li>
+  <li>Lợi ích: slide đẹp hơn khi yêu cầu ngay từ đầu vì Claude phải tư duy hình ảnh trước</li>
+</ul>
+
+<h2 id="quy-trinh-nang-cao">Quy trình nâng cao: Từ 0 đến 1 với Cowork và Claude Design</h2>
+
+<p>Quy trình 6 bước để tạo ra thiết kế nhất quán thương hiệu từ đầu.</p>
+
+<h3>Bước 1: Trích xuất hệ thống thương hiệu bằng Cowork</h3>
+<ol>
+  <li>Gom toàn bộ tài sản vào thư mục: logo, slide cũ, ảnh sản phẩm, landing page, file PDF hướng dẫn</li>
+  <li>Mở Cowork, chọn thư mục đó</li>
+  <li>Yêu cầu phân tích và viết bản mô tả đầy đủ về hệ thống thiết kế</li>
+  <li>Lưu thành file <strong>DESIGN.md</strong> (bộ hướng dẫn thương hiệu)</li>
+</ol>
+
+<h3>Bước 2: Tải DESIGN.md lên Claude Design</h3>
+<ul>
+  <li>Vào <code>claude.ai/design</code></li>
+  <li>Đưa file DESIGN.md làm ngữ cảnh</li>
+  <li>Kết quả: tất cả prompt sau này tự động áp dụng đúng màu sắc và font chữ</li>
+</ul>
+
+<h3>Bước 3: Generate — Tạo thiết kế</h3>
+
+<p>Một prompt tốt có 4 yếu tố cố định:</p>
+
+<table>
+<tr><th>Yếu tố</th><th>Nội dung</th></tr>
+<tr><td>Mục tiêu</td><td>Cái gì cần thiết kế</td></tr>
+<tr><td>Bố cục</td><td>Cấu trúc tổng thể</td></tr>
+<tr><td>Nội dung</td><td>Thông tin cụ thể cần đưa vào</td></tr>
+<tr><td>Ràng buộc</td><td>Nguyên tắc thiết kế cần tuân theo</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Khi nào Claude Design tỏa sáng:</strong> Khi đã có design system và prompt đủ cụ thể.
+</div>
+
+<h3>Bước 4: Iterate — Chỉnh sửa</h3>
+<ul>
+  <li><strong>Thay đổi cấu trúc:</strong> yêu cầu ngay trong khung chat, dùng Tweaks để có nhiều phiên bản</li>
+  <li><strong>Thay đổi chi tiết pixel:</strong> bấm nút edit, chọn phần cần đổi (sẽ tô sáng màu xanh lá)</li>
+  <li>Luôn lưu nhánh riêng trước khi thử hướng đi mạo hiểm</li>
+</ul>
+
+<h3>Bước 5: Validate — Kiểm chứng</h3>
+
+<p>Chạy 3 prompt kiểm tra:</p>
+<ol>
+  <li>Rà soát độ tương phản và khả năng tiếp cận, liệt kê vi phạm WCAG 2.1 AA</li>
+  <li>Tạo phiên bản cho desktop, tablet, di động</li>
+  <li>Đề xuất 2 phương án A/B test cho phần đầu trang</li>
+</ol>
+
+<h3>Bước 6: Export — Xuất file</h3>
+
+<p>Bấm Export ở góc trên bên phải. Các định dạng hỗ trợ:</p>
+<ul>
+  <li>Send to Canva</li>
+  <li>PPTX</li>
+  <li>PDF</li>
+  <li>HTML độc lập</li>
+  <li>Gói dành cho Claude Code</li>
+</ul>
+
+<table>
+<tr><th>Loại dự án</th><th>Thời gian ước tính</th></tr>
+<tr><td>Một trang đơn</td><td>Khoảng 1 tiếng</td></tr>
+<tr><td>Website nhiều tab</td><td>2–3 tiếng</td></tr>
+</table>
+
+<h2 id="sao-chep-phong-cach">Sao chép bất kỳ phong cách thiết kế nào</h2>
+
+<p>Trang web <strong>getdesign.md</strong> cho phép tải về file DESIGN.md của hầu hết các thương hiệu lớn, miễn phí.</p>
+
+<h3>Cách sử dụng</h3>
+<ol>
+  <li>Tải file DESIGN.md của thương hiệu yêu thích (ví dụ: Mastercard, Airbnb, Ferrari)</li>
+  <li>Đưa file đó cho Claude Design kèm prompt yêu cầu thiết kế</li>
+  <li>Kết quả: Claude sao chép lại tinh thần thị giác của thương hiệu gần như tức thì</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Mẹo:</strong> Tải DESIGN.md từ <code>getdesign.md</code> — miễn phí, bao gồm hầu hết các thương hiệu lớn toàn cầu.
+</div>
+
+<h2 id="gu-tham-my">Gu thẩm mỹ — Thứ AI vẫn chưa thể thay thế</h2>
+
+<h3>Khả năng của Claude Design</h3>
+<ul>
+  <li>Dựng 10 bản dashboard trong 10 phút</li>
+  <li>Tự động áp dụng design system</li>
+  <li>Đề xuất 3 phương án bố cục</li>
+  <li>Xuất ra 5 định dạng khác nhau</li>
+</ul>
+
+<h3>Khả năng AI không thể làm</h3>
+
+<blockquote>Nó không thể nói bạn biết trong 10 bản dashboard đó, bản nào nên được dùng cho đúng người dùng của bạn, vào đúng thời điểm này.</blockquote>
+
+<p><strong>Gu thẩm mỹ</strong> là khả năng:</p>
+<ul>
+  <li>Nói không với 9 phiên bản</li>
+  <li>Nói có với 1 phiên bản duy nhất</li>
+  <li>Là công tắc ghi đè — khi bạn nhìn vào lời nhận xét và nói Claude sai ở chỗ này</li>
+</ul>
+
+<blockquote>Bạn được trả tiền để làm tốt hơn, để đi trước mức mặc định của AI.</blockquote>
+
+<blockquote>Hãy làm chủ AI trước khi nó làm chủ bạn. Bạn phải giỏi hơn mức trung bình.</blockquote>
+
+<div class="callout callout-blue">
+<strong>Cho designer:</strong> Những designer có gu thẩm mỹ tốt đang bước vào thập kỷ rực rỡ nhất. Gu thẩm mỹ vừa trở nên đắt giá hơn bao giờ hết.
+</div>
+
+<h2 id="han-che">Những hạn chế hiện tại</h2>
+
+<ul>
+  <li>Tiêu tốn quá nhiều token (tức là tiền)</li>
+  <li>Còn khá nhiều lỗi lặt vặt</li>
+  <li>Quyền kiểm soát chi tiết hạn chế</li>
+</ul>
+
+<p>Claude Design là bước tiếp theo sau Claude Code (thay đổi viết code) và Claude Cowork (nhắm tới dân văn phòng). Tương lai của AI tools đang tiến triển rất nhanh.</p>
+
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html" class="current">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html">18. Dùng Claude Công Ty</a>
+</aside>
+
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20 - Travel & Hotel - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./19-work-office.html">19. Work & Office</a>
+      <a href="./20-travel-hotel.html" class="active">20. Travel & Hotel</a>
+      <a href="./21-technology-internet.html">21. Technology & Internet</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 20
+  </div>
+  <div class="card-nav">
+    <a href="./19-work-office.html">← Previous: Work & Office</a>
+    <a href="./21-technology-internet.html">Next: Technology & Internet →</a>
+  </div>
+
+  <h1>Travel & Hotel</h1>
+  <p class="subtitle">Du lich va khach san — dat phong, check-in, san bay, va cac tinh huong khi di du lich</p>
+
+  <h2>Tai san bay</h2>
+
+  <h3>Check-in va boarding</h3>
+  <div class="formula">
+    <strong>I'd like to check in for my flight to [destination].</strong><br>
+    <strong>Here's my passport and booking confirmation.</strong><br>
+    <strong>Can I have a window/aisle seat?</strong><br>
+    <strong>How many bags can I check in?</strong><br>
+    <strong>What gate is my flight?</strong><br>
+    <strong>Is the flight on time?</strong>
+  </div>
+
+  <h3>Cac tinh huong o san bay</h3>
+  <ul>
+    <li><strong>Where is the departure gate?</strong> — Cong khoi hanh o dau?</li>
+    <li><strong>My flight has been delayed/cancelled.</strong> — Chuyen bay bi tre/huy.</li>
+    <li><strong>I missed my connecting flight.</strong> — Toi lo chuyen bay noi chuyen.</li>
+    <li><strong>Where can I pick up my luggage?</strong> — Lay hanh ly o dau?</li>
+    <li><strong>I'd like to declare something.</strong> — Toi muon khai bao (hai quan).</li>
+    <li><strong>Nothing to declare.</strong> — Khong co gi khai bao.</li>
+  </ul>
+
+  <h2>Tai khach san</h2>
+
+  <h3>Dat phong</h3>
+  <ul>
+    <li><strong>I'd like to book a room for [number] nights.</strong> — Toi muon dat phong [so] dem.</li>
+    <li><strong>Do you have any vacancies?</strong> — Con phong trong khong?</li>
+    <li><strong>How much is it per night?</strong> — Bao nhieu mot dem?</li>
+    <li><strong>Is breakfast included?</strong> — Co bao gom bua sang khong?</li>
+    <li><strong>I'd like a single/double room.</strong> — Toi muon phong don/doi.</li>
+    <li><strong>Do you have a room with a view?</strong> — Co phong co view khong?</li>
+  </ul>
+
+  <h3>Check-in / Check-out</h3>
+  <div class="formula">
+    <strong>I have a reservation under [name].</strong><br>
+    <strong>What time is check-out?</strong><br>
+    <strong>Can I have a late check-out?</strong> — Tra phong muon duoc khong?<br>
+    <strong>Could I leave my luggage here after check-out?</strong><br>
+    <strong>Is there Wi-Fi? What's the password?</strong>
+  </div>
+
+  <h3>Yeu cau / Van de</h3>
+  <ul>
+    <li><strong>Could I get extra towels?</strong> — Cho toi them khan duoc khong?</li>
+    <li><strong>The air conditioning isn't working.</strong> — May lanh khong hoat dong.</li>
+    <li><strong>I'd like to change rooms.</strong> — Toi muon doi phong.</li>
+    <li><strong>Is there a gym/pool in the hotel?</strong> — Khach san co phong gym/ho boi khong?</li>
+    <li><strong>Can you call a taxi for me?</strong> — Goi taxi giup toi duoc khong?</li>
+  </ul>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu co cac mau cau dat phong, hoi gia, yeu cau dich vu tuong tu.</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"I'd like to..."</strong> (lich su) thay vi "I want" khi dat phong/yeu cau. Tieng Viet: "Toi muon..." dung cho ca hai.</li>
+      <li>Tieng Anh phan biet <strong>"book" (dat truoc) va "check in" (lam thu tuc)</strong>. Tieng Viet thuong dung "dat phong" cho ca hai.</li>
+      <li>Tieng Anh noi <strong>"per night"</strong> (moi dem). Tieng Viet: "mot dem" — tuong tu nhung khong co "per".</li>
+      <li><strong>"Vacancies"</strong> = phong trong (thuong thay tren bien khach san). Tieng Viet: "con phong khong?"</li>
+      <li>Tieng Anh dung <strong>"under [name]"</strong> khi noi dat phong duoi ten ai. Tieng Viet: "duoi ten [ten]".</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>boarding pass</td><td>/ˈbɔːr.dɪŋ pæs/</td><td>n.</td><td>the len may bay</td></tr>
+    <tr><td>departure</td><td>/dɪˈpɑːr.tʃər/</td><td>n.</td><td>khoi hanh</td></tr>
+    <tr><td>arrival</td><td>/əˈraɪ.vəl/</td><td>n.</td><td>den noi</td></tr>
+    <tr><td>layover</td><td>/ˈleɪ.oʊ.vər/</td><td>n.</td><td>qua canh</td></tr>
+    <tr><td>luggage/baggage</td><td>/ˈlʌɡ.ɪdʒ/</td><td>n.</td><td>hanh ly</td></tr>
+    <tr><td>carry-on</td><td>/ˈkær.i.ɒn/</td><td>n.</td><td>hanh ly xach tay</td></tr>
+    <tr><td>reservation</td><td>/ˌrez.ərˈveɪ.ʃən/</td><td>n.</td><td>dat truoc</td></tr>
+    <tr><td>vacancy</td><td>/ˈveɪ.kən.si/</td><td>n.</td><td>phong trong</td></tr>
+    <tr><td>check-in / check-out</td><td></td><td>n.</td><td>nhan phong / tra phong</td></tr>
+    <tr><td>itinerary</td><td>/aɪˈtɪn.ər.er.i/</td><td>n.</td><td>lich trinh</td></tr>
+    <tr><td>customs</td><td>/ˈkʌs.təmz/</td><td>n.</td><td>hai quan</td></tr>
+    <tr><td>delayed</td><td>/dɪˈleɪd/</td><td>adj.</td><td>bi tre</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Check-in khach san</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Receptionist:</span> Good afternoon! Welcome to the Grand Hotel. How can I help you?</p>
+    <p><span class="speaker">You:</span> Hi, I have a reservation under Nguyen Minh.</p>
+    <p><span class="speaker">Receptionist:</span> Let me check... Yes, a double room for three nights, checking out on the 15th. Is that correct?</p>
+    <p><span class="speaker">You:</span> That's right.</p>
+    <p><span class="speaker">Receptionist:</span> May I see your passport and a credit card for the deposit?</p>
+    <p><span class="speaker">You:</span> Here you go. Is breakfast included?</p>
+    <p><span class="speaker">Receptionist:</span> Yes, breakfast is served from 7 to 10 in the restaurant on the ground floor. Here's your key card — room 405, fourth floor. The elevator is on your right.</p>
+    <p><span class="speaker">You:</span> Great. What time is check-out?</p>
+    <p><span class="speaker">Receptionist:</span> Check-out is at 11 a.m., but we can arrange a late check-out until 1 p.m. for a small fee.</p>
+    <p><span class="speaker">You:</span> Good to know. Thank you!</p>
+  </div>
+
+  <h3>Tinh huong 2: Tai quay check-in san bay</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Agent:</span> Good morning. Passport and booking reference, please.</p>
+    <p><span class="speaker">You:</span> Here you go. I'm on the 10:30 flight to Singapore.</p>
+    <p><span class="speaker">Agent:</span> Thank you. Would you like a window or aisle seat?</p>
+    <p><span class="speaker">You:</span> Window, please. And can I check this bag?</p>
+    <p><span class="speaker">Agent:</span> Of course. Please place it on the scale... That's 18 kilos, within the limit. Do you have any carry-on?</p>
+    <p><span class="speaker">You:</span> Just this backpack.</p>
+    <p><span class="speaker">Agent:</span> Perfect. Here's your boarding pass. Gate B7, boarding starts at 9:50. Have a good flight!</p>
+    <p><span class="speaker">You:</span> Thank you!</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I want to book a room." (qua truc tiep) → <strong>Dung:</strong> "I'd <em>like</em> to book a room." (lich su hon)</li>
+      <li><strong>Sai:</strong> "How much one night?" → <strong>Dung:</strong> "How much is it <em>per night</em>?"</li>
+      <li><strong>Sai:</strong> "I have booking name Minh." → <strong>Dung:</strong> "I have a reservation <em>under</em> Minh."</li>
+      <li><strong>Sai:</strong> "My luggage is lost. Where is it?" → <strong>Dung:</strong> "My luggage hasn't arrived. Could you help me <em>locate</em> it?" (lich su va chinh xac hon)</li>
+      <li><strong>Sai:</strong> "What time is the plane?" → <strong>Dung:</strong> "What time does my flight <em>depart</em>?" hoac "What time is my flight?"</li>
+      <li><strong>Sai:</strong> "I want window chair." → <strong>Dung:</strong> "Can I have a <em>window seat</em>?" (seat, khong phai chair)</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>"I'd like..."</strong> la cach yeu cau lich su nhat trong moi tinh huong du lich.</li>
+      <li><strong>Luu so booking reference</strong> — thuong can khi check-in online hoac tai quay.</li>
+      <li><strong>"Is [X] included?"</strong> — cau hoi huu ich: breakfast included? Wi-Fi included? Airport transfer included?</li>
+      <li><strong>Seat vs Chair:</strong> Tren may bay/tau/xe = "seat". "Chair" chi dung cho ghe binh thuong.</li>
+      <li><strong>Tip:</strong> Luu lich trinh (itinerary) trong dien thoai — de tra cuu nhanh khi can.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Ban muon dat phong doi 2 dem. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'd like to book a double room for two nights, please.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "How much one night?"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">How much is it <strong>per night</strong>?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Ban muon ngoi canh cua so tren may bay. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Can I have a <strong>window seat</strong>, please?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Sua loi: "I have booking name Nguyen."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I have a reservation <strong>under</strong> Nguyen.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> May lanh trong phong khong hoat dong. Bao le tan the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Excuse me, the air conditioning in my room isn't working. Could someone take a look?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Phan biet "luggage" va "carry-on":<br>a) Hanh ly ky gui = ___<br>b) Hanh ly xach tay = ___</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">a) <strong>checked luggage/baggage</strong><br>b) <strong>carry-on</strong> (bag/luggage)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Ban muon tra phong muon (1 gio chieu thay vi 11 gio sang). Hoi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Is it possible to get a late check-out? / Can I have a late check-out until 1 p.m.?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Chuyen bay bi tre. Hoi nhan vien the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">My flight has been delayed. How long is the delay? / When is the new departure time?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Dien vao cho trong: "Is breakfast ___ in the room rate?" (bao gom)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>included</strong></div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Viet hoi thoai ngan (4-6 cau): ban check-in tai khach san va hoi ve Wi-Fi.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du:<br>You: Hi, I have a reservation under Tran Lan.<br>Receptionist: Welcome! Yes, a single room for two nights. Here's your key — room 302.<br>You: Thank you. Is there Wi-Fi in the room?<br>Receptionist: Yes, the network is "GrandHotel-Guest" and the password is on the card in your room.<br>You: Great. And what time is breakfast?<br>Receptionist: From 6:30 to 9:30 in the lobby restaurant.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./19-work-office.html">← Previous: Work & Office</a>
+    <a href="./21-technology-internet.html">Next: Technology & Internet →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

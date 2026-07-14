@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ngừng Prompt Theo Kiểu Cũ - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Claude AIO
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung</div>
+    <div class="nav-items">
+      <a href="#overview">Vấn đề prompt cũ</a>
+      <a href="#cowork">Claude Cowork</a>
+      <a href="#obsidian">Obsidian giải pháp</a>
+      <a href="#workflow">Quy trình hằng ngày</a>
+      <a href="#structure">Cấu trúc thư mục</a>
+      <a href="#skills">Claude Skills</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Ngừng Prompt Theo Kiểu Cũ</h1>
+<p class="subtitle">Phương pháp prompt hiện đại với Obsidian + Cowork — vượt qua template cứng nhắc</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/ngung-prompt-theo-kieu-cu" target="_blank">phandonggiang.com</a> — Cấp độ 3, Nâng cao</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Prompt ngắn cụt cho kết quả tầm tầm vì thiếu ngữ cảnh. Giải pháp không phải viết prompt dài hơn — mà là xây hệ thống file context + Cowork để Claude tự đọc mọi thứ nó cần.
+</div>
+
+<h2>Các vấn đề với cách prompt cũ</h2>
+<ul>
+  <li>Prompt ngắn cụt → kết quả tầm tầm, chung chung</li>
+  <li>Thiếu ngữ cảnh: phong cách viết, đối tượng đọc, context riêng</li>
+  <li>Projects của Claude cải thiện nhưng vẫn cần thiết lập lặp lại</li>
+  <li>Quản lý file <code>.md</code> phức tạp nếu không có tool hỗ trợ</li>
+</ul>
+
+<h2 id="cowork">Claude Cowork là gì</h2>
+<ul>
+  <li>Kết nối trực tiếp với thư mục máy tính</li>
+  <li>Tự động đọc file văn bản trước mỗi phiên làm việc</li>
+  <li>Có thể tạo file thực tế (docx, ppt, Excel)</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Vấn đề:</strong> Quản lý file .md phức tạp nếu không có tool hỗ trợ — cần giải pháp giao diện để edit và tổ chức dễ dàng.
+</div>
+
+<h2 id="obsidian">Obsidian là giải pháp</h2>
+
+<blockquote>Một ứng dụng miễn phí, mở một thư mục file và biến nó thành cơ sở kiến thức gọn gàng.</blockquote>
+
+<ul>
+  <li>Miễn phí cho một thiết bị</li>
+  <li>Giao diện sạch sẽ, dễ sử dụng</li>
+  <li>Tìm kiếm xuyên suốt tất cả file</li>
+  <li>Tự động đồng bộ với Cowork (cùng thư mục)</li>
+</ul>
+
+<p><strong>Tại sao Obsidian?</strong> Đáp ứng 3 tiêu chí: miễn phí, lưu trên máy tính, giao diện dễ dùng.</p>
+
+<h2 id="workflow">Quy trình hằng ngày</h2>
+
+<div class="flow">
+  <span class="flow-step">Obsidian: duyệt/tìm/chỉnh sửa</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Cowork: xây dựng thành phẩm</span>
+</div>
+
+<table>
+  <thead><tr><th>Công cụ</th><th>Vai trò</th></tr></thead>
+  <tbody>
+    <tr><td>Obsidian</td><td>Cập nhật bộ não — duyệt, tìm, chỉnh sửa file context</td></tr>
+    <tr><td>Cowork</td><td>Xây dựng thành phẩm — đọc context từ thư mục, tạo output</td></tr>
+  </tbody>
+</table>
+
+<h2 id="structure">Cấu trúc thư mục đề xuất</h2>
+
+<table>
+  <thead><tr><th>Thư mục</th><th>Chứa gì</th></tr></thead>
+  <tbody>
+    <tr><td><code>about-me/</code></td><td>Thông tin cá nhân, phong cách viết, quy tắc</td></tr>
+    <tr><td><code>claude-output/</code></td><td>Kết quả Claude tạo ra</td></tr>
+    <tr><td><code>templates/</code></td><td>Mẫu ưa thích cho từng loại tài liệu</td></tr>
+  </tbody>
+</table>
+
+<div class="callout callout-green">
+<strong>Mẹo:</strong> Trỏ cả Obsidian và Cowork vào cùng một thư mục. Chỉnh sửa trong Obsidian → Cowork tự đọc file mới nhất ngay lập tức.
+</div>
+
+<h2 id="skills">Claude Skills (nâng cao)</h2>
+
+<p>Các quy trình đã lưu sẵn, gọi bằng lệnh <code>/skill-name</code>:</p>
+
+<ul>
+  <li><code>/newsletter</code> — viết newsletter theo format chuẩn</li>
+  <li><code>/client-brief</code> — tạo brief cho khách hàng</li>
+  <li><code>/sales-email</code> — viết email bán hàng</li>
+</ul>
+
+<blockquote>Bước đầu tiên: dành 2 lần 20 phút/tuần để thiết lập cơ bản. Obsidian + Cowork + Skills = không bao giờ cần prompt từ đầu nữa.</blockquote>
+
+<div class="prev-next">
+  <a href="11-tiet-kiem-token.html">&larr; Bài 11: Tiết Kiệm Token</a>
+  <a href="13-xay-skill-day-tung-buoc.html">Bài 13: Xây Skill Dạy Từng Bước &rarr;</a>
+</div>
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html" class="current">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html">18. Dùng Claude Công Ty</a>
+</aside>
+
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

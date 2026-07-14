@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handbook — Mẫu B: Magazine Style</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; min-height: 100vh; }
+
+    /* HEADER */
+    .header { padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.03em; background: linear-gradient(135deg, #667eea, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header p { color: #94a3b8; font-size: .9rem; margin-top: .4rem; }
+
+    /* SEARCH */
+    .search-wrap { max-width: 480px; margin: -1.25rem auto 0; padding: 0 2rem; position: relative; z-index: 10; }
+    .search-box { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: .6rem 1rem; display: flex; align-items: center; gap: .5rem; }
+    .search-box svg { width: 18px; height: 18px; color: #64748b; flex-shrink: 0; }
+    .search-box input { flex: 1; background: none; border: none; color: #e2e8f0; font-size: .88rem; outline: none; }
+    .search-box input::placeholder { color: #64748b; }
+
+    /* CONTAINER */
+    .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+
+    /* FEATURED */
+    .featured { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.25rem; margin-bottom: 3rem; }
+    .featured-main { background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 240px; text-decoration: none; color: inherit; transition: all .3s; }
+    .featured-main:hover { border-color: #667eea; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(102,126,234,.15); }
+    .featured-main .tag { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #667eea; margin-bottom: .5rem; }
+    .featured-main h2 { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; margin-bottom: .4rem; }
+    .featured-main p { font-size: .85rem; color: #94a3b8; }
+    .featured-side { display: flex; flex-direction: column; gap: 1.25rem; }
+    .featured-card { flex: 1; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem; text-decoration: none; color: inherit; transition: all .3s; display: flex; flex-direction: column; justify-content: flex-end; }
+    .featured-card:hover { border-color: #a78bfa; transform: translateY(-2px); }
+    .featured-card .tag { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #a78bfa; margin-bottom: .35rem; }
+    .featured-card h3 { font-size: .95rem; font-weight: 600; color: #f1f5f9; margin-bottom: .2rem; }
+    .featured-card p { font-size: .78rem; color: #94a3b8; }
+
+    /* SECTION */
+    .section-title { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #64748b; margin-bottom: 1rem; padding-left: .25rem; }
+
+    /* GRID */
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem; text-decoration: none; color: inherit; transition: all .25s; }
+    .card:hover { border-color: #667eea; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+    .card-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: .75rem; }
+    .card h3 { font-size: .88rem; font-weight: 600; color: #f1f5f9; margin-bottom: .3rem; }
+    .card p { font-size: .78rem; color: #94a3b8; line-height: 1.5; }
+
+    /* BOTTOM SECTIONS */
+    .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .bottom-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: all .25s; }
+    .bottom-card:hover { border-color: #10b981; }
+    .bottom-card .tag { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .5rem; }
+    .bottom-card h3 { font-size: .95rem; font-weight: 600; color: #f1f5f9; margin-bottom: .25rem; }
+    .bottom-card p { font-size: .8rem; color: #94a3b8; }
+
+    @media (max-width: 768px) {
+      .featured { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .bottom-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Handbook</h1>
+    <p>Personal knowledge base</p>
+  </div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics...">
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- FEATURED -->
+    <div class="featured">
+      <a href="#" class="featured-main">
+        <span class="tag">AI Engineering</span>
+        <h2>Claude Code Handbook</h2>
+        <p>Tài liệu học tập hoàn chỉnh về Claude Code — từ cơ bản đến nâng cao, workflow thực chiến</p>
+      </a>
+      <div class="featured-side">
+        <a href="#" class="featured-card">
+          <span class="tag">Methodology</span>
+          <h3>Superpowers</h3>
+          <p>TDD, planning, execution có kỷ luật cho AI agents</p>
+        </a>
+        <a href="#" class="featured-card">
+          <span class="tag">Framework</span>
+          <h3>GSD Framework</h3>
+          <p>Meta-prompting & context-engineering system</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- AI ENGINEERING GRID -->
+    <div class="section-title">AI Engineering</div>
+    <div class="grid">
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#06d6a0"></div>
+        <h3>GStack Sprint Playbook</h3>
+        <p>Phân tích & thực hành tốt nhất từ triết lý Sprint của Garry Tan</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#f59e0b"></div>
+        <h3>Skills Stack</h3>
+        <p>Mô hình 3 lớp decision/context/execution</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#e94560"></div>
+        <h3>GStack Sprint Practice</h3>
+        <p>Hướng dẫn thực hành 7 bước Sprint với prompt sẵn sàng</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#8b5cf6"></div>
+        <h3>Multica</h3>
+        <p>Nền tảng open-source biến AI agents thành đồng đội</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#0ea5e9"></div>
+        <h3>ECC</h3>
+        <p>63 agents, 249 skills, 12+ ngôn ngữ</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#ec4899"></div>
+        <h3>The Agency</h3>
+        <p>144+ AI agent personalities — 12 divisions</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#6366f1"></div>
+        <h3>Skills for Real Engineers</h3>
+        <p>Composable skills — TDD, debugging, architecture</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#2563eb"></div>
+        <h3>Spec Kit</h3>
+        <p>Spec-Driven Development by GitHub</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-dot" style="background:#059669"></div>
+        <h3>Claude Code Best Practice</h3>
+        <p>83 best practices — context, session, architecture</p>
+      </a>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="bottom-grid">
+      <a href="#" class="bottom-card">
+        <div class="tag" style="color:#10b981">English</div>
+        <h3>English Learning Roadmap</h3>
+        <p>Lộ trình tự học tiếng Anh — 12 bài ngữ pháp + ôn tập + quick reference</p>
+      </a>
+      <a href="#" class="bottom-card">
+        <div class="tag" style="color:#7c3aed">Productivity</div>
+        <h3>Obsidian</h3>
+        <p>Ứng dụng ghi chú và quản lý kiến thức cá nhân, local-first</p>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

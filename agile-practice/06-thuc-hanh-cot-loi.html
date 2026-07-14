@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thực Hành Agile Cốt Lõi - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Agile Practice Guide
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Practices</div>
+    <div class="nav-items">
+      <a href="#charter">Project & Team Charter</a>
+      <a href="#retro">Retrospectives</a>
+      <a href="#backlog">Backlog</a>
+      <a href="#standup">Daily Standups</a>
+      <a href="#demo">Demos/Reviews</a>
+      <a href="#planning">Sprint Planning</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Agile Practice Guide</div>
+  <div class="level-label">Nhập môn</div>
+  <a href="01-gioi-thieu-agile.html">01. Giới Thiệu Agile</a>
+  <a href="02-tu-duy-agile.html">02. Tư Duy Agile & Lean</a>
+  <a href="03-vong-doi-du-an.html">03. Vòng Đời Dự Án</a>
+  <div class="level-label">Trung cấp</div>
+  <a href="04-moi-truong-agile.html">04. Môi Trường Agile</a>
+  <a href="05-doi-nhom-agile.html">05. Đội Nhóm Agile</a>
+  <a href="06-thuc-hanh-cot-loi.html" class="current">06. Thực Hành Cốt Lõi</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-phan-phoi-gia-tri.html">07. Phân Phối Giá Trị</a>
+  <a href="08-do-luong-agile.html">08. Đo Lường Agile</a>
+  <a href="09-xu-ly-van-de.html">09. Xử Lý Vấn Đề</a>
+  <div class="level-label">Chuyên sâu</div>
+  <a href="10-to-chuc-agile.html">10. Chuyển Đổi Tổ Chức</a>
+  <a href="11-mo-rong-quy-mo.html">11. Mở Rộng Quy Mô</a>
+  <a href="12-cac-framework-agile.html">12. Frameworks Agile</a>
+</aside>
+<main class="main">
+<h1 id="overview">Thực Hành Agile Cốt Lõi</h1>
+<p class="subtitle">Retrospectives, Backlog, Daily Standups, Demo và Sprint Planning</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://www.pmi.org/pmbok-guide-standards/practice-guides/agile" target="_blank">Agile Practice Guide</a> — Chương 5: Delivering in an Agile Environment</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Phần cơ bản nhất tạo nên một dự án Agile là giao sản phẩm hoạt động thường xuyên. Đội không demo hoặc release không thể học đủ nhanh và chưa thực sự áp dụng Agile.
+</div>
+
+<h2 id="charter">Project Charter & Team Charter</h2>
+
+<p>Mỗi dự án cần một project charter để đội biết dự án quan trọng vì sao, đội đang hướng tới đâu, và mục tiêu là gì.</p>
+
+<h3>Project Charter</h3>
+<ul>
+<li>Tại sao dự án này quan trọng</li>
+<li>Hướng đi và mục tiêu dự án</li>
+<li>Stakeholders và constraints</li>
+</ul>
+
+<h3>Team Charter</h3>
+<p>Ngoài project charter, đội Agile cần team norms và hiểu cách làm việc cùng nhau:</p>
+<ul>
+<li><strong>Working agreements</strong> — quy tắc làm việc đội đồng thuận</li>
+<li><strong>Definition of Done</strong> — tiêu chuẩn hoàn thành</li>
+<li><strong>Communication norms</strong> — cách và khi nào giao tiếp</li>
+<li><strong>Conflict resolution</strong> — cách xử lý bất đồng</li>
+</ul>
+
+<h2 id="retro">Retrospectives</h2>
+
+<p>Retrospective là thực hành quan trọng nhất — nền tảng cho continuous improvement. Đội suy ngẫm định kỳ về cách trở nên hiệu quả hơn.</p>
+
+<h3>Cấu trúc cơ bản</h3>
+<div class="flow">
+<span class="flow-step">What went well?</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">What didn't?</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">What to improve?</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Action items</span>
+</div>
+
+<h3>Best Practices</h3>
+<ul>
+<li>Tổ chức cuối mỗi iteration hoặc sau milestone quan trọng</li>
+<li>Toàn đội tham gia — tạo không gian an toàn cho mọi ý kiến</li>
+<li>Tập trung vào quy trình, không đổ lỗi cá nhân</li>
+<li>Chọn 1-2 improvements cụ thể để thực hiện ngay iteration sau</li>
+<li>Track improvements — verify chúng thực sự cải thiện</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Nguyên tắc #12</strong>
+"Định kỳ, đội tự suy ngẫm về cách trở nên hiệu quả hơn, rồi điều chỉnh hành vi phù hợp." — Retrospective là hiện thực hóa trực tiếp nguyên tắc này.
+</div>
+
+<h2 id="backlog">Backlog Preparation & Refinement</h2>
+
+<h3>Product Backlog</h3>
+<p>Danh sách được ưu tiên (ordered list) của mọi thứ cần thiết trong sản phẩm:</p>
+<ul>
+<li>Features, bug fixes, technical debt, knowledge acquisition</li>
+<li>Product Owner chịu trách nhiệm ordering</li>
+<li>Items phía trên nhỏ hơn, chi tiết hơn, sẵn sàng để làm</li>
+<li>Items phía dưới lớn hơn, ít chi tiết — sẽ được refine sau</li>
+</ul>
+
+<h3>Backlog Refinement</h3>
+<p>Hoạt động ongoing (không phải event 1 lần) để đảm bảo backlog luôn sẵn sàng:</p>
+<ul>
+<li><strong>Splitting</strong> — chia stories lớn thành pieces nhỏ có thể hoàn thành trong 1 iteration</li>
+<li><strong>Elaborating</strong> — thêm chi tiết, acceptance criteria</li>
+<li><strong>Estimating</strong> — đội estimate effort (story points, T-shirt sizes)</li>
+<li><strong>Prioritizing</strong> — Product Owner sắp xếp theo giá trị</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Lưu ý</strong>
+Refinement nên chiếm khoảng 10% capacity của đội. Nếu quá ít → stories chưa sẵn sàng khi planning. Nếu quá nhiều → lãng phí vì priorities có thể thay đổi.
+</div>
+
+<h2 id="standup">Daily Standups</h2>
+
+<p>Cuộc họp ngắn hàng ngày (thường ≤15 phút) để đội đồng bộ và phát hiện impediments sớm.</p>
+
+<h3>Format cổ điển (3 câu hỏi)</h3>
+<ol>
+<li>Hôm qua tôi đã hoàn thành gì?</li>
+<li>Hôm nay tôi sẽ làm gì?</li>
+<li>Có gì cản trở tôi không?</li>
+</ol>
+
+<h3>Format hiện đại (focus on flow)</h3>
+<ol>
+<li>Cần gì để items gần done nhất được hoàn thành?</li>
+<li>Có items nào bị stuck không?</li>
+<li>Có items mới nào đội cần biết?</li>
+</ol>
+
+<h3>Anti-patterns cần tránh</h3>
+<ul>
+<li>Biến thành status report cho manager</li>
+<li>Giải quyết vấn đề phức tạp trong standup (nên "take offline")</li>
+<li>Kéo dài quá 15 phút</li>
+<li>Không đứng (sitting = comfortable = kéo dài)</li>
+<li>Chỉ 1 người nói, mọi người khác passive</li>
+</ul>
+
+<h2 id="demo">Demonstrations/Reviews</h2>
+
+<p>Demo (Sprint Review) là cơ hội để nhận feedback về sản phẩm thực tế — không phải slides hay tài liệu.</p>
+
+<h3>Mục đích</h3>
+<ul>
+<li><strong>Feedback</strong> — stakeholders xem và phản hồi sản phẩm thực</li>
+<li><strong>Transparency</strong> — ai cũng thấy tiến độ thực sự</li>
+<li><strong>Alignment</strong> — đảm bảo đội đang build đúng thứ</li>
+<li><strong>Celebrate</strong> — công nhận thành quả của đội</li>
+</ul>
+
+<h3>Best Practices</h3>
+<ul>
+<li>Demo working product, không phải incomplete work</li>
+<li>Mời stakeholders, PMO, và bất kỳ ai quan tâm</li>
+<li>Thu thập feedback cụ thể — ghi lại và đưa vào backlog</li>
+<li>Lên lịch phù hợp với delivery cadence của đội</li>
+</ul>
+
+<blockquote>
+Khuyến khích PMO và các bên quan tâm xem demos để người quyết định portfolio có thể thấy tiến độ thực sự.
+</blockquote>
+
+<h2 id="planning">Planning for Iteration-Based Agile</h2>
+
+<h3>Sprint Planning</h3>
+<p>Đội lập kế hoạch cho iteration tiếp theo dựa trên:</p>
+<ul>
+<li><strong>Capacity</strong> — khả năng của đội (velocity, availability)</li>
+<li><strong>Priority</strong> — items quan trọng nhất từ backlog</li>
+<li><strong>Dependencies</strong> — phụ thuộc cần xử lý</li>
+</ul>
+
+<h3>Capacity Planning</h3>
+<ul>
+<li>Mỗi đội có capacity khác nhau — không so sánh giữa các đội</li>
+<li>Khi có người nghỉ (holidays, vacations) → giảm capacity tương ứng</li>
+<li>Đội không thể dự đoán 100% — chấp nhận uncertainty</li>
+<li>Khi stories nhỏ hơn và đội thấy progress → đội học được khả năng thực sự</li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>Agile Planning</strong>
+Đội Agile không lập kế hoạch chỉ một lần trong một khối lớn. Thay vào đó: plan a little → deliver → learn → replan. Đó là sự khác biệt cốt lõi so với predictive planning.
+</div>
+
+<h3>Iteration Flow</h3>
+<div class="flow">
+<span class="flow-step">Planning</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Daily Work</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Demo</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Retro</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Repeat</span>
+</div>
+
+<div class="prev-next">
+  <a href="05-doi-nhom-agile.html">← Bài 05: Đội Nhóm Agile</a>
+  <a href="07-phan-phoi-gia-tri.html">Bài 07: Phân Phối Giá Trị Liên Tục →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

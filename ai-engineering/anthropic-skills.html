@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anthropic Skills - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang ch&#7911;
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">T&#7893;ng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Skills l&#224; g&#236;</a>
+      <a href="#how-it-works">C&#225;ch ho&#7841;t &#273;&#7897;ng</a>
+      <a href="#progressive-disclosure">Progressive Disclosure</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Specification</div>
+    <div class="nav-items">
+      <a href="#structure">C&#7845;u tr&#250;c th&#432; m&#7909;c</a>
+      <a href="#frontmatter">Frontmatter Fields</a>
+      <a href="#skill-md">Vi&#7871;t SKILL.md</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Skill Creator</div>
+    <div class="nav-items">
+      <a href="#creator-workflow">Workflow 5 b&#432;&#7899;c</a>
+      <a href="#creator-agents">Agents h&#7895; tr&#7907;</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Skills Chi Ti&#7871;t</div>
+    <div class="nav-items">
+      <a href="#webapp-testing">Webapp Testing</a>
+      <a href="#frontend-design">Frontend Design</a>
+      <a href="#mcp-builder">MCP Builder</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Danh S&#225;ch &amp; C&#224;i &#272;&#7863;t</div>
+    <div class="nav-items">
+      <a href="#built-in">17 Skills c&#243; s&#7861;n</a>
+      <a href="#categories">Ph&#226;n nh&#243;m</a>
+      <a href="#install">C&#224;i &#273;&#7863;t</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Anthropic Skills</h1>
+<p class="subtitle">Agent Skills &#8212; h&#7879; th&#7889;ng folder-based instructions m&#7903; r&#7897;ng n&#259;ng l&#7921;c Claude cho c&#225;c t&#225;c v&#7909; chuy&#234;n bi&#7879;t, l&#7863;p l&#7841;i v&#224; nh&#7845;t qu&#225;n</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Ngu&#7891;n: <a href="https://github.com/anthropics/skills" target="_blank">github.com/anthropics/skills</a> | <a href="https://agentskills.io/specification" target="_blank">agentskills.io/specification</a> &#8212; Apache 2.0 License</span>
+</div>
+
+<p>Agent Skills l&#224; m&#7897;t feature c&#7911;a Claude Code v&#224; Claude.ai cho ph&#233;p t&#7843;i c&#225;c &#8220;skills&#8221; &#8212; c&#225;c folder ch&#7913;a instructions, scripts v&#224; resources &#8212; &#273;&#7875; Claude th&#7921;c hi&#7879;n c&#225;c t&#225;c v&#7909; chuy&#234;n bi&#7879;t m&#7897;t c&#225;ch l&#7863;p l&#7841;i, nh&#7845;t qu&#225;n. Repo <code>anthropics/skills</code> l&#224; b&#7897; s&#432;u t&#7853;p skills ch&#237;nh th&#7913;c c&#7911;a Anthropic, ph&#225;t h&#224;nh d&#432;&#7899;i Apache 2.0 license (document skills l&#224; source-available).</p>
+
+<div class="callout callout-blue">
+<strong>T&#432; duy c&#7889;t l&#245;i:</strong> Skill l&#224; c&#225;ch &#8220;d&#7841;y&#8221; Claude m&#7897;t quy tr&#236;nh c&#7909; th&#7875;. Thay v&#236; vi&#7871;t prompt d&#224;i m&#7895;i l&#7847;n, b&#7841;n &#273;&#243;ng g&#243;i instructions th&#224;nh m&#7897;t folder t&#7921; ch&#7913;a &#8212; Claude &#273;&#7885;c v&#224; th&#7921;c hi&#7879;n theo workflow &#273;&#227; &#273;&#7883;nh s&#7861;n, cho k&#7871;t qu&#7843; nh&#7845;t qu&#225;n qua nhi&#7873;u session. M&#7895;i skill l&#224; m&#7897;t &#8220;chuy&#234;n gia&#8221; trong l&#297;nh v&#7921;c h&#7865;p c&#7911;a n&#243;.
+</div>
+
+<h2 id="how-it-works">C&#225;ch ho&#7841;t &#273;&#7897;ng</h2>
+
+<p>Khi m&#7897;t skill &#273;&#432;&#7907;c k&#237;ch ho&#7841;t, Claude &#273;&#7885;c file <code>SKILL.md</code> v&#224; tu&#226;n theo c&#225;c instructions trong &#273;&#243; &#273;&#7875; ho&#224;n th&#224;nh t&#225;c v&#7909;. H&#7879; th&#7889;ng ho&#7841;t &#273;&#7897;ng theo c&#417; ch&#7871; 3 l&#7899;p:</p>
+
+<ul>
+<li><strong>Instructions</strong> &#8212; h&#432;&#7899;ng d&#7851;n Claude c&#225;ch th&#7921;c hi&#7879;n t&#225;c v&#7909; (SKILL.md body)</li>
+<li><strong>Scripts</strong> &#8212; c&#225;c helper scripts (Python, Shell, JS) h&#7895; tr&#7907; workflow t&#7921; &#273;&#7897;ng</li>
+<li><strong>Resources</strong> &#8212; reference materials, examples, templates, assets</li>
+</ul>
+
+<div class="flow">
+  <span class="flow-step">User invoke skill</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Claude &#273;&#7885;c SKILL.md</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">T&#7843;i scripts/resources n&#7871;u c&#7847;n</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Th&#7921;c thi theo instructions</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Output nh&#7845;t qu&#225;n</span>
+</div>
+
+<p>Claude quy&#7871;t &#273;&#7883;nh khi n&#224;o invoke m&#7897;t skill d&#7921;a tr&#234;n field <code>description</code> trong frontmatter. Khi task c&#7911;a user kh&#7899;p v&#7899;i m&#244; t&#7843; c&#7911;a skill, Claude t&#7921; &#273;&#7897;ng k&#237;ch ho&#7841;t n&#243; &#8212; ho&#7863;c user c&#243; th&#7875; g&#7885;i tr&#7921;c ti&#7871;p b&#7857;ng slash command.</p>
+
+<h2 id="progressive-disclosure">Progressive Disclosure (3 c&#7845;p t&#7843;i)</h2>
+
+<p>Skills &#273;&#432;&#7907;c thi&#7871;t k&#7871; theo nguy&#234;n t&#7855;c progressive disclosure &#273;&#7875; t&#7889;i &#432;u token usage. Kh&#244;ng ph&#7843;i to&#224;n b&#7897; n&#7897;i dung skill &#273;&#432;&#7907;c t&#7843;i c&#249;ng l&#250;c:</p>
+
+<table>
+<tr><th>C&#7845;p</th><th>Token</th><th>N&#7897;i dung</th><th>Khi n&#224;o t&#7843;i</th></tr>
+<tr><td><strong>Metadata</strong></td><td>~100 tokens</td><td>name + description</td><td>L&#250;c kh&#7903;i &#273;&#7897;ng &#8212; t&#7843;i cho T&#7844;T C&#7842; skills &#273;&#227; c&#224;i</td></tr>
+<tr><td><strong>Instructions</strong></td><td>&lt; 5000 tokens (khuy&#7871;n ngh&#7883;)</td><td>Full SKILL.md body</td><td>Khi skill &#273;&#432;&#7907;c activate/invoke</td></tr>
+<tr><td><strong>Resources</strong></td><td>On-demand</td><td>Files trong scripts/, references/, assets/</td><td>Ch&#7881; t&#7843;i khi Claude c&#7847;n trong qu&#225; tr&#236;nh th&#7921;c thi</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>T&#7841;i sao progressive disclosure quan tr&#7885;ng:</strong> V&#7899;i ~100 tokens/skill cho metadata, b&#7841;n c&#243; th&#7875; c&#224;i h&#224;ng ch&#7909;c skills m&#224; kh&#244;ng &#7843;nh h&#432;&#7903;ng &#273;&#7871;n performance. Ch&#7881; khi skill &#273;&#432;&#7907;c k&#237;ch ho&#7841;t, n&#7897;i dung chi ti&#7871;t m&#7899;i v&#224;o context window. &#272;i&#7873;u n&#224;y cho ph&#233;p &#8220;skill library&#8221; l&#7899;n m&#224; v&#7851;n gi&#7919; context lean.
+</div>
+
+<h2 id="structure">C&#7845;u tr&#250;c th&#432; m&#7909;c Skill</h2>
+
+<h3>T&#7889;i thi&#7875;u (ch&#7881; c&#7847;n 1 file)</h3>
+
+<pre><code>my-skill/
+&#9492;&#9472;&#9472; SKILL.md          # File b&#7855;t bu&#7897;c &#8212; instructions ch&#237;nh</code></pre>
+
+<h3>&#272;&#7847;y &#273;&#7911; (v&#7899;i scripts v&#224; resources)</h3>
+
+<pre><code>skill-name/
+&#9500;&#9472;&#9472; SKILL.md          # B&#7855;t bu&#7897;c: metadata + instructions
+&#9500;&#9472;&#9472; scripts/          # T&#249;y ch&#7885;n: executable code (Python, Shell, JS)
+&#9500;&#9472;&#9472; references/       # T&#249;y ch&#7885;n: t&#224;i li&#7879;u tham kh&#7843;o
+&#9500;&#9472;&#9472; assets/           # T&#249;y ch&#7885;n: templates, images, resources
+&#9492;&#9472;&#9472; LICENSE.txt</code></pre>
+
+<div class="callout callout-amber">
+<strong>Quy t&#7855;c quan tr&#7885;ng:</strong> T&#234;n th&#432; m&#7909;c PH&#7842;I KH&#7898;P v&#7899;i gi&#225; tr&#7883; <code>name</code> trong frontmatter c&#7911;a SKILL.md. V&#237; d&#7909;: th&#432; m&#7909;c <code>webapp-testing/</code> th&#236; frontmatter ph&#7843;i c&#243; <code>name: webapp-testing</code>.
+</div>
+<h2 id="frontmatter">Frontmatter Fields</h2>
+
+<p>File SKILL.md b&#7855;t &#273;&#7847;u b&#7857;ng m&#7897;t YAML frontmatter block &#273;&#432;&#7907;c bao b&#7903;i <code>---</code>. &#272;&#226;y l&#224; c&#225;c fields &#273;&#432;&#7907;c h&#7895; tr&#7907;:</p>
+
+<table>
+<tr><th>Field</th><th>B&#7855;t bu&#7897;c</th><th>Constraints</th><th>M&#7909;c &#273;&#237;ch</th></tr>
+<tr><td><code>name</code></td><td>C&#243;</td><td>Max 64 k&#253; t&#7921;. Ch&#7881; lowercase a-z, 0-9, hyphen. Kh&#244;ng b&#7855;t &#273;&#7847;u/k&#7871;t th&#250;c b&#7857;ng hyphen. Kh&#244;ng c&#243; <code>--</code>. Ph&#7843;i kh&#7899;p t&#234;n th&#432; m&#7909;c.</td><td>Unique identifier cho skill</td></tr>
+<tr><td><code>description</code></td><td>C&#243;</td><td>Max 1024 k&#253; t&#7921;. M&#244; t&#7843; skill l&#224;m g&#236; v&#224; khi n&#224;o d&#249;ng.</td><td>Claude d&#249;ng &#273;&#7875; quy&#7871;t &#273;&#7883;nh khi n&#224;o invoke skill</td></tr>
+<tr><td><code>license</code></td><td>Kh&#244;ng</td><td>T&#234;n license ho&#7863;c t&#234;n file license &#273;i k&#232;m.</td><td>Th&#244;ng tin b&#7843;n quy&#7873;n</td></tr>
+<tr><td><code>compatibility</code></td><td>Kh&#244;ng</td><td>Max 500 k&#253; t&#7921;.</td><td>Y&#234;u c&#7847;u m&#244;i tr&#432;&#7901;ng &#273;&#7863;c bi&#7879;t (VD: &#8220;requires Playwright&#8221;)</td></tr>
+<tr><td><code>metadata</code></td><td>Kh&#244;ng</td><td>Arbitrary key-value map (string &#8594; string).</td><td>Th&#244;ng tin b&#7893; sung t&#249;y &#253;</td></tr>
+<tr><td><code>allowed-tools</code></td><td>Kh&#244;ng</td><td>Space-separated string c&#225;c tools &#273;&#432;&#7907;c pre-approve.</td><td>Experimental: t&#7921; &#273;&#7897;ng c&#7845;p quy&#7873;n tools</td></tr>
+</table>
+
+<h2 id="skill-md">Vi&#7871;t SKILL.md hi&#7879;u qu&#7843;</h2>
+
+<p>M&#7897;t SKILL.md ho&#224;n ch&#7881;nh bao g&#7891;m frontmatter v&#224; body instructions:</p>
+
+<pre><code>---
+name: my-testing-skill
+description: |
+  Run comprehensive test suites for Python projects using pytest.
+  Use when the user asks to test, validate, or check code quality.
+license: MIT
+compatibility: Requires pytest and coverage installed
+---
+
+# Python Testing Skill
+
+## Overview
+This skill runs pytest-based test suites with coverage reporting.
+
+## Workflow
+1. Detect test framework (pytest.ini, setup.cfg, pyproject.toml)
+2. Run tests with coverage: `pytest --cov=src --cov-report=term-missing`
+3. Report results with actionable feedback
+
+## When tests fail
+- Show the failing test name and assertion
+- Show the relevant source code
+- Suggest a fix based on the error pattern
+
+## Coverage targets
+- Minimum: 80% line coverage
+- Report uncovered branches explicitly</code></pre>
+
+<div class="callout callout-green">
+<strong>Progressive disclosure trong SKILL.md:</strong> B&#7855;t &#273;&#7847;u v&#7899;i overview ng&#7855;n g&#7885;n, sau &#273;&#243; &#273;i v&#224;o chi ti&#7871;t. Claude &#273;&#7885;c t&#7915; tr&#234;n xu&#7889;ng &#8212; th&#244;ng tin quan tr&#7885;ng nh&#7845;t &#273;&#7863;t &#7903; &#273;&#7847;u file. Gi&#7919; d&#432;&#7899;i 5000 tokens (khuy&#7871;n ngh&#7883;) &#273;&#7875; kh&#244;ng chi&#7871;m qu&#225; nhi&#7873;u context window.
+</div>
+
+<h3>C&#7845;u tr&#250;c n&#7897;i dung SKILL.md khuy&#7871;n ngh&#7883;</h3>
+
+<ol>
+<li><strong>Overview</strong> &#8212; 1-2 c&#226;u m&#244; t&#7843; skill l&#224;m g&#236;</li>
+<li><strong>Workflow</strong> &#8212; c&#225;c b&#432;&#7899;c th&#7921;c hi&#7879;n theo th&#7913; t&#7921;</li>
+<li><strong>Decision points</strong> &#8212; khi n&#224;o l&#224;m g&#236; (if/else logic)</li>
+<li><strong>Output format</strong> &#8212; k&#7871;t qu&#7843; mong &#273;&#7907;i tr&#244;ng nh&#432; th&#7871; n&#224;o</li>
+<li><strong>Edge cases</strong> &#8212; x&#7917; l&#253; l&#7895;i, fallback behavior</li>
+<li><strong>References</strong> &#8212; tr&#7887; &#273;&#7871;n files trong references/ ho&#7863;c scripts/ n&#7871;u c&#7847;n</li>
+</ol>
+
+<h2 id="creator-workflow">Skill Creator &#8212; Workflow 5 b&#432;&#7899;c</h2>
+
+<p><code>skill-creator</code> l&#224; meta-skill (skill &#273;&#7875; t&#7841;o skill). N&#243; h&#432;&#7899;ng d&#7851;n Claude qua 5 b&#432;&#7899;c l&#7863;p (iterative loop) &#273;&#7875; t&#7841;o v&#224; tinh ch&#7881;nh m&#7897;t skill m&#7899;i:</p>
+
+<div class="flow">
+  <span class="flow-step">1. Capture Intent</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">2. Draft</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">3. Test &amp; Evaluate</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">4. Iterate</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">5. Optimize Description</span>
+</div>
+
+<h3>B&#432;&#7899;c 1: Capture Intent</h3>
+<p>Ph&#7887;ng v&#7845;n user &#273;&#7875; hi&#7875;u r&#245; y&#234;u c&#7847;u:</p>
+<ul>
+<li>Skill s&#7869; l&#224;m g&#236; c&#7909; th&#7875;?</li>
+<li>Khi n&#224;o n&#243; n&#234;n &#273;&#432;&#7907;c trigger (use cases)?</li>
+<li>Expected outputs l&#224; g&#236; (format, n&#7897;i dung)?</li>
+<li>C&#243; test cases n&#224;o &#273;&#7875; &#273;&#225;nh gi&#225; ch&#7845;t l&#432;&#7907;ng?</li>
+<li>M&#244;i tr&#432;&#7901;ng n&#224;o (Claude Code vs Claude.ai)?</li>
+</ul>
+
+<h3>B&#432;&#7899;c 2: Draft</h3>
+<ul>
+<li>Vi&#7871;t SKILL.md v&#7899;i frontmatter (name, description) v&#224; instructions</li>
+<li>Gi&#7919; d&#432;&#7899;i ~500 lines &#273;&#7875; &#273;&#7843;m b&#7843;o hi&#7879;u qu&#7843;</li>
+<li>D&#249;ng progressive disclosure: th&#244;ng tin quan tr&#7885;ng l&#234;n &#273;&#7847;u</li>
+<li>Gi&#7843;i th&#237;ch &#8220;why&#8221; thay v&#236; ch&#7881; &#8220;what&#8221; &#8212; Claude x&#7917; l&#253; edge cases t&#7889;t h&#417;n khi hi&#7875;u &#273;&#7897;ng l&#7921;c</li>
+</ul>
+
+<h3>B&#432;&#7899;c 3: Test &amp; Evaluate</h3>
+<ul>
+<li>Spawn parallel test runs: with-skill vs baseline (kh&#244;ng c&#243; skill)</li>
+<li>D&#249;ng eval-viewer (browser-based) &#273;&#7875; xem k&#7871;t qu&#7843; tr&#7921;c quan</li>
+<li>&#272;&#225;nh gi&#225; theo c&#225;c ti&#234;u ch&#237;: &#273;&#7897; ch&#237;nh x&#225;c, nh&#7845;t qu&#225;n, &#273;&#7847;y &#273;&#7911;</li>
+<li>D&#249;ng quantitative assertions khi c&#243; th&#7875;</li>
+</ul>
+
+<h3>B&#432;&#7899;c 4: Iterate</h3>
+<ul>
+<li>Review k&#7871;t qu&#7843; v&#7899;i user, identify patterns trong feedback</li>
+<li>C&#7843;i thi&#7879;n skill: generalize t&#7915; examples, kh&#244;ng overfit</li>
+<li>T&#7853;p trung v&#224;o &#8220;why&#8221; &#8212; gi&#7843;i th&#237;ch reasoning thay v&#236; li&#7879;t k&#234; rules c&#7913;ng</li>
+<li>Rerun tests v&#224;o iteration directories m&#7899;i &#273;&#7875; so s&#225;nh</li>
+</ul>
+
+<h3>B&#432;&#7899;c 5: Optimize Description</h3>
+<ul>
+<li>Refine field <code>description</code> &#273;&#7875; Claude trigger &#273;&#250;ng l&#250;c</li>
+<li>Description n&#234;n &#8220;a little bit pushy&#8221; &#8212; ch&#7911; &#273;&#7897;ng h&#417;n &#273;&#7875; tr&#225;nh undertriggering</li>
+<li>D&#249;ng pattern &#8220;Use when...&#8221; &#273;&#7875; ch&#7881; r&#245; use cases</li>
+<li>Ki&#7875;m tra undertriggering s&#7899;m &#8212; &#273;&#226;y l&#224; l&#7895;i ph&#7893; bi&#7871;n nh&#7845;t</li>
+</ul>
+<h2 id="creator-agents">3 Agents h&#7895; tr&#7907; Evaluation</h2>
+
+<p>Skill Creator s&#7917; d&#7909;ng 3 sub-agents chuy&#234;n bi&#7879;t &#273;&#7875; &#273;&#225;nh gi&#225; ch&#7845;t l&#432;&#7907;ng skill trong qu&#225; tr&#236;nh test:</p>
+
+<table>
+<tr><th>Agent</th><th>Vai tr&#242;</th><th>Output</th></tr>
+<tr><td><code>grader.md</code></td><td>&#272;&#7885;c execution transcript, &#273;&#225;nh gi&#225; output theo expectations &#273;&#227; &#273;&#7883;nh ngh&#297;a</td><td>JSON v&#7899;i scores v&#224; nh&#7853;n x&#233;t</td></tr>
+<tr><td><code>comparator.md</code></td><td>So s&#225;nh m&#249; (blind comparison) gi&#7919;a output A vs B, ch&#7845;m &#273;i&#7875;m content + structure</td><td>Structured comparison report</td></tr>
+<tr><td><code>analyzer.md</code></td><td>Ph&#226;n t&#237;ch k&#7871;t qu&#7843; comparison, t&#236;m patterns v&#224; insights</td><td>Summary v&#7899;i recommendations</td></tr>
+</table>
+
+<p>Quy tr&#236;nh evaluation:</p>
+<div class="flow">
+  <span class="flow-step">Ch&#7841;y test cases</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Grader ch&#7845;m &#273;i&#7875;m</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Comparator so s&#225;nh</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Analyzer t&#7893;ng h&#7907;p</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Iterate</span>
+</div>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<ol>
+<li><strong>Gi&#7843;i th&#237;ch &#8220;why&#8221; thay v&#236; ch&#7881; &#8220;what&#8221;</strong> &#8212; Explain l&#253; do &#273;&#7857;ng sau instructions thay v&#236; ch&#7881; &#273;&#432;a ra rules c&#7913;ng nh&#7855;c. Claude s&#7869; handle edge cases t&#7889;t h&#417;n khi hi&#7875;u &#273;&#7897;ng l&#7921;c.</li>
+<li><strong>Gi&#7919; lean</strong> &#8212; Remove c&#225;c elements kh&#244;ng productive. M&#7895;i d&#242;ng trong SKILL.md n&#234;n c&#243; m&#7909;c &#273;&#237;ch r&#245; r&#224;ng. D&#432;&#7899;i 500 lines.</li>
+<li><strong>Description quy&#7871;t &#273;&#7883;nh invocation</strong> &#8212; Field <code>description</code> &#7843;nh h&#432;&#7903;ng tr&#7921;c ti&#7871;p &#273;&#7871;n khi n&#224;o Claude invoke skill. Vi&#7871;t c&#7909; th&#7875;, &#8220;a little bit pushy&#8221;.</li>
+<li><strong>Ki&#7875;m tra undertriggering s&#7899;m</strong> &#8212; L&#7895;i ph&#7893; bi&#7871;n nh&#7845;t l&#224; skill kh&#244;ng &#273;&#432;&#7907;c trigger khi c&#7847;n. Test v&#7899;i nhi&#7873;u c&#225;ch di&#7877;n &#273;&#7841;t kh&#225;c nhau.</li>
+<li><strong>Generalize, kh&#244;ng overfit</strong> &#8212; Vi&#7871;t &#273;&#7875; handle diverse future use cases, kh&#244;ng ch&#7881; test cases hi&#7879;n t&#7841;i.</li>
+<li><strong>Adapt theo environment</strong> &#8212; Claude.ai (kh&#244;ng c&#243; subagents, kh&#244;ng c&#243; browser) vs Claude Code (c&#243; terminal, c&#243; file system) c&#7847;n instructions kh&#225;c nhau.</li>
+<li><strong>Bundle repeated work</strong> &#8212; N&#7871;u nhi&#7873;u test cases &#273;&#7873;u c&#7847;n c&#249;ng m&#7897;t b&#432;&#7899;c, &#273;&#432;a v&#224;o skill &#273;&#7875; tr&#225;nh l&#7863;p l&#7841;i.</li>
+</ol>
+
+<div class="callout callout-red">
+<strong>Anti-pattern:</strong> Kh&#244;ng vi&#7871;t SKILL.md nh&#432; documentation cho ng&#432;&#7901;i &#273;&#7885;c. Skill l&#224; <em>instructions</em> cho Claude &#8212; vi&#7871;t nh&#432; &#273;ang ch&#7881; d&#7851;n m&#7897;t &#273;&#7891;ng nghi&#7879;p th&#244;ng minh: &#8220;Khi nh&#7853;n task X, l&#224;m A, r&#7891;i B, r&#7891;i C. N&#7871;u g&#7863;p v&#7845;n &#273;&#7873; Y, x&#7917; l&#253; b&#7857;ng Z.&#8221;
+</div>
+
+<h2 id="webapp-testing">Webapp Testing Skill</h2>
+
+<p>Skill <code>webapp-testing</code> cho ph&#233;p Claude t&#7921; &#273;&#7897;ng test c&#225;c web applications local b&#7857;ng Playwright (Python). &#272;&#226;y l&#224; m&#7897;t trong nh&#7919;ng skill ph&#7913;c t&#7841;p nh&#7845;t, minh h&#7885;a r&#245; c&#225;ch m&#7897;t skill ho&#7841;t &#273;&#7897;ng v&#7899;i scripts v&#224; decision logic.</p>
+
+<h3>Core Pattern: Reconnaissance-then-Action</h3>
+
+<div class="flow">
+  <span class="flow-step">1. Navigate</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">2. Wait</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">3. Inspect</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">4. Act</span>
+</div>
+
+<ol>
+<li><strong>Navigate</strong> &#8212; goto URL (file:// ho&#7863;c http://localhost)</li>
+<li><strong>Wait</strong> &#8212; <code>page.wait_for_load_state('networkidle')</code> (b&#7855;t bu&#7897;c v&#7899;i dynamic apps)</li>
+<li><strong>Inspect</strong> &#8212; screenshot HO&#7862;C dump DOM &#273;&#7875; hi&#7875;u trang</li>
+<li><strong>Act</strong> &#8212; click, fill, submit d&#7921;a tr&#234;n selectors &#273;&#227; x&#225;c &#273;&#7883;nh</li>
+</ol>
+
+<h3>Decision Tree</h3>
+
+<table>
+<tr><th>Lo&#7841;i app</th><th>C&#225;ch ti&#7871;p c&#7853;n</th></tr>
+<tr><td>Static HTML</td><td>D&#249;ng <code>file://</code> URL tr&#7921;c ti&#7871;p, kh&#244;ng c&#7847;n server</td></tr>
+<tr><td>Dynamic app (React, Vue...)</td><td>D&#249;ng <code>with_server.py</code> v&#7899;i <code>--server</code> v&#224; <code>--port</code> flags</td></tr>
+<tr><td>Multi-service (backend + frontend)</td><td>Nhi&#7873;u <code>--server</code> flags cho t&#7915;ng service</td></tr>
+</table>
+
+<h3>Scripts &#273;i k&#232;m</h3>
+
+<pre><code># Server lifecycle management
+python scripts/with_server.py --server "npm run dev" --port 5173 \
+  -- python your_automation.py
+
+# Multiple servers (backend + frontend)
+python scripts/with_server.py \
+  --server "python backend.py" --port 8000 \
+  --server "npm run dev" --port 5173 \
+  -- python your_automation.py</code></pre>
+
+<h3>Example scripts trong skill</h3>
+<ul>
+<li><code>element_discovery.py</code> &#8212; kh&#225;m ph&#225; buttons, links, inputs tr&#234;n trang</li>
+<li><code>static_html_automation.py</code> &#8212; t&#432;&#417;ng t&#225;c v&#7899;i file HTML local</li>
+<li><code>console_logging.py</code> &#8212; b&#7855;t v&#224; ghi l&#7841;i console logs trong browser</li>
+</ul>
+
+<h3>Key Practices</h3>
+<ul>
+<li>D&#249;ng <code>sync_playwright()</code> (synchronous API, kh&#244;ng ph&#7843;i async)</li>
+<li>Lu&#244;n &#273;&#243;ng browser sau khi xong (<code>browser.close()</code>)</li>
+<li>D&#249;ng descriptive selectors: <code>text=Button Label</code> ho&#7863;c <code>#id</code></li>
+<li>Viewport m&#7863;c &#273;&#7883;nh: 1920x1080</li>
+<li>Lu&#244;n wait for network idle tr&#432;&#7899;c khi inspect dynamic content</li>
+</ul>
+<h2 id="frontend-design">Frontend Design Skill</h2>
+
+<p>Skill <code>frontend-design</code> h&#432;&#7899;ng d&#7851;n Claude thi&#7871;t k&#7871; frontend v&#7899;i tri&#7871;t l&#253; c&#7889;t l&#245;i: <em>&#8220;Each project should feel like it was made for this subject, not like a template applied to any subject.&#8221;</em></p>
+
+<h3>2-Pass Workflow</h3>
+
+<table>
+<tr><th>Pass</th><th>M&#7909;c &#273;&#237;ch</th><th>Output</th></tr>
+<tr><td><strong>Pass 1: Brainstorm</strong></td><td>L&#234;n k&#7871; ho&#7841;ch compact: palette, typography, layout, signature element</td><td>Design plan ng&#7855;n g&#7885;n</td></tr>
+<tr><td><strong>Pass 2: Review</strong></td><td>T&#7921; h&#7887;i: &#8220;Plan n&#224;y specific v&#7899;i project n&#224;y kh&#244;ng, hay generic?&#8221;</td><td>Refined plan ho&#7863;c redo</td></tr>
+</table>
+
+<h3>Design Principles</h3>
+
+<ul>
+<li><strong>Hero element:</strong> M&#7903; &#273;&#7847;u b&#7857;ng &#8220;the most characteristic thing&#8221; c&#7911;a ch&#7911; &#273;&#7873; &#8212; kh&#244;ng ph&#7843;i generic hero section</li>
+<li><strong>Typography as personality:</strong> Font mang t&#237;nh c&#225;ch, kh&#244;ng trung l&#7853;p &#8212; font choice ph&#7843;i c&#243; l&#253; do</li>
+<li><strong>Structural choices mang &#253; ngh&#297;a:</strong> M&#7895;i decision tr&#7843; l&#7901;i &#8220;t&#7841;i sao c&#225;i n&#224;y &#7903; &#273;&#226;y?&#8221;</li>
+<li><strong>Motion sparingly:</strong> Ch&#7881; &#273;&#7875; clarify flow &#8212; qu&#225; nhi&#7873;u motion tr&#244;ng &#8220;AI-generated&#8221;</li>
+<li><strong>Restraint:</strong> Ch&#7885;n 1 ch&#7895; bold, m&#7885;i th&#7913; c&#242;n l&#7841;i quiet</li>
+<li><strong>Complexity matches vision:</strong> Kh&#244;ng th&#234;m complexity v&#236; &#8220;tr&#244;ng x&#7883;n h&#417;n&#8221;</li>
+</ul>
+
+<h3>Anti-patterns (tuy&#7879;t &#273;&#7889;i tr&#225;nh)</h3>
+
+<div class="callout callout-red">
+<strong>Kh&#244;ng &#273;&#432;&#7907;c ship:</strong>
+<ul style="margin:0.5rem 0 0 1rem;font-size:.88rem">
+<li>Default card grids kh&#244;ng c&#243; hierarchy</li>
+<li>Stock hero: centered headline + gradient blob + generic CTA</li>
+<li>Unmodified library defaults (Tailwind/shadcn m&#7863;c &#273;&#7883;nh)</li>
+<li>Flat layouts kh&#244;ng c&#243; layering, depth, ho&#7863;c motion</li>
+<li>Safe gray-on-white v&#7899;i 1 accent color duy nh&#7845;t</li>
+<li>Dashboard generic kh&#244;ng c&#243; point of view</li>
+<li>Default font stack kh&#244;ng c&#243; l&#253; do r&#245; r&#224;ng</li>
+</ul>
+</div>
+
+<h3>Y&#234;u c&#7847;u t&#7889;i thi&#7875;u (4/10)</h3>
+
+<p>M&#7895;i frontend surface ph&#7843;i th&#7875; hi&#7879;n &#237;t nh&#7845;t 4 trong 10 &#273;&#7863;c &#273;i&#7875;m sau:</p>
+
+<ol>
+<li>Hierarchy r&#245; r&#224;ng qua scale contrast</li>
+<li>Rhythm c&#243; ch&#7911; &#273;&#237;ch trong spacing</li>
+<li>Depth/layering qua overlap, shadows, surfaces, ho&#7863;c motion</li>
+<li>Typography c&#243; character v&#224; pairing strategy</li>
+<li>Color &#273;&#432;&#7907;c d&#249;ng semantically, kh&#244;ng ch&#7881; decorative</li>
+<li>Hover, focus, active states &#273;&#432;&#7907;c thi&#7871;t k&#7871; c&#7849;n th&#7853;n</li>
+<li>Grid-breaking editorial ho&#7863;c bento composition</li>
+<li>Texture, grain, ho&#7863;c atmosphere khi ph&#249; h&#7907;p</li>
+<li>Motion clarify flow thay v&#236; distract</li>
+<li>Data visualization l&#224; ph&#7847;n c&#7911;a design system</li>
+</ol>
+
+<h2 id="mcp-builder">MCP Builder Skill</h2>
+
+<p>Skill <code>mcp-builder</code> h&#432;&#7899;ng d&#7851;n Claude x&#226;y d&#7921;ng Model Context Protocol (MCP) servers. Tri&#7871;t l&#253;: <em>&#8220;The quality of an MCP server is measured by how well it enables LLMs to accomplish real-world tasks.&#8221;</em></p>
+
+<h3>4 Phases</h3>
+
+<table>
+<tr><th>Phase</th><th>M&#7909;c &#273;&#237;ch</th><th>Output</th></tr>
+<tr><td><strong>1. Research &amp; Planning</strong></td><td>Nghi&#234;n c&#7913;u MCP spec, ch&#7885;n tech stack</td><td>Architecture plan</td></tr>
+<tr><td><strong>2. Implementation</strong></td><td>Project structure, API clients, error handling, pagination</td><td>Working MCP server code</td></tr>
+<tr><td><strong>3. Review &amp; Testing</strong></td><td>Code quality, build verification, MCP Inspector</td><td>Tested, reviewed code</td></tr>
+<tr><td><strong>4. Evaluation</strong></td><td>10 c&#226;u h&#7887;i test th&#7921;c t&#7871; (&#273;&#7897;c l&#7853;p, read-only, ph&#7913;c t&#7841;p, verifiable)</td><td>Evaluation report</td></tr>
+</table>
+
+<h3>Tech Stack khuy&#7871;n ngh&#7883;</h3>
+
+<table>
+<tr><th>Ng&#244;n ng&#7919;</th><th>SDK/Framework</th><th>Transport</th><th>Naming Convention</th></tr>
+<tr><td><strong>TypeScript</strong> (khuy&#7871;n ngh&#7883;)</td><td><code>@modelcontextprotocol/sdk</code></td><td>stdio (local) ho&#7863;c StreamableHTTP (remote)</td><td>Project: <code>{service}-mcp-server</code>, Tools: <code>{service}_{action}</code> (snake_case)</td></tr>
+<tr><td><strong>Python</strong></td><td>FastMCP</td><td>stdio</td><td>T&#432;&#417;ng t&#7921;, lu&#244;n d&#249;ng async/await</td></tr>
+</table>
+
+<h3>Patterns quan tr&#7885;ng</h3>
+
+<ul>
+<li><strong>Pagination b&#7855;t bu&#7897;c:</strong> M&#7885;i tool tr&#7843; v&#7873; list ph&#7843;i c&#243; limit/offset</li>
+<li><strong>Character limits:</strong> Tr&#225;nh context overflow b&#7857;ng c&#225;ch gi&#7899;i h&#7841;n response size</li>
+<li><strong>Error messages actionable:</strong> H&#432;&#7899;ng d&#7851;n agent b&#432;&#7899;c ti&#7871;p theo khi g&#7863;p l&#7895;i</li>
+<li><strong>Tool descriptions &#273;&#7911; chi ti&#7871;t:</strong> LLM ph&#7843;i t&#7921; quy&#7871;t &#273;&#7883;nh &#273;&#432;&#7907;c khi n&#224;o d&#249;ng tool n&#224;o</li>
+<li><strong>Zod schemas v&#7899;i <code>.strict()</code>:</strong> Validate input ch&#7863;t ch&#7869; (TypeScript)</li>
+<li><strong>Pydantic v2:</strong> Validate input (Python)</li>
+<li><strong><code>registerTool()</code> pattern:</strong> &#272;&#259;ng k&#253; tools theo pattern m&#7899;i nh&#7845;t</li>
+</ul>
+
+<pre><code>// TypeScript MCP server example (simplified)
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
+
+const server = new McpServer({ name: "github-mcp-server", version: "1.0.0" });
+
+server.tool(
+  "github_search_repos",
+  "Search GitHub repositories by query with pagination",
+  {
+    query: z.string().describe("Search query"),
+    limit: z.number().default(10).describe("Max results"),
+    offset: z.number().default(0).describe("Pagination offset")
+  },
+  async ({ query, limit, offset }) => {
+    // Implementation...
+  }
+);</code></pre>
+<h2 id="built-in">17 Skills cu00f3 su1eb5n</h2>
+
+<p>Repo <code>anthropics/skills</code> cung cu1ea5p 17 skills chu00ednh thu1ee9c, chia thu00e0nh 2 nhu00f3m license:</p>
+
+<ul>
+<li><strong>Example skills</strong> (Apache 2.0) u2014 mu00e3 nguu1ed3n mu1edf, tu1ef1 do su1eed du1ee5ng vu00e0 su1eeda u0111u1ed5i</li>
+<li><strong>Document skills</strong> (source-available) u2014 xem u0111u01b0u1ee3c mu00e3 nguu1ed3n nhu01b0ng cu00f3 hu1ea1n chu1ebf su1eed du1ee5ng</li>
+</ul>

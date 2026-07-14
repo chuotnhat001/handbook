@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrices & Roadmap - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Matrices</div>
+    <div class="nav-items">
+      <a href="#doc-matrix">Documentation Matrix</a>
+      <a href="#priority-matrix">Module Priority Matrix</a>
+      <a href="#skill-matrix">Skill Matrix</a>
+      <a href="#competency-roadmap">Competency Roadmap</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture</a>
+  <a href="04-implementation.html">Phase 4: Implementation</a>
+  <a href="05-operations.html">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html" class="current">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Matrices & Roadmap</h1>
+<p class="subtitle">Documentation Matrix, Priority Matrix, Skill Matrix và Implementation Roadmap</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 14l2 2 4-4"/></svg>
+<span>Ma trận đánh giá và lộ trình — công cụ ra quyết định cho team lead và project manager</span>
+</div>
+
+<h2 id="doc-matrix">Documentation Matrix</h2>
+<p>Ma trận liên kết giữa documents, vai trò sử dụng, và phase áp dụng.</p>
+
+<table>
+<tr><th>Document</th><th>BA</th><th>Arch</th><th>Dev</th><th>QA</th><th>Admin</th><th>CIO</th><th>Phase</th><th>Priority</th></tr>
+<tr><td>DOC-101: CRM Foundation</td><td>●</td><td>●</td><td>○</td><td>○</td><td>○</td><td>●</td><td>P1</td><td>Critical</td></tr>
+<tr><td>DOC-102: Customer Lifecycle</td><td>●</td><td>●</td><td>○</td><td>○</td><td>○</td><td>●</td><td>P1</td><td>Critical</td></tr>
+<tr><td>DOC-105: Requirements Eng</td><td>●</td><td>●</td><td>○</td><td>●</td><td>○</td><td>○</td><td>P1</td><td>Critical</td></tr>
+<tr><td>DOC-106: Process Analysis</td><td>●</td><td>●</td><td>○</td><td>○</td><td>○</td><td>○</td><td>P1</td><td>Critical</td></tr>
+<tr><td>DOC-107: Data Strategy</td><td>●</td><td>●</td><td>●</td><td>○</td><td>●</td><td>○</td><td>P1</td><td>High</td></tr>
+<tr><td>DOC-108: Project Methodology</td><td>●</td><td>○</td><td>○</td><td>○</td><td>○</td><td>●</td><td>P1</td><td>Critical</td></tr>
+<tr><td>DOC-201: Sales Process</td><td>●</td><td>○</td><td>●</td><td>○</td><td>●</td><td>○</td><td>P2</td><td>Critical</td></tr>
+<tr><td>DOC-204: Marketing Auto</td><td>●</td><td>○</td><td>●</td><td>○</td><td>●</td><td>○</td><td>P2</td><td>Critical</td></tr>
+<tr><td>DOC-207: Service Process</td><td>●</td><td>○</td><td>●</td><td>●</td><td>●</td><td>○</td><td>P2</td><td>Critical</td></tr>
+<tr><td>DOC-210: Customer 360</td><td>○</td><td>●</td><td>●</td><td>○</td><td>●</td><td>●</td><td>P2</td><td>Critical</td></tr>
+<tr><td>DOC-303: DDD Design</td><td>○</td><td>●</td><td>●</td><td>○</td><td>○</td><td>○</td><td>P3</td><td>Critical</td></tr>
+<tr><td>DOC-304: API Architecture</td><td>○</td><td>●</td><td>●</td><td>●</td><td>○</td><td>○</td><td>P3</td><td>Critical</td></tr>
+<tr><td>DOC-306: Data Architecture</td><td>○</td><td>●</td><td>●</td><td>○</td><td>●</td><td>○</td><td>P3</td><td>Critical</td></tr>
+<tr><td>DOC-308: Security Arch</td><td>○</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>P3</td><td>Critical</td></tr>
+<tr><td>DOC-401: Backend Dev</td><td>○</td><td>●</td><td>●</td><td>●</td><td>○</td><td>○</td><td>P4</td><td>Critical</td></tr>
+<tr><td>DOC-408: DevOps Pipeline</td><td>○</td><td>●</td><td>●</td><td>●</td><td>●</td><td>○</td><td>P4</td><td>Critical</td></tr>
+<tr><td>DOC-503: Observability</td><td>○</td><td>●</td><td>●</td><td>○</td><td>●</td><td>○</td><td>P5</td><td>Critical</td></tr>
+<tr><td>DOC-601: AI/ML for CRM</td><td>○</td><td>●</td><td>●</td><td>○</td><td>○</td><td>●</td><td>P6</td><td>High</td></tr>
+</table>
+<p><strong>Chú thích:</strong> ● = Primary audience, ○ = Optional/Reference</p>
+
+<h2 id="priority-matrix">Module Priority Matrix</h2>
+<p>Đánh giá priority dựa trên Business Impact × Implementation Complexity.</p>
+
+<table>
+<tr><th>Module</th><th>Business Impact</th><th>Complexity</th><th>Priority Score</th><th>Sequence</th></tr>
+<tr><td>Contact & Account Management</td><td>10</td><td>Low</td><td>P0 — Must have first</td><td>Sprint 1-2</td></tr>
+<tr><td>Lead Management</td><td>9</td><td>Medium</td><td>P0 — Revenue driver</td><td>Sprint 2-3</td></tr>
+<tr><td>Opportunity & Pipeline</td><td>9</td><td>Medium</td><td>P0 — Revenue tracking</td><td>Sprint 3-4</td></tr>
+<tr><td>Activity & Task Management</td><td>8</td><td>Low</td><td>P1 — Productivity</td><td>Sprint 2-3</td></tr>
+<tr><td>Email Integration</td><td>8</td><td>Medium</td><td>P1 — Daily usage</td><td>Sprint 4-5</td></tr>
+<tr><td>Case Management</td><td>8</td><td>Medium</td><td>P1 — Customer retention</td><td>Sprint 5-6</td></tr>
+<tr><td>Reporting & Dashboard</td><td>8</td><td>High</td><td>P1 — Visibility</td><td>Sprint 5-7</td></tr>
+<tr><td>Workflow Automation</td><td>7</td><td>High</td><td>P2 — Efficiency</td><td>Sprint 6-8</td></tr>
+<tr><td>Marketing Automation</td><td>7</td><td>High</td><td>P2 — Scale marketing</td><td>Sprint 7-9</td></tr>
+<tr><td>CPQ (Configure-Price-Quote)</td><td>6</td><td>High</td><td>P2 — Complex sales</td><td>Sprint 8-10</td></tr>
+<tr><td>Knowledge Base & Portal</td><td>6</td><td>Medium</td><td>P2 — Self-service</td><td>Sprint 8-9</td></tr>
+<tr><td>AI/ML Features</td><td>7</td><td>Very High</td><td>P3 — Differentiation</td><td>Sprint 10+</td></tr>
+<tr><td>Field Service</td><td>5</td><td>High</td><td>P3 — Niche use cases</td><td>Sprint 11+</td></tr>
+<tr><td>Marketplace/Extensions</td><td>5</td><td>Very High</td><td>P3 — Platform play</td><td>Sprint 12+</td></tr>
+</table>
+
+<h2 id="skill-matrix">Skill Matrix</h2>
+<p>Ma trận kỹ năng cần thiết cho từng vai trò trong dự án CRM.</p>
+
+<table>
+<tr><th>Skill Domain</th><th>BA</th><th>Solution Arch</th><th>Backend Dev</th><th>Frontend Dev</th><th>QA</th><th>DevOps</th><th>Admin</th></tr>
+<tr><td>Business Analysis (BABOK)</td><td>Expert</td><td>Proficient</td><td>Basic</td><td>Basic</td><td>Basic</td><td>—</td><td>Basic</td></tr>
+<tr><td>Process Modeling (BPMN)</td><td>Expert</td><td>Proficient</td><td>Basic</td><td>—</td><td>Basic</td><td>—</td><td>Basic</td></tr>
+<tr><td>Domain-Driven Design</td><td>Proficient</td><td>Expert</td><td>Expert</td><td>Proficient</td><td>Basic</td><td>—</td><td>—</td></tr>
+<tr><td>API Design (REST/GraphQL)</td><td>Basic</td><td>Expert</td><td>Expert</td><td>Proficient</td><td>Proficient</td><td>Basic</td><td>—</td></tr>
+<tr><td>Database Design</td><td>Basic</td><td>Expert</td><td>Expert</td><td>Basic</td><td>Proficient</td><td>Basic</td><td>Proficient</td></tr>
+<tr><td>Cloud Infrastructure</td><td>—</td><td>Proficient</td><td>Proficient</td><td>Basic</td><td>Proficient</td><td>Expert</td><td>Proficient</td></tr>
+<tr><td>Security (OWASP, IAM)</td><td>Basic</td><td>Expert</td><td>Proficient</td><td>Proficient</td><td>Proficient</td><td>Proficient</td><td>Expert</td></tr>
+<tr><td>Testing (TDD, E2E)</td><td>Basic</td><td>Proficient</td><td>Expert</td><td>Expert</td><td>Expert</td><td>Proficient</td><td>Basic</td></tr>
+<tr><td>CI/CD & DevOps</td><td>—</td><td>Proficient</td><td>Proficient</td><td>Basic</td><td>Proficient</td><td>Expert</td><td>Basic</td></tr>
+<tr><td>Data Analytics</td><td>Proficient</td><td>Proficient</td><td>Basic</td><td>Basic</td><td>Basic</td><td>—</td><td>Proficient</td></tr>
+<tr><td>AI/ML Integration</td><td>Basic</td><td>Proficient</td><td>Expert</td><td>Basic</td><td>Basic</td><td>Basic</td><td>—</td></tr>
+<tr><td>CRM Domain Knowledge</td><td>Expert</td><td>Proficient</td><td>Proficient</td><td>Basic</td><td>Basic</td><td>—</td><td>Expert</td></tr>
+</table>
+<p><strong>Levels:</strong> Expert (teach others) → Proficient (independent work) → Basic (understand concepts) → — (not required)</p>
+
+<h2 id="competency-roadmap">Competency Roadmap</h2>
+<p>Lộ trình phát triển năng lực theo thời gian cho mỗi vai trò.</p>
+
+<h3>Solution Architect Track</h3>
+<table>
+<tr><th>Quarter</th><th>Focus</th><th>Target Competency</th><th>Validation</th></tr>
+<tr><td>Q1</td><td>P1: Foundation + P2: Domain</td><td>Business context mastery</td><td>Present CRM strategy to stakeholders</td></tr>
+<tr><td>Q2</td><td>P3: Architecture</td><td>Architecture design proficiency</td><td>Deliver C4 diagrams + ADRs review</td></tr>
+<tr><td>Q3</td><td>P4: Implementation oversight</td><td>Technical leadership</td><td>Lead architecture review sessions</td></tr>
+<tr><td>Q4</td><td>P5-P6: Operations + Innovation</td><td>Platform evolution strategy</td><td>Produce platform roadmap document</td></tr>
+</table>
+
+<h3>Backend Developer Track</h3>
+<table>
+<tr><th>Quarter</th><th>Focus</th><th>Target Competency</th><th>Validation</th></tr>
+<tr><td>Q1</td><td>P1 (1.1) + P3 (3.2-3.3)</td><td>Domain + Architecture understanding</td><td>Implement one bounded context</td></tr>
+<tr><td>Q2</td><td>P4 (4.1, 4.3)</td><td>Clean code + TDD mastery</td><td>80% test coverage, pass code review</td></tr>
+<tr><td>Q3</td><td>P4 (4.2, 4.4) + P5 (5.2)</td><td>Platform + Performance</td><td>Zero-downtime deployment, meet SLOs</td></tr>
+<tr><td>Q4</td><td>P6 (6.1-6.2)</td><td>AI integration + SaaS patterns</td><td>Ship AI-powered feature to production</td></tr>
+</table>
+
+<h3>Business Analyst Track</h3>
+<table>
+<tr><th>Quarter</th><th>Focus</th><th>Target Competency</th><th>Validation</th></tr>
+<tr><td>Q1</td><td>P1 (all)</td><td>Requirements + Process mastery</td><td>Deliver complete SRS for 1 module</td></tr>
+<tr><td>Q2</td><td>P2 (all domains)</td><td>CRM domain expertise</td><td>Map end-to-end journey for Sales/Service</td></tr>
+<tr><td>Q3</td><td>P3 (3.1) + P5 (5.4)</td><td>Architecture literacy + Metrics</td><td>Define KPI framework + adoption dashboard</td></tr>
+<tr><td>Q4</td><td>Cross-functional</td><td>Product ownership</td><td>Lead quarterly business review (QBR)</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Sử dụng Matrices</strong>
+Matrices này nên được review mỗi quarter. Priority Matrix thay đổi theo business context. Skill Matrix giúp identify training gaps. Competency Roadmap guide individual development plans (IDP).
+</div>
+
+<div class="prev-next">
+  <a href="architecture-maps.html">← Architecture Maps</a>
+  <a href="glossary-standards.html">Glossary & Standards →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

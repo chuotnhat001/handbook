@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Best Practice - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#059669;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Giới thiệu</a>
+      <a href="#architecture">Kiến trúc 3 lớp</a>
+      <a href="#structure">Cấu trúc repo</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Best Practices</div>
+    <div class="nav-items">
+      <a href="#prompting">Prompting</a>
+      <a href="#planning">Planning</a>
+      <a href="#context">Context Management</a>
+      <a href="#session">Session Management</a>
+      <a href="#advanced">Advanced Workflows</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Hệ Sinh Thái</div>
+    <div class="nav-items">
+      <a href="#workflows">Development Workflows</a>
+      <a href="#skills">Skill Collections</a>
+      <a href="#cross-model">Cross-Model Integration</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Kết</div>
+    <div class="nav-items">
+      <a href="#summary">8 Key Practices</a>
+      <a href="#features">Hot Features</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Claude Code Best Practice</h1>
+<p class="subtitle">From vibe coding to agentic engineering — tổng hợp 83+ best practices từ community</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/shanraisshan/claude-code-best-practice" target="_blank">github.com/shanraisshan/claude-code-best-practice</a> — 61.4k stars, community-curated by @shanraisshan</span>
+</div>
+
+<p>Kho tài liệu trung tâm hệ thống hóa best practices từ community cho Claude Code, giúp developer chuyển từ "vibe coding" sang <strong>agentic engineering</strong> có cấu trúc. Được hỗ trợ bởi Disrupt.com và ClaudeKit.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Claude Code không chỉ là autocomplete thông minh hơn — nó là lập trình viên AI được trao quyền truy cập hệ thống. Hiệu quả phụ thuộc vào cách bạn quản lý context, cấu trúc workflow, và delegate work cho subagents.
+</div>
+
+<h2 id="architecture">Kiến trúc 3 lớp cốt lõi</h2>
+
+<table>
+<tr><th>Thành phần</th><th>Định nghĩa</th><th>Vị trí</th></tr>
+<tr><td><strong>Subagents</strong></td><td>Autonomous agents thực hiện task chuyên biệt</td><td><code>.claude/agents/&lt;name&gt;.md</code></td></tr>
+<tr><td><strong>Commands</strong></td><td>Slash commands điều phối workflow</td><td><code>.claude/commands/</code></td></tr>
+<tr><td><strong>Skills</strong></td><td>Khả năng tái sử dụng mà agents/commands gọi vào</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td></tr>
+</table>
+
+<p>Thành phần nền tảng bổ sung:</p>
+<ul>
+<li><strong>Memory:</strong> <code>CLAUDE.md</code> + <code>.claude/rules/</code></li>
+<li><strong>MCP Servers:</strong> tích hợp tool bên ngoài</li>
+<li><strong>Settings:</strong> permissions, model config, output styles</li>
+<li><strong>Hooks:</strong> automation tự động (PreToolUse, PostToolUse, Stop)</li>
+<li><strong>Checkpointing:</strong> theo dõi file edit, cho phép rewind</li>
+</ul>
+
+<h2 id="structure">Cấu trúc repo</h2>
+
+<pre><code>.claude/                — Agents, commands, skills, hooks, settings
+best-practice/          — Tài liệu về các khái niệm cốt lõi
+implementation/         — Ví dụ thực tế
+orchestration-workflow/ — Pattern: Command → Agent → Skill
+development-workflows/  — Các workflow methodology có tên
+tips/                   — Kỹ thuật từ community
+tutorial/               — Tài liệu học tập</code></pre>
+
+<h2 id="prompting">Prompting</h2>
+
+<h3>Challenge Claude</h3>
+<p>Yêu cầu Claude "grill me on changes" — không tạo PR cho đến khi bạn pass test của nó. Buộc Claude defend giải pháp thay vì chỉ chấp nhận.</p>
+
+<h3>Elegant Solution</h3>
+<p>Sau các fix tầm thường, yêu cầu Claude bỏ hết và implement giải pháp elegant hơn. Prototype 20–30 phiên bản rẻ thay vì viết spec quá kỹ.</p>
+
+<h3>Minimal Input</h3>
+<p>Paste bug và nói "fix" — không cần micromanage từng bước. Để Claude tự quyết approach.</p>
+
+<h2 id="planning">Planning</h2>
+
+<ul>
+<li>Luôn bắt đầu session bằng <strong>plan mode</strong></li>
+<li>Dùng <strong>AskUserQuestion tool</strong> để Claude phỏng vấn bạn thu thập context trước khi code</li>
+<li>Chia PRD thành <strong>vertical slices (tracer bullets)</strong> — mỗi slice đi xuyên qua tất cả các layer</li>
+<li>Prototype 20–30 phiên bản rẻ thay vì viết spec quá kỹ</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Vertical Slices:</strong> Thay vì build từng layer (DB → API → UI), build một feature end-to-end trước. Mỗi slice chứng minh system hoạt động xuyên suốt. Sau đó mở rộng sang feature tiếp.
+</div>
+
+<h2 id="context">Context Management</h2>
+
+<div class="callout callout-red">
+<strong>Context Rot:</strong> Chất lượng Claude giảm rõ rệt sau 300–400k tokens. "Dumb zone" xuất hiện ở ~40% context utilization — Claude bắt đầu kém đi từ sớm hơn bạn nghĩ.
+</div>
+
+<ul>
+<li><strong>Giữ context dưới 30–40%</strong> cho công việc phức tạp</li>
+<li><strong>Rewind</strong> qua các attempt thất bại thay vì để corrections chồng chất</li>
+<li>Dùng <strong>subagents</strong> để cô lập exploration — chỉ trả về kết luận về main context</li>
+<li>"Summarize from here" trước khi rewind để tạo handoff notes</li>
+</ul>
+
+<h2 id="session">Session Management</h2>
+
+<p>Mỗi turn là một branching point với 5 lựa chọn:</p>
+
+<div class="flow">
+<span class="flow-step">Continue</span>
+<span class="flow-arrow">|</span>
+<span class="flow-step">/rewind</span>
+<span class="flow-arrow">|</span>
+<span class="flow-step">/clear</span>
+<span class="flow-arrow">|</span>
+<span class="flow-step">/compact</span>
+<span class="flow-arrow">|</span>
+<span class="flow-step">Subagent</span>
+</div>
+
+<ul>
+<li>Task mới = session mới</li>
+<li>Dùng "summarize from here" trước khi rewind để tạo handoff notes</li>
+<li>Match session boundaries với task boundaries</li>
+</ul>
+
+<h2 id="advanced">Advanced Workflows</h2>
+
+<table>
+<tr><th>Kỹ thuật</th><th>Command/Flag</th><th>Mục đích</th></tr>
+<tr><td>Git Worktrees</td><td><code>--worktree</code></td><td>Isolate branch, parallel dev</td></tr>
+<tr><td>Auto Mode</td><td><code>--permission-mode auto</code></td><td>Loại bỏ permission prompts</td></tr>
+<tr><td>Fast Mode</td><td><code>/fast</code></td><td>Quick iterations</td></tr>
+<tr><td>Cross-model</td><td>Plugins / MCP / Router</td><td>Tích hợp model khác</td></tr>
+</table>
+
+<h2 id="workflows">Development Workflow Methodologies</h2>
+
+<p>Tất cả hội tụ về pattern chung:</p>
+
+<div class="flow">
+<span class="flow-step">Research</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Plan</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Execute</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Review</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Ship</span>
+</div>
+
+<table>
+<tr><th>Workflow</th><th>Stars</th><th>Đặc điểm nổi bật</th></tr>
+<tr><td><strong>Superpowers</strong></td><td>240k</td><td>Orchestrates brainstorming → planning → subagent-driven dev → review</td></tr>
+<tr><td><strong>ECC</strong></td><td>222k</td><td><code>/ecc:plan</code>, <code>/tdd</code>, <code>/code-review</code>, <code>/security-scan</code></td></tr>
+<tr><td><strong>Matt Pocock Skills</strong></td><td>148k</td><td><code>/ask-matt</code>, <code>/grill-with-docs</code>, <code>/prototype</code>, <code>/triage</code></td></tr>
+<tr><td><strong>gstack</strong></td><td>117k</td><td>Multi-role reviews: CEO, engineering, design, DevEx + deployment gates</td></tr>
+<tr><td><strong>Spec Kit</strong></td><td>116k</td><td>Constitution-driven: specification → implementation → convergence</td></tr>
+<tr><td><strong>BMAD-METHOD</strong></td><td>50k</td><td>Forge idea → PRD → architecture → stories → dev → deploy</td></tr>
+</table>
+
+<h2 id="skills">Skill Collections</h2>
+
+<table>
+<tr><th>Collection</th><th>Stars</th><th>Số skills</th><th>Ghi chú</th></tr>
+<tr><td>anthropics/skills</td><td>156k</td><td>17</td><td>Official Anthropic</td></tr>
+<tr><td>mattpocock/skills</td><td>148k</td><td>31</td><td>Production-focused</td></tr>
+<tr><td>Understand-Anything</td><td>67k</td><td>8</td><td>Research &amp; comprehension</td></tr>
+<tr><td>agent-skills</td><td>27k</td><td>21</td><td>Cross-domain</td></tr>
+<tr><td>awesome-agent-skills</td><td>26k</td><td>1,497+</td><td>Curated list</td></tr>
+</table>
+
+<h2 id="cross-model">Cross-Model Integration</h2>
+
+<p>3 pattern tích hợp với model khác:</p>
+
+<table>
+<tr><th>Pattern</th><th>Cách hoạt động</th><th>Ví dụ</th></tr>
+<tr><td><strong>Plugins</strong></td><td>CLI của model khác chạy bên trong Claude Code</td><td><code>/codex:review</code></td></tr>
+<tr><td><strong>MCP</strong></td><td>Claude Code gọi model khác như tool</td><td>pal-mcp-server (50+ models)</td></tr>
+<tr><td><strong>Router</strong></td><td>Swap API endpoint sang provider khác</td><td>claude-code-router (34k stars)</td></tr>
+</table>
+
+<h2 id="summary">8 Key Practices</h2>
+
+<ol>
+<li><strong>Plan first</strong> — Bắt đầu mọi session bằng planning có cấu trúc</li>
+<li><strong>Manage context aggressively</strong> — Giữ dưới 40%; rewind thay vì correct</li>
+<li><strong>Use subagents for delegation</strong> — Cô lập exploration, chỉ trả kết luận</li>
+<li><strong>Vertical slices over horizontal phases</strong> — Build end-to-end trước khi polish từng layer</li>
+<li><strong>Prototype proliferation</strong> — Build nhiều phiên bản rẻ thay vì over-specify</li>
+<li><strong>Challenge Claude</strong> — Yêu cầu grill, prove, hoặc scrap và rebuild</li>
+<li><strong>Session hygiene</strong> — Match session boundaries với task boundaries</li>
+<li><strong>Embrace agents</strong> — Để autonomous agents xử lý multi-step workflows phức tạp</li>
+</ol>
+
+<h2 id="features">Hot / Emerging Features</h2>
+
+<table>
+<tr><th>Feature</th><th>Mô tả</th></tr>
+<tr><td><strong>Ultrareview</strong></td><td>Enhanced code review với task tracking</td></tr>
+<tr><td><strong>Auto Mode</strong></td><td>Loại bỏ permission prompts hoàn toàn</td></tr>
+<tr><td><strong>Fast Mode</strong></td><td>Tối ưu cho quick iterations</td></tr>
+<tr><td><strong>Agent Teams</strong></td><td>Nhiều agents phối hợp trên cùng codebase</td></tr>
+<tr><td><strong>Computer Use</strong></td><td>Claude tương tác với desktop GUI</td></tr>
+<tr><td><strong>Scheduled Tasks</strong></td><td>Tự động hóa định kỳ (<code>/loop</code>, <code>/schedule</code>)</td></tr>
+<tr><td><strong>Routines</strong></td><td>Workflow sequences tái sử dụng</td></tr>
+</table>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(function(btn){btn.addEventListener('click',function(){var code=this.parentElement.querySelector('code');navigator.clipboard.writeText(code.textContent);this.textContent='Copied!';this.classList.add('copied');var b=this;setTimeout(function(){b.textContent='Copy';b.classList.remove('copied')},2000)})});
+</script>
+</body>
+</html>

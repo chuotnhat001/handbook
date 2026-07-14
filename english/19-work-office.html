@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>19 - Work & Office - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./18-health-body.html">18. Health & Body</a>
+      <a href="./19-work-office.html" class="active">19. Work & Office</a>
+      <a href="./20-travel-hotel.html">20. Travel & Hotel</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 19
+  </div>
+  <div class="card-nav">
+    <a href="./18-health-body.html">← Previous: Health & Body</a>
+    <a href="./20-travel-hotel.html">Next: Travel & Hotel →</a>
+  </div>
+
+  <h1>Work & Office</h1>
+  <p class="subtitle">Cong viec va van phong — giao tiep noi cong so, hop, email, va cac tinh huong chuyen nghiep</p>
+
+  <h2>Mau cau co ban</h2>
+
+  <h3>Trong cuoc hop</h3>
+  <div class="formula">
+    <strong>Let's get started.</strong> — Chung ta bat dau nhe.<br>
+    <strong>Can I share my screen?</strong> — Toi chia se man hinh duoc khong?<br>
+    <strong>I'd like to add something.</strong> — Toi muon bo sung.<br>
+    <strong>Could you repeat that?</strong> — Ban noi lai duoc khong?<br>
+    <strong>Let's take this offline.</strong> — De minh ban rieng sau.<br>
+    <strong>Any questions before we wrap up?</strong> — Co cau hoi gi truoc khi ket thuc khong?
+  </div>
+
+  <h3>Yeu cau / De nghi</h3>
+  <ul>
+    <li><strong>Could you send me the report by Friday?</strong> — Ban gui bao cao truoc thu 6 duoc khong?</li>
+    <li><strong>Would you mind reviewing this?</strong> — Ban xem giup cai nay duoc khong?</li>
+    <li><strong>I'll get back to you on that.</strong> — Toi se tra loi ban sau.</li>
+    <li><strong>Let me check and follow up.</strong> — De toi kiem tra va cap nhat sau.</li>
+    <li><strong>Can we schedule a quick call?</strong> — Minh sap xep cuoc goi nhanh duoc khong?</li>
+  </ul>
+
+  <h3>Bao cao tien do</h3>
+  <ul>
+    <li><strong>I'm working on [task].</strong> — Toi dang lam [task].</li>
+    <li><strong>It's almost done.</strong> — Sap xong roi.</li>
+    <li><strong>I'm blocked on [issue].</strong> — Toi bi ket o [van de].</li>
+    <li><strong>I need more time.</strong> — Toi can them thoi gian.</li>
+    <li><strong>I'll have it ready by [time].</strong> — Toi se hoan thanh truoc [thoi gian].</li>
+    <li><strong>I'm ahead of schedule.</strong> — Toi di truoc tien do.</li>
+  </ul>
+
+  <h3>Email chuyen nghiep</h3>
+  <div class="formula">
+    <strong>Mo dau:</strong><br>
+    Hi [Name], / Dear [Name],<br>
+    I hope this email finds you well.<br>
+    Just following up on our conversation...<br><br>
+    <strong>Ket thuc:</strong><br>
+    Let me know if you have any questions.<br>
+    Looking forward to hearing from you.<br>
+    Best regards, / Kind regards, / Thanks,
+  </div>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu co cac cap do trang trong khac nhau tuy tinh huong.</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"Could/Would"</strong> de lich su hon "Can". Tieng Viet dung "duoc khong" cho ca hai.</li>
+      <li>Tieng Anh <strong>khong co he thong xung ho</strong> phuc tap nhu tieng Viet (anh/chi/em/sep). Chi co "you" cho tat ca.</li>
+      <li>Email tieng Anh <strong>ngan gon, di thang vao van de</strong>. Email tieng Viet thuong co phan chao hoi dai hon.</li>
+      <li>Tieng Anh dung <strong>"Let's take this offline"</strong> (ban rieng sau) — khong co tuong duong truc tiep trong tieng Viet.</li>
+      <li><strong>"I'll get back to you"</strong> la cam ket se tra loi — khong phai loi tu choi lich su nhu "de toi xem" trong tieng Viet.</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>deadline</td><td>/ˈded.laɪn/</td><td>n.</td><td>han chot</td></tr>
+    <tr><td>meeting</td><td>/ˈmiː.tɪŋ/</td><td>n.</td><td>cuoc hop</td></tr>
+    <tr><td>agenda</td><td>/əˈdʒen.də/</td><td>n.</td><td>chuong trinh hop</td></tr>
+    <tr><td>feedback</td><td>/ˈfiːd.bæk/</td><td>n.</td><td>phan hoi</td></tr>
+    <tr><td>colleague</td><td>/ˈkɒl.iːɡ/</td><td>n.</td><td>dong nghiep</td></tr>
+    <tr><td>promote</td><td>/prəˈmoʊt/</td><td>v.</td><td>thang chuc</td></tr>
+    <tr><td>resign</td><td>/rɪˈzaɪn/</td><td>v.</td><td>tu chuc</td></tr>
+    <tr><td>overtime</td><td>/ˈoʊ.vər.taɪm/</td><td>n.</td><td>lam them gio</td></tr>
+    <tr><td>remote work</td><td>/rɪˈmoʊt wɜːrk/</td><td>n.</td><td>lam viec tu xa</td></tr>
+    <tr><td>standup</td><td>/ˈstænd.ʌp/</td><td>n.</td><td>hop nhanh hang ngay</td></tr>
+    <tr><td>deliverable</td><td>/dɪˈlɪv.ər.ə.bəl/</td><td>n.</td><td>san pham ban giao</td></tr>
+    <tr><td>stakeholder</td><td>/ˈsteɪkˌhoʊl.dər/</td><td>n.</td><td>ben lien quan</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Daily standup</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Lead:</span> Alright, let's do a quick round. Minh, you want to go first?</p>
+    <p><span class="speaker">Minh:</span> Sure. Yesterday I finished the API integration for the payment module. Today I'm writing unit tests for it. No blockers.</p>
+    <p><span class="speaker">Lead:</span> Great. Sarah?</p>
+    <p><span class="speaker">Sarah:</span> I'm still working on the dashboard redesign. I'm blocked on the design specs — waiting for the UX team to finalize the mockups.</p>
+    <p><span class="speaker">Lead:</span> I'll ping them after this. Anyone else have blockers?</p>
+    <p><span class="speaker">David:</span> I need access to the staging database. Could someone help me with that?</p>
+    <p><span class="speaker">Lead:</span> I'll sort that out today. Anything else? No? Let's get to it.</p>
+  </div>
+
+  <h3>Tinh huong 2: Gui email xin nghi phep</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Subject:</span> Leave Request — Dec 23-27</p>
+    <p><span class="speaker">Body:</span></p>
+    <p>Hi David,</p>
+    <p>I'd like to request time off from December 23 to 27 for a family trip. I've already coordinated with Sarah to cover any urgent tasks during that time.</p>
+    <p>Please let me know if this works.</p>
+    <p>Thanks,<br>Minh</p>
+  </div>
+
+  <h3>Tinh huong 3: Hoi y kien trong hop</h3>
+  <div class="dialogue">
+    <p><span class="speaker">You:</span> I'd like to suggest a different approach for the migration.</p>
+    <p><span class="speaker">Lead:</span> Sure, go ahead.</p>
+    <p><span class="speaker">You:</span> Instead of doing a big-bang migration over the weekend, we could do it incrementally — one service at a time. It's slower but much less risky.</p>
+    <p><span class="speaker">Lead:</span> That's a good point. What's the timeline look like?</p>
+    <p><span class="speaker">You:</span> About two weeks instead of one, but we avoid downtime and can roll back easily if something goes wrong.</p>
+    <p><span class="speaker">Lead:</span> Let's discuss the tradeoffs with the team and decide by Thursday.</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I have a meeting at 3 hours." → <strong>Dung:</strong> "I have a meeting at <em>3 o'clock</em> / at <em>3 p.m.</em>"</li>
+      <li><strong>Sai:</strong> "Can you help me do this?" (voi sep) → <strong>Dung:</strong> "<em>Would you mind</em> helping me with this?" (lich su hon voi cap tren)</li>
+      <li><strong>Sai:</strong> "I will finish it in next week." → <strong>Dung:</strong> "I'll finish it <em>next week</em>." (khong can "in")</li>
+      <li><strong>Sai:</strong> "Please revert to me." → <strong>Dung:</strong> "Please <em>get back to me</em>." hoac "Please <em>reply</em>." (revert = quay lai trang thai cu, khong phai tra loi)</li>
+      <li><strong>Sai:</strong> "I'm working in this company 3 years." → <strong>Dung:</strong> "I've <em>been working</em> at this company <em>for</em> 3 years." (Present Perfect Continuous + for)</li>
+      <li><strong>Sai:</strong> "Kindly do the needful." → <strong>Dung:</strong> "Could you please take care of this?" (cau kia qua cu va khong tu nhien)</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>"Could/Would"</strong> luon lich su hon "Can" khi yeu cau — dac biet voi sep hoac khach hang.</li>
+      <li><strong>Email ngan gon:</strong> 1 muc dich = 1 email. Khong viet qua 5 cau neu khong can thiet.</li>
+      <li><strong>"Let's take this offline"</strong> = "ban rieng sau, khong chiem thoi gian hop".</li>
+      <li><strong>"I'll circle back"</strong> = "toi se quay lai van de nay sau" — rat pho bien trong meeting.</li>
+      <li><strong>Standup format:</strong> Yesterday / Today / Blockers — giu ngan gon, moi nguoi 30-60 giay.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Ban muon nho dong nghiep xem lai code. Noi cau nao lich su nhat?<br>a) Review my code.<br>b) Can you review my code?<br>c) Would you mind reviewing my code?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>c) Would you mind reviewing my code?</strong> (lich su nhat)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "I'm working in this company since 2020."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I've been working <strong>at</strong> this company <strong>since</strong> 2020. (Present Perfect Continuous + since)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Ban bi ket vi chua co design specs. Bao cao trong standup the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'm blocked on the design specs — still waiting for the UX team to finalize them.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Sua loi: "Please revert to me by end of day."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Please <strong>get back to me</strong> by end of day. / Please <strong>reply</strong> by end of day.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Dien vao cho trong: "I ___ the report ready ___ tomorrow morning."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'll <strong>have</strong> the report ready <strong>by</strong> tomorrow morning.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Trong hop, ban muon bo sung y kien. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'd like to add something. / Can I jump in here? / If I may add...</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Viet email ngan (3-4 cau) xin nghi phep ngay thu 6 tuan nay.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du:<br>Hi [Manager],<br>I'd like to take this Friday off for a personal appointment. I've made sure there are no urgent deliverables that day. Please let me know if that works.<br>Thanks, Minh</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> "Let's take this offline" nghia la gi?<br>a) Tat may tinh<br>b) Ban rieng sau, khong chiem thoi gian hop<br>c) Gui email thay vi noi truc tiep</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>b)</strong> Ban rieng sau, khong chiem thoi gian hop.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Sua loi: "I have a meeting at 3 hours afternoon."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I have a meeting at <strong>3 p.m.</strong> / at <strong>3 in the afternoon</strong>.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Viet standup update cua ban hom nay (Yesterday / Today / Blockers).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du:<br>Yesterday: I completed the user authentication feature and submitted a PR.<br>Today: I'm starting on the notification system.<br>Blockers: None at the moment.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./18-health-body.html">← Previous: Health & Body</a>
+    <a href="./20-travel-hotel.html">Next: Travel & Hotel →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>22 - Opinions & Debate - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./21-technology-internet.html">21. Technology & Internet</a>
+      <a href="./22-opinions-debate.html" class="active">22. Opinions & Debate</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 22
+  </div>
+  <div class="card-nav">
+    <a href="./21-technology-internet.html">← Previous: Technology & Internet</a>
+    <span class="disabled">Last card</span>
+  </div>
+
+  <h1>Opinions & Debate</h1>
+  <p class="subtitle">Y kien va tranh luan — cach trinh bay quan diem, dong y, phan doi, va thao luan lich su</p>
+
+  <h2>Trinh bay y kien</h2>
+
+  <h3>Dua ra quan diem</h3>
+  <div class="formula">
+    <strong>I think / I believe...</strong> — Toi nghi / Toi tin rang...<br>
+    <strong>In my opinion...</strong> — Theo y kien cua toi...<br>
+    <strong>From my perspective...</strong> — Tu goc nhin cua toi...<br>
+    <strong>The way I see it...</strong> — Theo cach toi nhin...<br>
+    <strong>Personally, I feel that...</strong> — Ca nhan toi cam thay...<br>
+    <strong>I'd argue that...</strong> — Toi cho rang... (manh hon)
+  </div>
+
+  <h3>Dong y</h3>
+  <ul>
+    <li><strong>I agree.</strong> — Toi dong y.</li>
+    <li><strong>That's a good point.</strong> — Do la mot y hay.</li>
+    <li><strong>Exactly! / Absolutely!</strong> — Chinh xac!</li>
+    <li><strong>I couldn't agree more.</strong> — Toi hoan toan dong y. (manh)</li>
+    <li><strong>You have a point there.</strong> — Ban co ly o diem do.</li>
+    <li><strong>I see what you mean.</strong> — Toi hieu y ban.</li>
+  </ul>
+
+  <h3>Phan doi lich su</h3>
+  <ul>
+    <li><strong>I see your point, but...</strong> — Toi hieu y ban, nhung...</li>
+    <li><strong>I'm not sure I agree.</strong> — Toi khong chac la dong y.</li>
+    <li><strong>I respectfully disagree.</strong> — Toi xin phep khong dong y.</li>
+    <li><strong>That's one way to look at it, but...</strong> — Do la mot cach nhin, nhung...</li>
+    <li><strong>I take your point, however...</strong> — Toi ghi nhan y ban, tuy nhien...</li>
+    <li><strong>I'd have to disagree on that.</strong> — Toi phai khong dong y o diem do.</li>
+  </ul>
+
+  <h3>Hoi y kien nguoi khac</h3>
+  <ul>
+    <li><strong>What do you think about...?</strong> — Ban nghi gi ve...?</li>
+    <li><strong>How do you feel about...?</strong> — Ban cam thay the nao ve...?</li>
+    <li><strong>What's your take on...?</strong> — Quan diem cua ban ve...? (informal)</li>
+    <li><strong>Do you agree that...?</strong> — Ban co dong y rang...?</li>
+    <li><strong>Where do you stand on...?</strong> — Lap truong cua ban ve...?</li>
+  </ul>
+
+  <h2>Cau truc lap luan</h2>
+  <div class="formula">
+    <strong>Dua ra ly do:</strong><br>
+    The reason is... / This is because... / The main argument is...<br><br>
+    <strong>Them vi du:</strong><br>
+    For example... / For instance... / Take [X] for example...<br><br>
+    <strong>Nhuong buoc mot phan:</strong><br>
+    While I agree that [X], I still think [Y]...<br>
+    It's true that [X], but on the other hand...<br><br>
+    <strong>Ket luan:</strong><br>
+    So overall... / All things considered... / In conclusion...
+  </div>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu co cac cap do lich su khi phan doi (tu nhe den manh).</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh <strong>khuyen khich phan doi truc tiep</strong> (direct disagreement) — duoc coi la binh thuong trong tranh luan. Tieng Viet thuong gian tiep hon de giu hoa khi.</li>
+      <li>Tieng Anh dung <strong>"I think" + menh de</strong>. Tieng Viet: "Toi nghi la..." — tuong tu nhung khong can "that".</li>
+      <li>Tieng Anh co <strong>hedging language</strong> (giam nhe): "I'm not sure", "I might be wrong, but..." — rat pho bien de lich su. Tieng Viet it dung kieu nay.</li>
+      <li><strong>"I couldn't agree more"</strong> = dong y 100% (phu dinh kep = khang dinh manh). Tieng Viet khong co cau truc tuong duong.</li>
+      <li>Tieng Anh dung <strong>"however" / "on the other hand"</strong> de chuyen y. Tieng Viet: "tuy nhien" / "mat khac".</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>opinion</td><td>/əˈpɪn.jən/</td><td>n.</td><td>y kien</td></tr>
+    <tr><td>perspective</td><td>/pərˈspek.tɪv/</td><td>n.</td><td>goc nhin</td></tr>
+    <tr><td>argument</td><td>/ˈɑːrɡ.jə.mənt/</td><td>n.</td><td>luan diem / tranh luan</td></tr>
+    <tr><td>debate</td><td>/dɪˈbeɪt/</td><td>n./v.</td><td>tranh luan</td></tr>
+    <tr><td>disagree</td><td>/ˌdɪs.əˈɡriː/</td><td>v.</td><td>khong dong y</td></tr>
+    <tr><td>compromise</td><td>/ˈkɒm.prə.maɪz/</td><td>n./v.</td><td>thoa hiep</td></tr>
+    <tr><td>convince</td><td>/kənˈvɪns/</td><td>v.</td><td>thuyet phuc</td></tr>
+    <tr><td>evidence</td><td>/ˈev.ɪ.dəns/</td><td>n.</td><td>bang chung</td></tr>
+    <tr><td>valid</td><td>/ˈvæl.ɪd/</td><td>adj.</td><td>hop le, co ly</td></tr>
+    <tr><td>biased</td><td>/ˈbaɪ.əst/</td><td>adj.</td><td>thien vi</td></tr>
+    <tr><td>controversial</td><td>/ˌkɒn.trəˈvɜːr.ʃəl/</td><td>adj.</td><td>gay tranh cai</td></tr>
+    <tr><td>pros and cons</td><td>/proʊz ænd kɒnz/</td><td>n.</td><td>uu va nhuoc diem</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Thao luan ve remote work</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> What's your take on remote work? Do you think it's better than working in an office?</p>
+    <p><span class="speaker">B:</span> Personally, I think remote work is great for productivity. You save time on commuting and have fewer distractions.</p>
+    <p><span class="speaker">A:</span> I see your point, but I'd argue that working in an office is better for collaboration. It's easier to brainstorm when you're in the same room.</p>
+    <p><span class="speaker">B:</span> That's true. But with tools like Zoom and Slack, you can still collaborate effectively. The key is having good communication habits.</p>
+    <p><span class="speaker">A:</span> You have a point there. I guess it depends on the type of work. For creative projects, I still prefer face-to-face.</p>
+    <p><span class="speaker">B:</span> I'd agree with that. Maybe a hybrid model is the best compromise — two or three days in the office, the rest remote.</p>
+    <p><span class="speaker">A:</span> Yeah, I think that's where most companies are heading. Best of both worlds.</p>
+  </div>
+
+  <h3>Tinh huong 2: Tranh luan ve AI trong giao duc</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> I believe AI tools like ChatGPT should be allowed in schools. They help students learn faster.</p>
+    <p><span class="speaker">B:</span> I'm not sure I agree. If students rely on AI for everything, they won't develop critical thinking skills.</p>
+    <p><span class="speaker">A:</span> While I agree that over-reliance is a risk, I still think AI can be a powerful learning tool — like a calculator for writing. You still need to understand the fundamentals.</p>
+    <p><span class="speaker">B:</span> That's a fair point. But how do you prevent cheating? If a student submits AI-generated work, how would a teacher know?</p>
+    <p><span class="speaker">A:</span> Good question. I think the solution isn't to ban AI, but to redesign assessments. Focus on process, not just output.</p>
+    <p><span class="speaker">B:</span> I take your point. Maybe the real issue is how we assess learning, not the tools themselves.</p>
+    <p><span class="speaker">A:</span> Exactly. All things considered, I think we need to adapt rather than resist.</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I am agree with you." → <strong>Dung:</strong> "I <em>agree</em> with you." (agree la dong tu, khong can "am")</li>
+      <li><strong>Sai:</strong> "According to me..." → <strong>Dung:</strong> "<em>In my opinion</em>..." (according to + nguon khac, khong dung cho chinh minh)</li>
+      <li><strong>Sai:</strong> "I think it is not good." → <strong>Dung:</strong> "I <em>don't think</em> it's good." (phu dinh o "think", khong o menh de sau)</li>
+      <li><strong>Sai:</strong> "I very agree." → <strong>Dung:</strong> "I <em>strongly/completely</em> agree." (khong dung "very" voi dong tu)</li>
+      <li><strong>Sai:</strong> "In my opinion, I think..." → <strong>Dung:</strong> Chon mot: "In my opinion, [X]." HOAC "I think [X]." (khong dung ca hai — thua)</li>
+      <li><strong>Sai:</strong> "I disagree you." → <strong>Dung:</strong> "I disagree <em>with</em> you." (can gioi tu "with")</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>Hedging</strong> giup lich su hon: "I might be wrong, but..." / "I'm not entirely sure, but..." — giam nhe truoc khi phan doi.</li>
+      <li><strong>Acknowledge truoc khi phan doi:</strong> "I see your point, but..." / "That's a valid argument, however..." — the hien ton trong.</li>
+      <li><strong>Dung "I think" thay vi "You're wrong"</strong> — tap trung vao y kien cua minh, khong tan cong nguoi khac.</li>
+      <li><strong>Hoi lai de hieu ro:</strong> "What do you mean by that?" / "Could you give an example?" — tranh hieu nham truoc khi phan doi.</li>
+      <li><strong>Ket thuc bang diem chung:</strong> "I think we can both agree that..." — giup cuoc thao luan ket thuc tich cuc.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Sua loi: "I am agree with your opinion."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I <strong>agree</strong> with your opinion. (bo "am" — agree la dong tu)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "According to me, this is a bad idea."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>In my opinion</strong>, this is a bad idea. ("according to" chi dung cho nguon khac)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Ban muon phan doi lich su. Chon cau tot nhat:<br>a) You're wrong.<br>b) That's stupid.<br>c) I see your point, but I'd have to disagree.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>c) I see your point, but I'd have to disagree.</strong> (lich su va chuyen nghiep)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Sua loi: "I think it is not a good solution."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I <strong>don't think</strong> it's a good solution. (phu dinh o "think")</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Dien vao cho trong: "I couldn't ___ more." (dong y hoan toan)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I couldn't <strong>agree</strong> more.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Ban muon hoi y kien dong nghiep ve du an moi. Hoi the nao? (2 cach)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">What do you think about the new project? / What's your take on the new project?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Sua loi: "I very agree with this approach."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I <strong>strongly</strong> agree with this approach. (khong dung "very" voi dong tu)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Viet 2 cau: dong y mot phan nhung phan doi phan con lai.<br>Chu de: "Social media is bad for teenagers."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du: While I agree that excessive social media use can be harmful, I don't think it's entirely bad — it also helps teenagers stay connected and learn new skills.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Sua loi: "In my opinion, I think we should cancel the meeting."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Chon mot: "<strong>In my opinion</strong>, we should cancel the meeting." HOAC "<strong>I think</strong> we should cancel the meeting." (khong dung ca hai)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Viet mot doan ngan (4-5 cau) trinh bay quan diem cua ban ve chu de: "Is it better to learn English online or in a classroom?"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du: In my opinion, online learning is more effective for self-motivated learners. The main reason is flexibility — you can study at your own pace and choose materials that match your level. However, I'd argue that a classroom is better for beginners who need structure and immediate feedback from a teacher. All things considered, I think a combination of both is the ideal approach.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./21-technology-internet.html">← Previous: Technology & Internet</a>
+    <span class="disabled">Last card</span>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

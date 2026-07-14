@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.done{color:#059669}
+.nav-items a.done::before{content:'✓ ';color:#059669}
+.nav-items a.current{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+.roadmap{list-style:none;padding:0;margin:1rem 0}
+.roadmap li{display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border-radius:8px;margin-bottom:.25rem;font-size:.92rem;transition:background .15s}
+.roadmap li:hover{background:#f8fafc}
+.roadmap .num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.roadmap .upcoming .num{background:#e2e8f0;color:#64748b}
+.roadmap .current .num{background:#667eea;color:#fff}
+.roadmap .done .num{background:#059669;color:#fff}
+.roadmap a{color:#1a1a2e;text-decoration:none;font-weight:500}
+.roadmap a:hover{color:#4c51bf}
+.roadmap .tag{font-size:.72rem;background:#f1f3f5;color:#64748b;padding:2px 8px;border-radius:4px;margin-left:auto}
+.phase-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf;margin:2rem 0 .75rem;padding:.5rem 0;border-bottom:1px solid rgba(102,126,234,.15)}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Giai đoạn 1: Ngữ pháp</div>
+    <div class="nav-items">
+      <a href="./01-parts-of-speech.html" class="done">01. Parts of Speech</a>
+      <a href="./02-sentence-structure.html" class="done">02. Sentence Structure</a>
+      <a href="./03-present-simple.html" class="done">03. Present Simple</a>
+      <a href="./04-present-continuous.html" class="done">04. Present Continuous</a>
+      <a href="./05-past-simple.html" class="done">05. Past Simple</a>
+      <a href="./06-past-continuous.html" class="done">06. Past Continuous</a>
+      <a href="./07-future.html" class="done">07. Future</a>
+      <a href="./08-present-perfect.html" class="done">08. Present Perfect</a>
+      <a href="./09-modal-verbs.html" class="done">09. Modal Verbs</a>
+      <a href="./10-comparatives.html" class="done">10. Comparatives</a>
+      <a href="./11-conditionals.html" class="done">11. Conditionals</a>
+      <a href="./12-prepositions.html" class="done">12. Prepositions</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tài liệu</div>
+    <div class="nav-items">
+      <a href="./quick-reference.html">Quick Reference</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai đoạn 2: Giao tiếp</div>
+    <div class="nav-items">
+      <a href="./13-self-introduction.html" class="done">13. Self Introduction</a>
+      <a href="./14-daily-routine.html" class="done">14. Daily Routine</a>
+      <a href="./15-shopping-money.html" class="done">15. Shopping & Money</a>
+      <a href="./16-food-restaurant.html" class="done">16. Food & Restaurant</a>
+      <a href="./17-directions-transport.html" class="done">17. Directions</a>
+      <a href="./18-health-body.html" class="done">18. Health & Body</a>
+      <a href="./19-work-office.html" class="done">19. Work & Office</a>
+      <a href="./20-travel-hotel.html" class="done">20. Travel & Hotel</a>
+      <a href="./21-technology-internet.html" class="done">21. Technology</a>
+      <a href="./22-opinions-debate.html" class="done">22. Opinions</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Bài tập hàng ngày</div>
+    <div class="nav-items">
+      <a href="./exercises/day-01.html" class="done">Day 01</a>
+      <a href="./exercises/day-02.html" class="done">Day 02</a>
+      <a href="./exercises/day-03.html" class="done">Day 03</a>
+      <a href="./exercises/day-04.html" class="done">Day 04</a>
+      <a href="./exercises/day-05.html" class="done">Day 05</a>
+      <a href="./exercises/day-06.html" class="done">Day 06</a>
+      <a href="./exercises/day-07.html" class="done">Day 07</a>
+      <a href="./exercises/day-08.html" class="done">Day 08</a>
+      <a href="./exercises/day-09.html" class="done">Day 09</a>
+      <a href="./exercises/day-10.html" class="done">Day 10</a>
+      <a href="./exercises/day-11.html" class="done">Day 11</a>
+      <a href="./exercises/day-12.html" class="done">Day 12</a>
+      <a href="./exercises/day-13.html" class="done">Day 13</a>
+      <a href="./exercises/day-14.html" class="done">Day 14</a>
+      <a href="./exercises/day-15.html" class="done">Day 15</a>
+      <a href="./exercises/day-16.html" class="done">Day 16</a>
+      <a href="./exercises/day-17.html" class="done">Day 17</a>
+      <a href="./exercises/day-18.html" class="done">Day 18</a>
+      <a href="./exercises/day-19.html" class="done">Day 19</a>
+      <a href="./exercises/day-20.html" class="done">Day 20</a>
+      <a href="./exercises/day-21.html" class="done">Day 21</a>
+      <a href="./exercises/day-22.html" class="done">Day 22</a>
+      <a href="./exercises/day-23.html" class="done">Day 23</a>
+      <a href="./exercises/day-24.html" class="done">Day 24</a>
+      <a href="./exercises/day-25.html" class="done">Day 25</a>
+      <a href="./exercises/day-26.html" class="done">Day 26</a>
+      <a href="./exercises/day-27.html" class="done">Day 27</a>
+      <a href="./exercises/day-28.html" class="done">Day 28</a>
+      <a href="./exercises/day-29.html" class="done">Day 29</a>
+      <a href="./exercises/day-30.html" class="done">Day 30</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <h1>English Learning Roadmap</h1>
+  <p class="subtitle">Lộ trình tự học tiếng Anh — từ ngữ pháp cơ bản đến giao tiếp thực tế</p>
+
+  <p>Mỗi bài học chứa: giải thích ngữ pháp + so sánh với tiếng Việt + từ vựng + câu mẫu + lỗi thường gặp của người Việt + bài tập.</p>
+
+  <div class="phase-label">Giai đoạn 1: Ngữ pháp cơ bản (1-2 tháng)</div>
+  <ul class="roadmap">
+    <li class="done"><span class="num">1</span><a href="./01-parts-of-speech.html">Parts of Speech</a><span class="tag">Loại từ</span></li>
+    <li class="done"><span class="num">2</span><a href="./02-sentence-structure.html">Sentence Structure</a><span class="tag">Cấu trúc câu</span></li>
+    <li class="done"><span class="num">3</span><a href="./03-present-simple.html">Present Simple</a><span class="tag">Hiện tại đơn</span></li>
+    <li class="done"><span class="num">R</span><a href="./review-01.html">Review 1-3</a><span class="tag">Ôn tập</span></li>
+    <li class="done"><span class="num">4</span><a href="./04-present-continuous.html">Present Continuous</a><span class="tag">Hiện tại tiếp diễn</span></li>
+    <li class="done"><span class="num">5</span><a href="./05-past-simple.html">Past Simple</a><span class="tag">Quá khứ đơn</span></li>
+    <li class="done"><span class="num">6</span><a href="./06-past-continuous.html">Past Continuous</a><span class="tag">Quá khứ tiếp diễn</span></li>
+    <li class="done"><span class="num">R</span><a href="./review-02.html">Review 4-6</a><span class="tag">Ôn tập</span></li>
+    <li class="done"><span class="num">7</span><a href="./07-future.html">Future (will/going to)</a><span class="tag">Tương lai</span></li>
+    <li class="done"><span class="num">8</span><a href="./08-present-perfect.html">Present Perfect</a><span class="tag">Hiện tại hoàn thành</span></li>
+    <li class="done"><span class="num">9</span><a href="./09-modal-verbs.html">Modal Verbs</a><span class="tag">Động từ khuyết thiếu</span></li>
+    <li class="done"><span class="num">R</span><a href="./review-03.html">Review 7-9</a><span class="tag">Ôn tập</span></li>
+    <li class="done"><span class="num">10</span><a href="./10-comparatives.html">Comparatives & Superlatives</a><span class="tag">So sánh</span></li>
+    <li class="done"><span class="num">11</span><a href="./11-conditionals.html">Conditionals</a><span class="tag">Câu điều kiện</span></li>
+    <li class="done"><span class="num">12</span><a href="./12-prepositions.html">Prepositions & Conjunctions</a><span class="tag">Giới từ & Liên từ</span></li>
+    <li class="done"><span class="num">R</span><a href="./review-04.html">Review 10-12</a><span class="tag">Ôn tập tổng</span></li>
+  </ul>
+
+  <div class="phase-label">Bài tập hàng ngày (30 ngày, 30-45 phút/bài, có chấm điểm)</div>
+  <ul class="roadmap">
+    <li class="done"><span class="num">→</span><a href="./exercises/day-01.html">Bắt đầu luyện tập</a><span class="tag">30 bài</span></li>
+  </ul>
+
+  <div class="phase-label">Giai đoạn 2: Level tổng hợp (sau khi hoàn thành giai đoạn 1)</div>
+  <ul class="roadmap">
+    <li class="done"><span class="num">13</span><a href="./13-self-introduction.html">Self Introduction</a><span class="tag">Giới thiệu bản thân</span></li>
+    <li class="done"><span class="num">14</span><a href="./14-daily-routine.html">Daily Routine</a><span class="tag">Thói quen hàng ngày</span></li>
+    <li class="done"><span class="num">15</span><a href="./15-shopping-money.html">Shopping & Money</a><span class="tag">Mua sắm</span></li>
+    <li class="done"><span class="num">16</span><a href="./16-food-restaurant.html">Food & Restaurant</a><span class="tag">Nhà hàng</span></li>
+    <li class="done"><span class="num">17</span><a href="./17-directions-transport.html">Directions & Transport</a><span class="tag">Hỏi đường</span></li>
+    <li class="done"><span class="num">18</span><a href="./18-health-body.html">Health & Body</a><span class="tag">Sức khỏe</span></li>
+    <li class="done"><span class="num">19</span><a href="./19-work-office.html">Work & Office</a><span class="tag">Công việc</span></li>
+    <li class="done"><span class="num">20</span><a href="./20-travel-hotel.html">Travel & Hotel</a><span class="tag">Du lịch</span></li>
+    <li class="done"><span class="num">21</span><a href="./21-technology-internet.html">Technology & Internet</a><span class="tag">Công nghệ</span></li>
+    <li class="done"><span class="num">22</span><a href="./22-opinions-debate.html">Opinions & Debate</a><span class="tag">Ý kiến</span></li>
+  </ul>
+</div>
+</div>
+</body>
+</html>

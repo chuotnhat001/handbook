@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18 - Health & Body - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./17-directions-transport.html">17. Directions & Transport</a>
+      <a href="./18-health-body.html" class="active">18. Health & Body</a>
+      <a href="./19-work-office.html">19. Work & Office</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 18
+  </div>
+  <div class="card-nav">
+    <a href="./17-directions-transport.html">← Previous: Directions & Transport</a>
+    <a href="./19-work-office.html">Next: Work & Office →</a>
+  </div>
+
+  <h1>Health & Body</h1>
+  <p class="subtitle">Suc khoe va co the — mo ta trieu chung, di kham bac si, mua thuoc</p>
+
+  <h2>Mau cau co ban</h2>
+
+  <h3>Mo ta trieu chung</h3>
+  <div class="formula">
+    <strong>I have a [symptom].</strong> — Toi bi [trieu chung].<br>
+    <strong>I've been feeling [adj] for [time].</strong> — Toi cam thay [adj] duoc [thoi gian].<br>
+    <strong>It hurts here.</strong> — Dau o day. (chi vao cho dau)<br>
+    <strong>I feel dizzy / nauseous / weak.</strong> — Toi thay chong mat / buon non / yeu.<br>
+    <strong>My [body part] hurts.</strong> — [Bo phan] cua toi bi dau.
+  </div>
+
+  <h3>Tai phong kham</h3>
+  <ul>
+    <li><strong>I'd like to make an appointment.</strong> — Toi muon dat lich hen.</li>
+    <li><strong>I need to see a doctor.</strong> — Toi can gap bac si.</li>
+    <li><strong>How long have you had this problem?</strong> — Ban bi nhu vay bao lau roi?</li>
+    <li><strong>Are you taking any medication?</strong> — Ban dang uong thuoc gi khong?</li>
+    <li><strong>Are you allergic to anything?</strong> — Ban co di ung gi khong?</li>
+    <li><strong>I have health insurance.</strong> — Toi co bao hiem y te.</li>
+  </ul>
+
+  <h3>Tai nha thuoc</h3>
+  <ul>
+    <li><strong>Do you have anything for a headache?</strong> — Co thuoc gi tri dau dau khong?</li>
+    <li><strong>How often should I take this?</strong> — Uong thuoc nay bao lau mot lan?</li>
+    <li><strong>Take two tablets three times a day.</strong> — Uong 2 vien, 3 lan mot ngay.</li>
+    <li><strong>Do I need a prescription for this?</strong> — Thuoc nay can don khong?</li>
+  </ul>
+
+  <h2>Bo phan co the</h2>
+  <table>
+    <tr><th>Tieng Anh</th><th>Phien am</th><th>Nghia</th></tr>
+    <tr><td>head</td><td>/hed/</td><td>dau</td></tr>
+    <tr><td>throat</td><td>/θroʊt/</td><td>hong/co hong</td></tr>
+    <tr><td>chest</td><td>/tʃest/</td><td>nguc</td></tr>
+    <tr><td>stomach</td><td>/ˈstʌm.ək/</td><td>bung/da day</td></tr>
+    <tr><td>back</td><td>/bæk/</td><td>lung</td></tr>
+    <tr><td>shoulder</td><td>/ˈʃoʊl.dər/</td><td>vai</td></tr>
+    <tr><td>knee</td><td>/niː/</td><td>dau goi</td></tr>
+    <tr><td>ankle</td><td>/ˈæŋ.kəl/</td><td>mat ca chan</td></tr>
+    <tr><td>wrist</td><td>/rɪst/</td><td>co tay</td></tr>
+    <tr><td>elbow</td><td>/ˈel.boʊ/</td><td>khuyu tay</td></tr>
+  </table>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu mo ta trieu chung theo kieu "Toi bi/co [trieu chung]".</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"I have a headache"</strong> (co mao tu "a"). Tieng Viet: "Toi bi dau dau" (khong co mao tu).</li>
+      <li>Tieng Anh phan biet <strong>"ache" (dau am i) va "pain" (dau nhoi/manh)</strong>. Tieng Viet chi co "dau".</li>
+      <li>Tieng Anh dung <strong>Present Perfect</strong> de mo ta trieu chung keo dai: "I've <em>been</em> coughing for 3 days." Tieng Viet: "Toi ho 3 ngay roi."</li>
+      <li>Tieng Anh noi <strong>"My head hurts"</strong> hoac <strong>"I have a headache"</strong> — 2 cach. Tieng Viet thuong chi co 1: "Toi bi dau dau".</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>headache</td><td>/ˈhed.eɪk/</td><td>n.</td><td>dau dau</td></tr>
+    <tr><td>stomachache</td><td>/ˈstʌm.ək.eɪk/</td><td>n.</td><td>dau bung</td></tr>
+    <tr><td>fever</td><td>/ˈfiː.vər/</td><td>n.</td><td>sot</td></tr>
+    <tr><td>cough</td><td>/kɒf/</td><td>n./v.</td><td>ho</td></tr>
+    <tr><td>sore throat</td><td>/sɔːr θroʊt/</td><td>n.</td><td>dau hong</td></tr>
+    <tr><td>runny nose</td><td>/ˈrʌn.i noʊz/</td><td>n.</td><td>so mui</td></tr>
+    <tr><td>prescription</td><td>/prɪˈskrɪp.ʃən/</td><td>n.</td><td>don thuoc</td></tr>
+    <tr><td>symptom</td><td>/ˈsɪmp.təm/</td><td>n.</td><td>trieu chung</td></tr>
+    <tr><td>diagnosis</td><td>/ˌdaɪ.əɡˈnoʊ.sɪs/</td><td>n.</td><td>chan doan</td></tr>
+    <tr><td>painkiller</td><td>/ˈpeɪnˌkɪl.ər/</td><td>n.</td><td>thuoc giam dau</td></tr>
+    <tr><td>appointment</td><td>/əˈpɔɪnt.mənt/</td><td>n.</td><td>lich hen (kham)</td></tr>
+    <tr><td>insurance</td><td>/ɪnˈʃʊr.əns/</td><td>n.</td><td>bao hiem</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Di kham bac si</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Doctor:</span> Good morning. What brings you in today?</p>
+    <p><span class="speaker">You:</span> I've been having a bad cough and sore throat for about four days now.</p>
+    <p><span class="speaker">Doctor:</span> Do you have a fever?</p>
+    <p><span class="speaker">You:</span> Yes, I had a temperature of 38.5 last night.</p>
+    <p><span class="speaker">Doctor:</span> Any other symptoms? Headache, body aches?</p>
+    <p><span class="speaker">You:</span> A bit of a headache, and I feel really tired.</p>
+    <p><span class="speaker">Doctor:</span> Let me take a look at your throat... It's quite red. I think you have a throat infection. I'll prescribe some antibiotics.</p>
+    <p><span class="speaker">You:</span> How long should I take them?</p>
+    <p><span class="speaker">Doctor:</span> Take one tablet twice a day for seven days. Make sure to finish the whole course, even if you feel better.</p>
+    <p><span class="speaker">You:</span> Okay. Should I rest at home?</p>
+    <p><span class="speaker">Doctor:</span> Yes, take a few days off. Drink plenty of fluids and get lots of rest.</p>
+  </div>
+
+  <h3>Tinh huong 2: Tai nha thuoc</h3>
+  <div class="dialogue">
+    <p><span class="speaker">You:</span> Hi, do you have anything for a headache?</p>
+    <p><span class="speaker">Pharmacist:</span> Sure. Do you prefer ibuprofen or paracetamol?</p>
+    <p><span class="speaker">You:</span> What's the difference?</p>
+    <p><span class="speaker">Pharmacist:</span> Ibuprofen is also anti-inflammatory, so it's better if there's any swelling. Paracetamol is gentler on the stomach.</p>
+    <p><span class="speaker">You:</span> I'll take the paracetamol. I have a sensitive stomach.</p>
+    <p><span class="speaker">Pharmacist:</span> Good choice. Take two tablets every four to six hours. Don't exceed eight in 24 hours.</p>
+    <p><span class="speaker">You:</span> Got it. Do I need a prescription?</p>
+    <p><span class="speaker">Pharmacist:</span> No, this is over-the-counter. That'll be $5.50.</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I am headache." → <strong>Dung:</strong> "I <em>have</em> a headache." (dung "have" voi trieu chung, khong dung "am")</li>
+      <li><strong>Sai:</strong> "My head is pain." → <strong>Dung:</strong> "My head <em>hurts</em>." hoac "I have a <em>headache</em>."</li>
+      <li><strong>Sai:</strong> "I sick." → <strong>Dung:</strong> "I'm <em>sick</em>." hoac "I <em>feel</em> sick." (can dong tu "am" hoac "feel")</li>
+      <li><strong>Sai:</strong> "I go to hospital." (khi chi bi cam) → <strong>Dung:</strong> "I went to <em>the doctor</em> / <em>the clinic</em>." (hospital = benh vien, chi cho truong hop nang)</li>
+      <li><strong>Sai:</strong> "I eat medicine." → <strong>Dung:</strong> "I <em>take</em> medicine." (dung "take" voi thuoc, khong dung "eat")</li>
+      <li><strong>Sai:</strong> "I have sick 3 days." → <strong>Dung:</strong> "I've <em>been</em> sick <em>for</em> 3 days." (Present Perfect + for)</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>"What brings you in today?"</strong> — cau hoi bac si thuong dung de bat dau. Tra loi bang trieu chung chinh.</li>
+      <li><strong>Dung Present Perfect</strong> khi mo ta trieu chung keo dai: "I've been coughing for 3 days" (khong dung Past Simple).</li>
+      <li><strong>Doctor vs Hospital:</strong> O nuoc ngoai, benh nhe di "GP/clinic" (phong kham). "Hospital" chi cho cap cuu hoac benh nang.</li>
+      <li><strong>Over-the-counter (OTC)</strong> = thuoc mua khong can don. <strong>Prescription</strong> = can don bac si.</li>
+      <li><strong>Nho mang the bao hiem</strong> — "Do you accept [insurance name]?" khi dat lich.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Sua loi: "I am headache since yesterday."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I've <strong>had</strong> a headache <strong>since</strong> yesterday.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Dien vao cho trong: "I've been ___ (cough) for a week."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>coughing</strong> (Present Perfect Continuous: have been + V-ing)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Sua loi: "I eat medicine every morning."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I <strong>take</strong> medicine every morning.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Ban bi dau hong va sot. Mo ta cho bac si (2-3 cau).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I have a sore throat and a fever. I've been feeling this way for about two days. It hurts when I swallow.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Phan biet "ache" va "pain":<br>a) I have a dull ___ in my back. (dau am i)<br>b) I felt a sharp ___ in my chest. (dau nhoi)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">a) <strong>ache</strong> (dau am i, keo dai)<br>b) <strong>pain</strong> (dau nhoi, manh)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Ban muon mua thuoc giam dau o nha thuoc. Hoi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Do you have anything for a headache? / Can I get some painkillers?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Sua loi: "I go to hospital because I have cold."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I went to <strong>the doctor/clinic</strong> because I have <strong>a</strong> cold. (hospital = benh vien, chi cho truong hop nang; can mao tu "a" truoc "cold")</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Duoc dan: "Take two tablets three times a day." — Nghia la uong bao nhieu vien mot ngay?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>6 vien/ngay</strong> (2 vien x 3 lan = 6)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Dien vao cho trong: "Are you ___ to any medication?" (di ung)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>allergic</strong> (Are you allergic to any medication?)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Viet hoi thoai ngan (4-6 cau): ban goi dien dat lich kham bac si.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du:<br>Receptionist: Good morning, City Clinic. How can I help you?<br>You: Hi, I'd like to make an appointment with Dr. Smith.<br>Receptionist: What's the reason for your visit?<br>You: I've had a bad cough for about a week and it's not getting better.<br>Receptionist: I can fit you in tomorrow at 10:30. Does that work?<br>You: Yes, that's perfect. Thank you.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./17-directions-transport.html">← Previous: Directions & Transport</a>
+    <a href="./19-work-office.html">Next: Work & Office →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

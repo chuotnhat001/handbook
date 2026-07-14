@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vòng Đời Dự Án - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Agile Practice Guide
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Life Cycles</div>
+    <div class="nav-items">
+      <a href="#overview">Tổng quan</a>
+      <a href="#predictive">Predictive</a>
+      <a href="#iterative">Iterative</a>
+      <a href="#incremental">Incremental</a>
+      <a href="#agile">Agile</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Hybrid & Tailoring</div>
+    <div class="nav-items">
+      <a href="#hybrid">Hybrid life cycles</a>
+      <a href="#mixing">Pha trộn Agile</a>
+      <a href="#tailoring">Tailoring</a>
+      <a href="#choosing">Cách lựa chọn</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Agile Practice Guide</div>
+  <div class="level-label">Nhập môn</div>
+  <a href="01-gioi-thieu-agile.html">01. Giới Thiệu Agile</a>
+  <a href="02-tu-duy-agile.html">02. Tư Duy Agile & Lean</a>
+  <a href="03-vong-doi-du-an.html" class="current">03. Vòng Đời Dự Án</a>
+  <div class="level-label">Trung cấp</div>
+  <a href="04-moi-truong-agile.html">04. Môi Trường Agile</a>
+  <a href="05-doi-nhom-agile.html">05. Đội Nhóm Agile</a>
+  <a href="06-thuc-hanh-cot-loi.html">06. Thực Hành Cốt Lõi</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-phan-phoi-gia-tri.html">07. Phân Phối Giá Trị</a>
+  <a href="08-do-luong-agile.html">08. Đo Lường Agile</a>
+  <a href="09-xu-ly-van-de.html">09. Xử Lý Vấn Đề</a>
+  <div class="level-label">Chuyên sâu</div>
+  <a href="10-to-chuc-agile.html">10. Chuyển Đổi Tổ Chức</a>
+  <a href="11-mo-rong-quy-mo.html">11. Mở Rộng Quy Mô</a>
+  <a href="12-cac-framework-agile.html">12. Frameworks Agile</a>
+</aside>
+<main class="main">
+<h1 id="overview">Vòng Đời Dự Án</h1>
+<p class="subtitle">4 loại life cycle: Predictive, Iterative, Incremental, Agile và cách lựa chọn</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://www.pmi.org/pmbok-guide-standards/practice-guides/agile" target="_blank">Agile Practice Guide</a> — Chương 3: Life Cycle Selection</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Không có life cycle nào hoàn hảo cho mọi dự án. Mỗi dự án tìm một điểm tối ưu trên continuum — cân bằng giữa tính dự đoán được và khả năng thích ứng.
+</div>
+
+<p>Dự án có nhiều hình thái và có nhiều cách thực hiện. Đội dự án cần nhận biết các đặc điểm và lựa chọn phù hợp nhất cho tình huống.</p>
+
+<h2 id="predictive">Predictive Life Cycle</h2>
+
+<p>Phương pháp truyền thống, phần lớn lập kế hoạch diễn ra trước, sau đó thực thi tuần tự.</p>
+
+<div class="flow">
+<span class="flow-step">Analyze</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Design</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Test</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Deliver</span>
+</div>
+
+<h3>Đặc điểm</h3>
+<ul>
+<li><strong>Requirements:</strong> Cố định (fixed) từ đầu</li>
+<li><strong>Activities:</strong> Thực hiện một lần cho toàn bộ dự án</li>
+<li><strong>Delivery:</strong> Một lần duy nhất (single delivery)</li>
+<li><strong>Goal:</strong> Quản lý chi phí</li>
+</ul>
+
+<h3>Khi nào phù hợp</h3>
+<ul>
+<li>Requirements rõ ràng và ổn định</li>
+<li>Đội ngũ ổn định, rủi ro thấp</li>
+<li>Công nghệ đã được chứng minh</li>
+<li>Ít cơ hội cho interim deliverables</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Rủi ro</strong>
+Nếu dự án gặp thay đổi hoặc bất đồng về requirements, hoặc giải pháp công nghệ không còn đơn giản, dự án predictive sẽ phát sinh chi phí không lường trước.
+</div>
+
+<h2 id="iterative">Iterative Life Cycle</h2>
+
+<p>Cải thiện sản phẩm qua các prototypes hoặc proof-of-concept liên tiếp.</p>
+
+<div class="flow">
+<span class="flow-step">Analyze</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Prototype</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Refine</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Deliver</span>
+</div>
+
+<h3>Đặc điểm</h3>
+<ul>
+<li><strong>Requirements:</strong> Thay đổi (dynamic)</li>
+<li><strong>Activities:</strong> Lặp lại cho đến khi đúng</li>
+<li><strong>Delivery:</strong> Một lần (single delivery)</li>
+<li><strong>Goal:</strong> Tính đúng đắn của giải pháp (correctness)</li>
+</ul>
+
+<h3>Khi nào phù hợp</h3>
+<ul>
+<li>Độ phức tạp cao</li>
+<li>Thay đổi thường xuyên</li>
+<li>Scope bị ảnh hưởng bởi nhiều stakeholders có quan điểm khác nhau</li>
+<li>Cần học hỏi trước khi xây dựng (optimized for learning)</li>
+</ul>
+
+<h2 id="incremental">Incremental Life Cycle</h2>
+
+<p>Tối ưu cho tốc độ giao hàng — cung cấp các phần hoàn chỉnh mà khách hàng có thể sử dụng ngay.</p>
+
+<div class="flow">
+<span class="flow-step">Increment 1</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Deliver</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Increment 2</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Deliver</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">...</span>
+</div>
+
+<h3>Đặc điểm</h3>
+<ul>
+<li><strong>Requirements:</strong> Thay đổi (dynamic)</li>
+<li><strong>Activities:</strong> Thực hiện một lần cho mỗi increment</li>
+<li><strong>Delivery:</strong> Nhiều lần, các phần nhỏ hoàn chỉnh</li>
+<li><strong>Goal:</strong> Tốc độ (speed)</li>
+</ul>
+
+<h3>Khi nào phù hợp</h3>
+<ul>
+<li>Business không thể chờ mọi thứ hoàn thành</li>
+<li>Khách hàng sẵn sàng nhận một phần của giải pháp tổng thể</li>
+<li>Cần feedback sớm để điều chỉnh</li>
+</ul>
+
+<h2 id="agile">Agile Life Cycle</h2>
+
+<p>Kết hợp cả iterative (lặp lại để tinh chỉnh) VÀ incremental (giao từng phần hoàn chỉnh). Có 2 dạng:</p>
+
+<h3>Iteration-Based Agile</h3>
+<ul>
+<li>Đội làm việc trong iterations (timeboxes đều nhau)</li>
+<li>Hoàn thành tính năng quan trọng nhất trước</li>
+<li>Mỗi iteration tạo ra working tested features</li>
+<li>Ví dụ: Scrum với sprints 2 tuần</li>
+</ul>
+
+<h3>Flow-Based Agile</h3>
+<ul>
+<li>Đội kéo features từ backlog dựa trên capacity</li>
+<li>Không theo lịch iteration cố định</li>
+<li>Giữ WIP (Work in Progress) nhỏ</li>
+<li>Mỗi feature có thể mất thời gian khác nhau</li>
+<li>Ví dụ: Kanban</li>
+</ul>
+
+<table>
+<tr><th>Tiêu chí</th><th>Iteration-Based</th><th>Flow-Based</th></tr>
+<tr><td>Cadence</td><td>Timebox cố định (1-4 tuần)</td><td>Liên tục, không có timebox</td></tr>
+<tr><td>Planning</td><td>Đầu mỗi iteration</td><td>Khi có capacity</td></tr>
+<tr><td>WIP</td><td>Cố định theo iteration</td><td>Giới hạn bằng WIP limits</td></tr>
+<tr><td>Review</td><td>Cuối mỗi iteration</td><td>Theo lịch tùy chọn</td></tr>
+</table>
+
+<h2 id="hybrid">Hybrid Life Cycles</h2>
+
+<p>Kết hợp các elements từ predictive, iterative, incremental, và/hoặc agile. Có nhiều biến thể:</p>
+
+<h3>1. Agile Development + Predictive Rollout</h3>
+<p>Phát triển bằng Agile (xử lý bất định), sau đó rollout bằng predictive (quy trình lặp lại đã biết).</p>
+<p><strong>Ví dụ:</strong> Phát triển sản phẩm công nghệ mới → triển khai và training cho hàng ngàn users.</p>
+
+<h3>2. Agile + Predictive đồng thời</h3>
+<p>Một số aspects dùng Agile (short iterations, daily standups, retrospectives), aspects khác vẫn predictive (upfront estimation, work assignment).</p>
+
+<h3>3. Chủ yếu Predictive với thành phần Agile</h3>
+<p>Phần lớn dự án routine, một phần có bất định được xử lý Agile.</p>
+<p><strong>Ví dụ:</strong> Xây dựng cơ sở với vật liệu mái mới — thử nghiệm Agile cho phần mới.</p>
+
+<h3>4. Chủ yếu Agile với thành phần Predictive</h3>
+<p>Phần lớn dự án Agile, nhưng một yếu tố không thể dùng Agile.</p>
+<p><strong>Ví dụ:</strong> Tích hợp component bên ngoài từ vendor không phối hợp incremental.</p>
+
+<div class="callout callout-green">
+<strong>Hybrid như chiến lược chuyển đổi</strong>
+Nhiều đội không thể chuyển sang Agile ngay. Bắt đầu bằng thêm iterative techniques → sau đó thêm incremental techniques. Thử trên dự án ít rủi ro trước, rồi mở rộng dần.
+</div>
+
+<h2 id="mixing">Pha Trộn Các Phương Pháp Agile</h2>
+
+<p>Đội Agile hiếm khi giới hạn trong một framework duy nhất. Sự pha trộn phổ biến nhất:</p>
+
+<ul>
+<li><strong>Scrum</strong> — product backlog, product owner, sprint events</li>
+<li><strong>Kanban board</strong> — visualize flow, WIP limits, identify impediments</li>
+<li><strong>XP practices</strong> — continuous integration, automated testing, TDD, refactoring</li>
+</ul>
+
+<blockquote>
+Sự pha trộn từ nhiều nguồn tạo ra kết quả synergistic — hiệu suất cao hơn so với mỗi thành phần riêng lẻ.
+</blockquote>
+
+<h2 id="tailoring">Yếu Tố Tailoring</h2>
+
+<table>
+<tr><th>Yếu tố dự án</th><th>Tùy chỉnh</th></tr>
+<tr><td>Demand pattern không đều</td><td>Dùng cadence (timebox) kết hợp flow-based để linh hoạt</td></tr>
+<tr><td>Đội thiếu kinh nghiệm</td><td>Retrospect thường xuyên hơn, chọn cải tiến</td></tr>
+<tr><td>Luồng công việc hay bị gián đoạn</td><td>Kanban boards + WIP limits để cải thiện flow</td></tr>
+<tr><td>Chất lượng increment kém</td><td>Test-Driven Development và mistake-proofing</td></tr>
+<tr><td>Cần nhiều hơn 1 đội</td><td>Học về scaling frameworks rồi craft approach phù hợp</td></tr>
+<tr><td>Đội mới với Agile</td><td>Training mindset và principles trước, sau đó workshop framework cụ thể</td></tr>
+</table>
+
+<h2 id="choosing">Cách Lựa Chọn Life Cycle</h2>
+
+<p>Continuum dựa trên 2 trục:</p>
+<ul>
+<li><strong>Degree of Change</strong> (trục X): Low → High</li>
+<li><strong>Frequency of Delivery</strong> (trục Y): Low → High</li>
+</ul>
+
+<table>
+<tr><th>Life Cycle</th><th>Change</th><th>Delivery</th><th>Lợi thế</th></tr>
+<tr><td>Predictive</td><td>Thấp</td><td>Thấp (1 lần)</td><td>Tận dụng những gì đã biết và đã chứng minh</td></tr>
+<tr><td>Iterative</td><td>Cao</td><td>Thấp</td><td>Feedback trên công việc chưa hoàn thành để cải thiện</td></tr>
+<tr><td>Incremental</td><td>Thấp</td><td>Cao</td><td>Deliverables hoàn chỉnh khách hàng dùng ngay</td></tr>
+<tr><td>Agile</td><td>Cao</td><td>Cao</td><td>Iterate + increment = adapt + deliver thường xuyên</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Câu hỏi quyết định</strong>
+"Làm sao chúng ta có thể thành công nhất?" — không quan trọng cách đó là Agile hay Predictive. Nếu cần feedback → increments. Nếu cần quản lý rủi ro khi khám phá → iterations hoặc Agile.
+</div>
+
+<div class="prev-next">
+  <a href="02-tu-duy-agile.html">← Bài 02: Tư Duy Agile & Lean</a>
+  <a href="04-moi-truong-agile.html">Bài 04: Xây Dựng Môi Trường Agile →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

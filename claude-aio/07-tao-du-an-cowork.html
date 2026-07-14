@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo Dự Án Trong Claude Cowork - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Cowork Projects là gì</a>
+      <a href="#compare">Hai hệ thống cũ vs mới</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tạo Project</div>
+    <div class="nav-items">
+      <a href="#create">3 cách tạo Project</a>
+      <a href="#first-run">Thiết lập ban đầu</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Workflows Thực Tế</div>
+    <div class="nav-items">
+      <a href="#newsletter">Newsletter hàng tuần</a>
+      <a href="#client-reports">Báo cáo khách hàng</a>
+      <a href="#sales-proposals">Đề xuất bán hàng</a>
+      <a href="#ops-briefing">Báo cáo vận hành</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kết Hợp & Hạn Chế</div>
+    <div class="nav-items">
+      <a href="#old-projects">Projects kiểu cũ</a>
+      <a href="#limitations">Hạn chế hiện tại</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Bắt Đầu</div>
+    <div class="nav-items">
+      <a href="#setup-15-min">Thiết lập 15 phút</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Tạo Dự Án Trong Claude Cowork</h1>
+<p class="subtitle">Cách dùng Cowork Projects để Claude nhớ ngữ cảnh giữa các phiên, tự động hóa tác vụ lặp lại, và tạo sản phẩm thật thay vì chỉ chat</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/tao-du-an-trong-claude-cowork" target="_blank">phandonggiang.com</a> — Khóa học AI thực chiến, Cấp độ 2 | Trung cấp</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Cowork Projects giải quyết vấn đề cốt lõi của Claude: quên sạch sau mỗi phiên. Bằng cách gắn bộ nhớ, hướng dẫn và thư mục vào một Project, Claude trở thành "nhân viên AI" thực sự — nhớ việc cũ, thực thi việc mới, và tự chạy theo lịch mà không cần nhắc lại.
+</div>
+
+<!-- SECTION 1: COMPARE -->
+<h2 id="compare">Hai hệ thống: cũ vs tích hợp</h2>
+
+<p>Trước khi có Cowork Projects, Claude trên desktop và trên trình duyệt hoạt động hoàn toàn riêng biệt.</p>
+
+<table>
+<tr><th>Hệ thống</th><th>Nơi chạy</th><th>Làm được gì</th><th>Hạn chế</th></tr>
+<tr><td><strong>Claude Projects (trình duyệt)</strong></td><td>claude.ai</td><td>Tải file, viết hướng dẫn, chia sẻ với cả đội</td><td>Không tạo file mới, không chạy code — chỉ chat có thêm ngữ cảnh</td></tr>
+<tr><td><strong>Claude Cowork (desktop cũ)</strong></td><td>Ứng dụng desktop</td><td>Đọc file, tạo tài liệu thật, chạy code, hỏi lại trước khi thực thi</td><td>Mỗi phiên là trang trắng — không nhớ gì từ lần trước</td></tr>
+<tr><td><strong>Cowork Projects (hiện tại)</strong></td><td>Ứng dụng desktop</td><td>Tất cả ở trên + bộ nhớ lâu dài, tác vụ lên lịch, lịch sử đầy đủ</td><td>Chỉ trên máy của bạn, chưa chia sẻ được cho đội</td></tr>
+</table>
+
+<h3>Cowork Projects bao gồm những gì</h3>
+<ul>
+  <li>Thư mục riêng mà Claude đọc và ghi trực tiếp vào đó</li>
+  <li>Hướng dẫn tùy chỉnh về giọng văn, quy tắc, định dạng và giới hạn</li>
+  <li><strong>Bộ nhớ theo phạm vi (scoped memory)</strong> — Claude nhớ những gì nó đã làm trong chính Project này</li>
+  <li>Tác vụ được lên lịch, lặp lại định kỳ, gắn liền với Project này</li>
+  <li>Lịch sử tác vụ — mọi lần chạy đều được lưu lại ngay trên máy của bạn</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Điểm nổi bật:</strong> Bạn chỉ cần nói "làm tiếp báo cáo tuần trước" là Claude hiểu ngay — nhưng chỉ trong phạm vi của Project này, không hề lẫn sang những công việc khác.
+</div>
+
+<!-- SECTION 2: CREATE -->
+<h2 id="create">3 cách tạo Cowork Project</h2>
+
+<p>Vào tab Cowork &gt; Projects &gt; bấm <strong>+</strong> để bắt đầu. Có ba lựa chọn tùy theo tình huống của bạn.</p>
+
+<h3>Cách 1 — Bắt đầu từ đầu (Start from scratch)</h3>
+<p>Phù hợp nhất khi bạn đang xây dựng một quy trình làm việc hoàn toàn mới.</p>
+<ol>
+  <li>Tạo một thư mục mới trên máy tính</li>
+  <li>Vào Cowork &gt; Projects &gt; bấm + &gt; chọn <strong>Start from scratch</strong></li>
+  <li>Thêm hướng dẫn, thêm các file cần thiết (mẫu, quy chuẩn thương hiệu...)</li>
+  <li>Đặt tên cho Project và hoàn tất</li>
+</ol>
+
+<h3>Cách 2 — Nhập từ Project có sẵn trên claude.ai (Import a project)</h3>
+<p>Phù hợp nếu bạn đã xây sẵn "bộ não" trên trình duyệt — giờ là lúc để nó thực thi.</p>
+<ol>
+  <li>Vào Cowork &gt; Projects &gt; bấm + &gt; chọn <strong>Import a project</strong></li>
+  <li>Tìm Project bạn đã có trên trình duyệt, chọn một cái</li>
+  <li>File và hướng dẫn sẽ tự động chuyển sang</li>
+  <li>Chọn nơi lưu trên máy</li>
+</ol>
+
+<h3>Cách 3 — Dùng thư mục có sẵn trên máy</h3>
+<p>Phù hợp nếu bạn đã có sẵn một thư mục Cowork từ trước. Chỉ cần "bọc" nó lại thành một Project để có thêm bộ nhớ và hướng dẫn.</p>
+<ol>
+  <li>Chọn thư mục đã có, đặt tên cho Project</li>
+  <li>Thêm hướng dẫn và file bổ sung nếu cần</li>
+</ol>
+
+<div class="callout callout-amber">
+<strong>Lưu ý về hướng dẫn (instructions):</strong> Viết ngắn gọn, tối đa 5–8 dòng. Đây là những quy tắc Claude tuân theo trong mọi tác vụ của Project này — giọng văn, nơi lưu file, cách hỏi lại, định dạng xuất ra.
+</div>
+
+<!-- SECTION 3: FIRST RUN -->
+<h2 id="first-run">Thiết lập ban đầu sau khi tạo Project</h2>
+
+<p>Ngay sau khi tạo xong, chạy prompt này để Claude "học" toàn bộ Project ngay trong ngày đầu tiên:</p>
+
+<blockquote>
+"Tôi vừa tạo Project này. Hãy đọc mọi file trong thư mục, sau đó tóm tắt lại những gì bạn hiểu về không gian làm việc này: ở đây có gì, tôi có thể dùng nó để làm gì, và bạn sẽ tuân theo những hướng dẫn nào. Nếu có gì chưa rõ, hãy dùng AskUserQuestion để hỏi lại tôi."
+</blockquote>
+
+<p>Đây là cách chắc chắn nhất để đảm bảo Project được thiết lập đúng ngay từ đầu. Từ đó về sau, Claude sẽ luôn nhớ ngữ cảnh mà không cần giải thích lại.</p>
+
+<div class="flow">
+  <span class="flow-step">Tạo Project</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Chạy prompt thiết lập</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Claude đọc & hiểu</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-step">Sẵn sàng làm việc</span>
+</div>
+
+<!-- SECTION 4: NEWSLETTER -->
+<h2 id="newsletter">Workflow 1 — Newsletter hàng tuần</h2>
+
+<p>Dành cho đội content, freelancer, hay bất kỳ ai sản xuất nội dung định kỳ.</p>
+
+<h3>Cấu trúc thư mục Project "Newsletter"</h3>
+<ul>
+  <li><code>about-me.md</code> — mô tả tác giả, phong cách, đối tượng độc giả</li>
+  <li><code>anti-ai-writing-style.md</code> — quy tắc viết "chống AI", từ bị cấm</li>
+  <li>5 số newsletter cũ từng có hiệu suất tốt</li>
+  <li>Tài liệu tham khảo từ những người sáng tạo khác</li>
+  <li>Tài liệu chính thức từ các công ty hay viết về</li>
+</ul>
+
+<h3>Hướng dẫn Project (instructions)</h3>
+<ul>
+  <li>Luôn đọc thư mục ABOUT ME và file anti-AI-writing-style.md trước mỗi tác vụ</li>
+  <li>Giữ đúng giọng văn này, không bao giờ dùng những từ bị cấm</li>
+  <li>Giữ mỗi đoạn dưới 3 câu</li>
+  <li>Luôn dùng AskUserQuestion trước khi viết</li>
+</ul>
+
+<h3>Quy trình mỗi tuần</h3>
+<ol>
+  <li>Thả brief chủ đề mới cùng tài liệu nghiên cứu vào thư mục</li>
+  <li>Mở Project và gõ: <em>"Tôi muốn viết số newsletter tiếp theo về [chủ đề]. Hãy bắt đầu bằng AskUserQuestion để cùng tôi tinh chỉnh góc nhìn trước khi viết."</em></li>
+  <li>Claude hỏi lại 5–6 câu dưới dạng form có thể bấm chọn</li>
+  <li>Bấm trả lời → Claude viết luôn bản nháp hoàn chỉnh dạng file markdown</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Lợi thế:</strong> Claude nhớ đúng giọng văn từ tuần trước, nhớ những góc độ nào từng hiệu quả — không cần giải thích lại từ đầu mỗi lần. Dùng Grok để nghiên cứu trên web trước khi viết — công cụ tốt nhất cho bước này.
+</div>
+
+<!-- SECTION 5: CLIENT REPORTS -->
+<h2 id="client-reports">Workflow 2 — Sản phẩm bàn giao cho khách hàng</h2>
+
+<p>Phù hợp với công ty luật, tư vấn, kế toán, agency — bất kỳ ai sản xuất báo cáo định kỳ theo cấu trúc chuẩn.</p>
+
+<h3>Cấu trúc thư mục Project "Client Strategy Reports"</h3>
+<ul>
+  <li>Mẫu báo cáo (template)</li>
+  <li>2 ví dụ báo cáo chất lượng cao</li>
+  <li>Brief của khách hàng hiện tại</li>
+  <li>Các tài liệu tham khảo khách hàng gửi</li>
+</ul>
+
+<h3>Hướng dẫn Project (instructions)</h3>
+<ul>
+  <li>Luôn có phần tóm tắt điều hành</li>
+  <li>Không vượt quá 15 trang</li>
+  <li>Dùng đúng thuật ngữ của khách hàng trong brief</li>
+  <li>Cấu trúc theo thứ tự: tóm tắt điều hành → phát hiện → khuyến nghị → bước tiếp theo → phụ lục</li>
+  <li>Xuất file dưới dạng .docx</li>
+  <li>Luôn hỏi trước khi viết</li>
+</ul>
+
+<h3>Quy trình mỗi lần có khách hàng mới</h3>
+<ol>
+  <li>Thả brief mới vào thư mục</li>
+  <li>Mở Project và gõ: <em>"Có brief khách hàng mới vừa được thả vào. Đọc nó rồi tạo báo cáo chiến lược dưới dạng .docx. Hỏi tôi trước khi làm."</em></li>
+  <li>Claude đọc brief, đối chiếu với mẫu và các ví dụ cũ</li>
+  <li>Hỏi 3–4 câu (ví dụ: "Báo cáo này có cần thêm mốc thời gian không?", "Có muốn so sánh với đối thủ không?")</li>
+  <li>Bấm trả lời → Claude tạo file .docx trong thư mục</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Lợi thế:</strong> Báo cáo đều theo đúng một cấu trúc nhờ mẫu và ví dụ luôn có sẵn. Đến báo cáo thứ ba, Claude đã nắm được sở thích định dạng và mức độ chi tiết mong muốn.
+</div>
+
+<!-- SECTION 6: SALES PROPOSALS -->
+<h2 id="sales-proposals">Workflow 3 — Đề xuất bán hàng</h2>
+
+<p>Phù hợp với đội sales, phát triển kinh doanh, đối tác chiến lược, hay agency đang chào khách hàng mới.</p>
+
+<h3>Cấu trúc thư mục Project "Sales Proposals"</h3>
+<ul>
+  <li>Bảng giá</li>
+  <li>3 bản đề xuất từng thắng</li>
+  <li>Các case study</li>
+  <li>Playbook xử lý phản đối</li>
+  <li>Ghi chú cuộc gọi khảo sát khách hàng (thả vào trước mỗi lần chạy)</li>
+</ul>
+
+<h3>Hướng dẫn Project (instructions)</h3>
+<ul>
+  <li>Luôn mở đầu bằng đúng nỗi đau (pain point) của khách hàng tiềm năng</li>
+  <li>Không bao giờ nêu tên đối thủ cạnh tranh</li>
+  <li>Luôn kết thúc bằng một mốc thời gian đề xuất</li>
+  <li>Giữ đúng tông giọng của các đề xuất từng thắng</li>
+  <li>Xuất file .docx</li>
+  <li>Hỏi rõ trước khi viết</li>
+</ul>
+
+<h3>Quy trình sau mỗi cuộc gọi khảo sát</h3>
+<ol>
+  <li>Nhân viên sales thả ghi chú cuộc gọi vào thư mục</li>
+  <li>Mở Project và gõ: <em>"Có ghi chú cuộc gọi khảo sát mới trong thư mục. Tạo một đề xuất. Hỏi tôi trước khi làm."</em></li>
+  <li>Claude đọc ghi chú và các đề xuất từng thắng</li>
+  <li>Hỏi vài câu: ngân sách dự kiến, mốc thời gian ra quyết định, đối thủ chính</li>
+  <li>Tạo luôn bản đề xuất .docx</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Mẹo nâng cao:</strong> Kết nối Granola, Gmail và Slack với Claude qua các connector — nhờ vậy toàn bộ ngữ cảnh đàm phán sẽ được đưa thẳng vào Project mà không cần copy thủ công.
+</div>
+
+<!-- SECTION 7: OPS BRIEFING -->
+<h2 id="ops-briefing">Workflow 4 — Báo cáo vận hành hàng tuần</h2>
+
+<p>Phù hợp với bất kỳ quản lý nào phải tổng hợp báo cáo từ nhiều người.</p>
+
+<h3>Cấu trúc thư mục Project "Weekly Ops Briefing"</h3>
+<ul>
+  <li>4 bản báo cáo tuần gần nhất (để Claude nhận ra khuôn mẫu)</li>
+  <li>Mẫu định dạng gói gọn trong 1 trang</li>
+  <li>Dữ liệu thô từ các trưởng nhóm (thả vào mỗi sáng thứ Hai)</li>
+</ul>
+
+<h3>Hướng dẫn Project (instructions)</h3>
+<ul>
+  <li>Mỗi thứ Hai, gộp toàn bộ dữ liệu thô từ các trưởng nhóm thành một bản báo cáo điều hành duy nhất</li>
+  <li>Tối đa 1 trang</li>
+  <li>Gồm các mục: thắng lợi, điểm nghẽn, ưu tiên cho tuần tới</li>
+  <li>Đánh dấu bất kỳ điểm nghẽn nào xuất hiện ở nhiều hơn một đội</li>
+  <li>Xuất file .docx</li>
+</ul>
+
+<h3>Tự động hóa hoàn toàn với Scheduled Tasks</h3>
+<ol>
+  <li>Vào Project &gt; Scheduled tasks &gt; New</li>
+  <li>Viết prompt: "Đọc dữ liệu thô trong thư mục, tạo báo cáo vận hành theo mẫu, lưu file .docx vào OUTPUTS/"</li>
+  <li>Chọn tần suất: mỗi thứ Hai lúc 8 giờ sáng</li>
+  <li>Claude tự chạy — đọc dữ liệu, tạo báo cáo, lưu vào thư mục</li>
+</ol>
+
+<blockquote>"Việc này trước đây cần có một chief of staff, giờ chỉ là một tác vụ được lên lịch tự động."</blockquote>
+
+<div class="callout callout-green">
+<strong>Lợi thế của bộ nhớ theo phạm vi:</strong> Nhờ scoped memory, Claude còn nhận ra được cả xu hướng qua các tuần — điểm nghẽn nào lặp đi lặp lại, đội nào liên tục gặp vấn đề — mà không cần bạn chỉ ra.
+</div>
+
+<!-- SECTION 8: OLD PROJECTS -->
+<h2 id="old-projects">Projects kiểu cũ vẫn có chỗ đứng</h2>
+
+<p>Cowork Projects vượt trội khi nói đến việc thực thi. Nhưng Projects kiểu cũ trên trình duyệt vẫn thắng ở một điểm quan trọng: <strong>chia sẻ cho cả đội</strong>.</p>
+
+<ul>
+  <li>Cowork Projects chỉ nằm trên máy của bạn, chưa thể chia sẻ cho 10 đồng nghiệp khác</li>
+  <li>Nếu cả đội cần cùng truy cập chung một bộ hướng dẫn và file, Projects kiểu cũ trên trình duyệt vẫn là lựa chọn hợp lý hơn</li>
+</ul>
+
+<h3>Thiết lập được khuyến nghị hiện tại</h3>
+
+<table>
+<tr><th>Công cụ</th><th>Vai trò</th><th>Ai dùng</th></tr>
+<tr><td><strong>Claude Projects (kiểu cũ)</strong></td><td>Playbook chung cho cả đội — "nguồn chân lý" mà ai cũng truy cập được</td><td>Toàn bộ đội</td></tr>
+<tr><td><strong>Cowork Projects</strong></td><td>Không gian thực thi cá nhân — nơi thực sự tạo ra sản phẩm</td><td>Từng cá nhân</td></tr>
+</table>
+
+<p>Nhập các Project của đội vào Cowork để giữ nguyên hướng dẫn nhưng có thêm sức mạnh thực thi đầy đủ.</p>
+
+<blockquote>Khi nào Anthropic bổ sung tính năng chia sẻ nhóm cho Cowork Projects, Projects kiểu cũ sẽ trở nên dư thừa — nhưng hiện tại thì chưa.</blockquote>
+
+<!-- SECTION 9: LIMITATIONS -->
+<h2 id="limitations">Hạn chế hiện tại cần biết</h2>
+
+<table>
+<tr><th>Hạn chế</th><th>Chi tiết</th><th>Giải pháp tạm thời</th></tr>
+<tr><td><strong>Chưa chia sẻ nhóm được</strong></td><td>Cowork Projects chỉ nằm trên máy của bạn, chưa thể chia sẻ cho đồng nghiệp</td><td>Dùng Claude Projects kiểu cũ cho quy trình dùng chung</td></tr>
+<tr><td><strong>Lưu trữ cục bộ</strong></td><td>Không đồng bộ cloud — làm việc trên hai máy khác nhau sẽ không truy cập cùng một Project</td><td>Giao tác vụ qua điện thoại qua Dispatch vẫn được, nhưng file & bộ nhớ vẫn chỉ trên máy desktop</td></tr>
+<tr><td><strong>Tốn hạn mức nhiều hơn</strong></td><td>1 phiên Cowork Project tương đương hơn 20 cuộc trò chuyện thông thường</td><td>Gói Max (100 USD/tháng) cho sử dụng nặng; gói Pro (20 USD) sẽ chạm giới hạn nhanh</td></tr>
+<tr><td><strong>Vẫn là research preview</strong></td><td>Thực thi tự động đôi khi mắc lỗi với tác vụ nhiều bước phức tạp</td><td>Luôn kiểm tra kết quả trước khi gửi cho khách hàng</td></tr>
+<tr><td><strong>Ứng dụng phải luôn mở</strong></td><td>Đóng Claude Desktop là tác vụ lên lịch dừng theo</td><td>Để máy tính chạy và ứng dụng mở khi có scheduled tasks</td></tr>
+<tr><td><strong>Bộ nhớ bị giới hạn theo phạm vi</strong></td><td>Claude nhớ mọi thứ trong một Project, nhưng không nhớ gì giữa các Project với nhau</td><td>Đây là chủ đích để cô lập dữ liệu — không có giải pháp thay thế hiện tại</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Lưu ý về token:</strong> Bộ nhớ theo phạm vi và ngữ cảnh lâu dài rất đáng giá, nhưng bạn sẽ chạm giới hạn nhanh hơn nếu dùng gói Pro. Cân nhắc nâng lên gói Max nếu dùng Cowork Projects thường xuyên.
+</div>
+
+<!-- SECTION 10: SETUP 15 MIN -->
+<h2 id="setup-15-min">Thiết lập trong 15 phút</h2>
+
+<p>Toàn bộ quá trình từ zero đến sẵn sàng làm việc với Project đầu tiên.</p>
+
+<table>
+<tr><th>Thời gian</th><th>Việc cần làm</th></tr>
+<tr><td><strong>Phút 0–1</strong></td><td>Cập nhật ứng dụng Claude Desktop lên bản mới nhất. Tính năng Projects chỉ hoạt động từ bản cập nhật tháng 3/2026. Kiểm tra ở góc dưới bên trái cạnh tên bạn.</td></tr>
+<tr><td><strong>Phút 1–8</strong></td><td>Chọn một tác vụ lặp lại mà bạn làm mỗi tuần. Vào Cowork &gt; Projects &gt; + &gt; chọn cách tạo phù hợp. Viết hướng dẫn ngắn gọn 5–8 dòng.</td></tr>
+<tr><td><strong>Phút 8–12</strong></td><td>Chạy tác vụ đầu tiên trong Project: "Đọc mọi thứ trong thư mục này, sau đó [tác vụ của bạn]. Bắt đầu bằng AskUserQuestion để chúng ta thống nhất trước khi bạn thực thi." Quan sát Claude đọc file và tạo ra sản phẩm.</td></tr>
+<tr><td><strong>Phút 12–15</strong></td><td>(Không bắt buộc) Nếu công việc lặp lại hàng tuần: vào Project &gt; Scheduled tasks &gt; New. Viết prompt, chọn tần suất. Tuần sau nó sẽ tự chạy.</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Kết quả sau 15 phút:</strong> Claude biết context của dự án, nhớ hướng dẫn và giọng văn, lưu sản phẩm đúng chỗ, và không tự đoán khi thiếu thông tin. Từ phiên thứ hai trở đi, bạn không cần giải thích lại bất cứ điều gì.
+</div>
+
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html" class="current">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html">18. Dùng Claude Công Ty</a>
+</aside>
+
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiến Trúc Cloud Native Trong Ngân Hàng - Cloud Native Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1);position:relative}
+pre code{background:none;padding:0;color:inherit;border:none}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Cloud Native Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Platform</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu</a>
+      <a href="#crm-microservice">CRM Microservice</a>
+      <a href="#api-gateway">API Gateway</a>
+      <a href="#authentication">Authentication</a>
+      <a href="#kafka">Kafka Event Bus</a>
+      <a href="#redis">Cache Redis</a>
+      <a href="#database">Database Strategy</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Operations</div>
+    <div class="nav-items">
+      <a href="#kubernetes">Kubernetes/OKD</a>
+      <a href="#cicd">CI/CD Pipeline</a>
+      <a href="#monitoring">Monitoring</a>
+      <a href="#ha">High Availability</a>
+      <a href="#dr">Disaster Recovery</a>
+      <a href="#okd-design">Triển khai OKD</a>
+      <a href="#summary">Tóm tắt</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Cloud Native Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-tong-quan-cntt.html">01. Tổng Quan CNTT</a>
+  <a href="02-kien-truc-phan-mem.html">02. Kiến Trúc Phần Mềm</a>
+  <a href="03-he-sinh-thai-cloud-native.html">03. Hệ Sinh Thái Cloud Native</a>
+  <div class="level-label">Container & Orchestration</div>
+  <a href="04-container-docker.html">04. Container & Docker</a>
+  <a href="05-kubernetes.html">05. Kubernetes</a>
+  <a href="06-okd-openshift.html">06. OKD / OpenShift</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-kafka-event-driven.html">07. Kafka & Event-Driven</a>
+  <a href="08-devops-cicd.html">08. DevOps & CI/CD</a>
+  <a href="09-monitoring-observability.html">09. Monitoring</a>
+  <a href="10-security.html">10. Security</a>
+  <div class="level-label">Thực chiến</div>
+  <a href="11-banking-architecture.html" class="current">11. Kiến Trúc Ngân Hàng</a>
+</aside>
+<main class="main">
+<h1 id="overview">Kiến Trúc Cloud Native Trong Ngân Hàng</h1>
+<p class="subtitle">CRM, BPM, Loyalty, FlowX — Toàn cảnh kiến trúc hệ thống ngân hàng trên nền tảng cloud native</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://learn.microsoft.com/en-us/azure/architecture/" target="_blank">Azure Architecture</a>, <a href="https://www.cncf.io/" target="_blank">CNCF</a>, <a href="https://www.redhat.com/en/solutions/financial-services" target="_blank">Red Hat OpenShift Banking</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành chương này, bạn sẽ:</strong>
+Hiểu toàn cảnh kiến trúc cloud native cho hệ thống ngân hàng (CRM, BPM, Loyalty). Nắm cách thiết kế microservices với bounded contexts. Biết tích hợp API Gateway, Keycloak, Kafka, Redis trong banking platform. Hiểu deployment strategy trên OKD/OpenShift với HA và DR. Có khả năng thiết kế end-to-end banking system trên cloud native stack.
+</div>
+<h2 id="crm-microservice">Kiến Trúc CRM Microservice</h2>
+
+<h3>Bounded Contexts</h3>
+<p>CRM ngân hàng được chia thành 4 bounded contexts chính, mỗi context là một microservice độc lập với database riêng (Database per Service pattern):</p>
+
+<table>
+<tr><th>Bounded Context</th><th>Responsibility</th><th>Database</th></tr>
+<tr><td><strong>Customer</strong></td><td>Hồ sơ KH, KYC, segmentation, 360-view</td><td>PostgreSQL</td></tr>
+<tr><td><strong>Interaction</strong></td><td>Lịch sử tương tác, tickets, notes, timeline</td><td>MongoDB</td></tr>
+<tr><td><strong>Campaign</strong></td><td>Marketing campaigns, offers, targeting rules</td><td>PostgreSQL</td></tr>
+<tr><td><strong>Analytics</strong></td><td>Customer scoring, churn prediction, CLV</td><td>ClickHouse/Elasticsearch</td></tr>
+</table>
+
+<h3>Communication Patterns</h3>
+<div class="flow">
+<span class="flow-step">Customer Service</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Kafka Event</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Interaction Service</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Analytics Service</span>
+</div>
+
+<ul>
+<li><strong>Synchronous</strong> — REST/gRPC cho queries cần response ngay (lấy thông tin KH)</li>
+<li><strong>Asynchronous</strong> — Kafka events cho state changes (KH mới tạo, KH cập nhật segment)</li>
+<li><strong>CQRS</strong> — Command (write) tách riêng Query (read) cho Customer 360-view</li>
+</ul>
+
+<h3>Domain Events</h3>
+<pre><code>// Domain Events từ Customer bounded context
+CustomerCreated { customerId, fullName, segment, kycStatus }
+CustomerSegmentChanged { customerId, oldSegment, newSegment, reason }
+CustomerKYCCompleted { customerId, kycLevel, verifiedAt }
+
+// Interaction context lắng nghe và tạo timeline entry
+// Analytics context lắng nghe và update scoring model</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>FlowX.AI Integration</strong>
+FlowX.AI cho phép ngân hàng xây dựng digital journeys (onboarding, loan application) trên nền microservices mà không cần rewrite legacy core banking. FlowX orchestrate workflow qua Kafka, render UI động, và kết nối với CRM/BPM qua REST adapters.
+</div>
+
+<h2 id="api-gateway">API Gateway</h2>
+
+<h3>Vai trò trong Banking Platform</h3>
+<p>API Gateway là single entry point cho mọi client (mobile app, internet banking, partner APIs). Trong ngân hàng, gateway đảm nhận thêm compliance và security layers.</p>
+
+<h3>Kong / APISIX — Lựa chọn phổ biến</h3>
+<table>
+<tr><th>Feature</th><th>Kong</th><th>APISIX</th></tr>
+<tr><td><strong>Architecture</strong></td><td>Lua + OpenResty + PostgreSQL</td><td>Lua + OpenResty + etcd</td></tr>
+<tr><td><strong>Performance</strong></td><td>Tốt (10K+ RPS/node)</td><td>Rất tốt (hỗ trợ hot reload)</td></tr>
+<tr><td><strong>Plugins</strong></td><td>200+ plugins (enterprise)</td><td>80+ plugins (open-source)</td></tr>
+<tr><td><strong>K8s native</strong></td><td>Kong Ingress Controller</td><td>APISIX Ingress Controller</td></tr>
+<tr><td><strong>Banking fit</strong></td><td>Enterprise support, PCI compliance</td><td>Lightweight, high performance</td></tr>
+</table>
+
+<h3>Gateway Responsibilities</h3>
+<ul>
+<li><strong>Rate Limiting</strong> — 100 req/s cho mobile, 1000 req/s cho internal, 50 req/s cho partner APIs</li>
+<li><strong>Authentication</strong> — Validate JWT từ Keycloak, inject user claims vào headers</li>
+<li><strong>Routing</strong> — Path-based routing tới microservices (e.g., <code>/api/v1/customers/*</code> → customer-service)</li>
+<li><strong>Request/Response Transform</strong> — Mask sensitive data (PAN, SSN) trong response</li>
+<li><strong>Circuit Breaker</strong> — Protect downstream services khỏi cascade failure</li>
+<li><strong>Audit Logging</strong> — Log mọi API call cho compliance (PCI DSS requirement)</li>
+</ul>
+
+<pre><code># Kong rate limiting config cho banking APIs
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: banking-rate-limit
+spec:
+  plugin: rate-limiting
+  config:
+    minute: 100
+    hour: 5000
+    policy: redis
+    redis_host: redis-cluster.cache.svc
+    redis_port: 6379
+    hide_client_headers: false</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="authentication">Authentication — Keycloak</h2>
+
+<h3>OAuth2/OIDC Flow cho Banking</h3>
+<div class="flow">
+<span class="flow-step">Mobile App</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Keycloak (OIDC)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">JWT + Refresh Token</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">API Gateway validates</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Microservice</span>
+</div>
+
+<h3>Keycloak Configuration cho Ngân Hàng</h3>
+<ul>
+<li><strong>Realm per channel</strong> — <code>retail-banking</code>, <code>corporate-banking</code>, <code>partner-api</code></li>
+<li><strong>Client per app</strong> — mobile-app, web-portal, admin-dashboard</li>
+<li><strong>Roles</strong> — customer, teller, branch-manager, admin, auditor</li>
+<li><strong>MFA required</strong> — OTP/SMS cho transactions, biometrics cho high-value</li>
+<li><strong>Token lifetime</strong> — Access: 5 min, Refresh: 30 min (banking compliance)</li>
+<li><strong>Session management</strong> — Max 1 active session per device, force logout on suspicious activity</li>
+</ul>
+
+<h3>JWT Claims cho Banking</h3>
+<pre><code>{
+  "sub": "user-uuid-12345",
+  "realm": "retail-banking",
+  "roles": ["customer", "premium"],
+  "customer_id": "CIF001234567",
+  "segment": "mass-affluent",
+  "branch_code": "VN-HCM-001",
+  "kyc_level": 3,
+  "transaction_limit": 500000000,
+  "iat": 1720000000,
+  "exp": 1720000300
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-amber">
+<strong>Security Note</strong>
+Không store sensitive data (account balance, card number) trong JWT. JWT chỉ chứa identity và authorization claims. Sensitive data phải query trực tiếp từ service với proper authorization check.
+</div>
+<h2 id="kafka">Kafka Event Bus</h2>
+
+<h3>Vai trò trong Banking Platform</h3>
+<p>Apache Kafka là backbone cho event-driven architecture trong ngân hàng. Mọi state change quan trọng đều publish qua Kafka, cho phép loose coupling giữa services và audit trail tự nhiên.</p>
+
+<h3>Topic Design cho Banking</h3>
+<table>
+<tr><th>Topic Pattern</th><th>Ví dụ</th><th>Mục đích</th></tr>
+<tr><td><strong>crm.customer.*</strong></td><td>crm.customer.created, crm.customer.updated</td><td>Customer lifecycle events</td></tr>
+<tr><td><strong>payment.*</strong></td><td>payment.initiated, payment.completed, payment.failed</td><td>Payment processing pipeline</td></tr>
+<tr><td><strong>loyalty.*</strong></td><td>loyalty.points.earned, loyalty.points.redeemed</td><td>Loyalty program events</td></tr>
+<tr><td><strong>notification.*</strong></td><td>notification.sms, notification.push, notification.email</td><td>Multi-channel notifications</td></tr>
+<tr><td><strong>audit.*</strong></td><td>audit.login, audit.transaction, audit.config-change</td><td>Compliance audit trail</td></tr>
+</table>
+
+<h3>Topic Naming Convention</h3>
+<pre><code># Pattern: {domain}.{entity}.{event-type}
+# Ví dụ banking topics:
+
+crm.customer.created          # KH mới được tạo
+crm.customer.segment-changed  # Segment thay đổi
+payment.transfer.initiated    # Lệnh chuyển tiền khởi tạo
+payment.transfer.completed    # Chuyển tiền thành công
+payment.transfer.failed       # Chuyển tiền thất bại
+loyalty.points.earned         # Tích điểm
+loyalty.tier.upgraded         # Nâng hạng thành viên
+audit.user.login-success      # Đăng nhập thành công
+audit.user.login-failed       # Đăng nhập thất bại</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Kafka Configuration cho Banking</h3>
+<ul>
+<li><strong>Replication factor: 3</strong> — đảm bảo durability (min.insync.replicas=2)</li>
+<li><strong>Retention: 7 ngày</strong> cho operational topics, <strong>365 ngày</strong> cho audit topics</li>
+<li><strong>Partitions</strong> — partition by customer_id để đảm bảo ordering per customer</li>
+<li><strong>Exactly-once semantics</strong> — enable.idempotence=true cho payment topics</li>
+<li><strong>Schema Registry</strong> — Avro schemas, backward compatibility mode</li>
+<li><strong>ACLs</strong> — mỗi service chỉ produce/consume topics thuộc domain mình</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Critical: Payment Event Ordering</strong>
+Payment events PHẢI đảm bảo ordering per transaction. Dùng transaction_id làm partition key. Nếu payment.initiated arrive sau payment.completed → data inconsistency. Enable idempotent producer + transactional consumers cho payment domain.
+</div>
+
+<h2 id="redis">Cache Redis</h2>
+
+<h3>Use Cases trong Banking</h3>
+<table>
+<tr><th>Use Case</th><th>Pattern</th><th>TTL</th></tr>
+<tr><td><strong>Session Store</strong></td><td>Keycloak session, user context</td><td>30 phút</td></tr>
+<tr><td><strong>Hot Data Cache</strong></td><td>Customer profile, account balance</td><td>5 phút</td></tr>
+<tr><td><strong>Rate Limiting</strong></td><td>API gateway counters, login attempts</td><td>1 phút</td></tr>
+<tr><td><strong>Distributed Lock</strong></td><td>Payment dedup, concurrent transfer protection</td><td>30 giây</td></tr>
+<tr><td><strong>Leaderboard</strong></td><td>Loyalty points ranking, campaign results</td><td>1 giờ</td></tr>
+</table>
+
+<h3>Caching Patterns</h3>
+
+<h3>Cache-Aside (Lazy Loading)</h3>
+<pre><code># Đọc: check cache trước, miss thì query DB rồi set cache
+async def get_customer(customer_id):
+    # 1. Check Redis
+    cached = await redis.get(f"customer:{customer_id}")
+    if cached:
+        return json.loads(cached)
+    
+    # 2. Cache miss → query PostgreSQL
+    customer = await db.query("SELECT * FROM customers WHERE id = $1", customer_id)
+    
+    # 3. Set cache with TTL
+    await redis.setex(f"customer:{customer_id}", 300, json.dumps(customer))
+    return customer</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Write-Through</h3>
+<pre><code># Ghi: update DB + cache đồng thời
+async def update_customer_segment(customer_id, new_segment):
+    # 1. Update PostgreSQL
+    await db.execute(
+        "UPDATE customers SET segment = $1 WHERE id = $2",
+        new_segment, customer_id
+    )
+    
+    # 2. Update Redis immediately
+    customer = await db.query("SELECT * FROM customers WHERE id = $1", customer_id)
+    await redis.setex(f"customer:{customer_id}", 300, json.dumps(customer))
+    
+    # 3. Publish event
+    await kafka.produce("crm.customer.segment-changed", {
+        "customer_id": customer_id,
+        "new_segment": new_segment
+    })</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Redis Cluster cho Banking</h3>
+<ul>
+<li><strong>Redis Cluster 6 nodes</strong> — 3 masters + 3 replicas (cross-AZ)</li>
+<li><strong>Persistence</strong> — AOF enabled (appendfsync everysec) cho session data</li>
+<li><strong>Memory policy</strong> — allkeys-lru cho cache, noeviction cho session/lock</li>
+<li><strong>TLS enabled</strong> — encrypt data in transit (compliance requirement)</li>
+<li><strong>AUTH + ACL</strong> — mỗi service có user riêng, chỉ access prefix thuộc mình</li>
+</ul>
+
+<h2 id="database">Database Strategy — Polyglot Persistence</h2>
+
+<h3>Nguyên tắc: Right tool for the right job</h3>
+<p>Không một database nào phù hợp cho mọi use case. Banking platform sử dụng polyglot persistence — chọn database phù hợp nhất cho từng bounded context.</p>
+
+<table>
+<tr><th>Database</th><th>Use Case</th><th>Bounded Context</th></tr>
+<tr><td><strong>PostgreSQL</strong></td><td>OLTP, ACID transactions, relational data</td><td>Customer, Payment, Account</td></tr>
+<tr><td><strong>MongoDB</strong></td><td>Flexible schema, document-oriented</td><td>Interaction, Campaign templates</td></tr>
+<tr><td><strong>Redis</strong></td><td>Cache, session, rate limiting</td><td>Cross-cutting (shared infra)</td></tr>
+<tr><td><strong>Elasticsearch</strong></td><td>Full-text search, log analytics</td><td>Search, Audit logs</td></tr>
+<tr><td><strong>ClickHouse</strong></td><td>OLAP, time-series analytics</td><td>Analytics, Reporting</td></tr>
+</table>
+
+<h3>PostgreSQL cho Core Banking</h3>
+<ul>
+<li><strong>Patroni HA</strong> — automatic failover, streaming replication</li>
+<li><strong>Connection pooling</strong> — PgBouncer (transaction mode, max 200 connections/pool)</li>
+<li><strong>Partitioning</strong> — table partition by date cho transactions (tăng query performance)</li>
+<li><strong>Logical replication</strong> — replicate sang read replica cho reporting</li>
+<li><strong>Encryption</strong> — TDE (Transparent Data Encryption) cho data at rest</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Database per Service Pattern</strong>
+Mỗi microservice sở hữu database riêng. Customer Service không được query trực tiếp vào Payment DB. Muốn lấy data cross-service → gọi API hoặc subscribe Kafka events. Điều này đảm bảo loose coupling và independent deployability.
+</div>
+<h2 id="kubernetes">Kubernetes/OKD Deployment</h2>
+
+<h3>Namespace Strategy</h3>
+<p>Tổ chức resources theo environment và team ownership:</p>
+
+<table>
+<tr><th>Namespace</th><th>Mục đích</th><th>Resource Quota</th></tr>
+<tr><td><strong>crm-dev</strong></td><td>Development environment</td><td>CPU: 8 cores, RAM: 16Gi</td></tr>
+<tr><td><strong>crm-staging</strong></td><td>Staging/UAT</td><td>CPU: 16 cores, RAM: 32Gi</td></tr>
+<tr><td><strong>crm-prod</strong></td><td>Production</td><td>CPU: 64 cores, RAM: 128Gi</td></tr>
+<tr><td><strong>payment-prod</strong></td><td>Payment services (isolated)</td><td>CPU: 32 cores, RAM: 64Gi</td></tr>
+<tr><td><strong>shared-infra</strong></td><td>Kafka, Redis, monitoring</td><td>CPU: 48 cores, RAM: 96Gi</td></tr>
+</table>
+
+<h3>Resource Quotas & Limits</h3>
+<pre><code>apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: crm-prod-quota
+  namespace: crm-prod
+spec:
+  hard:
+    requests.cpu: "32"
+    requests.memory: 64Gi
+    limits.cpu: "64"
+    limits.memory: 128Gi
+    pods: "100"
+    services: "20"
+    persistentvolumeclaims: "30"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: crm-prod-limits
+  namespace: crm-prod
+spec:
+  limits:
+  - default:
+      cpu: "500m"
+      memory: 512Mi
+    defaultRequest:
+      cpu: "100m"
+      memory: 128Mi
+    type: Container</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Horizontal Pod Autoscaler (HPA)</h3>
+<pre><code>apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: crm-api-hpa
+  namespace: crm-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: crm-api
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Pods
+        value: 4
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="cicd">CI/CD Pipeline</h2>
+
+<h3>Pipeline Flow</h3>
+<div class="flow">
+<span class="flow-step">GitLab Push</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build & Test</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Scan (Trivy)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Harbor Registry</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">ArgoCD Sync</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">OKD Deploy</span>
+</div>
+
+<h3>GitLab CI Stages</h3>
+<pre><code># .gitlab-ci.yml cho CRM microservice
+stages:
+  - test
+  - build
+  - scan
+  - deploy-staging
+  - deploy-prod
+
+unit-test:
+  stage: test
+  image: openjdk:17-slim
+  script:
+    - ./gradlew test
+  coverage: '/Total.*?([0-9]{1,3})%/'
+
+build-image:
+  stage: build
+  script:
+    - docker build -t harbor.bank.vn/crm/customer-service:${CI_COMMIT_SHA} .
+    - docker push harbor.bank.vn/crm/customer-service:${CI_COMMIT_SHA}
+
+security-scan:
+  stage: scan
+  script:
+    - trivy image --severity HIGH,CRITICAL --exit-code 1 
+        harbor.bank.vn/crm/customer-service:${CI_COMMIT_SHA}
+
+deploy-staging:
+  stage: deploy-staging
+  script:
+    - argocd app set crm-staging --revision ${CI_COMMIT_SHA}
+    - argocd app sync crm-staging --prune
+  environment:
+    name: staging
+
+deploy-prod:
+  stage: deploy-prod
+  script:
+    - argocd app set crm-prod --revision ${CI_COMMIT_SHA}
+    - argocd app sync crm-prod --strategy rolling
+  environment:
+    name: production
+  when: manual
+  only:
+    - main</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>ArgoCD GitOps</h3>
+<ul>
+<li><strong>Git as single source of truth</strong> — mọi config change phải qua Git PR</li>
+<li><strong>Auto-sync disabled cho production</strong> — require manual approval</li>
+<li><strong>Health checks</strong> — ArgoCD verify pod healthy trước khi mark sync success</li>
+<li><strong>Rollback</strong> — 1 click rollback to previous Git commit</li>
+<li><strong>Multi-cluster</strong> — 1 ArgoCD manage nhiều OKD clusters (DC1, DC2, DR)</li>
+</ul>
+
+<h2 id="monitoring">Monitoring & Observability</h2>
+
+<h3>Stack: Prometheus + Grafana + Loki</h3>
+<table>
+<tr><th>Tool</th><th>Vai trò</th><th>Data</th></tr>
+<tr><td><strong>Prometheus</strong></td><td>Metrics collection & alerting</td><td>Time-series metrics</td></tr>
+<tr><td><strong>Grafana</strong></td><td>Visualization & dashboards</td><td>Metrics + Logs + Traces</td></tr>
+<tr><td><strong>Loki</strong></td><td>Log aggregation</td><td>Structured logs</td></tr>
+<tr><td><strong>Tempo/Jaeger</strong></td><td>Distributed tracing</td><td>Request traces across services</td></tr>
+<tr><td><strong>AlertManager</strong></td><td>Alert routing & silencing</td><td>Alerts → PagerDuty/Slack</td></tr>
+</table>
+
+<h3>SLOs cho Banking Services</h3>
+<table>
+<tr><th>Service</th><th>SLO Target</th><th>Error Budget (monthly)</th></tr>
+<tr><td><strong>Payment Gateway</strong></td><td>99.99% availability</td><td>4.3 phút downtime</td></tr>
+<tr><td><strong>CRM API</strong></td><td>99.9% availability</td><td>43.8 phút downtime</td></tr>
+<tr><td><strong>Loyalty Service</strong></td><td>99.9% availability</td><td>43.8 phút downtime</td></tr>
+<tr><td><strong>Internet Banking</strong></td><td>99.95% availability</td><td>21.9 phút downtime</td></tr>
+<tr><td><strong>API Latency (P99)</strong></td><td>&lt; 500ms (CRM), &lt; 200ms (Payment)</td><td>SLI-based alerting</td></tr>
+</table>
+
+<h3>Key Metrics (RED Method)</h3>
+<ul>
+<li><strong>Rate</strong> — Requests per second per service</li>
+<li><strong>Errors</strong> — Error rate (5xx responses / total requests)</li>
+<li><strong>Duration</strong> — Request latency (P50, P95, P99)</li>
+</ul>
+
+<pre><code># PrometheusRule cho Payment SLO alerting
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: payment-slo-alerts
+  namespace: payment-prod
+spec:
+  groups:
+  - name: payment.slo
+    rules:
+    - alert: PaymentHighErrorRate
+      expr: |
+        sum(rate(http_requests_total{service="payment-gateway",code=~"5.."}[5m]))
+        / sum(rate(http_requests_total{service="payment-gateway"}[5m])) > 0.001
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Payment error rate exceeds SLO (0.1%)"
+    - alert: PaymentHighLatency
+      expr: |
+        histogram_quantile(0.99, 
+          sum(rate(http_request_duration_seconds_bucket{service="payment-gateway"}[5m])) by (le)
+        ) > 0.2
+      for: 5m
+      labels:
+        severity: warning</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<h2 id="ha">High Availability</h2>
+
+<h3>Multi-AZ Deployment</h3>
+<p>Banking services phải chạy across multiple Availability Zones để đảm bảo không single point of failure. Nếu 1 AZ down, traffic tự động failover sang AZ còn lại.</p>
+
+<table>
+<tr><th>Component</th><th>HA Strategy</th><th>Min Replicas</th></tr>
+<tr><td><strong>CRM API</strong></td><td>Multi-AZ, pod anti-affinity</td><td>3 (spread across 3 AZ)</td></tr>
+<tr><td><strong>Payment Gateway</strong></td><td>Multi-AZ, active-active</td><td>4 (2 per AZ minimum)</td></tr>
+<tr><td><strong>PostgreSQL</strong></td><td>Patroni HA, sync replication</td><td>3 (1 primary + 2 replicas)</td></tr>
+<tr><td><strong>Kafka</strong></td><td>Multi-AZ brokers, rack awareness</td><td>3 brokers (min.insync=2)</td></tr>
+<tr><td><strong>Redis</strong></td><td>Redis Cluster, cross-AZ replicas</td><td>6 (3 masters + 3 replicas)</td></tr>
+</table>
+
+<h3>Pod Anti-Affinity</h3>
+<pre><code># Đảm bảo pods của cùng service spread across các node/AZ khác nhau
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crm-api
+  namespace: crm-prod
+spec:
+  replicas: 3
+  template:
+    spec:
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app: crm-api
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values: ["crm-api"]
+            topologyKey: kubernetes.io/hostname</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Pod Disruption Budget (PDB)</h3>
+<pre><code># Đảm bảo luôn có minimum pods available khi maintenance/upgrade
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: crm-api-pdb
+  namespace: crm-prod
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: crm-api
+---
+# Payment: stricter PDB - không cho phép bất kỳ disruption nào
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: payment-gateway-pdb
+  namespace: payment-prod
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: payment-gateway</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Circuit Breaker Pattern</h3>
+<div class="flow">
+<span class="flow-step">Closed (normal)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Open (failures threshold)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Half-Open (test)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Closed (recovered)</span>
+</div>
+
+<ul>
+<li><strong>Threshold</strong> — Open circuit sau 5 consecutive failures hoặc 50% error rate trong 10s window</li>
+<li><strong>Timeout</strong> — Circuit stays open 30s trước khi thử half-open</li>
+<li><strong>Fallback</strong> — Return cached data hoặc graceful degradation message</li>
+<li><strong>Implementation</strong> — Resilience4j (Java), Istio service mesh (infra-level)</li>
+</ul>
+
+<h2 id="dr">Disaster Recovery</h2>
+
+<h3>RPO/RTO Targets</h3>
+<table>
+<tr><th>Service Tier</th><th>RPO (Data Loss)</th><th>RTO (Recovery Time)</th><th>Strategy</th></tr>
+<tr><td><strong>Tier 1: Payment</strong></td><td>0 (zero data loss)</td><td>&lt; 5 phút</td><td>Synchronous replication, active-active</td></tr>
+<tr><td><strong>Tier 2: CRM, Core</strong></td><td>&lt; 1 phút</td><td>&lt; 15 phút</td><td>Async replication, warm standby</td></tr>
+<tr><td><strong>Tier 3: Analytics</strong></td><td>&lt; 1 giờ</td><td>&lt; 4 giờ</td><td>Backup restore, cold standby</td></tr>
+</table>
+
+<h3>Backup Strategy</h3>
+<ul>
+<li><strong>PostgreSQL</strong> — WAL archiving liên tục + daily full backup (pg_basebackup) + PITR capability</li>
+<li><strong>MongoDB</strong> — Continuous oplog backup + daily snapshot</li>
+<li><strong>Kafka</strong> — MirrorMaker 2 replicate sang DR cluster (async)</li>
+<li><strong>Redis</strong> — AOF + RDB snapshot mỗi 15 phút → S3-compatible storage</li>
+<li><strong>etcd (K8s)</strong> — Automated snapshot mỗi giờ, retain 72h</li>
+<li><strong>Velero</strong> — Backup K8s resources (namespaces, deployments, PVCs) → offsite storage</li>
+</ul>
+
+<h3>Failover Architecture</h3>
+<div class="flow">
+<span class="flow-step">DC1 (Primary)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Global LB detects failure</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DNS failover</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">DC2 (DR) promoted</span>
+</div>
+
+<ul>
+<li><strong>Active-Active</strong> (Payment) — Cả 2 DC handle traffic, data sync realtime</li>
+<li><strong>Active-Passive</strong> (CRM) — DC2 warm standby, promote khi DC1 fail</li>
+<li><strong>DR Drill</strong> — Test failover quarterly, document runbook, measure actual RTO</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>DR Testing là bắt buộc</strong>
+NHNN yêu cầu ngân hàng phải có DR drill ít nhất 2 lần/năm. Mọi runbook phải được test thực tế, không chỉ trên giấy. Đo actual RTO và so sánh với target. Nếu miss target → escalate và fix.
+</div>
+
+<h2 id="okd-design">Thiết Kế Triển Khai Trên OKD</h2>
+
+<h3>Projects (Namespaces) Layout</h3>
+<pre><code># OKD Projects cho banking platform
+bank-crm-dev          # CRM development
+bank-crm-staging      # CRM staging/UAT
+bank-crm-prod         # CRM production
+
+bank-payment-dev
+bank-payment-staging
+bank-payment-prod     # Payment (isolated, stricter policies)
+
+bank-loyalty-dev
+bank-loyalty-staging
+bank-loyalty-prod
+
+bank-shared-infra     # Kafka, Redis, Elasticsearch
+bank-monitoring       # Prometheus, Grafana, Loki
+bank-cicd             # ArgoCD, GitLab Runner
+bank-security         # Vault, cert-manager, Keycloak</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Network Policies</h3>
+<pre><code># Isolation: Payment namespace chỉ nhận traffic từ API Gateway
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: payment-ingress-policy
+  namespace: bank-payment-prod
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: bank-shared-infra
+      podSelector:
+        matchLabels:
+          app: kong-gateway
+    ports:
+    - port: 8080
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: bank-shared-infra
+      podSelector:
+        matchLabels:
+          app: kafka
+    ports:
+    - port: 9092
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: bank-shared-infra
+    ports:
+    - port: 5432   # PostgreSQL
+    - port: 6379   # Redis
+    - port: 9092   # Kafka</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Security Context Constraints (SCC)</h3>
+<table>
+<tr><th>SCC</th><th>Áp dụng cho</th><th>Restrictions</th></tr>
+<tr><td><strong>restricted</strong></td><td>Tất cả application pods</td><td>Non-root, no privilege escalation, read-only rootfs</td></tr>
+<tr><td><strong>nonroot</strong></td><td>Middleware (Kafka, Redis)</td><td>Non-root, allow specific capabilities</td></tr>
+<tr><td><strong>privileged</strong></td><td>Monitoring agents only</td><td>Node-level access (Prometheus node-exporter)</td></tr>
+</table>
+
+<pre><code># SecurityContextConstraints cho banking application pods
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: banking-restricted
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: false
+allowPrivilegedContainer: false
+readOnlyRootFilesystem: true
+runAsUser:
+  type: MustRunAsNonRoot
+seLinuxContext:
+  type: MustRunAs
+volumes:
+- configMap
+- emptyDir
+- persistentVolumeClaim
+- projected
+- secret</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<h2 id="summary">Tóm Tắt</h2>
+
+<h3>Kiến trúc tổng thể Banking Platform</h3>
+<div class="flow">
+<span class="flow-step">Mobile/Web</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">API Gateway (Kong)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Keycloak Auth</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Microservices</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Kafka/Redis</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Polyglot DB</span>
+</div>
+
+<blockquote>
+"Cloud native banking không chỉ là containerize legacy apps. Đó là re-think cách xây dựng hệ thống tài chính — resilient, observable, secure by design, và có khả năng scale theo demand thực tế."
+</blockquote>
+
+<h3>Checklist triển khai Banking Platform</h3>
+<ul>
+<li>Microservices với bounded contexts rõ ràng (DDD)</li>
+<li>API Gateway với rate limiting, auth, audit logging</li>
+<li>Keycloak SSO với MFA cho mọi channel</li>
+<li>Kafka event bus với exactly-once cho payment domain</li>
+<li>Redis cluster cho caching và session management</li>
+<li>Polyglot persistence — right DB for right job</li>
+<li>OKD/K8s với namespace isolation và resource quotas</li>
+<li>GitOps CI/CD (GitLab CI → Harbor → ArgoCD)</li>
+<li>Prometheus/Grafana monitoring với SLO-based alerting</li>
+<li>Multi-AZ HA với pod anti-affinity và PDB</li>
+<li>DR strategy với RPO/RTO per service tier</li>
+<li>Network Policies và SCC cho defense in depth</li>
+</ul>
+<h3>Thuật ngữ quan trọng</h3>
+<table>
+<tr><th>Thuật ngữ</th><th>Định nghĩa</th></tr>
+<tr><td>Bounded Context</td><td>Ranh giới logic trong DDD — mỗi context có model và database riêng</td></tr>
+<tr><td>CQRS</td><td>Command Query Responsibility Segregation — tách read/write models</td></tr>
+<tr><td>Event Sourcing</td><td>Lưu state dưới dạng chuỗi events thay vì current state</td></tr>
+<tr><td>Circuit Breaker</td><td>Pattern ngắt mạch khi downstream service fail liên tục</td></tr>
+<tr><td>RPO</td><td>Recovery Point Objective — maximum acceptable data loss</td></tr>
+<tr><td>RTO</td><td>Recovery Time Objective — maximum acceptable downtime</td></tr>
+<tr><td>SLO</td><td>Service Level Objective — target reliability (e.g., 99.99%)</td></tr>
+<tr><td>Error Budget</td><td>Allowed downtime = 1 - SLO (e.g., 4.3 min/month cho 99.99%)</td></tr>
+<tr><td>GitOps</td><td>Git as single source of truth cho infrastructure state</td></tr>
+<tr><td>PDB</td><td>Pod Disruption Budget — minimum pods available during maintenance</td></tr>
+<tr><td>SCC</td><td>Security Context Constraints — OKD security policies cho pods</td></tr>
+<tr><td>Polyglot Persistence</td><td>Dùng nhiều loại database khác nhau cho các use case khác nhau</td></tr>
+</table>
+<h3>Câu hỏi ôn tập</h3>
+<ol>
+<li>Giải thích tại sao CRM cần chia thành 4 bounded contexts thay vì 1 monolith service.</li>
+<li>So sánh cache-aside và write-through pattern. Khi nào dùng pattern nào trong banking?</li>
+<li>Tại sao payment events cần exactly-once semantics? Hậu quả nếu duplicate payment event?</li>
+<li>Thiết kế Kafka topic structure cho hệ thống Loyalty (points, tiers, rewards, promotions).</li>
+<li>RPO = 0 cho Payment service đạt được bằng cách nào? Trade-off là gì?</li>
+<li>Giải thích Network Policy isolate Payment namespace — tại sao không cho phép CRM gọi trực tiếp Payment DB?</li>
+<li>SLO 99.99% cho Payment nghĩa là error budget bao nhiêu? Khi error budget cạn kiệt, team nên làm gì?</li>
+<li>Thiết kế DR failover plan cho toàn bộ banking platform khi primary DC mất điện hoàn toàn.</li>
+</ol>
+
+<div class="prev-next">
+  <a href="10-security.html">&larr; Bài 10: Security</a>
+  <span></span>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

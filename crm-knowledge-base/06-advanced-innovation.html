@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 6: Advanced & Innovation - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.doc-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.doc-card h4{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.82rem;color:#555b6e}
+.doc-meta span{display:flex;align-items:center;gap:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge-critical{background:#fee2e2;color:#dc2626}
+.badge-high{background:#fef3c7;color:#d97706}
+.badge-medium{background:#e0f2fe;color:#0284c7}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">6.1 AI & ML</div>
+    <div class="nav-items">
+      <a href="#ai-crm">AI-Powered CRM</a>
+      <a href="#predictive">Predictive Analytics</a>
+      <a href="#nlp-conversational">NLP & Conversational AI</a>
+      <a href="#recommendation">Recommendation Engine</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">6.2 Platform Eng</div>
+    <div class="nav-items">
+      <a href="#platform-engineering">Platform Engineering</a>
+      <a href="#multi-tenant">Multi-tenant SaaS</a>
+      <a href="#marketplace">Marketplace & Ecosystem</a>
+      <a href="#low-code">Low-Code/No-Code</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">6.3 Emerging Tech</div>
+    <div class="nav-items">
+      <a href="#iot-crm">IoT & Connected CRM</a>
+      <a href="#blockchain">Blockchain & Trust</a>
+      <a href="#ar-vr">AR/VR Experiences</a>
+      <a href="#composable">Composable CRM</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture</a>
+  <a href="04-implementation.html">Phase 4: Implementation</a>
+  <a href="05-operations.html">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html" class="current">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Phase 6: Advanced & Innovation</h1>
+<p class="subtitle">AI/ML, Platform Engineering và Emerging Technologies — tương lai của CRM</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+<span>3 domains · 12 modules · ~80 giờ học · Vai trò: Software Architect, Data Scientist, CIO Advisor, Innovation Lead</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Phase 6 mở rộng CRM vượt ra ngoài traditional CRUD — tích hợp AI cho predictive insights, xây dựng platform engineering cho scalable SaaS, và khám phá emerging technologies. Đây là phase tạo competitive advantage, không phải table stakes.
+</div>
+
+<h2 id="ai-crm">Domain 6.1 — AI & Machine Learning for CRM</h2>
+<p>Tích hợp AI/ML để biến CRM từ record-keeping system thành intelligent decision-support platform.</p>
+
+<h3 id="predictive">Module 6.1.1 — Predictive Analytics & ML Models</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+AI biến CRM từ "system of record" (ghi chép quá khứ) thành "system of intelligence" (dự đoán tương lai + recommend actions). Module này xây dựng ML pipeline cho 4 use cases có ROI cao nhất: Lead Scoring (tập trung sales vào deals likely-to-close), Churn Prediction (intervene trước khi khách rời), CLV (invest đúng khách hàng), Next-Best-Action (guide reps on what to do next).
+</div>
+
+<div class="doc-card">
+<h4>DOC-601: AI-Powered CRM Intelligence</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng AI layer cho CRM platform</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> MLOps, Responsible AI, EU AI Act</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Identify & Prioritize ML Use Cases</strong> — Evaluate CRM-specific ML opportunities: Lead Scoring (predict conversion probability), Churn Prediction (predict customers at risk), CLV Prediction (forecast future value), Next-Best-Action (recommend what rep should do), Sentiment Analysis (gauge customer mood from interactions). Score each: business impact × data availability × feasibility. Start with highest-scored. Mục đích: avoid "AI for AI's sake" — each model must have measurable business outcome and sufficient training data to be viable.</li>
+<li><strong>Design Feature Engineering from CRM Data</strong> — Extract ML features from: behavioral signals (email opens, page views, login frequency), transactional data (purchase history, deal size trend), temporal patterns (days since last contact, response time trend), relationship signals (stakeholder count, org chart coverage), firmographic data (company size, industry, funding stage). Build Feature Store for reuse across models. Mục đích: features are the "raw material" of ML — good features matter more than algorithm choice. Feature Store enables consistency between training and serving.</li>
+<li><strong>Build MLOps Pipeline</strong> — End-to-end: Data Collection → Feature Engineering → Model Training (versioned experiments) → Evaluation (offline metrics: AUC, precision, recall) → Deployment (A/B canary rollout) → Monitoring (model drift detection, performance degradation alerts) → Retraining (scheduled or triggered by drift). Mục đích: reproducible, automated ML lifecycle — not "data scientist trains in notebook, throws pickle over wall to engineering".</li>
+<li><strong>Thiết kế Model Serving Architecture</strong> — Real-time (lead scoring at point of form submission — <100ms latency requirement): model served via API, pre-computed features from Feature Store. Batch (CLV recalculation — nightly): scheduled job processes all customers, writes scores to CRM database. Near-real-time (churn risk update — event-triggered): streaming pipeline recalculates on key events (support ticket created, usage dropped). Mục đích: match serving pattern to use case SLA — not everything needs real-time; batch is simpler and cheaper when acceptable.</li>
+<li><strong>Implement Explainability & Responsible AI</strong> — For each model: SHAP values (which features drove this prediction?), Model Cards (document performance across demographic groups), Bias Audit (does model unfairly disadvantage any customer segment?), Human Override (user can disagree with AI recommendation). Comply with EU AI Act transparency requirements. Mục đích: trust requires explainability — sales rep won't follow "AI score = 85" without understanding why. Bias detection prevents discriminatory outcomes.</li>
+<li><strong>Design A/B Testing for ML Models</strong> — Compare: model predictions vs human decisions (does ML improve outcomes?), new model vs existing model (does V2 beat V1?), model-assisted vs control group (does providing AI score improve rep behavior?). Track: conversion rate lift, revenue impact, time saved. Statistical rigor: proper sample size, control for confounders. Mục đích: prove AI value with data — "model accuracy improved 5%" means nothing if it doesn't translate to business outcome improvement.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> ML Pipeline Architecture (end-to-end flow), Feature Store Design (shared features across models), Model Serving Topology (real-time vs batch paths)</p>
+<p><strong>Deliverables:</strong> ML Strategy Document (use cases + priority + timeline), Model Cards (per model: purpose, performance, limitations, bias assessment), MLOps Pipeline Specification</p>
+<p><strong>Công cụ:</strong> MLflow (experiment tracking), Kubeflow/SageMaker/Vertex AI (pipeline orchestration), Feast/Tecton (Feature Store), SHAP (explainability)</p>
+</div>
+
+<h3 id="nlp-conversational">Module 6.1.2 — NLP & Conversational AI</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+LLMs đã thay đổi game cho CRM: auto-draft emails, summarize call notes, extract action items, answer questions from knowledge base, và assist agents in real-time. Module này integrate generative AI safely: maximize productivity gains while preventing hallucination, data leaks, và inappropriate outputs. Key: AI assists humans, không replace human judgment on critical decisions.
+</div>
+
+<div class="doc-card">
+<h4>DOC-602: Conversational AI for CRM</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Tích hợp NLP và conversational AI</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-601, DOC-208</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Identify LLM Integration Points</strong> — High-value CRM use cases: Email Drafting (given context + tone, generate reply), Meeting Summarization (transcribe + extract action items + update CRM fields), Data Entry Assist (extract contact info from email signatures), Record Summarization ("tell me about this account in 30 seconds"), Search Enhancement (natural language → structured query). Prioritize by: time saved × frequency × accuracy achievable. Mục đích: target repetitive, low-judgment tasks first — max productivity gain with lowest hallucination risk.</li>
+<li><strong>Build RAG Architecture for Knowledge Retrieval</strong> — Pipeline: CRM knowledge base + product docs + internal wiki → chunked + embedded → vector store. At query time: user question → embed → similarity search → top-K chunks → LLM generates answer grounded in retrieved context. Include: source attribution (show which documents informed the answer), confidence scoring, fallback to "I don't know". Mục đích: chatbot answers questions accurately from internal knowledge rather than hallucinating — critical for customer-facing use where wrong answers = trust damage.</li>
+<li><strong>Implement Voice AI Integration</strong> — Call transcription: real-time (Whisper/Deepgram) → transcript stored with recording. Post-call processing: extract next steps, identify objections raised, detect sentiment shifts, score against sales methodology (did rep follow MEDDPICC?). Real-time coaching: whisper suggestions to agent during live call (competitor mentioned → show battle card). Mục đích: unlock insights from 100% of calls (not just the 5% managers can listen to), and provide real-time assistance that improves every conversation.</li>
+<li><strong>Design Email Intelligence</strong> — Auto-categorize inbound emails (support request, sales inquiry, renewal discussion, feedback). Priority scoring (urgency indicators, VIP customer, revenue at risk). Suggested responses (template selection + personalization). Thread summarization (collapse 20-email thread into 3 bullet points). Mục đích: reduce time-in-inbox for reps and agents — auto-routing + suggested responses = faster handling, less cognitive load.</li>
+<li><strong>Implement AI Safety & Guardrails</strong> — Protections: input sanitization (prompt injection prevention), output validation (no PII leakage, no hallucinated data, no inappropriate content), human-in-the-loop (AI drafts, human approves before send), audit logging (all AI inputs/outputs recorded), rate limiting (prevent abuse), model output filtering (toxicity, bias). Compliance: data residency (customer data stays in region), consent (clear disclosure when AI is involved). Mục đích: AI that's powerful AND safe — one leaked customer record or offensive auto-response = trust destruction and regulatory exposure.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Conversational AI Architecture (LLM + RAG + guardrails), RAG Pipeline (embed → store → retrieve → generate), Intent Classification Flow (chatbot decision tree)</p>
+<p><strong>Deliverables:</strong> AI Integration Specification, Prompt Library (tested + versioned prompts per use case), AI Safety Policy Document (guardrails + acceptable use)</p>
+<p><strong>Công cụ:</strong> OpenAI/Anthropic APIs (LLM), LangChain/LlamaIndex (orchestration), Pinecone/Weaviate (vector DB), Whisper/Deepgram (speech-to-text), Guardrails AI (output validation)</p>
+</div>
+
+<h3 id="recommendation">Module 6.1.3 — Recommendation & Personalization Engine</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+"Next-Best-Action" là killer feature cho CRM — thay vì rep tự quyết "nên gọi ai hôm nay?", hệ thống recommend dựa trên data: "Contact John at Acme (engagement spike yesterday, proposal viewed 3x, competitor meeting next week → urgency HIGH)". Module này build personalization engine cho both internal users (rep guidance) AND external interactions (customer experience personalization).
+</div>
+
+<div class="doc-card">
+<h4>DOC-603: Intelligent Recommendations</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng recommendation engine cho CRM</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-601, DOC-210</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Design Next-Best-Action Engine</strong> — For sales reps: rank daily priorities (which accounts to contact, which deals need attention, what actions to take). Factors: engagement recency, deal stage momentum, buyer signals, competitive threats, relationship strength decay. Output: prioritized action list with reason ("Contact: engagement spike + proposal viewed"). Mục đích: reps spend first hour on highest-impact activities instead of inbox triaging — data-driven daily prioritization beats intuition.</li>
+<li><strong>Build Content Recommendation</strong> — For marketing/sales: given customer profile + current journey stage → recommend: which content to share (case study matching their industry), which email template to use, which product to cross-sell, which event to invite to. Algorithms: collaborative filtering (customers like them engaged with X), content-based (profile matches content tags). Mục đích: right content at right time — instead of "blast same whitepaper to everyone", personalize based on where they are in their journey.</li>
+<li><strong>Implement Real-time Personalization</strong> — For customer-facing experiences: website personalization (show relevant case studies, pricing page variant), email personalization (dynamic content blocks based on segment), chatbot personalization (greeting + context + suggestions based on profile). Event-driven: profile update → immediate impact on next interaction. Mục đích: every customer interaction feels "they know me" — personalization increases conversion 20-40% vs generic.</li>
+<li><strong>Design Dynamic Pricing & Offer Optimization</strong> — For sales/renewals: recommend optimal discount level (balance win probability vs margin), suggest best bundle/package (maximize customer value + revenue), predict price sensitivity per segment. Guardrails: minimum margin thresholds, approval required above X% discount, fairness constraints (no discriminatory pricing). Mục đích: maximize revenue per deal while maintaining fair pricing — AI suggests, human approves, compliance enforces.</li>
+<li><strong>Implement Exploration vs Exploitation (Contextual Bandits)</strong> — Problem: pure exploitation (always recommend what worked before) misses opportunities. Solution: contextual bandits allocate small % of recommendations to explore (try new approaches) while primarily exploiting (use proven winners). Track: regret metric, exploration rate over time, discovery of new high-performing approaches. Mục đích: recommendation system continuously improves itself — discovers new effective patterns without waiting for A/B test to be manually designed.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Recommendation Architecture (data → features → model → ranking → delivery), Personalization Pipeline (profile → segment → rule evaluation → content selection), Decision Flow (exploration vs exploitation)</p>
+<p><strong>Deliverables:</strong> Recommendation Engine Specification, Evaluation Metrics (precision, recall, business impact), A/B Test Framework (for validating recommendation quality)</p>
+<p><strong>Công cụ:</strong> Apache Spark MLlib (collaborative filtering), TensorFlow Recommenders, Amazon Personalize (managed service), custom contextual bandit implementation</p>
+</div>
+
+<h2 id="platform-engineering">Domain 6.2 — Platform Engineering</h2>
+<p>Xây dựng CRM thành true platform — multi-tenant SaaS, marketplace, và developer ecosystem.</p>
+
+<h3 id="multi-tenant">Module 6.2.1 — Multi-Tenant SaaS Architecture</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Nếu CRM sẽ serve multiple customers (SaaS model), multi-tenancy là foundational architecture decision. Module này thiết kế tenant isolation đảm bảo: data security (tenant A never sees tenant B), performance isolation (one tenant's heavy usage doesn't degrade others), và customization flexibility (each tenant configures differently without code forks). Wrong tenancy model = rewrite later.
+</div>
+
+<div class="doc-card">
+<h4>DOC-604: SaaS Platform Design</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế multi-tenant SaaS CRM</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> SaaS Maturity Model, AWS Well-Architected SaaS Lens</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Chọn Tenancy Model</strong> — Evaluate 3 models: Silo (separate infrastructure per tenant — max isolation, highest cost, simplest logic), Pool (shared everything with logical separation — lowest cost, most efficient, hardest to guarantee isolation), Bridge (hybrid — shared compute, separate databases per tenant tier). Decision criteria: compliance requirements, data sensitivity, cost targets, number of tenants, customization needs. Mục đích: foundational decision affecting all subsequent architecture — choose wrong = massive refactoring later.</li>
+<li><strong>Thiết kế Tenant Isolation</strong> — Data isolation: Row-Level Security (RLS) with tenant_id in every query, separate schemas, or separate databases. Compute isolation: shared pods with resource quotas (Kubernetes), separate node pools for premium tenants. Network isolation: network policies, separate VPCs for high-security tenants. Test: prove data leak impossible via automated isolation tests. Mục đích: existential for SaaS — one tenant data leak = company-ending event.</li>
+<li><strong>Build Onboarding Automation</strong> — Self-service signup: create tenant record → provision resources → seed default data → configure defaults → welcome email with setup wizard. Under 5 minutes from signup to first login. Support: trial → paid conversion (upgrade without disruption), custom onboarding for enterprise (white-glove with data import). Mục đích: time-to-value determines conversion — every minute of onboarding friction loses a percentage of signups.</li>
+<li><strong>Implement Billing & Metering</strong> — Track usage per tenant: API calls, storage, users, features accessed. Pricing models: per-seat (simple), usage-based (fair), tiered (good-better-best), hybrid. Integration: CRM events → metering service → billing platform (Stripe) → invoice. Handle: upgrades/downgrades mid-cycle, proration, overages. Mục đích: revenue engine of SaaS — accurate metering = fair billing = customer trust = reduced churn from billing disputes.</li>
+<li><strong>Design Noisy Neighbor Prevention</strong> — Detect: one tenant consuming disproportionate resources (CPU, database connections, API calls). Prevent: per-tenant rate limits, per-tenant resource quotas, per-tenant queue priorities, throttling heavy operations (bulk imports, report generation). Alert: tenant approaching limits → notification before hard throttle. Mục đích: one enterprise tenant running huge report shouldn't make platform slow for 1000 SMB tenants — isolation at performance level, not just data level.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Multi-tenant Architecture (showing isolation boundaries), Tenant Isolation Diagram (data + compute + network layers), Onboarding Flow (signup → provisioning → active)</p>
+<p><strong>Deliverables:</strong> SaaS Architecture Document, Tenant Isolation Specification (with proof of isolation), Pricing Model Document</p>
+<p><strong>Công cụ:</strong> AWS SaaS Factory (reference architecture), Kubernetes namespaces + resource quotas, Stripe Billing (metering + invoicing), LaunchDarkly (per-tenant feature flags)</p>
+</div>
+
+<h3 id="marketplace">Module 6.2.2 — Marketplace & Developer Ecosystem</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Platform = product + ecosystem. Salesforce's AppExchange has 7000+ apps — that's platform power. Module này build marketplace cho third-party developers to extend CRM: add integrations, add features, serve vertical-specific needs that the core platform can't cover. Key insight: you can't build everything yourself — but you can build a platform that lets others build on top.
+</div>
+
+<div class="doc-card">
+<h4>DOC-605: CRM Marketplace Platform</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng app marketplace cho CRM</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-604, DOC-405</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Design Marketplace Architecture</strong> — Components: App Registry (metadata, versions, pricing), Installation Engine (per-tenant app provisioning), Runtime Sandbox (isolated execution), Review Pipeline (automated + manual security review), Billing Integration (revenue share, customer billing). App types: integrations (connect external systems), add-ons (add features to UI), templates (pre-built workflows/reports). Mục đích: platform for scale — ecosystem of partner-built apps extends CRM value without your engineering team bottleneck.</li>
+<li><strong>Build Developer Portal & SDK</strong> — Portal contents: getting started guide (<30 min to "hello world"), API reference (interactive), SDK libraries (JavaScript, Python, .NET), sample apps (common patterns), sandbox environment (test without affecting production), community forum. SDKs abstract: authentication, API calls, event subscriptions, UI components. Mục đích: developer experience determines ecosystem health — if building an app takes weeks instead of days, partners won't invest.</li>
+<li><strong>Implement App Security Review</strong> — Automated: SAST scan (code vulnerabilities), dependency audit (known CVEs), permission scope review (does it request more access than needed?), performance testing (resource usage within limits). Manual: UX review, functionality testing, data handling review. Certification levels: basic (automated only), verified (manual review), premium (ongoing monitoring). Mục đích: customer trust requires app quality — one malicious/buggy app damages platform reputation.</li>
+<li><strong>Design Revenue Sharing Model</strong> — Standard split: 70% developer / 30% platform (industry norm). Tiers: higher developer share for verified/premium apps. Payment: monthly payouts, minimum threshold, transparent reporting. Additional incentives: co-marketing for top apps, featured placement, early access to new APIs. Mục đích: attract quality developers — revenue share must be compelling enough to justify their investment in building on your platform vs competitors.</li>
+<li><strong>Build Partner Certification Program</strong> — Tiers: Registered (basic access), Certified (trained + tested), Premier (deep expertise + co-sell). Requirements per tier: training completion, technical assessment, customer references, revenue threshold. Benefits: lead referrals, co-marketing, dedicated support, early API access. Mục đích: quality control on professional services ecosystem — customers need confidence that "certified partner" means competent implementation.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Marketplace Architecture (app lifecycle), App Installation Flow (customer → marketplace → install → sandbox), Partner Ecosystem Map (tiers + relationships)</p>
+<p><strong>Deliverables:</strong> Marketplace Specification, Developer Guide (comprehensive), Partner Program Document (tiers + benefits + requirements)</p>
+<p><strong>Công cụ:</strong> ReadMe/Stoplight (developer portal), OAuth 2.0 (app authorization), WASM/container sandboxing (app isolation), Stripe Connect (revenue sharing)</p>
+</div>
+
+<h3 id="low-code">Module 6.2.3 — Low-Code/No-Code Platform</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+IT bottleneck is real: business users have ideas faster than engineering can build. Low-code platform empowers "citizen developers" (admins, power users) to build custom apps, forms, workflows, and reports WITHOUT writing code. Module này build visual builder tools that are powerful enough for real use cases yet safe enough (governance, guardrails) to not break production.
+</div>
+
+<div class="doc-card">
+<h4>DOC-606: Low-Code CRM Builder</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Cho phép citizen developers tùy biến CRM</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-medium">Medium</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-404, DOC-405</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Build Visual Form Designer</strong> — Drag-drop interface: field types (text, number, date, lookup, file upload, signature), layout (sections, columns, tabs), logic (show/hide rules, required conditions, validation), submission actions (create record, send notification, trigger workflow). Preview mode: test form without publishing. Mục đích: admin creates custom data capture forms in minutes — onboarding questionnaire, feedback survey, expense request, custom intake form.</li>
+<li><strong>Implement Visual Workflow Builder</strong> — Complement to DOC-404 (developer workflow engine) with visual no-code interface: trigger selection (point-and-click), condition builder (field + operator + value, no code), action library (send email, create task, update field, call API), testing mode (simulate with sample data). Mục đích: business users automate own processes — "when deal > $50K, notify VP" shouldn't need a developer ticket.</li>
+<li><strong>Build Custom Report/Dashboard Builder</strong> — Self-service: select data source (entity), add filters (visual), choose visualization (table, chart, KPI card), configure drill-down, schedule email delivery. Support: calculated fields (formula builder), cross-object reporting (joins without SQL), conditional formatting (highlight if metric > threshold). Mục đích: eliminate "please build me a report" requests — business users explore data independently, reducing analytics team backlog by 60%+.</li>
+<li><strong>Implement Governance & Guardrails</strong> — Prevent citizen-dev chaos: role-based builder access (not everyone can modify production), approval workflow for publishing (admin review before live), version history (rollback any change), impact analysis (show "this change affects 500 users"), resource limits (prevent infinite loops in workflows, query timeouts in reports). Mục đích: empowerment WITH safety — one bad workflow trigger can spam 10,000 emails; governance prevents disasters while maintaining speed.</li>
+<li><strong>Design Version Control for Citizen Dev</strong> — Track: who changed what, when, why (optional comment). Support: draft mode (work without affecting live), publish (make live for users), rollback (instant revert to previous version), compare (diff between versions). Audit trail: all changes logged for compliance. Mục đích: enterprise requirement — know who changed the lead routing rule last Tuesday and be able to undo it in one click.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Low-code Platform Architecture (builder → metadata → runtime), Builder UI Wireframes (form designer + workflow builder), Governance Model (roles + approval + audit)</p>
+<p><strong>Deliverables:</strong> Low-code Platform Specification, Builder User Guide (for admins), Governance Policy Document (what's allowed, review process)</p>
+<p><strong>Công cụ:</strong> Retool/Appsmith (reference for internal tools), custom visual builder framework, metadata-driven rendering engine</p>
+</div>
+
+<h2 id="iot-crm">Domain 6.3 — Emerging Technologies</h2>
+<p>Công nghệ mới nổi sẽ reshape CRM — IoT, blockchain, AR/VR và composable architecture.</p>
+
+<h3 id="blockchain">Module 6.3.1 — IoT & Connected Customer Experience</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+IoT biến CRM từ reactive ("customer calls to report problem") thành proactive ("system detects issue before customer notices"). Applicable cho: connected devices (smart home, industrial equipment, vehicles), wearables, retail sensors. Module này integrate IoT telemetry vào CRM: device health → predictive service tickets, location data → contextual marketing, usage patterns → product recommendations.
+</div>
+
+<div class="doc-card">
+<h4>DOC-607: IoT-Connected CRM</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Tích hợp IoT signals vào CRM</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-medium">Medium</span></span>
+<span><strong>Thời gian:</strong> 6 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-307, DOC-601</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Design IoT Data Ingestion Pipeline</strong> — Architecture: devices → IoT Gateway (MQTT/HTTP) → stream processing (filter, aggregate, enrich) → CRM events (only business-relevant signals forwarded). Volume management: raw telemetry stays in time-series DB, only actionable events reach CRM. Example: "device temperature > threshold for 10 minutes" → create service case automatically. Mục đích: CRM doesn't drown in raw sensor data — only business-meaningful events arrive, processed and enriched with customer context.</li>
+<li><strong>Implement Proactive Service Triggers</strong> — ML models on device telemetry predict failures before they happen: "this motor's vibration pattern matches failure pattern — 85% probability of failure within 7 days". Auto-action: create service case, schedule preventive maintenance, notify customer, order replacement parts. Mục đích: shift from "break-fix" to "predict-prevent" — customer never experiences downtime, service costs drop (planned maintenance vs emergency dispatch).</li>
+<li><strong>Build Location-based CRM Features</strong> — Geofencing: customer enters store zone → trigger welcome notification + load preferences for staff. Proximity: field service technician near customer location → suggest opportunistic visit. Territory: real-time map of customer locations + rep territories + visit history. Mục đích: physical-world context enriches digital CRM — bridge online-offline customer experience.</li>
+<li><strong>Design Digital Twin Integration</strong> — For B2B/industrial: create virtual representation of customer's physical asset in CRM. Twin shows: current state, maintenance history, predicted lifecycle, optimal usage recommendations. Link: service cases → affected twin, sales opportunities → expansion based on twin insights. Mục đích: sales and service teams "see" the customer's reality without site visit — informed conversations, proactive recommendations.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> IoT-CRM Integration Architecture (devices → gateway → processing → CRM), Event Stream Processing Pipeline, Digital Twin Model (asset → twin → CRM entities)</p>
+<p><strong>Deliverables:</strong> IoT Integration Specification, Use Case Library (industry-specific), Data Pipeline Design (ingestion + processing + routing)</p>
+<p><strong>Công cụ:</strong> AWS IoT Core/Azure IoT Hub (gateway), Apache Kafka/Flink (stream processing), TimescaleDB (time-series storage), custom ML models (predictive maintenance)</p>
+</div>
+
+<h3 id="ar-vr">Module 6.3.2 — Blockchain & Decentralized Identity</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Blockchain cho CRM không phải về cryptocurrency — mà về trust, verifiable identity, và customer data ownership. Module này explore: customer controls their own data (self-sovereign), loyalty points as transferable tokens, và smart contracts automating service agreements. Applicable khi: trust between parties is low, data portability is required, or tokenized incentives make business sense.
+</div>
+
+<div class="doc-card">
+<h4>DOC-608: Trust & Decentralized CRM</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Áp dụng blockchain cho trust và identity</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-medium">Medium</span></span>
+<span><strong>Thời gian:</strong> 4 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-308</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Assess Blockchain Use Cases for CRM</strong> — Evaluate viability: Decentralized Identity (DIDs — customer proves identity without sharing raw PII), Loyalty Tokenization (points as transferable tokens on chain — interoperable between partners), Smart Contract SLAs (auto-execute penalties/credits when SLA breached), Supply Chain Provenance (product authenticity verification linked to customer record). Score each: business value × technical feasibility × regulatory acceptance. Mục đích: filter hype from value — most blockchain CRM ideas don't justify the complexity. Identify the 1-2 that genuinely solve trust problems not solvable otherwise.</li>
+<li><strong>Design Decentralized Identity Integration</strong> — Architecture: customer creates DID (decentralized identifier) + wallet → issues Verifiable Credentials (VCs) from trusted parties (bank KYC, employer verification) → presents VCs to CRM for verification without revealing underlying data. CRM stores: proof of verification, not raw PII. Benefits: reduced PII liability, customer portability, fraud reduction. Mục đích: shift liability — instead of storing 1M customers' passport numbers, store cryptographic proof they were verified. Data breach impact dramatically reduced.</li>
+<li><strong>Design Tokenized Loyalty Program</strong> — Architecture: loyalty points as tokens on blockchain (fungible — ERC-20 equivalent). Features: earn from purchases/engagement, spend across partner network, trade/gift to others, expire via smart contract logic. Benefits vs traditional: interoperability (partner ecosystem without bilateral agreements), transparency (customer sees all earn/burn on-chain), reduced fraud (tamper-proof balances). Mục đích: next-gen loyalty that's portable, transparent, and composable — differentiator for customer acquisition and retention.</li>
+<li><strong>Implement Privacy-Preserving Data Sharing</strong> — Zero-knowledge proofs: prove attributes without revealing data ("customer is over 18" without revealing birthdate, "customer spent >$10K this year" without revealing exact transactions). Use for: partner data sharing (share insights without raw data), compliance verification (prove consent without exposing consent records), analytics on encrypted data. Mục đích: unlock data value while maintaining privacy — enable use cases that GDPR would otherwise block.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> DID Architecture (wallet → issuer → verifier → CRM), Token Economy Design (earn/burn/transfer flows), Smart Contract Flow (SLA monitoring → breach detection → auto-credit)</p>
+<p><strong>Deliverables:</strong> Blockchain Use Case Assessment (scored viability matrix), DID Integration Specification (if applicable)</p>
+<p><strong>Công cụ:</strong> Hyperledger (enterprise permissioned), Ethereum/Polygon (public + L2), Ceramic Network (decentralized data), SpruceID (DID toolkit)</p>
+</div>
+
+<h3 id="composable">Module 6.3.3 — Composable CRM & MACH Architecture</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Composable architecture is the future of enterprise software — instead of monolithic suite (Salesforce does everything), compose best-of-breed components via APIs. MACH principles (Microservices, API-first, Cloud-native, Headless) enable: swap any component without rewriting the rest, choose best tool per capability, and avoid vendor lock-in. Module này design CRM as composable platform — both consuming external PBCs AND being consumed as a PBC by others.
+</div>
+
+<div class="doc-card">
+<h4>DOC-609: Composable CRM Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế CRM theo MACH principles</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> MACH Alliance, Packaged Business Capabilities</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Apply MACH Principles to CRM</strong> — Evaluate current architecture against 4 principles: Microservices (each capability independently deployable?), API-first (all functionality accessible via API, not just UI?), Cloud-native (designed for cloud elasticity, not lift-and-shift?), Headless (backend decoupled from any specific frontend?). Gap analysis: which principles are met, which need architectural changes? Mục đích: assess composability readiness — know exactly where you are vs where MACH target state requires.</li>
+<li><strong>Design Packaged Business Capabilities (PBCs)</strong> — Decompose CRM into PBCs: each PBC is self-contained, API-accessible, independently replaceable. Examples: "Lead Management PBC", "Email Campaign PBC", "Case Resolution PBC", "Customer 360 PBC". Each PBC has: defined API contract, event publications, data ownership, SLA. Mục đích: any PBC can be swapped for best-of-breed alternative — if better email tool emerges, replace Email Campaign PBC without touching Lead Management.</li>
+<li><strong>Build Orchestration Layer</strong> — Orchestration sits between PBCs: routes requests, coordinates cross-PBC workflows (saga patterns), handles event routing, manages API composition (aggregate data from multiple PBCs for single UI request). Implementation: API Gateway + Event Mesh + BFF layer. Mục đích: PBCs don't know about each other directly — orchestration provides the "glue" that makes independent components work together as coherent system.</li>
+<li><strong>Design Best-of-Breed Integration Strategy</strong> — For each capability: evaluate build-in-house vs adopt external PBC. Decision criteria: strategic differentiation (build), commodity (buy best-of-breed), data sensitivity (keep in-house), integration complexity (prefer fewer vendors). Create technology radar: Adopt (proven, use now), Trial (promising, limited use), Assess (interesting, evaluate), Hold (avoid). Mục đích: pragmatic composition — not everything needs to be built or bought. Right mix based on strategic importance and team capacity.</li>
+<li><strong>Implement Vendor Lock-in Mitigation</strong> — Strategies: abstraction layers (don't depend directly on vendor SDKs — wrap with internal interface), data portability (export all data in standard formats at any time), contract flexibility (avoid multi-year lock-in, negotiate exit clauses), standards compliance (OpenAPI, AsyncAPI, CloudEvents — vendor-neutral contracts). Test: "how long to replace vendor X?" should be weeks, not months. Mục đích: composable = freedom to change. If replacing a component takes 6 months of rewriting, you're not composable — you're locked in with extra steps.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> MACH Architecture Diagram (PBCs + orchestration + event mesh), PBC Composition (how components connect), Orchestration Layer (routing + coordination)</p>
+<p><strong>Deliverables:</strong> Composable Architecture Blueprint, PBC Catalog (all capabilities with API contracts), Integration Strategy (build vs buy per capability)</p>
+<p><strong>Công cụ:</strong> Commercetools (reference MACH implementation), Contentful (headless CMS PBC), Algolia (search PBC), custom orchestration layer (API Gateway + event mesh)</p>
+</div>
+
+<div class="callout callout-green">
+<strong>Tổng kết Phase 6</strong>
+Phase 6 đưa CRM vào next generation: AI-powered intelligence, scalable SaaS platform, và emerging tech integration. Đây là phase tạo moat — competitive advantages không dễ copy. Prerequisites: Phases 1-5 phải solid trước khi invest vào innovation.
+</div>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng</strong>
+Emerging technologies (IoT, Blockchain, AR/VR) nên được đánh giá theo business value cụ thể, không phải theo hype. Áp dụng Innovation Accounting — validate assumptions trước khi commit resources.
+</div>
+
+<div class="prev-next">
+  <a href="05-operations.html">← Phase 5: Operations</a>
+  <a href="knowledge-graph.html">Knowledge & Dependency Graph →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

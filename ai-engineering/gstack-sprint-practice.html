@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GStack Sprint Practice - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#e94560;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Bắt Đầu</div>
+    <div class="nav-items">
+      <a href="#install">Cài đặt</a>
+      <a href="#workflow">Sprint Workflow</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Commands</div>
+    <div class="nav-items">
+      <a href="#thinking">Thinking & Planning</a>
+      <a href="#design">Design</a>
+      <a href="#building">Building & Review</a>
+      <a href="#testing">QA & Testing</a>
+      <a href="#shipping">Shipping</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng Cao</div>
+    <div class="nav-items">
+      <a href="#browser">Browser Tools</a>
+      <a href="#gbrain">GBrain</a>
+      <a href="#safety">Safety & Security</a>
+      <a href="#parallel">Parallel Sprints</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">GStack Sprint Practice</h1>
+<p class="subtitle">Hướng dẫn thực hành — 23 slash commands biến Claude Code thành đội kỹ sư ảo</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/garrytan/gstack" target="_blank">github.com/garrytan/gstack</a> — by Garry Tan (Y Combinator CEO), MIT License</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Một developer + GStack có thể ship sản phẩm nhanh như team 20 người. Năng suất 810× so với cách truyền thống nhờ 23 vai trò chuyên gia được tự động hóa qua slash commands.
+</div>
+
+<h2 id="install">Cài đặt (30 giây)</h2>
+
+<p><strong>Yêu cầu:</strong> Claude Code, Git, Bun v1.0+ (Node.js trên Windows)</p>
+
+<pre><code># Clone và setup
+git clone https://github.com/garrytan/gstack ~/.claude/skills/gstack
+cd ~/.claude/skills/gstack && ./setup
+
+# (Optional) Team mode — auto-update cho shared repos
+./setup --team</code></pre>
+
+<p><strong>Gỡ cài đặt:</strong></p>
+<pre><code>~/.claude/skills/gstack/bin/gstack-uninstall
+# hoặc giữ config:
+~/.claude/skills/gstack/bin/gstack-uninstall --keep-state</code></pre>
+
+<h2 id="workflow">Sprint Workflow</h2>
+
+<div class="flow">
+<span class="flow-step">Think</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Plan</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Build</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Review</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Test</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Ship</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Reflect</span>
+</div>
+
+<ol>
+<li>Mô tả ý tưởng cho Claude</li>
+<li><code>/office-hours</code> → tạo design doc</li>
+<li><code>/plan-ceo-review</code> → challenge scope</li>
+<li><code>/plan-eng-review</code> → lock architecture</li>
+<li>Approve plan, implement</li>
+<li><code>/review</code> → code review + auto-fixes</li>
+<li><code>/qa</code> → test và fix bugs</li>
+<li><code>/ship</code> → merge và deploy</li>
+<li><code>/retro</code> → reflect on sprint</li>
+</ol>
+
+<h2 id="thinking">Thinking &amp; Planning</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/office-hours</code></td><td>Đặt câu hỏi sâu, reframe sản phẩm — stress-test ý tưởng kiểu YC</td></tr>
+<tr><td><code>/plan-ceo-review</code></td><td>Rethink scope với 4 mode (Expansion/Reduction), thách thức giả định</td></tr>
+<tr><td><code>/plan-eng-review</code></td><td>Lock architecture, data flow, edge cases, tests trước khi build</td></tr>
+<tr><td><code>/plan-design-review</code></td><td>Rate design dimensions 0-10, phát hiện AI slop</td></tr>
+<tr><td><code>/plan-devex-review</code></td><td>Audit developer experience</td></tr>
+<tr><td><code>/autoplan</code></td><td>Chạy CEO → design → eng review tự động liên tục</td></tr>
+</table>
+
+<h2 id="design">Design</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/design-consultation</code></td><td>Build design system từ đầu (aesthetic, typography, color, layout)</td></tr>
+<tr><td><code>/design-shotgun</code></td><td>Generate 4-6 mockup variants để compare side-by-side</td></tr>
+<tr><td><code>/design-html</code></td><td>Convert mockup → production HTML (30KB, zero external deps)</td></tr>
+</table>
+
+<h2 id="building">Building &amp; Review</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/review</code></td><td>Staff engineer review: find production bugs, auto-fix</td></tr>
+<tr><td><code>/investigate</code></td><td>Root-cause debugging methodology</td></tr>
+<tr><td><code>/design-review</code></td><td>Designer audit + auto-fixes cho UI</td></tr>
+<tr><td><code>/codex</code></td><td>Second opinion từ OpenAI Codex (cross-model review)</td></tr>
+</table>
+
+<h2 id="testing">QA &amp; Testing</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/qa</code></td><td>Test app, find bugs, fix với atomic commits</td></tr>
+<tr><td><code>/qa-only</code></td><td>Bug report only (không fix)</td></tr>
+<tr><td><code>/devex-review</code></td><td>Live developer experience audit</td></tr>
+<tr><td><code>/benchmark</code></td><td>Core Web Vitals, performance baseline</td></tr>
+</table>
+
+<h2 id="shipping">Shipping</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/ship</code></td><td>Sync main, run tests, audit coverage, push, open PR</td></tr>
+<tr><td><code>/land-and-deploy</code></td><td>Merge PR, CI/CD, verify production</td></tr>
+<tr><td><code>/canary</code></td><td>Post-deploy monitoring</td></tr>
+<tr><td><code>/document-release</code></td><td>Update docs tự động sau khi ship</td></tr>
+<tr><td><code>/document-generate</code></td><td>Generate missing docs từ code</td></tr>
+<tr><td><code>/retro</code></td><td>Weekly engineering retrospective</td></tr>
+</table>
+
+<h2 id="browser">Browser Tools</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/browse</code></td><td>Agent-controlled real Chromium với anti-bot stealth</td></tr>
+<tr><td><code>/open-gstack-browser</code></td><td>Headed mode với sidebar agent cho natural language tasks</td></tr>
+<tr><td><code>/pair-agent</code></td><td>Multi-agent coordination (cross-agent tasks)</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Prompt Injection Defense:</strong> GStack Browser tích hợp ML classifier + canary token để phòng chống prompt injection từ web pages. Dùng <code>$B handoff</code> để switch sang headed Chrome khi bị stuck.
+</div>
+
+<h2 id="gbrain">GBrain (Persistent Knowledge)</h2>
+
+<p>Bộ nhớ AI duy trì giữa các session. Setup qua <code>/setup-gbrain</code>:</p>
+
+<table>
+<tr><th>Mode</th><th>Mô tả</th></tr>
+<tr><td><strong>PGLite local</strong></td><td>Local-only, setup 30 giây, không cần server</td></tr>
+<tr><td><strong>Supabase cloud</strong></td><td>Cross-machine memory, cần Supabase account</td></tr>
+</table>
+
+<ul>
+<li><code>/sync-gbrain</code> — Re-index code vào brain</li>
+<li>Per-remote trust policy: read-write / read-only / deny</li>
+</ul>
+
+<h2 id="safety">Safety &amp; Security</h2>
+
+<table>
+<tr><th>Command</th><th>Chức năng</th></tr>
+<tr><td><code>/careful</code></td><td>Warn trước destructive commands (rm -rf, DROP TABLE, force-push)</td></tr>
+<tr><td><code>/freeze</code></td><td>Restrict edits to one directory only</td></tr>
+<tr><td><code>/guard</code></td><td><code>/careful</code> + <code>/freeze</code> combined</td></tr>
+<tr><td><code>/cso</code></td><td>OWASP Top 10 + STRIDE threat modeling audit</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Privacy:</strong> Telemetry mặc định OFF. Khi opt-in, chỉ gửi: skill name, duration, success/fail, version, OS. Không bao giờ gửi code, file paths, prompts, hay user content. Đổi bất cứ lúc nào: <code>gstack-config set telemetry off</code>
+</div>
+
+<h2 id="parallel">Parallel Sprints</h2>
+
+<p>GStack hỗ trợ <strong>10-15 parallel sprints</strong> cùng lúc dùng Conductor. Mỗi sprint là một isolated workspace riêng biệt, cho phép work trên nhiều feature cùng lúc mà không conflict.</p>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(function(btn){btn.addEventListener('click',function(){var code=this.parentElement.querySelector('code');navigator.clipboard.writeText(code.textContent);this.textContent='Copied!';this.classList.add('copied');var b=this;setTimeout(function(){b.textContent='Copy';b.classList.remove('copied')},2000)})});
+</script>
+</body>
+</html>

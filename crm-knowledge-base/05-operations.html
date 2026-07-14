@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 5: Operations & Optimization - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.doc-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.doc-card h4{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.82rem;color:#555b6e}
+.doc-meta span{display:flex;align-items:center;gap:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge-critical{background:#fee2e2;color:#dc2626}
+.badge-high{background:#fef3c7;color:#d97706}
+.badge-medium{background:#e0f2fe;color:#0284c7}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">5.1 Administration</div>
+    <div class="nav-items">
+      <a href="#admin-ops">System Administration</a>
+      <a href="#user-mgmt">User & License Mgmt</a>
+      <a href="#platform-health">Platform Health</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">5.2 Performance</div>
+    <div class="nav-items">
+      <a href="#observability">Observability Stack</a>
+      <a href="#optimization">Performance Tuning</a>
+      <a href="#scalability">Scalability Patterns</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">5.3 Security Ops</div>
+    <div class="nav-items">
+      <a href="#security-ops">Security Operations</a>
+      <a href="#incident-response">Incident Response</a>
+      <a href="#compliance-ops">Compliance Monitoring</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">5.4 Governance</div>
+    <div class="nav-items">
+      <a href="#data-governance">Data Governance</a>
+      <a href="#adoption-metrics">Adoption & Metrics</a>
+      <a href="#continuous-improvement">Continuous Improvement</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture</a>
+  <a href="04-implementation.html">Phase 4: Implementation</a>
+  <a href="05-operations.html" class="current">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Phase 5: Operations & Optimization</h1>
+<p class="subtitle">Administration, Performance, Security Operations và Continuous Improvement</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+<span>4 domains · 14 modules · ~100 giờ học · Vai trò: SRE, Security Engineer, Platform Admin, CIO Advisor</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Vận hành CRM không chỉ là "giữ hệ thống chạy" — mà là liên tục tối ưu performance, đảm bảo security posture, và đo lường business value. Phase 5 áp dụng SRE practices, proactive monitoring, và data-driven optimization.
+</div>
+
+<h2 id="admin-ops">Domain 5.1 — System Administration</h2>
+<p>Quản trị hệ thống CRM hàng ngày — user management, platform health, và operational procedures.</p>
+
+<h3 id="user-mgmt">Module 5.1.1 — Platform Administration</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Admin là "vận hành viên" giữ hệ thống chạy mượt mà — từ provisioning users mới (onboarding nhân viên) đến deprovisioning khi nghỉ việc (security), từ backup scheduling đến capacity planning. Module này tạo operational runbooks để bất kỳ admin nào cũng có thể thực hiện tasks chuẩn hóa mà không cần "tribal knowledge" trong đầu 1 người.
+</div>
+
+<div class="doc-card">
+<h4>DOC-501: CRM Administration Guide</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Vận hành CRM platform hiệu quả</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> ITIL v4, SRE Handbook</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế User Lifecycle Management</strong> — Provisioning: HR system event (new hire) → auto-create CRM account + assign role + add to team → welcome email with setup instructions. Deprovisioning: termination event → disable account immediately → reassign owned records (open deals, active cases) → archive after 30 days. SCIM protocol for IdP sync. Mục đích: no orphan accounts (security risk), no lost data (business continuity), automated = no delays or human errors.</li>
+<li><strong>Xây dựng Role & Permission Management</strong> — Define standard roles matching org structure (Sales Rep, Sales Manager, Marketing Ops, Service Agent, Admin). Document permission inheritance hierarchy. Create self-service role request workflow. Quarterly access reviews (who has admin access? still appropriate?). Mục đích: principle of least privilege enforced operationally, not just technically — regular reviews catch role creep.</li>
+<li><strong>Implement Environment Management</strong> — Define environments: Development (devs experiment freely), Sandbox (user acceptance testing, training), Staging (pre-production validation, same config as prod), Production (live). Change promotion process: dev → staging → production with approval gates. Data refresh schedule (staging refreshed from prod monthly, anonymized). Mục đích: production is protected — no experimental changes reach users without testing, UAT happens on realistic data.</li>
+<li><strong>Build Backup & Recovery Procedures</strong> — Schedule: database full backup daily, incremental every 6 hours, transaction log every 15 minutes. Test: monthly restore drill to verify backups are usable (untested backup = no backup). Document RTO/RPO per service tier. Offsite replication for disaster recovery. Mục đích: "can we restore?" is a question that must be answered with "yes, we tested it on [date]" — not "probably, we've never tried".</li>
+<li><strong>Tạo Operational Runbooks</strong> — For top 20 operational tasks: step-by-step instructions, expected outcomes, troubleshooting if unexpected, rollback steps. Examples: "How to add new custom field", "How to reset user MFA", "How to export account data for legal request", "How to scale up during campaign launch". Mục đích: knowledge captured = team resilient. New admin productive in week 1, not month 3. On-call engineer can handle incidents without waking the expert.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Admin Process Flows (user lifecycle), Role Hierarchy Diagram, Environment Topology (with data flow)</p>
+<p><strong>Deliverables:</strong> Admin Runbook (comprehensive, searchable), User Management Procedures, Backup Policy Document</p>
+<p><strong>Công cụ:</strong> Okta/Azure AD (IdP + SCIM), Terraform (environment provisioning), Ansible (configuration), PagerDuty (on-call rotation)</p>
+</div>
+
+<h3 id="platform-health">Module 5.1.2 — Platform Health & Maintenance</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM là "always-on" system — downtime during business hours = lost revenue. Module này implement proactive health management: detect problems BEFORE users notice, schedule maintenance during low-traffic windows, manage technical debt before it becomes crisis, and keep dependencies current (security patches, library updates).
+</div>
+
+<div class="doc-card">
+<h4>DOC-502: Platform Health Management</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Đảm bảo CRM luôn healthy và performant</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-501</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Build Health Check Framework</strong> — Automated checks: application health endpoints (per service), database connectivity + query latency, cache hit rates, queue depths, disk space, certificate expiry, integration endpoint availability. Dashboard showing green/yellow/red per component. Daily automated health report email to admin team. Mục đích: at-a-glance system health — admin starts morning knowing exactly what needs attention before users report issues.</li>
+<li><strong>Establish Maintenance Windows & Patching</strong> — Define maintenance windows: weekly (minor — config changes, low-risk patches), monthly (medium — dependency updates, minor version upgrades), quarterly (major — architecture changes, major version upgrades). Communication template: announce 72h before, remind 24h, confirm completion. Mục đích: predictable schedule — users know when to expect brief disruptions, team has dedicated time for maintenance rather than deferring indefinitely.</li>
+<li><strong>Implement Technical Debt Management</strong> — Track: tech debt items (Jira backlog with severity + impact), health metrics (test coverage trend, dependency freshness, code complexity hotspots). Budget: 20% of sprint capacity dedicated to tech debt (non-negotiable). Quarterly review: top 5 debt items by business risk, prioritized for next quarter. Mục đích: prevent "death by a thousand cuts" — small debts compound into system brittleness. Regular paydown keeps system maintainable and team velocity high.</li>
+<li><strong>Design Storage Management & Archival</strong> — Policies: active data (current + 2 years in primary storage), archive data (2-7 years in cold storage, queryable on demand), purge data (>7 years or per retention policy, deleted permanently). Auto-archival workflows based on record age + activity. Storage growth monitoring + alerts. Mục đích: database performance degrades with size — archival keeps primary DB fast while meeting legal retention requirements.</li>
+<li><strong>Define SLA & Reporting</strong> — Internal SLAs per tier: P1 (system down — 15 min response, 1h resolution), P2 (major feature broken — 1h response, 4h resolution), P3 (minor issue — 4h response, 24h resolution). Monthly SLA report: uptime %, incidents count, mean time to resolution. Review in team meeting. Mục đích: measurable service commitment — team accountable, users have expectations set, trends visible for investment decisions.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Health Dashboard Wireframe (component status), Maintenance Calendar (annual view), SLA Tier Diagram (response + resolution targets)</p>
+<p><strong>Deliverables:</strong> Health Check Scripts (automated), Maintenance Windows Policy, SLA Report Template (monthly)</p>
+<p><strong>Công cụ:</strong> Grafana (health dashboards), Nagios/Zabbix (health checks), Jira (tech debt tracking), StatusPage (user-facing status communication)</p>
+</div>
+
+<h2 id="observability">Domain 5.2 — Performance & Observability</h2>
+<p>Monitoring, alerting, performance tuning và scalability engineering.</p>
+
+<h3>Module 5.2.1 — Observability Stack</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+"You can't improve what you can't measure." Module này build observability infrastructure cho phép answer 3 questions instantly: (1) Is anything broken RIGHT NOW? (alerts), (2) WHY is it broken? (traces + logs), (3) Is it getting WORSE over time? (metrics trends). Without observability, incidents are detected by angry users, debugged by guessing, and repeated because root cause is never found.
+</div>
+
+<div class="doc-card">
+<h4>DOC-503: CRM Observability Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng full observability cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> OpenTelemetry, SRE Golden Signals</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Implement Three Pillars</strong> — Metrics (numeric time-series — request count, latency percentiles, error rates, business KPIs like deals created/hour), Logs (structured events — JSON format, correlation IDs, severity levels, searchable), Traces (distributed request flow — see full journey of one request across all services). Use OpenTelemetry for vendor-neutral instrumentation. Mục đích: each pillar answers different questions — metrics say "something is wrong", traces say "where exactly", logs say "what happened in detail".</li>
+<li><strong>Define SLI/SLO/SLA</strong> — For each critical service: SLI (what to measure — e.g., "percentage of API calls completing in <500ms"), SLO (target — e.g., "99.9% of calls <500ms over 30-day window"), Error Budget (allowed failures — 0.1% = 43 minutes downtime/month). Publish SLO dashboard. Alert when error budget burn rate exceeds threshold. Mục đích: objective reliability targets — team knows exactly how much reliability is "enough", avoids over-engineering AND under-investing.</li>
+<li><strong>Design Alerting Strategy</strong> — Principles: alert on symptoms (users impacted) not causes (CPU high), alert on SLO burn rate (not individual errors), every alert must be actionable (if no action needed, it's noise). Tiers: P1 (page on-call immediately), P2 (notify team channel, address within 1h), P3 (ticket created, address within sprint). Review noise monthly: alerts fired but no action taken = remove. Mục đích: alert fatigue kills reliability — team ignoring alerts because 80% are noise. Fewer, meaningful alerts = faster response to real issues.</li>
+<li><strong>Implement Distributed Tracing</strong> — Propagate trace context (W3C Trace Context standard) across all services. Capture: span for each significant operation (API call, DB query, cache lookup, external service call), with attributes (tenant_id, user_id, endpoint). Sample intelligently: 100% for errors, 10% for normal traffic, always trace if request is slow. Mục đích: "user reports slow page load" → one click → see entire request journey → identify the 800ms DB query causing the problem.</li>
+<li><strong>Add Business Metrics</strong> — Beyond infrastructure: track CRM-specific metrics — deals created/hour, emails sent/hour, cases resolved/hour, active users (real-time), report generation time, sync job success rate. Correlate with infrastructure metrics. Mục đích: "system is up" ≠ "system is working" — 0% error rate means nothing if deals_created drops to zero because a workflow is silently failing.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Observability Architecture (collection → storage → visualization → alerting), Alert Flow Diagram (detection → routing → notification → acknowledgment), SLO Dashboard (current burn rate per service)</p>
+<p><strong>Deliverables:</strong> Observability Strategy Document, SLO Document (per service), Alert Runbooks (what to do when each alert fires)</p>
+<p><strong>Công cụ:</strong> OpenTelemetry (instrumentation), Prometheus + Grafana (metrics), Loki (logs), Tempo/Jaeger (traces), PagerDuty (alerting)</p>
+</div>
+
+<h3 id="optimization">Module 5.2.2 — Performance Optimization</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Performance optimization là ongoing process, không phải one-time event. Module này establish continuous performance improvement cycle: identify bottlenecks (via observability from DOC-503), optimize (database, caching, code), validate (benchmarks), và monitor (prevent regression). Goal: every quarter, measure và improve key performance metrics.
+</div>
+
+<div class="doc-card">
+<h4>DOC-504: CRM Performance Tuning</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Tối ưu performance CRM liên tục</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-503, DOC-407</span>
+</div>
+<p><strong>Nội dung:</strong> Database Query Optimization (slow query analysis, index tuning). Caching Optimization (hit rates, invalidation). API Response Time Optimization. Background Job Optimization. Memory & Connection Pool Tuning. CDN & Edge Optimization. Cost Optimization (right-sizing, reserved instances).</p>
+<p><strong>Sơ đồ:</strong> Performance Bottleneck Map, Caching Layer Diagram, Cost Breakdown</p>
+<p><strong>Deliverables:</strong> Performance Baseline Report, Optimization Playbook, Cost Report</p>
+<p><strong>Công cụ:</strong> pg_stat_statements, Redis Insight, Lighthouse, AWS Cost Explorer</p>
+</div>
+
+<h3 id="scalability">Module 5.2.3 — Scalability Engineering</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM phải scale theo business growth — từ 100 users lên 10,000, từ 1M records lên 100M. Module này design scalability patterns cho phép system grow mà không redesign. Key insight: scale problems manifest differently ở mỗi layer (compute, database, messaging) — mỗi layer cần strategy riêng.
+</div>
+
+<div class="doc-card">
+<h4>DOC-505: Scaling CRM Platform</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Scale CRM cho enterprise workloads</span>
+<span><strong>Độ khó:</strong> Expert <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-504, DOC-305</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Auto-scaling Policies</strong> — Define scaling triggers per service: CPU-based (>70% for 3 min → scale out), request-based (>1000 RPS → add instance), queue-depth (>1000 messages → scale consumers), schedule-based (9am weekdays pre-scale for login surge). Min/max boundaries, cooldown periods. Mục đích: system responds to demand automatically — no manual intervention for predictable load patterns, no over-provisioning during quiet periods.</li>
+<li><strong>Scale Database Layer</strong> — Read scaling: replicas (route reads to replicas, writes to primary), connection pooling (PgBouncer — 5000 app connections → 100 DB connections). Write scaling: vertical (bigger instance first), then sharding by tenant_id (last resort, most complex). Archival: move old data to cold storage, keep hot data in primary. Mục đích: database is usually first bottleneck — exhaust simpler options (replicas, caching, archival) before resorting to sharding complexity.</li>
+<li><strong>Scale Event Processing</strong> — Kafka partitioning: partition by tenant_id (maintain ordering per tenant), scale consumers = number of partitions. Handle: consumer lag monitoring, partition rebalancing during deploys, dead letter topics for poison messages. Mục đích: event throughput grows linearly with partitions — plan partition count for 10x current volume from day 1.</li>
+<li><strong>Design Multi-region Architecture</strong> — For global deployments: active-active (both regions serve traffic, conflict resolution needed) vs active-passive (one primary, failover region). Data replication strategy: sync (strong consistency, higher latency) vs async (eventual consistency, lower latency). Region placement: data residency + latency to user base. Mục đích: <100ms latency globally + survive entire region failure without data loss.</li>
+<li><strong>Implement Rate Limiting & Backpressure</strong> — Per-tenant rate limits (prevent noisy neighbor), per-endpoint limits (protect expensive operations), global limits (platform capacity). Backpressure: when downstream overwhelmed, signal upstream to slow down (HTTP 429, queue backoff). Circuit breakers between layers. Mục đích: graceful degradation under extreme load — serve existing users well rather than crashing trying to serve everyone poorly.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Scaling Architecture (layers + strategies per layer), Auto-scale Decision Flow, Multi-region Topology (data flows + failover paths)</p>
+<p><strong>Deliverables:</strong> Scaling Playbook (per-layer procedures), Capacity Plan (6-month projection), Load Test Results (proving scale targets met)</p>
+<p><strong>Công cụ:</strong> Kubernetes HPA/KEDA, AWS Auto Scaling, PgBouncer, Apache Kafka, CloudFront/CloudFlare</p>
+</div>
+
+<h2 id="security-ops">Domain 5.3 — Security Operations</h2>
+<p>Vận hành bảo mật, incident response và compliance monitoring liên tục.</p>
+
+<h3 id="incident-response">Module 5.3.1 — Security Operations Center</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Security Architecture (Phase 3) đặt nền tảng, nhưng security là trò chơi liên tục — threats evolve daily. Module này build operational security: detect threats in real-time, respond to incidents within minutes, patch vulnerabilities before exploitation, and maintain security posture through regular testing. A CRM with customer PII is a high-value target — proactive security ops is not optional.
+</div>
+
+<div class="doc-card">
+<h4>DOC-506: CRM Security Operations</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Vận hành bảo mật 24/7 cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> ISO 27001, NIST CSF, SOC 2</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Implement Security Monitoring (SIEM)</strong> — Collect logs: authentication events (success/failure, MFA bypass attempts), authorization failures (access denied), data access patterns (bulk exports, unusual queries), API abuse (rate limit hits, malformed requests), admin actions (role changes, config modifications). Correlate: multiple failed logins + successful login from new country = account takeover attempt. Mục đích: detect attacks in progress — average dwell time for undetected breaches is 200+ days; reduce to hours with monitoring.</li>
+<li><strong>Build Vulnerability Management Program</strong> — Cadence: automated dependency scanning (daily, CI integrated), infrastructure scanning (weekly), application DAST (monthly), manual penetration testing (quarterly, external firm). SLA: critical = patch within 24h, high = 7 days, medium = 30 days, low = next sprint. Track: vulnerability backlog, mean-time-to-patch, recurrence rate. Mục đích: continuous vulnerability awareness — don't wait for annual pentest to discover you have 47 critical vulnerabilities accumulated over 12 months.</li>
+<li><strong>Develop Incident Response Plan</strong> — Phases: Detection (alert fires or user reports) → Triage (severity classification: P1-P4) → Containment (isolate affected systems, revoke compromised credentials) → Eradication (remove attacker access, patch vulnerability) → Recovery (restore from clean state, verify integrity) → Post-mortem (blameless review, improve defenses). For each phase: who does what, escalation criteria, communication templates. Mục đích: when incident occurs, team executes practiced playbook instead of panicking. Practiced quarterly via tabletop exercises.</li>
+<li><strong>Establish Access Review Program</strong> — Quarterly: review all privileged access (admin roles, production DB access, API keys). Semi-annually: review all user access (correct roles? still employed? still in same department?). Annually: review third-party access (vendor accounts, integration service accounts). Automate: deprovisioning on termination (HR event → disable within 1 hour). Mục đích: prevent access creep (employees accumulate permissions over career) and orphan accounts (former employees, departed vendors still have access).</li>
+<li><strong>Implement Third-party Risk Management</strong> — For each vendor with CRM data access: security questionnaire (SOC 2 report review), contractual requirements (DPA, breach notification SLA), ongoing monitoring (vendor security posture changes), exit strategy (data retrieval and deletion on contract end). Mục đích: your security is only as strong as your weakest vendor — supply chain attacks via trusted third parties are increasingly common.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Security Operations Flow (detect → respond → recover), Incident Response Timeline (phase durations + actions), Vulnerability Lifecycle (discovery → triage → patch → verify)</p>
+<p><strong>Deliverables:</strong> Incident Response Plan (practiced), Security Runbooks (per threat type), Vulnerability Management Policy (SLAs + process)</p>
+<p><strong>Công cụ:</strong> Splunk/Elastic SIEM (monitoring), Qualys/Nessus (vulnerability scanning), Snyk (dependency), CrowdStrike (endpoint), 1Password/Vault (secrets)</p>
+</div>
+
+<h3 id="compliance-ops">Module 5.3.2 — Compliance & Audit Operations</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Compliance designed in Phase 3 must be maintained operationally — regulations change, auditors visit, customers request their data, retention periods expire. Module này automate compliance operations: continuous monitoring (not annual audits), automated evidence collection (not manual screenshots), and streamlined DSAR processing (not ad-hoc SQL queries). Goal: compliance is a background process, not a quarterly fire drill.
+</div>
+
+<div class="doc-card">
+<h4>DOC-507: Continuous Compliance</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Duy trì compliance liên tục</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-309, DOC-506</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Implement Continuous Compliance Monitoring</strong> — Automated checks: encryption at rest enabled (all databases), access logs retained (minimum period met), MFA enforced (no exceptions), data classification applied (all PII fields tagged), backup tested (last successful restore < 30 days). Dashboard: compliance score per control, trending, alerts on drift. Mục đích: "always audit-ready" — compliance posture visible in real-time, not discovered during annual audit preparation.</li>
+<li><strong>Automate Evidence Collection</strong> — For SOC 2/ISO 27001: automatically capture evidence artifacts (access review screenshots, config snapshots, training completion records, change approval logs). Map evidence → control → framework requirement. Store in evidence vault with retention. Mục đích: audit preparation reduces from 4 weeks manual gathering to 1 day review — auditors get structured, complete evidence packages.</li>
+<li><strong>Build DSAR Processing Pipeline</strong> — Data Subject Access Requests: intake (web form, email, support ticket) → identity verification (prove you are who you claim) → data collection (automated query across all systems) → review (legal review for exemptions) → delivery (secure format within 30 days). Automate: data collection from CRM, analytics, backups, third-party systems. Mục đích: GDPR Article 15 requires response within 30 days. At scale (100+ DSARs/month), manual processing is impossible — automation is the only path.</li>
+<li><strong>Implement Data Retention Automation</strong> — Policies: define retention per data type (active customer = indefinite, churned customer = 3 years, marketing leads = 2 years, audit logs = 7 years). Automation: scheduled jobs evaluate retention, execute archive/purge, log actions for audit. Handle: legal holds (suspend deletion for litigation), cross-reference dependencies (don't delete customer if open case exists). Mục đích: reduce storage costs + reduce breach impact surface + comply with data minimization principle — keep only what you need.</li>
+<li><strong>Establish Regulatory Change Management</strong> — Monitor: new regulations (GDPR amendments, new state privacy laws, industry-specific rules). Assess impact: which controls affected? what system changes needed? timeline for compliance? Maintain: regulatory calendar (compliance deadlines), gap analysis per regulation, remediation tracking. Mục đích: proactive adaptation — new regulation announced → impact assessed within 2 weeks → remediation planned → compliant before enforcement date.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Compliance Dashboard (control status per framework), Audit Workflow (evidence collection → review → submission), Retention Policy Flow (evaluation → action → logging)</p>
+<p><strong>Deliverables:</strong> Compliance Calendar (all deadlines), Audit Evidence Package (structured per control), Policy Templates (retention, access, classification)</p>
+<p><strong>Công cụ:</strong> Drata/Vanta (compliance automation), Open Policy Agent (policy as code), AWS Config Rules (infrastructure compliance), custom DSAR automation</p>
+</div>
+
+<h2 id="data-governance">Domain 5.4 — Governance & Improvement</h2>
+<p>Data governance, adoption measurement và continuous improvement cycle.</p>
+
+<h3 id="adoption-metrics">Module 5.4.1 — Adoption & Business Value</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM thành công không phải "system is live" mà là "users actively use it AND business outcomes improve". Module này answer 2 critical questions: (1) Are users actually using the CRM? (adoption metrics), (2) Is the business getting return on its CRM investment? (value realization). Without measurement, you can't improve — and executives will question whether CRM was worth the $X million investment.
+</div>
+
+<div class="doc-card">
+<h4>DOC-508: CRM Adoption & Value Realization</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Đo lường và tối ưu adoption CRM</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-110, DOC-211</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng Adoption Metrics Framework</strong> — Track layered metrics: Breadth (% users logging in weekly — target >90%), Depth (features used per session — are they beyond basic?), Quality (data completeness score — are fields filled accurately?), Frequency (sessions per user per day — habitual use?). Segment by: role, department, tenure, region. Mục đích: "90% login rate" masks that 60% only check email — depth metrics reveal real adoption vs performative compliance.</li>
+<li><strong>Implement Usage Analytics</strong> — Track in-app: page views (which screens most/least visited), feature engagement (which buttons clicked, which ignored), time-on-task (how long to create opportunity?), error encounters (where do users get stuck?), search queries (what are they looking for that's hard to find?). Heatmaps for UI optimization. Mục đích: data-driven UX improvement — instead of guessing what users need, observe what they actually do and struggle with.</li>
+<li><strong>Measure Business Value Realization</strong> — Track ROI dimensions: Revenue impact (deal velocity improvement, win rate increase, upsell rate), Productivity (time saved per rep per day, fewer tools needed), Cost reduction (support cost per ticket, manual process elimination), Customer satisfaction (NPS change, churn rate change). Compare: pre-CRM baseline → current metrics. Mục đích: justify investment to CFO/board with hard numbers — "CRM generated $2.3M additional pipeline from lead scoring alone, payback period = 8 months".</li>
+<li><strong>Identify & Leverage Power Users</strong> — Detect: users with highest engagement, best data quality, most creative use of features. Actions: interview them (what workflows did they create?), amplify (share their techniques as best practices), recruit (make them department champions), learn (their workflows often reveal missing platform features). Mục đích: organic adoption through peer influence is 3x more effective than mandates — power users show "what's possible" to skeptics.</li>
+<li><strong>Analyze & Remove Adoption Barriers</strong> — Detect barriers: features with high drop-off rate, pages with long time-to-task, support tickets about "how do I?", users reverting to Excel/email. Root cause analysis: UX issue? Training gap? Missing feature? Performance problem? Workflow doesn't match reality? Action plan per barrier with owner and deadline. Mục đích: remove friction systematically — each barrier removed increases adoption incrementally. Small improvements compound.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Adoption Dashboard (breadth × depth × quality × frequency), Value Realization Timeline (baseline → current → target), User Engagement Funnel (awareness → trial → regular use → power user)</p>
+<p><strong>Deliverables:</strong> Adoption Scorecard (monthly, per department), ROI Report Template (quarterly, for executives), Improvement Backlog (prioritized by adoption impact)</p>
+<p><strong>Công cụ:</strong> Pendo/Mixpanel (product analytics), WalkMe/Whatfix (in-app guidance), Power BI/Tableau (executive dashboards)</p>
+</div>
+
+<h3 id="continuous-improvement">Module 5.4.2 — Continuous Improvement</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM is never "done" — business evolves, users discover new needs, competitors raise the bar. Module này establish sustainable improvement cycle: collect feedback systematically, prioritize objectively (not by loudest voice), experiment before committing, and validate outcomes with data. This keeps CRM relevant and valuable over 5-10 year lifespan.
+</div>
+<div class="doc-card">
+<h4>DOC-509: CRM Evolution & Optimization</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết lập chu trình cải tiến liên tục</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 6 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-508</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng Feedback Collection System</strong> — Multiple channels: in-app feedback widget (thumbs up/down per feature + optional comment), quarterly user survey (NPS + feature satisfaction), support ticket analysis (recurring "how do I?" = UX gap), champion network interviews (monthly, top users share pain points + ideas). Aggregate into single backlog. Mục đích: systematic input from users — not "whoever yells loudest gets their feature" but data-driven understanding of user needs.</li>
+<li><strong>Implement Feature Prioritization Framework</strong> — RICE scoring: Reach (how many users affected?) × Impact (how much improvement per user?) × Confidence (how sure are we?) ÷ Effort (dev weeks). Stack rank all requests. Publish top 10 to stakeholders for transparency. Re-score quarterly as context changes. Mục đích: objective, defensible prioritization — when Sales VP asks "why isn't my feature next?", show the scoring that reveals higher-impact items ahead.</li>
+<li><strong>Establish A/B Testing Culture</strong> — For significant changes: test with subset of users before full rollout. Measure: task completion rate, time-on-task, error rate, satisfaction score. Statistical significance before declaring winner. Examples: new dashboard layout, changed workflow step, different notification timing. Mục đích: reduce risk of "improvements" that actually make things worse — 30% of well-intentioned UX changes decrease metrics. Test, don't guess.</li>
+<li><strong>Conduct Quarterly Business Reviews (QBR)</strong> — Agenda: KPI performance vs targets (from DOC-508), adoption trends, top user feedback themes, completed improvements (demonstrate velocity), upcoming roadmap (get stakeholder input), budget and resource needs. Attendees: executive sponsor, department heads, CRM team lead. Mục đích: recurring governance touchpoint — ensures CRM evolves aligned with business priorities, not just technical interests.</li>
+<li><strong>Maintain Platform Roadmap</strong> — Living document: Now (current sprint work), Next (committed for next quarter), Later (backlog, tentative). Categories: new features, optimization, technical debt, security, integrations. Review and update monthly. Publish to all stakeholders. Mục đích: transparency and alignment — everyone knows what's coming, can plan their work around it, and can raise conflicts before they become surprises.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Improvement Cycle (Plan-Do-Check-Act), Feature Prioritization Matrix (RICE visualization)</p>
+<p><strong>Deliverables:</strong> Improvement Backlog (maintained, RICE-scored), QBR Template (with agenda + metrics), Platform Roadmap Document (Now/Next/Later)</p>
+<p><strong>Công cụ:</strong> ProductBoard/Aha! (product management), Linear (engineering backlog), retrospective tools (Miro, EasyRetro)</p>
+</div>
+
+<div class="callout callout-green">
+<strong>Tổng kết Phase 5</strong>
+Phase 5 đảm bảo CRM không chỉ chạy mà còn phát triển. Key outcomes: 99.9% uptime (SLO), sub-second response times, zero critical security incidents, và measurable business value (ROI >300%). Continuous improvement cycle giữ platform luôn evolve theo nhu cầu business.
+</div>
+
+<div class="prev-next">
+  <a href="04-implementation.html">← Phase 4: Implementation</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced & Innovation →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

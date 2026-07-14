@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 - Comparatives & Superlatives - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./09-modal-verbs.html">09. Modal Verbs</a>
+      <a href="./10-comparatives.html" class="active">10. Comparatives & Superlatives</a>
+      <a href="./11-conditionals.html">11. Conditionals</a>
+      <a href="./12-prepositions.html">12. Prepositions & Conjunctions</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 10 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./09-modal-verbs.html">← Previous: Modal Verbs</a>
+    <a href="./11-conditionals.html">Next: Conditionals →</a>
+  </div>
+
+  <h1>Comparatives & Superlatives</h1>
+  <p class="subtitle">So sánh hơn và so sánh nhất — bigger, the biggest, more beautiful, the most beautiful</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Comparatives dùng để so sánh hai đối tượng. Superlatives dùng để so sánh một đối tượng với tất cả trong nhóm. Cấu trúc phụ thuộc vào độ dài của tính từ.</p>
+
+  <div class="formula">
+    <strong>Công thức:</strong><br><br>
+    <strong>Tính từ ngắn (1 âm tiết, hoặc 2 âm tiết kết thúc -y):</strong><br>
+    So sánh hơn: adj + <strong>-er</strong> + than<br>
+    → She is <strong>taller than</strong> me.<br>
+    So sánh nhất: the + adj + <strong>-est</strong><br>
+    → He is <strong>the tallest</strong> in the class.<br><br>
+    <strong>Tính từ dài (2+ âm tiết):</strong><br>
+    So sánh hơn: <strong>more</strong> + adj + than<br>
+    → This book is <strong>more interesting than</strong> that one.<br>
+    So sánh nhất: <strong>the most</strong> + adj<br>
+    → She is <strong>the most beautiful</strong> girl I know.<br><br>
+    <strong>So sánh bằng:</strong> as + adj + as<br>
+    → He is <strong>as tall as</strong> his brother.<br>
+    → This is not <strong>as expensive as</strong> that one.
+  </div>
+
+  <h3>Quy tắc thêm -er/-est (tính từ ngắn)</h3>
+  <table>
+    <tr><th>Quy tắc</th><th>Ví dụ</th></tr>
+    <tr><td>Thường: thêm <strong>-er/-est</strong></td><td>tall → taller → tallest</td></tr>
+    <tr><td>Kết thúc -e: thêm <strong>-r/-st</strong></td><td>large → larger → largest</td></tr>
+    <tr><td>Phụ âm + y: đổi y → <strong>-ier/-iest</strong></td><td>happy → happier → happiest</td></tr>
+    <tr><td>1 nguyên âm + 1 phụ âm: gấp đôi + <strong>-er/-est</strong></td><td>big → bigger → biggest</td></tr>
+  </table>
+
+  <h3>Tính từ bất quy tắc</h3>
+  <table>
+    <tr><th>Tính từ</th><th>So sánh hơn</th><th>So sánh nhất</th><th>Nghĩa</th></tr>
+    <tr><td>good</td><td><strong>better</strong></td><td><strong>the best</strong></td><td>tốt</td></tr>
+    <tr><td>bad</td><td><strong>worse</strong></td><td><strong>the worst</strong></td><td>xấu, tệ</td></tr>
+    <tr><td>far</td><td><strong>farther/further</strong></td><td><strong>the farthest/furthest</strong></td><td>xa</td></tr>
+    <tr><td>little</td><td><strong>less</strong></td><td><strong>the least</strong></td><td>ít</td></tr>
+    <tr><td>many/much</td><td><strong>more</strong></td><td><strong>the most</strong></td><td>nhiều</td></tr>
+  </table>
+
+  <h3>Bổ ngữ mức độ (modifiers)</h3>
+  <p>Dùng trước so sánh hơn để nhấn mạnh hoặc giảm nhẹ:</p>
+  <ul>
+    <li><strong>much / far / a lot</strong> + comparative: much better, far more expensive</li>
+    <li><strong>slightly / a little / a bit</strong> + comparative: slightly taller, a bit cheaper</li>
+  </ul>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Cả hai ngôn ngữ đều có cách diễn đạt so sánh hơn và so sánh nhất.</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt dùng "<strong>hơn</strong>" sau tính từ (đẹp hơn) và "<strong>nhất</strong>" sau tính từ (đẹp nhất). Tính từ không thay đổi hình thức.</li>
+      <li>Tiếng Anh <strong>thay đổi hình thức tính từ</strong> (big → bigger) hoặc <strong>thêm more/most</strong> trước tính từ dài.</li>
+      <li>Tiếng Anh bắt buộc dùng "<strong>the</strong>" trước superlative. Tiếng Việt không có mạo từ.</li>
+      <li>Tiếng Anh dùng "<strong>than</strong>" (hơn) và "<strong>as...as</strong>" (bằng). Tiếng Việt dùng "hơn" và "bằng".</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>compare</td><td>/kəmˈper/</td><td>v.</td><td>so sánh</td></tr>
+    <tr><td>than</td><td>/ðæn/</td><td>conj.</td><td>hơn (dùng trong so sánh)</td></tr>
+    <tr><td>equal</td><td>/ˈiː.kwəl/</td><td>adj.</td><td>bằng nhau</td></tr>
+    <tr><td>similar</td><td>/ˈsɪm.ə.lər/</td><td>adj.</td><td>tương tự</td></tr>
+    <tr><td>different</td><td>/ˈdɪf.ər.ənt/</td><td>adj.</td><td>khác nhau</td></tr>
+    <tr><td>superior</td><td>/suːˈpɪr.i.ər/</td><td>adj.</td><td>vượt trội</td></tr>
+    <tr><td>inferior</td><td>/ɪnˈfɪr.i.ər/</td><td>adj.</td><td>kém hơn</td></tr>
+    <tr><td>slightly</td><td>/ˈslaɪt.li/</td><td>adv.</td><td>hơi, một chút</td></tr>
+    <tr><td>much</td><td>/mʌtʃ/</td><td>adv.</td><td>nhiều (nhấn mạnh)</td></tr>
+    <tr><td>far</td><td>/fɑːr/</td><td>adv.</td><td>xa, rất (nhấn mạnh)</td></tr>
+    <tr><td>a lot</td><td>/ə lɑːt/</td><td>adv.</td><td>nhiều</td></tr>
+    <tr><td>the same as</td><td>/ðə seɪm æz/</td><td>phrase</td><td>giống như</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li>My house is <span class="highlight">bigger than</span> yours. — So sánh hơn, tính từ ngắn.</li>
+    <li>This is <span class="highlight">the most expensive</span> restaurant in town. — So sánh nhất, tính từ dài.</li>
+    <li>She runs <span class="highlight">faster than</span> her brother. — So sánh hơn, trạng từ ngắn.</li>
+    <li>Today is <span class="highlight">much hotter than</span> yesterday. — Bổ ngữ "much" nhấn mạnh.</li>
+    <li>He is <span class="highlight">as smart as</span> his sister. — So sánh bằng.</li>
+    <li>This exam was <span class="highlight">the worst</span> I've ever taken. — Bất quy tắc: bad → worst.</li>
+    <li>Living in the city is <span class="highlight">more convenient than</span> living in the countryside. — Tính từ dài.</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Dùng "more" với tính từ ngắn:</strong> ❌ "more big" → ✅ "<strong>bigger</strong>". Tính từ 1 âm tiết dùng -er, không dùng more.</li>
+      <li><strong>Quên "the" trước superlative:</strong> ❌ "She is tallest" → ✅ "She is <strong>the tallest</strong>". Superlative luôn cần "the".</li>
+      <li><strong>Nhầm than/then:</strong> ❌ "bigger <strong>then</strong>" → ✅ "bigger <strong>than</strong>". "Than" = hơn, "then" = sau đó.</li>
+      <li><strong>Dùng -er với tính từ dài:</strong> ❌ "beautifuler" → ✅ "<strong>more beautiful</strong>". Tính từ 3+ âm tiết dùng more/most.</li>
+      <li><strong>Gấp đôi sai:</strong> ❌ "more better" → ✅ "<strong>better</strong>". Không dùng more + comparative cùng lúc.</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Hoàn thành câu với dạng so sánh đúng của tính từ trong ngoặc:</em></p>
+
+  <div class="exercise">
+    <p>1. This car is ___ (fast) than that one.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ faster (tính từ ngắn: fast → faster)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. She is ___ (beautiful) girl in the school.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ the most beautiful (tính từ dài, superlative: the most + adj)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. My English is ___ (good) than last year.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ better (bất quy tắc: good → better)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. This exercise is ___ (difficult) than the previous one.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ more difficult (tính từ dài: more + difficult)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. He is ___ (tall) ___ his father.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ as tall as (so sánh bằng: as + adj + as)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. Winter is ___ (bad) season for me.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ the worst (bất quy tắc, superlative: bad → the worst)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. This movie is ___ (interesting) than the book.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ more interesting (tính từ dài: more + interesting)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. Today is much ___ (cold) than yesterday.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ colder (much + comparative: much colder)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. This is ___ (cheap) hotel in the city.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ the cheapest (tính từ ngắn, superlative: the + adj-est)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. My bag is not ___ (heavy) ___ yours.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ as heavy as (so sánh bằng phủ định: not as + adj + as)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./09-modal-verbs.html">← Previous: Modal Verbs</a>
+    <a href="./11-conditionals.html">Next: Conditionals →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

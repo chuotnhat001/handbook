@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 - Conditionals - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./10-comparatives.html">10. Comparatives & Superlatives</a>
+      <a href="./11-conditionals.html" class="active">11. Conditionals</a>
+      <a href="./12-prepositions.html">12. Prepositions & Conjunctions</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 11 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./10-comparatives.html">← Previous: Comparatives & Superlatives</a>
+    <a href="./12-prepositions.html">Next: Prepositions & Conjunctions →</a>
+  </div>
+
+  <h1>Conditionals (Type 0, 1, 2)</h1>
+  <p class="subtitle">Câu điều kiện — If..., then...</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Câu điều kiện diễn tả mối quan hệ giữa điều kiện và kết quả. Tiếng Anh phân biệt các loại câu điều kiện bằng thì (tense) của động từ.</p>
+
+  <div class="formula">
+    <strong>Công thức:</strong><br><br>
+    <strong>Type 0 — Sự thật hiển nhiên (facts/general truths):</strong><br>
+    If + S + V (present simple), S + V (present simple)<br>
+    → If you <strong>heat</strong> water to 100°C, it <strong>boils</strong>.<br>
+    → If I <strong>eat</strong> too much, I <strong>feel</strong> sick.<br><br>
+    <strong>Type 1 — Có thể xảy ra trong tương lai (real future):</strong><br>
+    If + S + V (present simple), S + <strong>will</strong> + V<br>
+    → If it <strong>rains</strong> tomorrow, I <strong>will stay</strong> home.<br>
+    → If you <strong>study</strong> hard, you <strong>will pass</strong> the exam.<br><br>
+    <strong>Type 2 — Không có thật ở hiện tại / giả định (unreal present):</strong><br>
+    If + S + V (past simple), S + <strong>would</strong> + V<br>
+    → If I <strong>had</strong> a million dollars, I <strong>would travel</strong> the world.<br>
+    → If she <strong>were</strong> here, she <strong>would help</strong> us.<br><br>
+    <strong>Lưu ý:</strong> Type 2 dùng "<strong>were</strong>" cho tất cả các ngôi (If I were, If he were — không dùng "was").
+  </div>
+
+  <h3>Tóm tắt 3 loại</h3>
+  <table>
+    <tr><th>Loại</th><th>Mệnh đề If</th><th>Mệnh đề chính</th><th>Ý nghĩa</th></tr>
+    <tr><td>Type 0</td><td>Present Simple</td><td>Present Simple</td><td>Sự thật, quy luật</td></tr>
+    <tr><td>Type 1</td><td>Present Simple</td><td>will + V</td><td>Có thể xảy ra (tương lai)</td></tr>
+    <tr><td>Type 2</td><td>Past Simple</td><td>would + V</td><td>Không có thật (hiện tại)</td></tr>
+  </table>
+
+  <h3>Các liên từ thay thế "if"</h3>
+  <ul>
+    <li><strong>unless</strong> = if not: Unless you hurry, you'll be late.</li>
+    <li><strong>provided that / as long as</strong> = if (nhấn mạnh điều kiện): You can go, provided that you finish your homework.</li>
+    <li><strong>in case</strong> = phòng khi: Take an umbrella in case it rains.</li>
+  </ul>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Cả hai đều dùng cấu trúc "nếu...thì..." để diễn đạt điều kiện.</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt dùng "<strong>nếu...thì...</strong>" cho tất cả các loại điều kiện. Không phân biệt bằng thì động từ.</li>
+      <li>Tiếng Anh <strong>phân biệt bằng thì</strong>: Type 0 (sự thật), Type 1 (có thể xảy ra), Type 2 (không có thật/giả định).</li>
+      <li>Tiếng Việt: "Nếu tôi có tiền, tôi sẽ mua xe" — không rõ thật hay giả định. Tiếng Anh phân biệt rõ: "If I have money, I will buy..." (Type 1, có thể) vs "If I had money, I would buy..." (Type 2, giả định).</li>
+      <li>Tiếng Anh dùng "<strong>were</strong>" (không phải "was") trong Type 2 cho tất cả ngôi. Tiếng Việt không có sự thay đổi này.</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>condition</td><td>/kənˈdɪʃ.ən/</td><td>n.</td><td>điều kiện</td></tr>
+    <tr><td>result</td><td>/rɪˈzʌlt/</td><td>n.</td><td>kết quả</td></tr>
+    <tr><td>possible</td><td>/ˈpɑː.sə.bəl/</td><td>adj.</td><td>có thể</td></tr>
+    <tr><td>impossible</td><td>/ɪmˈpɑː.sə.bəl/</td><td>adj.</td><td>không thể</td></tr>
+    <tr><td>imagine</td><td>/ɪˈmædʒ.ɪn/</td><td>v.</td><td>tưởng tượng</td></tr>
+    <tr><td>suppose</td><td>/səˈpoʊz/</td><td>v.</td><td>giả sử</td></tr>
+    <tr><td>unless</td><td>/ənˈles/</td><td>conj.</td><td>trừ khi</td></tr>
+    <tr><td>otherwise</td><td>/ˈʌð.ər.waɪz/</td><td>adv.</td><td>nếu không thì</td></tr>
+    <tr><td>in case</td><td>/ɪn keɪs/</td><td>conj.</td><td>phòng khi</td></tr>
+    <tr><td>provided that</td><td>/prəˈvaɪ.dɪd ðæt/</td><td>conj.</td><td>miễn là</td></tr>
+    <tr><td>as long as</td><td>/æz lɔːŋ æz/</td><td>conj.</td><td>miễn là</td></tr>
+    <tr><td>what if</td><td>/wʌt ɪf/</td><td>phrase</td><td>nếu...thì sao</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li><span class="highlight">If</span> you mix red and blue, you <span class="highlight">get</span> purple. — Type 0, sự thật.</li>
+    <li><span class="highlight">If</span> it rains tomorrow, we <span class="highlight">will cancel</span> the picnic. — Type 1, có thể xảy ra.</li>
+    <li><span class="highlight">If</span> I <span class="highlight">were</span> you, I <span class="highlight">would apologize</span>. — Type 2, lời khuyên giả định.</li>
+    <li><span class="highlight">If</span> she studies hard, she <span class="highlight">will get</span> a good grade. — Type 1.</li>
+    <li><span class="highlight">If</span> I <span class="highlight">had</span> more time, I <span class="highlight">would learn</span> Japanese. — Type 2, không có thật.</li>
+    <li><span class="highlight">Unless</span> you leave now, you <span class="highlight">will be</span> late. — Unless = If not.</li>
+    <li>I'll help you <span class="highlight">as long as</span> you help me too. — Điều kiện kèm theo.</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Dùng "will" trong mệnh đề if:</strong> ❌ "If I <strong>will go</strong>..." → ✅ "If I <strong>go</strong>..." Mệnh đề if không dùng will (trừ trường hợp đặc biệt).</li>
+      <li><strong>Nhầm Type 1 và Type 2:</strong> ❌ "If I had money, I will buy..." → ✅ "If I <strong>had</strong> money, I <strong>would</strong> buy..." (Type 2) hoặc "If I <strong>have</strong> money, I <strong>will</strong> buy..." (Type 1).</li>
+      <li><strong>Dùng "was" thay "were" trong Type 2:</strong> ❌ "If I <strong>was</strong> rich..." → ✅ "If I <strong>were</strong> rich..." Type 2 dùng "were" cho tất cả ngôi.</li>
+      <li><strong>Quên đảo thì:</strong> ❌ "If I am a bird, I would fly" → ✅ "If I <strong>were</strong> a bird, I would fly." Type 2 cần past simple trong mệnh đề if.</li>
+      <li><strong>Dùng "would" ở cả hai mệnh đề:</strong> ❌ "If I would study, I would pass" → ✅ "If I <strong>studied</strong>, I would pass."</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Hoàn thành câu điều kiện với dạng đúng của động từ trong ngoặc:</em></p>
+
+  <div class="exercise">
+    <p>1. If you heat ice, it ___ (melt).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ melts (Type 0: sự thật, present simple ở cả hai mệnh đề)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. If it ___ (rain) tomorrow, I will stay home.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ rains (Type 1: mệnh đề if dùng present simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. If I ___ (be) you, I would talk to her.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ were (Type 2: dùng "were" cho tất cả ngôi)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. If she studies hard, she ___ (pass) the exam.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ will pass (Type 1: mệnh đề chính dùng will + V)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. If I ___ (have) a car, I would drive to work.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ had (Type 2: mệnh đề if dùng past simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. If you ___ (not/water) plants, they die.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ don't water (Type 0: sự thật, present simple phủ định)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. If he ___ (win) the lottery, he would buy a house.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ won (Type 2: mệnh đề if dùng past simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. ___ you help me if I asked you?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Would (Type 2: câu hỏi, Would + S + V)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. If we leave now, we ___ (arrive) on time.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ will arrive (Type 1: có thể xảy ra, will + V)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. If I ___ (know) her number, I would call her.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ knew (Type 2: không có thật ở hiện tại, past simple)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./10-comparatives.html">← Previous: Comparatives & Superlatives</a>
+    <a href="./12-prepositions.html">Next: Prepositions & Conjunctions →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

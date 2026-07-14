@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Reference - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lo trinh</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./01-parts-of-speech.html">01. Parts of Speech</a>
+      <a href="./02-sentence-structure.html">02. Sentence Structure</a>
+      <a href="./03-present-simple.html">03. Present Simple</a>
+      <a href="./04-present-continuous.html">04. Present Continuous</a>
+      <a href="./05-past-simple.html">05. Past Simple</a>
+      <a href="./06-past-continuous.html">06. Past Continuous</a>
+      <a href="./07-future.html">07. Future</a>
+      <a href="./08-present-perfect.html">08. Present Perfect</a>
+      <a href="./09-modal-verbs.html">09. Modal Verbs</a>
+      <a href="./10-comparatives-superlatives.html">10. Comparatives</a>
+      <a href="./11-conditionals.html">11. Conditionals</a>
+      <a href="./12-prepositions.html">12. Prepositions</a>
+      <a href="./quick-reference.html" class="active">Quick Reference</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Quick Reference
+  </div>
+
+  <h1>Quick Reference</h1>
+  <p class="subtitle">Tom tat cong thuc ngu phap — tra cuu nhanh</p>
+
+  <h2>1. Sentence Structure</h2>
+  <div class="formula">
+    <strong>S + V + O</strong> (khang dinh)<br>
+    <strong>S + do/does/did + not + V</strong> (phu dinh)<br>
+    <strong>Do/Does/Did + S + V?</strong> (nghi van)
+  </div>
+
+  <h2>2. Present Simple</h2>
+  <div class="formula">
+    <strong>(+)</strong> I/You/We/They + V | He/She/It + V-s/es<br>
+    <strong>(-)</strong> don't/doesn't + V<br>
+    <strong>(?)</strong> Do/Does + S + V?<br><br>
+    <strong>Use:</strong> habits, facts, schedules
+  </div>
+
+  <h2>3. Present Continuous</h2>
+  <div class="formula">
+    <strong>(+)</strong> S + am/is/are + V-ing<br>
+    <strong>(-)</strong> S + am/is/are + not + V-ing<br>
+    <strong>(?)</strong> Am/Is/Are + S + V-ing?<br><br>
+    <strong>Use:</strong> now, temporary, plans
+  </div>
+
+  <h2>4. Past Simple</h2>
+  <div class="formula">
+    <strong>(+)</strong> S + V-ed / V2<br>
+    <strong>(-)</strong> S + didn't + V<br>
+    <strong>(?)</strong> Did + S + V?<br><br>
+    <strong>Use:</strong> completed past actions
+  </div>
+
+  <h2>5. Past Continuous</h2>
+  <div class="formula">
+    <strong>(+)</strong> S + was/were + V-ing<br>
+    <strong>(-)</strong> S + wasn't/weren't + V-ing<br>
+    <strong>(?)</strong> Was/Were + S + V-ing?<br><br>
+    <strong>Use:</strong> background action, when/while
+  </div>
+
+  <h2>6. Future</h2>
+  <div class="formula">
+    <strong>Will:</strong> S + will + V (decisions, predictions)<br>
+    <strong>Going to:</strong> S + am/is/are + going to + V (plans, evidence)
+  </div>
+
+  <h2>7. Present Perfect</h2>
+  <div class="formula">
+    <strong>(+)</strong> S + have/has + V3<br>
+    <strong>(-)</strong> S + haven't/hasn't + V3<br>
+    <strong>(?)</strong> Have/Has + S + V3?<br><br>
+    <strong>Use:</strong> experience, result still relevant, since/for
+  </div>
+
+  <h2>8. Modal Verbs</h2>
+  <div class="formula">
+    <strong>S + modal + V</strong> (bare infinitive, no "to", no -s)<br><br>
+    <strong>can/could</strong> (ability) | <strong>should</strong> (advice) | <strong>must</strong> (obligation) | <strong>may/might</strong> (possibility)
+  </div>
+
+  <h2>9. Comparatives & Superlatives</h2>
+  <div class="formula">
+    <strong>Short adj:</strong> -er than / the -est<br>
+    <strong>Long adj:</strong> more...than / the most...<br>
+    <strong>Irregular:</strong> good-better-best, bad-worse-worst
+  </div>
+
+  <h2>10. Conditionals</h2>
+  <div class="formula">
+    <strong>Type 0:</strong> If + present, present (facts)<br>
+    <strong>Type 1:</strong> If + present, will + V (real future)<br>
+    <strong>Type 2:</strong> If + past, would + V (unreal)
+  </div>
+
+  <h2>11. Common Prepositions</h2>
+  <div class="formula">
+    <strong>Time:</strong> at (time), on (day), in (month/year)<br>
+    <strong>Place:</strong> at (point), on (surface), in (space)
+  </div>
+
+  <h2>12. Key Irregular Verbs</h2>
+  <table>
+    <tr><th>V1</th><th>V2</th><th>V3</th><th>Meaning</th></tr>
+    <tr><td>be</td><td>was/were</td><td>been</td><td>thi/la/o</td></tr>
+    <tr><td>have</td><td>had</td><td>had</td><td>co</td></tr>
+    <tr><td>do</td><td>did</td><td>done</td><td>lam</td></tr>
+    <tr><td>go</td><td>went</td><td>gone</td><td>di</td></tr>
+    <tr><td>come</td><td>came</td><td>come</td><td>den</td></tr>
+    <tr><td>see</td><td>saw</td><td>seen</td><td>nhin/thay</td></tr>
+    <tr><td>make</td><td>made</td><td>made</td><td>lam/tao</td></tr>
+    <tr><td>take</td><td>took</td><td>taken</td><td>lay</td></tr>
+    <tr><td>get</td><td>got</td><td>got/gotten</td><td>duoc/lay</td></tr>
+    <tr><td>give</td><td>gave</td><td>given</td><td>cho</td></tr>
+    <tr><td>say</td><td>said</td><td>said</td><td>noi</td></tr>
+    <tr><td>know</td><td>knew</td><td>known</td><td>biet</td></tr>
+    <tr><td>think</td><td>thought</td><td>thought</td><td>nghi</td></tr>
+    <tr><td>find</td><td>found</td><td>found</td><td>tim thay</td></tr>
+    <tr><td>tell</td><td>told</td><td>told</td><td>noi/ke</td></tr>
+    <tr><td>become</td><td>became</td><td>become</td><td>tro thanh</td></tr>
+    <tr><td>leave</td><td>left</td><td>left</td><td>roi di</td></tr>
+    <tr><td>feel</td><td>felt</td><td>felt</td><td>cam thay</td></tr>
+    <tr><td>put</td><td>put</td><td>put</td><td>dat/de</td></tr>
+    <tr><td>bring</td><td>brought</td><td>brought</td><td>mang den</td></tr>
+  </table>
+
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 3: Architecture & Design - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.doc-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.doc-card h4{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.82rem;color:#555b6e}
+.doc-meta span{display:flex;align-items:center;gap:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge-critical{background:#fee2e2;color:#dc2626}
+.badge-high{background:#fef3c7;color:#d97706}
+.badge-medium{background:#e0f2fe;color:#0284c7}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#6366f1;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">3.1 Enterprise Arch</div>
+    <div class="nav-items">
+      <a href="#enterprise-arch">Enterprise Architecture</a>
+      <a href="#togaf">TOGAF & ArchiMate</a>
+      <a href="#capability-modeling">Capability Modeling</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">3.2 Solution Arch</div>
+    <div class="nav-items">
+      <a href="#solution-design">Solution Design</a>
+      <a href="#domain-modeling">Domain Modeling (DDD)</a>
+      <a href="#api-design">API Design</a>
+      <a href="#microservices">Microservices</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">3.3 Data Arch</div>
+    <div class="nav-items">
+      <a href="#data-modeling">Data Modeling</a>
+      <a href="#integration-arch">Integration Patterns</a>
+      <a href="#event-driven">Event-Driven Architecture</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">3.4 Security Arch</div>
+    <div class="nav-items">
+      <a href="#security-design">Security Architecture</a>
+      <a href="#iam">IAM & Access Control</a>
+      <a href="#compliance">Compliance by Design</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html" class="current">Phase 3: Architecture</a>
+  <a href="04-implementation.html">Phase 4: Implementation</a>
+  <a href="05-operations.html">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Phase 3: Architecture & Design</h1>
+<p class="subtitle">Enterprise, Solution, Data và Security Architecture cho CRM hệ thống cấp doanh nghiệp</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+<span>4 domains · 16 modules · ~120 giờ học · Vai trò: Enterprise Architect, Solution Architect, Software Architect</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Architecture quyết định mọi constraint kỹ thuật. Thiết kế sai ở tầng này sẽ gây ra technical debt khổng lồ. Phase 3 áp dụng TOGAF, C4 Model, DDD và Clean Architecture để tạo blueprint vững chắc trước khi viết một dòng code nào.
+</div>
+
+<div class="flow">
+<span class="flow-step">Enterprise Arch</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Solution Arch</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Data Arch</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Security Arch</span>
+</div>
+
+<h2 id="enterprise-arch">Domain 3.1 — Enterprise Architecture</h2>
+<p>Kiến trúc tổng thể doanh nghiệp — đảm bảo CRM phù hợp với IT landscape hiện có.</p>
+
+<h3 id="togaf">Module 3.1.1 — TOGAF & Enterprise Framework</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM không tồn tại trong chân không — nó phải fit vào IT landscape hiện có (ERP, eCommerce, billing, HR systems). Module này áp dụng TOGAF ADM để đảm bảo CRM decisions aligned với enterprise strategy, tránh "silo architecture" nơi mỗi team build theo cách riêng rồi 3 năm sau phải rewrite vì không integrate được.
+</div>
+
+<div class="doc-card">
+<h4>DOC-301: Enterprise Architecture for CRM</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Áp dụng EA framework cho CRM program</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> TOGAF 10, ArchiMate 3.2</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xác định Architecture Vision</strong> — Trả lời: CRM sẽ fit vào enterprise landscape như thế nào trong 3-5 năm? Key decisions: build/buy/compose ratio, cloud strategy (full cloud vs hybrid), integration philosophy (API-first vs ETL). Publish Architecture Principles (8-12 guiding statements). Mục đích: north star cho mọi architecture decision tiếp theo — khi team debate microservices vs monolith, refer back to principles.</li>
+<li><strong>Map Business Architecture</strong> — Sử dụng ArchiMate Business Layer: Value Streams (end-to-end flows delivering customer value), Business Capabilities (what the org CAN do), Business Processes (how it does them), Business Actors (who). Link CRM capabilities vào value streams. Mục đích: prove CRM supports business strategy, không phải "technology for technology's sake".</li>
+<li><strong>Map Application Architecture</strong> — Document current Application Landscape: all systems touching customer data (CRM, ERP, website, mobile app, email platform, billing, analytics). Map data flows between them. Identify: redundancies, gaps, integration pain points. Mục đích: baseline để plan target state — know where you are before deciding where to go.</li>
+<li><strong>Design Technology Architecture</strong> — Decisions: cloud provider(s), container orchestration, database technologies, messaging infrastructure, CDN, monitoring stack. Document as Technology Reference Model. Mục đích: standardize technology choices across CRM program — prevents 5 teams choosing 5 different message brokers.</li>
+<li><strong>Establish Architecture Governance</strong> — Set up: Architecture Review Board (monthly review of key decisions), ADR (Architecture Decision Record) practice (document every significant decision with context, options considered, decision rationale), Exception Process (how to deviate from principles). Mục đích: architecture doesn't drift over time — governance prevents "boiling frog" degradation as teams take shortcuts.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> ArchiMate Layered View (Business → Application → Technology), Application Landscape Map (current state), Capability Heat Map (maturity scoring), TOGAF ADM Cycle (tailored)</p>
+<p><strong>Deliverables:</strong> Architecture Vision Document (signed by CIO/CTO), Architecture Principles (published), Application Landscape Map, ADR Log (ongoing)</p>
+<p><strong>Công cụ:</strong> Archi (free ArchiMate tool), Sparx Enterprise Architect, LeanIX (SaaS), Mega HOPEX</p>
+</div>
+
+<h3 id="capability-modeling">Module 3.1.2 — Business Capability Modeling</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Capability Map trả lời "WHAT does the business need to do?" (không phải HOW). Đây là bridge giữa business strategy và technology decisions — mỗi capability map lên 1+ services trong architecture. Module này giúp ra quyết định: capability nào build in-house (differentiating), capability nào mua (commodity), capability nào partner.
+</div>
+
+<div class="doc-card">
+<h4>DOC-302: CRM Capability Map</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng capability model cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-301</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng Capability Hierarchy (L0-L3)</strong> — Decompose: L0 (CRM Platform), L1 (Sales Management, Marketing Management, Service Management, Data Management, Platform Services), L2 (sub-capabilities per L1, e.g., Sales → Lead Mgmt, Pipeline Mgmt, Forecasting), L3 (granular capabilities, e.g., Lead Mgmt → Capture, Score, Route, Nurture). Mục đích: exhaustive inventory of WHAT the system must do — drives service decomposition in Phase 3.2.</li>
+<li><strong>Map Capabilities to Services/Systems</strong> — Cho mỗi L2/L3 capability: which system(s) currently provide it? Which will provide it in target state? Identify: coverage gaps (no system does this), overlaps (3 systems do the same thing), strategic capabilities (build custom) vs commodity (buy SaaS). Mục đích: rationalization — eliminate duplicate systems, identify build-vs-buy per capability.</li>
+<li><strong>Create Heat Map Analysis</strong> — Score each capability on 3 dimensions: Maturity (1-5, how well does current implementation serve the need?), Strategic Importance (1-5, how much does this differentiate us?), Investment Need (1-5, how much do we need to invest?). Visualize as colored heat map. Mục đích: executive-friendly visualization that drives budget allocation — "where should we invest most?"</li>
+<li><strong>Perform Technology Portfolio Rationalization</strong> — Based on capability mapping: identify systems to retire, systems to consolidate, gaps requiring new investment. Create transition plan with dependencies and timeline. Mục đích: reduce total cost of ownership by eliminating redundant tools, and focus investment on high-strategic-value capabilities.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Capability Map (3 levels, visual), Heat Map (color-coded maturity × importance), Technology Radar (adopt/trial/assess/hold)</p>
+<p><strong>Deliverables:</strong> Capability Model Document (complete hierarchy), Rationalization Report (retire/consolidate/invest decisions), Investment Roadmap (prioritized by heat map)</p>
+<p><strong>Công cụ:</strong> LeanIX (enterprise), Ardoq, Excel + conditional formatting (lightweight), Miro (collaborative workshops)</p>
+</div>
+
+<h2 id="solution-design">Domain 3.2 — Solution Architecture</h2>
+<p>Thiết kế giải pháp chi tiết — từ domain modeling đến API contracts.</p>
+
+<h3 id="domain-modeling">Module 3.2.1 — Domain-Driven Design for CRM</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+DDD giải quyết complexity problem: CRM domain có nhiều concepts trùng tên nhưng khác nghĩa (VD: "Customer" trong Sales context khác với Service context). Module này partition system thành bounded contexts rõ ràng, mỗi context có language riêng và model riêng. Kết quả: team có thể work independently trên từng context mà không conflict.
+</div>
+
+<div class="doc-card">
+<h4>DOC-303: DDD Strategic & Tactical Design</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Áp dụng DDD để thiết kế CRM domain model</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> DDD (Eric Evans), Implementing DDD (Vaughn Vernon)</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Conduct EventStorming Workshop</strong> — Gather domain experts + developers. Sticky notes trên timeline: Domain Events (orange, past tense — "OpportunityCreated"), Commands (blue — "CreateOpportunity"), Aggregates (yellow — "Opportunity"), Read Models, Policies, External Systems. Duration: 2-3 sessions × 3 hours. Mục đích: shared understanding của toàn bộ business flow — cả business và tech cùng thấy big picture, discover hidden complexity.</li>
+<li><strong>Identify Bounded Contexts</strong> — Từ EventStorming output, group related concepts: Sales Context (Lead, Opportunity, Quote, Pipeline), Marketing Context (Campaign, Audience, Channel, Content), Service Context (Case, Ticket, SLA, Knowledge), Billing Context (Invoice, Payment, Subscription), Identity Context (User, Account, Permission). Mục đích: mỗi context = potential service boundary = team boundary. Wrong boundary = coupling hell; right boundary = independent deployability.</li>
+<li><strong>Create Context Map</strong> — Define relationships giữa contexts: Partnership (Sales ↔ Marketing, equal collaboration), Customer-Supplier (Billing downstream of Sales), Conformist (Identity upstream, others conform to its model), Anti-Corruption Layer (Legacy system → ACL → new system). Mục đích: explicit contracts giữa teams/services — biết ai phụ thuộc ai, change impact analysis trước khi modify API.</li>
+<li><strong>Define Ubiquitous Language per Context</strong> — Cho mỗi bounded context, tạo glossary: term + definition + examples + anti-examples. VD: trong Sales "Account" = company entity; trong Billing "Account" = billing entity (may include multiple Sales Accounts). Mục đích: eliminate ambiguity — khi dev đọc code trong Sales Context, "Account" means exactly one thing.</li>
+<li><strong>Design Tactical Patterns</strong> — Cho mỗi key aggregate: identify root entity, define invariants (rules that must always be true), list child entities and value objects, identify domain events emitted. VD: Opportunity aggregate has invariants (stage must progress forward, amount must match line items). Mục đích: enforce business rules IN the domain model (not in controllers or DB triggers) — impossible states become unrepresentable.</li>
+<li><strong>Map Domain Events to Integration Events</strong> — Distinguish: internal domain events (within bounded context, in-process) vs integration events (published to other contexts via message bus). Define event schema, versioning strategy, backward compatibility rules. Mục đích: decouple contexts — Sales publishes "OpportunityClosed" event, Billing subscribes and creates Invoice independently.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Context Map (all contexts + relationships), Aggregate Diagrams (per context), Domain Event Flow (timeline), Bounded Context Canvas (per context)</p>
+<p><strong>Deliverables:</strong> Domain Model Document (complete), Context Map (visual + documented), Ubiquitous Language Glossary (per context)</p>
+<p><strong>Công cụ:</strong> EventStorming (Miro/physical wall), Context Mapper (DSL tool), PlantUML/Mermaid (diagrams)</p>
+</div>
+
+<h3 id="api-design">Module 3.2.2 — API & Service Design</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+API là "contract" giữa CRM và mọi consumer (frontend, mobile, integrations, partners). Module này thiết kế API layer theo principles: consistent (naming, error handling), evolvable (versioning without breaking clients), secure (auth, rate limiting), và developer-friendly (documentation, SDKs). Bad API design = integration hell cho 5+ năm.
+</div>
+
+<div class="doc-card">
+<h4>DOC-304: CRM API Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế API layer cho CRM platform</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> OpenAPI 3.1, REST, GraphQL, gRPC</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế REST API Guidelines</strong> — Define standards: resource naming (plural nouns, nested for relationships: /accounts/{id}/contacts), HTTP methods mapping (GET=read, POST=create, PUT=replace, PATCH=update, DELETE=remove), response format (envelope with data + meta + errors), pagination (cursor-based for performance), filtering (field[operator]=value). Mục đích: consistency across 50+ endpoints — any developer familiar with 1 endpoint can predict behavior of all others.</li>
+<li><strong>Design GraphQL Schema (nếu applicable)</strong> — Define types mirroring domain model, design queries (read) và mutations (write) separately. Implement: field-level authorization, query complexity analysis (prevent N+1 and DoS), DataLoader pattern for batching. Mục đích: frontend teams get exactly the data they need in one request — no over-fetching (REST problem) or under-fetching (multiple round-trips).</li>
+<li><strong>Xây dựng API Versioning Strategy</strong> — Options: URL path versioning (/v1/contacts), header versioning (Accept: application/vnd.crm.v2+json), or query param (?version=2). Define: breaking change policy (what constitutes breaking?), deprecation timeline (announce → sunset → remove: 6 months minimum), migration guides per version. Mục đích: evolve API without breaking existing integrations — partners and customers build on your API, breaking them = trust destruction.</li>
+<li><strong>Thiết kế API Gateway & Infrastructure</strong> — Gateway responsibilities: authentication (JWT validation), rate limiting (per tenant, per endpoint), request routing, response caching, request/response transformation, analytics/logging. Choose pattern: single gateway vs BFF (Backend-for-Frontend, separate gateway per client type). Mục đích: cross-cutting concerns centralized — each service doesn't re-implement auth or rate limiting.</li>
+<li><strong>Xây dựng Developer Experience (DX)</strong> — Deliverables: interactive API documentation (try-it-out feature), SDKs in top languages (JavaScript, Python, C#), sandbox environment (safe to test, pre-populated data), webhook testing tools (simulate events), changelog + migration guides. Mục đích: time-to-first-successful-API-call < 15 minutes — good DX = adoption; bad DX = support tickets.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> API Architecture Diagram (gateway → services), Sequence Diagrams (key flows with auth), API Gateway Topology (routing rules)</p>
+<p><strong>Deliverables:</strong> API Design Guidelines Document, OpenAPI 3.1 Specs (per service), API Governance Policy (review process for new endpoints)</p>
+<p><strong>Công cụ:</strong> Swagger/OpenAPI (spec), Postman (testing + docs), Stoplight (design-first), Kong/Apigee/AWS API Gateway (infrastructure)</p>
+</div>
+
+<h3 id="microservices">Module 3.2.3 — Microservices & Modularity</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+"Microservices" không phải mặc định đúng — module này evaluate 3 options: Monolith (simple, fast to start), Modular Monolith (structured but single deployment), Microservices (independent deployment, high operational cost). Chọn dựa trên team size, expected scale, và operational maturity. Sai lầm phổ biến: startup 5 người chọn microservices → 80% effort vào infrastructure thay vì business logic.
+</div>
+
+<div class="doc-card">
+<h4>DOC-305: CRM Service Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế service decomposition cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-303, DOC-304</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Evaluate Architecture Style</strong> — Score 3 options against team/context: Monolith (team <10, MVP phase, simple deployment), Modular Monolith (team 10-30, clear boundaries needed, shared deployment ok), Microservices (team 30+, independent scaling per module, DevOps maturity high). Document decision as ADR with rationale. Mục đích: evidence-based choice — "monolith first, extract services when pain is proven" is usually correct for new CRM projects.</li>
+<li><strong>Decompose Services by Bounded Context</strong> — Map bounded contexts (from DOC-303) to services. Each service: owns its data (no shared database), exposes API (from DOC-304), publishes events (domain events → integration events). Define service boundaries test: "can this service be developed, tested, and deployed independently?" Mục đích: right-sized services — too big = monolith in disguise; too small = distributed monolith (worst of both worlds).</li>
+<li><strong>Design Inter-service Communication</strong> — Synchronous (REST/gRPC): for queries needing immediate response (get customer profile). Asynchronous (events via Kafka/RabbitMQ): for commands that can be eventually consistent (order placed → billing notified). Define: which interactions are sync vs async, timeout policies, retry strategies. Mục đích: prevent cascading failures — if Billing service is down, Sales service still works (async decoupling).</li>
+<li><strong>Implement Saga Pattern</strong> — For distributed transactions spanning services (e.g., "create deal + reserve inventory + generate quote"): define compensation actions (rollback steps), choose orchestration (central coordinator) vs choreography (event-driven). Document happy path + all failure scenarios. Mục đích: maintain data consistency without distributed transactions (2PC doesn't scale) — every business operation has defined rollback path.</li>
+<li><strong>Document with C4 Model</strong> — Create 4 levels: L1 System Context (CRM + external systems + users), L2 Container (applications, databases, message brokers within CRM), L3 Component (internal structure of each container/service), L4 Code (class diagrams for complex modules only). Mục đích: architecture documentation at appropriate detail level — executives see L1, developers see L3-L4, new team members walk L1→L2→L3 to onboard.</li>
+<li><strong>Design Resilience Patterns</strong> — Implement: Circuit Breaker (stop calling failing service, fail fast), Retry with Exponential Backoff (transient errors), Bulkhead (isolate resources per service), Timeout (no indefinite waits), Fallback (degraded behavior when dependency unavailable). Mục đích: system stays operational during partial failures — one failing service doesn't take down entire CRM.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> C4 Diagrams (all 4 levels), Service Interaction Diagram (sync + async flows), Saga Flow Diagram (happy path + compensation)</p>
+<p><strong>Deliverables:</strong> Architecture Decision Records (style choice + rationale), C4 Diagrams (maintained in code via Structurizr DSL), Service Catalog (all services with ownership, API, SLA)</p>
+<p><strong>Công cụ:</strong> Structurizr (C4 as code), IcePanel (interactive C4), Draw.io/Mermaid (quick diagrams), Backstage (service catalog)</p>
+</div>
+
+<h2 id="data-modeling">Domain 3.3 — Data Architecture</h2>
+<p>Mô hình dữ liệu, integration patterns và event-driven architecture cho CRM.</p>
+
+<h3 id="integration-arch">Module 3.3.1 — Data Modeling & Storage</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Data model là xương sống của CRM — mọi feature (search, reporting, personalization) phụ thuộc vào data được model đúng cách. Module này thiết kế 3 tầng (conceptual → logical → physical) và chọn storage technology phù hợp cho từng loại data. Sai lầm: dùng 1 RDBMS cho mọi thứ khi graph database phù hợp hơn cho relationship queries.
+</div>
+
+<div class="doc-card">
+<h4>DOC-306: CRM Data Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế data model và storage strategy</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 12 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> DAMA-DMBOK, ISO 8000</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng Conceptual Data Model</strong> — High-level entities và relationships (no attributes): Customer HAS many Contacts, Contact CREATES Opportunities, Opportunity CONTAINS Line Items, Case BELONGS TO Account. Validate với business stakeholders — đây là "business language" model. Mục đích: alignment giữa business và tech — business confirms "yes, this is how our world works" trước khi detail design.</li>
+<li><strong>Thiết kế Logical Data Model</strong> — Add attributes, data types, constraints, cardinality. Design: primary keys (UUID vs sequential), foreign keys, indexes strategy, soft delete (is_deleted flag vs archive table). Handle: polymorphism (Activity table for calls, emails, meetings — STI vs separate tables), temporal data (effective dates, versioning). Mục đích: blueprint cho physical implementation — developers can generate schema from this, DBAs can optimize.</li>
+<li><strong>Chọn Storage Technologies (Polyglot Persistence)</strong> — Match data type to storage: Relational (PostgreSQL — core entities, transactions, ACID), Document (MongoDB — flexible schemas, activity logs), Graph (Neo4j — relationship exploration "who knows who"), Search (Elasticsearch — full-text search, faceted filtering), Time-series (TimescaleDB — metrics, event streams), Cache (Redis — hot data, sessions). Mục đích: each technology optimized for its access pattern — don't force relational model onto graph problems.</li>
+<li><strong>Design CQRS Architecture</strong> — Separate Write Model (normalized, enforces invariants, optimized for transactions) from Read Model (denormalized, optimized for queries, eventually consistent). Example: Write → "create opportunity with line items" (ACID transaction); Read → "dashboard showing pipeline by stage" (materialized view, updated via events). Mục đích: read and write have different optimization needs — CQRS lets each evolve independently.</li>
+<li><strong>Thiết kế Event Sourcing (nếu applicable)</strong> — Store state changes as sequence of events (OpportunityCreated, StageChanged, AmountUpdated) instead of current state only. Rebuild current state by replaying events. Benefits: complete audit trail, temporal queries ("what was pipeline on March 1?"), event-driven integration. Mục đích: full history + perfect audit trail + ability to replay for analytics. Trade-off: more complex than CRUD — apply selectively to high-audit domains.</li>
+<li><strong>Plan Data Partitioning & Sharding</strong> — Strategy for scale: horizontal partitioning by tenant_id (multi-tenant isolation), time-based partitioning for events/activities (archive old data), read replicas for reporting (offload analytics from OLTP). Define: partition key selection criteria, cross-partition query handling, rebalancing strategy. Mục đích: plan for 10x growth — don't redesign data layer when you hit 1M customers; design for it from day 1.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> ERD (Conceptual, Logical, Physical — 3 separate diagrams), CQRS Architecture Diagram, Storage Decision Matrix (data type → technology mapping)</p>
+<p><strong>Deliverables:</strong> Data Model Document (all 3 levels), Schema Definitions (DDL scripts), Storage Technology ADR, Migration Strategy Document</p>
+<p><strong>Công cụ:</strong> ERwin/dbdiagram.io (modeling), DataGrip (schema management), Liquibase/Flyway (migrations), pgModeler (PostgreSQL-specific)</p>
+</div>
+
+<h3 id="event-driven">Module 3.3.2 — Integration & Event Architecture</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM không hoạt động cô lập — nó phải exchange data với ERP (orders, invoices), eCommerce (purchases, carts), Marketing Tools (campaigns, engagement), HR (employee data), và nhiều hơn. Module này thiết kế integration backbone: event-driven, loosely-coupled, và resilient. Sai lầm phổ biến: point-to-point integrations tạo "spaghetti architecture" không maintain nổi khi có 20+ systems.
+</div>
+
+<div class="doc-card">
+<h4>DOC-307: Integration Patterns & EDA</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế integration layer và event backbone</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> Enterprise Integration Patterns (Hohpe), AsyncAPI</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Inventory Integration Points</strong> — Map tất cả systems cần connect với CRM: direction (inbound/outbound/bidirectional), data exchanged, frequency (real-time/near-real-time/batch), volume (records per day), criticality (nếu integration fail, what business impact?). Mục đích: complete picture trước khi chọn technology — 3 real-time integrations vs 30 batch integrations = completely different architecture.</li>
+<li><strong>Chọn Integration Patterns</strong> — Match pattern to use case: Request-Reply (synchronous, need immediate response — e.g., validate address), Publish-Subscribe (async, broadcast events to multiple consumers — e.g., "opportunity won" notifies billing + fulfillment), Event Sourcing (capture all state changes as events for downstream replay). Mục đích: avoid "one hammer for all nails" — each pattern has tradeoffs in latency, coupling, complexity.</li>
+<li><strong>Select Message Broker Infrastructure</strong> — Evaluate: Apache Kafka (high throughput, replay, event streaming), RabbitMQ (routing flexibility, lightweight), NATS (ultra-low latency, edge). Decision criteria: throughput needs, ordering guarantees, retention requirements, operational complexity tolerance. Mục đích: infrastructure choice that scales with growth — don't choose RabbitMQ when you need Kafka's replay capability for event sourcing.</li>
+<li><strong>Design Event Schema & Registry</strong> — Define event schema standard: CloudEvents spec (source, type, data, specversion). Implement Schema Registry for versioning (Avro/JSON Schema). Define compatibility rules: backward compatible (new version reads old data), forward compatible (old version reads new data). Mục đích: prevent "breaking changes in production" — producers can evolve schemas without breaking consumers.</li>
+<li><strong>Implement Reliability Patterns</strong> — Design: Dead Letter Queue (DLQ — failed messages captured for investigation), Idempotency (consumers handle duplicate messages safely via idempotency key), Retry with backoff (transient failures auto-recover), Circuit Breaker (stop calling failing downstream). Mục đích: integration layer must be self-healing — temporary failures don't lose data or require manual intervention.</li>
+<li><strong>Evaluate iPaaS vs Custom</strong> — When to use iPaaS (MuleSoft, Workato, Make): standard connectors exist, business users need to configure, quick time-to-value. When to build custom: high throughput requirements, complex transformation logic, tight coupling to domain events. Can coexist: iPaaS for 3rd-party SaaS integrations, custom for core domain events. Mục đích: cost-effective decision — don't build what MuleSoft does better, but don't pay MuleSoft pricing for simple webhook forwarding.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Integration Architecture (all systems + data flows), Event Flow Diagram (producers → broker → consumers), Message Schema Examples, Sequence Diagrams (per key integration)</p>
+<p><strong>Deliverables:</strong> Integration Architecture Document, Event Catalog (all events with schema + owner), AsyncAPI Specs (for event-driven interfaces)</p>
+<p><strong>Công cụ:</strong> Apache Kafka/Confluent (event streaming), MuleSoft/Workato (iPaaS), AWS EventBridge (serverless events), Debezium (CDC), Schema Registry</p>
+</div>
+
+<h2 id="security-design">Domain 3.4 — Security Architecture</h2>
+<p>Bảo mật by design — IAM, encryption, compliance và threat modeling.</p>
+
+<h3 id="iam">Module 3.4.1 — Identity & Access Management</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+CRM chứa dữ liệu nhạy cảm nhất của doanh nghiệp — thông tin khách hàng, deal amounts, contracts, payment info. Security breach = regulatory fine + reputation damage + customer trust destruction. Module này thiết kế defense-in-depth: authentication (ai đang access?), authorization (họ được phép làm gì?), encryption (data an toàn even if stolen), và audit (ai đã làm gì, khi nào?).
+</div>
+
+<div class="doc-card">
+<h4>DOC-308: CRM Security Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế security cho CRM platform</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> ISO 27001, OAuth 2.0, OWASP ASVS, Zero Trust</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Authentication Architecture</strong> — Multi-protocol support: OAuth 2.0 + OIDC (modern web/mobile apps), SAML 2.0 (enterprise SSO integration), API Keys (service-to-service). MFA enforcement: TOTP, WebAuthn/FIDO2, SMS (fallback only). Session management: token rotation, idle timeout, absolute timeout. Mục đích: verify identity with certainty — stolen password alone should never be enough to access CRM data.</li>
+<li><strong>Thiết kế Authorization Model</strong> — Layered approach: RBAC (Role-Based: Admin, Manager, Rep, Viewer), ABAC (Attribute-Based: own-records-only, territory-based), Field-Level Security (hide salary fields from non-HR), Record-Level Sharing (private → team → organization hierarchy). Implement: permission evaluation engine, caching strategy for permission checks. Mục đích: principle of least privilege — every user sees only what they need, nothing more.</li>
+<li><strong>Design Data Protection & Encryption</strong> — At-rest: database encryption (TDE), field-level encryption (PII fields specifically), backup encryption. In-transit: TLS 1.3 everywhere, certificate management, internal mTLS between services. Key management: HSM-backed, key rotation schedule, separation of duties. Mục đích: even if attacker gains access to storage/network, data is unreadable without keys.</li>
+<li><strong>Thiết kế Multi-tenant Isolation</strong> — Model options: shared database with row-level security (RLS), shared schema with tenant discriminator, separate schemas, separate databases. For each: isolation guarantees, performance impact, operational complexity. Choose based on: number of tenants, data sensitivity, compliance requirements. Mục đích: Tenant A can NEVER see Tenant B's data — this is existential for SaaS CRM.</li>
+<li><strong>Conduct Threat Modeling (STRIDE)</strong> — For each component: identify threats using STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege). Draw data flow diagrams with trust boundaries. Rate: likelihood × impact. Define mitigations per threat. Mục đích: proactive security — find vulnerabilities in design before they're in code. Much cheaper to fix at architecture stage vs post-deployment.</li>
+<li><strong>Design Audit & Security Monitoring</strong> — Capture: who did what, when, from where, on which record. Immutable audit log (append-only, tamper-evident). Real-time alerting: impossible travel, brute force attempts, privilege escalation, bulk data export. Retention: regulatory minimum (often 7 years). Mục đích: forensics capability (investigate breaches), compliance evidence (auditors need proof), and deterrence (users know actions are logged).</li>
+</ol>
+<p><strong>Sơ đồ:</strong> IAM Architecture (auth flows per client type), Role Hierarchy (RBAC model), Threat Model (STRIDE DFD with trust boundaries), Security Zones (network segmentation)</p>
+<p><strong>Deliverables:</strong> Security Architecture Document (comprehensive), Threat Model (per component), Access Control Matrix (roles × permissions × resources)</p>
+<p><strong>Công cụ:</strong> Keycloak (open-source IAM), Auth0/Okta (managed), Azure AD B2C (Microsoft ecosystem), HashiCorp Vault (secrets), OWASP ZAP/Burp Suite (security testing)</p>
+</div>
+
+<h3 id="compliance">Module 3.4.2 — Compliance & Privacy by Design</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Compliance không phải "checkbox exercise" sau khi build xong — nó phải baked into architecture từ đầu. Retrofitting GDPR compliance vào existing system costs 10x more than designing for it. Module này đảm bảo privacy, data residency, và regulatory requirements là first-class architectural concerns.
+</div>
+
+<div class="doc-card">
+<h4>DOC-309: Compliance Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Tích hợp compliance vào kiến trúc CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> GDPR, CCPA, SOC 2, ISO 27701</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Áp dụng Privacy by Design Principles</strong> — Implement Cavoukian's 7 principles: proactive not reactive, privacy as default, privacy embedded into design, full functionality (no trade-offs), end-to-end security, visibility/transparency, respect for user privacy. Map each principle to specific architectural decisions. Mục đích: privacy is not a feature you add — it's a property of the architecture. Design decisions should make privacy violations structurally difficult.</li>
+<li><strong>Conduct Data Protection Impact Assessment (DPIA)</strong> — For each data processing activity: what personal data? legal basis? purpose? retention period? sharing with third parties? technical safeguards? Identify high-risk processing (profiling, automated decisions, large-scale monitoring). Mục đích: regulatory requirement (GDPR Art. 35) AND practical risk identification — forces you to justify every piece of personal data you collect.</li>
+<li><strong>Thiết kế Consent Management Architecture</strong> — Technical implementation: consent records (who consented, to what, when, how), purpose-based access control (data only accessible for consented purposes), consent withdrawal (immediate effect across all systems), consent audit trail (prove what was consented at any point in time). Mục đích: "can you prove this customer consented to marketing emails on March 3?" — if you can't answer with confidence, you have compliance risk.</li>
+<li><strong>Implement Right to Erasure (Technical Design)</strong> — Architecture for "delete my data": identify all locations (primary DB, backups, caches, analytics, logs, third-party systems), soft-delete vs hard-delete per location, anonymization strategy (keep aggregated analytics but remove PII), verification process (confirm deletion complete). Mục đích: GDPR Article 17 requires deletion within 30 days — you need automated, tested process, not manual ad-hoc deletion.</li>
+<li><strong>Design Data Residency & Sovereignty</strong> — For multi-region deployment: which data must stay in-region (EU customer data in EU), cross-border transfer mechanisms (Standard Contractual Clauses, adequacy decisions), encryption for data in transit between regions, tenant-level region assignment. Mục đích: legal requirement in many jurisdictions — wrong architecture = data flowing to wrong region = regulatory violation.</li>
+<li><strong>Thiết kế Compliance Automation</strong> — Automate: data subject access requests (DSAR — export all data about a person), consent preference enforcement (suppress from marketing when opted out), retention policy execution (auto-archive/delete when period expires), compliance reporting (evidence generation for auditors). Mục đích: manual compliance doesn't scale — when you have 1M customers and 100 DSARs/month, automation is the only viable path.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Consent Flow Diagram (capture → store → enforce → withdraw), Data Lifecycle Diagram (create → use → archive → delete), Compliance Architecture (enforcement points)</p>
+<p><strong>Deliverables:</strong> DPIA Template (filled for core processing activities), Privacy Architecture Document, Compliance Checklist (per regulation)</p>
+<p><strong>Công cụ:</strong> OneTrust/TrustArc (consent management), Osano (cookie consent), custom DSAR automation, Open Policy Agent (policy enforcement)</p>
+</div>
+
+<div class="callout callout-green">
+<strong>Tổng kết Phase 3</strong>
+Phase 3 tạo ra blueprint kỹ thuật hoàn chỉnh: từ EA vision (TOGAF) → domain model (DDD) → API contracts (OpenAPI) → data architecture → security design. Tất cả được ghi lại bằng C4 diagrams và ADRs, sẵn sàng cho implementation ở Phase 4.
+</div>
+
+<div class="prev-next">
+  <a href="02-domain-knowledge.html">← Phase 2: Domain Knowledge</a>
+  <a href="04-implementation.html">Phase 4: Implementation →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

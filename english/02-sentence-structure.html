@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 - Sentence Structure - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./01-parts-of-speech.html">01. Parts of Speech</a>
+      <a href="./02-sentence-structure.html" class="active">02. Sentence Structure</a>
+      <a href="./03-present-simple.html">03. Present Simple</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 2 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./01-parts-of-speech.html">← Previous: Parts of Speech</a>
+    <a href="./03-present-simple.html">Next: Present Simple →</a>
+  </div>
+
+  <h1>Sentence Structure</h1>
+  <p class="subtitle">Cấu trúc câu tiếng Anh — S + V + O và các biến thể</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Mọi câu tiếng Anh đều tuân theo trật tự cố định. Khác với tiếng Việt (linh hoạt hơn), tiếng Anh rất nghiêm ngặt về vị trí từ trong câu.</p>
+
+  <div class="formula">
+    <strong>Cấu trúc cơ bản:</strong><br><br>
+    <strong>Câu khẳng định (+):</strong> Subject + Verb + Object<br>
+    → I <strong>like</strong> coffee.<br><br>
+    <strong>Câu phủ định (-):</strong> Subject + do/does + not + Verb<br>
+    → I <strong>do not like</strong> coffee.<br><br>
+    <strong>Câu nghi vấn (?):</strong> Do/Does + Subject + Verb + Object?<br>
+    → <strong>Do</strong> you <strong>like</strong> coffee?<br><br>
+    <strong>Câu với "be":</strong><br>
+    (+) She <strong>is</strong> a teacher.<br>
+    (-) She <strong>is not</strong> a teacher.<br>
+    (?) <strong>Is</strong> she a teacher?
+  </div>
+
+  <h3>5 thành phần câu</h3>
+  <table>
+    <tr><th>Thành phần</th><th>Vai trò</th><th>Ví dụ</th></tr>
+    <tr><td><strong>Subject (S)</strong></td><td>Ai/cái gì thực hiện hành động</td><td><em>She</em> runs.</td></tr>
+    <tr><td><strong>Verb (V)</strong></td><td>Hành động hoặc trạng thái</td><td>She <em>runs</em>.</td></tr>
+    <tr><td><strong>Object (O)</strong></td><td>Ai/cái gì nhận hành động</td><td>She reads <em>books</em>.</td></tr>
+    <tr><td><strong>Complement (C)</strong></td><td>Bổ sung nghĩa cho S hoặc O</td><td>She is <em>happy</em>.</td></tr>
+    <tr><td><strong>Adverbial (A)</strong></td><td>Thời gian, nơi chốn, cách thức</td><td>She runs <em>every day</em>.</td></tr>
+  </table>
+
+  <h3>Các pattern phổ biến</h3>
+  <ul>
+    <li><strong>S + V:</strong> Birds fly. / He sleeps.</li>
+    <li><strong>S + V + O:</strong> I eat rice. / She reads books.</li>
+    <li><strong>S + V + C:</strong> He is tall. / They became friends.</li>
+    <li><strong>S + V + O + O:</strong> She gave me a book.</li>
+    <li><strong>S + V + O + C:</strong> They made him happy.</li>
+  </ul>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Cả hai đều dùng trật tự S + V + O làm cấu trúc chính.</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Anh dùng <strong>trợ động từ</strong> (do/does/did) để tạo câu phủ định và nghi vấn. Tiếng Việt chỉ thêm "không" hoặc đảo ngữ điệu.</li>
+      <li>Tiếng Anh <strong>bắt buộc có chủ ngữ</strong>. Tiếng Việt có thể lược bỏ: "Đi đâu đấy?" (không cần "bạn").</li>
+      <li>Trạng từ thời gian tiếng Anh thường ở <strong>cuối câu</strong>: "I go to school <em>every day</em>". Tiếng Việt thường ở đầu: "<em>Hàng ngày</em> tôi đi học".</li>
+      <li>Câu hỏi Yes/No tiếng Anh <strong>đảo trợ động từ</strong> lên đầu. Tiếng Việt giữ nguyên trật tự + thêm "không/à/hả".</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>sentence</td><td>/ˈsen.təns/</td><td>n.</td><td>câu</td></tr>
+    <tr><td>subject</td><td>/ˈsʌb.dʒekt/</td><td>n.</td><td>chủ ngữ</td></tr>
+    <tr><td>object</td><td>/ˈɒb.dʒekt/</td><td>n.</td><td>tân ngữ</td></tr>
+    <tr><td>statement</td><td>/ˈsteɪt.mənt/</td><td>n.</td><td>câu khẳng định</td></tr>
+    <tr><td>negative</td><td>/ˈneɡ.ə.tɪv/</td><td>adj.</td><td>phủ định</td></tr>
+    <tr><td>question</td><td>/ˈkwes.tʃən/</td><td>n.</td><td>câu hỏi</td></tr>
+    <tr><td>order</td><td>/ˈɔːr.dər/</td><td>n.</td><td>trật tự</td></tr>
+    <tr><td>auxiliary</td><td>/ɔːɡˈzɪl.jə.ri/</td><td>adj.</td><td>trợ (động từ)</td></tr>
+    <tr><td>clause</td><td>/klɔːz/</td><td>n.</td><td>mệnh đề</td></tr>
+    <tr><td>phrase</td><td>/freɪz/</td><td>n.</td><td>cụm từ</td></tr>
+    <tr><td>complement</td><td>/ˈkɒm.plɪ.ment/</td><td>n.</td><td>bổ ngữ</td></tr>
+    <tr><td>invert</td><td>/ɪnˈvɜːrt/</td><td>v.</td><td>đảo (ngữ)</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li><span class="highlight">She</span> (S) <span class="highlight">likes</span> (V) <span class="highlight">music</span> (O). — Câu khẳng định đơn giản.</li>
+    <li><span class="highlight">They</span> (S) <span class="highlight">do not play</span> (V) <span class="highlight">football</span> (O). — Câu phủ định với "do not".</li>
+    <li><span class="highlight">Does</span> <span class="highlight">he</span> (S) <span class="highlight">speak</span> (V) <span class="highlight">English</span> (O)? — Câu hỏi Yes/No.</li>
+    <li><span class="highlight">What</span> <span class="highlight">do</span> <span class="highlight">you</span> (S) <span class="highlight">want</span> (V)? — Câu hỏi Wh-.</li>
+    <li><span class="highlight">The cat</span> (S) <span class="highlight">is</span> (V) <span class="highlight">on the table</span> (A). — Câu với "be" + trạng ngữ.</li>
+    <li><span class="highlight">He</span> (S) <span class="highlight">gave</span> (V) <span class="highlight">her</span> (O1) <span class="highlight">a gift</span> (O2). — Câu có 2 tân ngữ.</li>
+    <li><span class="highlight">We</span> (S) <span class="highlight">are</span> (V) <span class="highlight">happy</span> (C) <span class="highlight">today</span> (A). — Đầy đủ S+V+C+A.</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Thiếu chủ ngữ:</strong> ❌ "Is very hot today" → ✅ "<strong>It</strong> is very hot today". Tiếng Anh luôn cần chủ ngữ, kể cả chủ ngữ giả "it".</li>
+      <li><strong>Thiếu trợ động từ trong câu phủ định:</strong> ❌ "I not like fish" → ✅ "I <strong>do not</strong> like fish". Phải dùng do/does + not.</li>
+      <li><strong>Không đảo ngữ khi hỏi:</strong> ❌ "You like coffee?" → ✅ "<strong>Do</strong> you like coffee?" Câu hỏi Yes/No phải đảo trợ động từ.</li>
+      <li><strong>Đặt trạng từ thời gian sai vị trí:</strong> ❌ "Yesterday I go school" → ✅ "I <strong>went</strong> to school <strong>yesterday</strong>". Trạng từ thời gian thường ở cuối.</li>
+      <li><strong>Dùng "have" thay "there is/are":</strong> ❌ "Have many people here" → ✅ "<strong>There are</strong> many people here".</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Sắp xếp các từ thành câu đúng:</em></p>
+
+  <div class="exercise">
+    <p>1. likes / she / chocolate</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ She likes chocolate. (S + V + O)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. not / does / he / speak / French</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ He does not speak French. (S + does not + V + O)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. do / where / you / live / ?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Where do you live? (Wh- + do + S + V)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. is / there / a / park / near / here</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ There is a park near here. (There + be + S + A)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. gave / the teacher / us / homework</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ The teacher gave us homework. (S + V + O1 + O2)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. are / they / students / good</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ They are good students. (S + V + C)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. play / does / she / piano / the / ?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Does she play the piano? (Does + S + V + O)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. every day / reads / he / newspapers</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ He reads newspapers every day. (S + V + O + A)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. not / I / am / tired</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ I am not tired. (S + be + not + C)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. made / the news / her / sad</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ The news made her sad. (S + V + O + C)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./01-parts-of-speech.html">← Previous: Parts of Speech</a>
+    <a href="./03-present-simple.html">Next: Present Simple →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chứng Chỉ Claude Miễn Phí - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Giới thiệu</a>
+      <a href="#canh-bao">Cảnh báo lừa đảo</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Các Bước Thực Hiện</div>
+    <div class="nav-items">
+      <a href="#buoc-1">Bước 1: Truy cập trang web</a>
+      <a href="#buoc-2">Bước 2: Claude 101</a>
+      <a href="#buoc-3">Bước 3: AI Fluency</a>
+      <a href="#buoc-4">Bước 4: Claude Cowork</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Sau Khi Có Chứng Chỉ</div>
+    <div class="nav-items">
+      <a href="#linkedin">Thêm vào LinkedIn</a>
+      <a href="#tai-sao">Tại sao quan trọng</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Chứng Chỉ Claude Miễn Phí</h1>
+<p class="subtitle">Cách lấy 3 chứng chỉ Claude do Anthropic cấp — hoàn toàn miễn phí, đáng đưa lên LinkedIn</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/chung-chi-claude-mien-phi" target="_blank">phandonggiang.com</a> — Phan Đông Giang, AI Instructor &amp; Content Creator</span>
+</div>
+
+<p>Có thể lấy được 3 chứng chỉ Claude trong khoảng 6 tiếng đồng hồ mà không tốn một đồng nào. Cả 3 đều do chính Anthropic — công ty mẹ của Claude — cấp, và là những chứng chỉ duy nhất thực sự đáng đưa lên LinkedIn.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Trong bối cảnh 78% tổ chức đã dùng AI vào năm 2024, chứng chỉ Claude là tín hiệu đơn giản nhưng có giá trị: nó cho người xem LinkedIn biết bạn đã thực sự dùng qua công cụ này — điều đúng với chưa tới 2% dân số thế giới.
+</div>
+
+<h2 id="canh-bao">Cảnh báo: Chứng chỉ giả tràn lan</h2>
+
+<p>Hiện có rất nhiều nơi đang rao bán các "chứng chỉ Claude" viral trên mạng. Tất cả đều là lừa đảo — Anthropic không công nhận bất kỳ cái nào trong số đó.</p>
+
+<div class="callout callout-red">
+<strong>Chỉ có đúng 3 chứng chỉ Claude hợp lệ:</strong> Tất cả đều miễn phí, đều do Anthropic trực tiếp cấp qua nền tảng <code>anthropic.skilljar.com</code>. Không có chứng chỉ nào khác được Anthropic công nhận.
+</div>
+
+<h2 id="buoc-1">Bước 1: Truy cập đúng trang web</h2>
+
+<p>Vào trang <strong>anthropic.skilljar.com</strong> và đăng ký bằng email của bạn. Không cần trả phí để sử dụng Claude cho việc này.</p>
+
+<h2 id="buoc-2">Bước 2: Học Claude 101 (~1 tiếng)</h2>
+
+<p>Đây là khóa cơ bản nhất, nhưng nội dung khá đầy đủ. Truy cập tại <code>anthropic.skilljar.com/claude-101</code>.</p>
+
+<p>Khóa gồm 13 bài học chia trong 5 module, bao gồm:</p>
+<ul>
+  <li>Claude thực chất là gì</li>
+  <li>Khi nào nên dùng Chat, khi nào dùng Cowork, khi nào dùng Code</li>
+  <li>Cách Projects hoạt động</li>
+  <li>Cách Skills hoạt động</li>
+  <li>Cách kết nối Claude với Gmail, Drive, Slack</li>
+</ul>
+
+<h2 id="buoc-3">Bước 3: AI Fluency — Framework &amp; Foundations (~3 tiếng)</h2>
+
+<p>Đây là chứng chỉ dài nhất và cũng hay nhất trong 3 chứng chỉ. Truy cập tại <code>anthropic.skilljar.com/ai-fluency-framework-foundations</code>.</p>
+
+<p>Khóa gồm 13 bài học về cách thực sự tương tác với AI, xoay quanh khung 4D:</p>
+
+<table>
+<tr><th>Chữ D</th><th>Tiếng Anh</th><th>Ý nghĩa</th></tr>
+<tr><td>D1</td><td>Delegation</td><td>Ủy quyền — biết khi nào giao việc cho AI</td></tr>
+<tr><td>D2</td><td>Description</td><td>Mô tả — cách viết prompt hiệu quả</td></tr>
+<tr><td>D3</td><td>Discernment</td><td>Thẩm định — tư duy phản biện khi đánh giá kết quả</td></tr>
+<tr><td>D4</td><td>Diligence</td><td>Cẩn trọng — khía cạnh đạo đức khi dùng AI</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Khuyến nghị:</strong> Nếu chỉ có thời gian học 1 trong 3 chứng chỉ, hãy chọn khóa AI Fluency. Đây là thứ gần nhất với việc rèn "gu" thẩm định AI mà bạn có thể tìm được miễn phí. Khóa có kèm một cheat sheet từ vựng AI Fluency dạng PDF (~1.43MB) — hãy tải về và lưu lại.
+</div>
+
+<h2 id="buoc-4">Bước 4: Introduction to Claude Cowork (~2 tiếng)</h2>
+
+<p>Khóa này nói về tính năng Cowork — được đánh giá là tính năng tốt nhất của Claude. Truy cập tại <code>anthropic.skilljar.com</code> và tìm khóa Introduction to Claude Cowork.</p>
+
+<p>Nội dung khóa học bao gồm:</p>
+<ul>
+  <li>Cowork là gì và cách truy cập</li>
+  <li>Projects và Plugins</li>
+  <li>Skills</li>
+  <li>Cách lên lịch cho các tác vụ</li>
+  <li>Xử lý file và tài liệu</li>
+  <li>Nghiên cứu ở quy mô lớn</li>
+  <li>Phân quyền</li>
+  <li>Cách chọn đúng model cho từng công việc</li>
+</ul>
+
+<h2 id="linkedin">Thêm chứng chỉ vào LinkedIn</h2>
+
+<p>Sau khi hoàn thành mỗi khóa học, bạn sẽ có quyền truy cập vào trang chứng nhận để lấy thông tin cần thiết. Cách thêm vào LinkedIn:</p>
+
+<ol>
+  <li>Vào trang hồ sơ cá nhân LinkedIn</li>
+  <li>Bấm "Add section" rồi chọn "Licenses &amp; certifications"</li>
+  <li>Điền theo mẫu: Tên chứng chỉ = <strong>"Claude 101 — Anthropic Academy"</strong>; Đơn vị cấp = <strong>"Anthropic"</strong>; Ngày cấp = ngày hoàn thành</li>
+  <li>Lặp lại tương tự cho chứng chỉ AI Fluency và Introduction to Claude Cowork</li>
+</ol>
+
+<div class="callout callout-amber">
+<strong>Tên chứng chỉ chính xác khi điền LinkedIn:</strong> Dùng đúng tên từ trang chứng nhận sau khi hoàn thành khóa. Đơn vị cấp luôn là "Anthropic".
+</div>
+
+<h2 id="tai-sao">Tại sao chuyện này thực sự đáng quan tâm</h2>
+
+<p>Theo báo cáo AI Index 2025 của Stanford, 78% tổ chức đã sử dụng AI trong năm 2024 — tăng vọt từ 55% năm trước đó. AI đã có mặt trong văn phòng rồi.</p>
+
+<p>Khi ai đó xem LinkedIn của bạn, một chứng chỉ Claude làm đúng một việc nhỏ nhưng quan trọng: nó cho người ta biết bạn thực sự đã từng dùng qua công cụ này. Và điều đó hiện chỉ đúng với chưa tới 2% dân số thế giới.</p>
+
+<blockquote>PwC phát hiện những người có kỹ năng AI được trả lương cao hơn trung bình 56% so với người không có. Năm trước đó con số này mới chỉ là 25%.</blockquote>
+
+<div class="callout callout-green">
+<strong>Kết luận thực tế:</strong> Chứng chỉ Claude có thể không giúp bạn được tuyển dụng ngay lập tức. Nhưng nó miễn phí, chỉ mất vài tiếng, và tạo ra một dòng gọn gàng trên hồ sơ, nói rằng: "Tôi đang học các công cụ mà mọi người đã dùng trong công việc."
+</div>
+
+<div class="flow">
+  <span class="flow-step">Đăng ký Skilljar</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Claude 101 (~1h)</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">AI Fluency (~3h)</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Claude Cowork (~2h)</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Cập nhật LinkedIn</span>
+</div>
+
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html" class="current">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html">18. Dùng Claude Công Ty</a>
+</aside>
+
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

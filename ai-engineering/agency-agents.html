@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agency Agents - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">The Agency là gì</a>
+      <a href="#philosophy">Triết lý thiết kế</a>
+      <a href="#template">Agent Template</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">16 Divisions</div>
+    <div class="nav-items">
+      <a href="#engineering">Engineering (40+)</a>
+      <a href="#design">Design (8)</a>
+      <a href="#marketing">Marketing (38)</a>
+      <a href="#product">Product & PM (12)</a>
+      <a href="#testing">Testing (9)</a>
+      <a href="#security">Security (11)</a>
+      <a href="#game">Game Dev (25+)</a>
+      <a href="#other-divisions">Other Divisions</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài Đặt & Sử Dụng</div>
+    <div class="nav-items">
+      <a href="#install">Installation</a>
+      <a href="#platforms">12 Platforms</a>
+      <a href="#scenarios">Multi-Agent Scenarios</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Community</div>
+    <div class="nav-items">
+      <a href="#community">Translations</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Agency Agents</h1>
+<p class="subtitle">232 AI agent personalities chuyên biệt — mỗi agent có personality, workflow, deliverables, và success metrics riêng — hỗ trợ 12 AI coding platforms</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/msitarzewski/agency-agents" target="_blank">github.com/msitarzewski/agency-agents</a> — MIT License, 117k stars, 19.3k forks</span>
+</div>
+
+<p>The Agency cung cấp bộ sưu tập 232 agent personality được thiết kế để làm việc cùng developers trong AI coding environments. Mỗi agent có chuyên môn riêng biệt, phong cách giao tiếp độc đáo, và quy trình làm việc cụ thể với các deliverable đo lường được.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Khác với generic "Act as a developer" prompts, mỗi agent trong The Agency là một specification hoàn chỉnh với personality riêng, proven workflow, và measurable success metrics — được sinh ra từ production usage thực tế và community iteration qua nhiều tháng.
+</div>
+
+<h2 id="philosophy">Triết lý thiết kế Agent</h2>
+
+<p>The Agency tự phân biệt với 3 loại tài nguyên AI khác:</p>
+
+<table>
+<tr><th>Loại</th><th>Vấn đề</th><th>The Agency</th></tr>
+<tr><td>Generic "Act as X" prompts</td><td>Không có personality, không có workflow</td><td>Deep specialization với personality và process</td></tr>
+<tr><td>Prompt libraries</td><td>One-off, không có deliverables</td><td>Comprehensive systems với workflows và deliverables</td></tr>
+<tr><td>Black-box AI tools</td><td>Không customizable</td><td>Transparent, forkable, adaptable personalities</td></tr>
+</table>
+
+<p>Theo repository: agents được thiết kế để "specialized (not generic), personality-driven (unique voice), deliverable-focused (real code), và production-ready (battle-tested)."</p>
+
+<h2 id="template">Agent Template Structure</h2>
+
+<p>Mỗi agent file được xây dựng theo cấu trúc 6 phần:</p>
+
+<table>
+<tr><th>Phần</th><th>Nội dung</th></tr>
+<tr><td><strong>Identity &amp; Memory</strong></td><td>Personality traits, communication style, learning patterns</td></tr>
+<tr><td><strong>Core Mission</strong></td><td>Primary objectives và domain expertise</td></tr>
+<tr><td><strong>Critical Rules</strong></td><td>Domain-specific constraints và guardrails</td></tr>
+<tr><td><strong>Technical Deliverables</strong></td><td>Concrete outputs với code examples</td></tr>
+<tr><td><strong>Workflow Process</strong></td><td>Step-by-step execution methodology</td></tr>
+<tr><td><strong>Success Metrics</strong></td><td>Measurable outcomes và quality standards</td></tr>
+</table>
+
+<blockquote>Ví dụ về personality cụ thể: "The Evidence Collector defaults to finding 3–5 issues and requires visual proof for everything." The Whimsy Injector đảm bảo "every playful element must serve a functional or emotional purpose."</blockquote>
+
+<h2 id="engineering">Engineering Division (40+ agents)</h2>
+
+<p>Agents phát triển phần mềm, bao gồm tất cả specializations:</p>
+
+<ul>
+<li>Frontend Developer, Backend Architect, Mobile App Builder, AI Engineer</li>
+<li>DevOps Automator, Rapid Prototyper, Senior Developer, SRE</li>
+<li>Embedded Firmware Engineer, Incident Response Commander</li>
+<li>Solidity Smart Contract Engineer, Codebase Onboarding Engineer</li>
+<li>Technical Writer, Code Reviewer, Database Optimizer, Git Workflow Master</li>
+<li>Software Architect, Data Engineer, CMS Developer</li>
+<li>Email Intelligence Engineer, Voice AI Integration Engineer</li>
+<li>Prompt Engineer, Multi-Agent Systems Architect</li>
+<li>WeChat Mini Program Developer, Feishu Integration Developer</li>
+<li>Minimal Change Engineer, IT Service Manager, OrgScript Engineer</li>
+<li>Drupal Shopping Cart Engineer, WordPress Shopping Cart Engineer</li>
+</ul>
+
+<h2 id="design">Design Division (8 agents)</h2>
+
+<ul>
+<li>UI Designer, UX Researcher, UX Architect</li>
+<li>Brand Guardian, Visual Storyteller, Whimsy Injector</li>
+<li>Image Prompt Engineer, Inclusive Visuals Specialist, Persona Walkthrough Specialist</li>
+</ul>
+
+<h2 id="marketing">Marketing Division (38 agents)</h2>
+
+<p>Agents cho content và social media, bao gồm market-specific agents:</p>
+
+<h3>Global platforms</h3>
+<ul>
+<li>Growth Hacker, Content Creator, SEO Specialist, Email Marketing Strategist</li>
+<li>Twitter/X Engager, X/Twitter Intelligence Analyst, TikTok Strategist</li>
+<li>Instagram Curator, Reddit Community Builder, LinkedIn Content Creator</li>
+<li>App Store Optimizer, Podcast Strategist, Global Podcast Strategist</li>
+<li>Video Optimization Specialist, Multi-Platform Publisher, PR &amp; Communications Manager</li>
+</ul>
+
+<h3>China market specialists</h3>
+<ul>
+<li>Xiaohongshu Specialist, WeChat Official Account Manager, Zhihu Strategist</li>
+<li>Baidu SEO Specialist, Bilibili Content Strategist, Douyin Strategist</li>
+<li>Kuaishou Strategist, Weibo Strategist, Private Domain Operator</li>
+<li>China E-Commerce Operator, Cross-Border E-Commerce Specialist</li>
+<li>Livestream Commerce Coach, China Market Localization Strategist</li>
+</ul>
+
+<h3>Emerging search</h3>
+<ul>
+<li>AI Citation Strategist, AEO Foundations Architect, Agentic Search Optimizer</li>
+<li>Paid Media Division (11 agents): PPC Campaign Strategist, Search Query Analyst, Paid Media Auditor, Tracking &amp; Measurement Specialist, Ad Creative Strategist, Programmatic &amp; Display Buyer, Paid Social Strategist</li>
+</ul>
+
+<h2 id="product">Product &amp; Project Management (12 agents)</h2>
+
+<table>
+<tr><th>Division</th><th>Agents</th></tr>
+<tr><td>Product (5)</td><td>Sprint Prioritizer, Trend Researcher, Feedback Synthesizer, Behavioral Nudge Engine, Product Manager</td></tr>
+<tr><td>Project Management (7)</td><td>Studio Producer, Project Shepherd, Studio Operations, Experiment Tracker, Senior Project Manager, Jira Workflow Steward, Meeting Notes Specialist</td></tr>
+</table>
+
+<h2 id="testing">Testing Division (9 agents)</h2>
+
+<ul>
+<li>Evidence Collector, Reality Checker, Test Results Analyzer</li>
+<li>Performance Benchmarker, API Tester, Tool Evaluator</li>
+<li>Workflow Optimizer, Accessibility Auditor</li>
+</ul>
+
+<h2 id="security">Security Division (11 agents)</h2>
+
+<ul>
+<li>Security Architect, Application Security Engineer, Penetration Tester</li>
+<li>Cloud Security Architect, Incident Responder, Threat Intelligence Analyst</li>
+<li>Threat Detection Engineer, Senior SecOps Engineer</li>
+<li>Compliance Auditor, Blockchain Security Auditor</li>
+</ul>
+
+<h2 id="game">Game Development Division (25+ agents)</h2>
+
+<h3>Cross-engine agents</h3>
+<ul>
+<li>Game Designer, Level Designer, Technical Artist, Game Audio Engineer, Narrative Designer</li>
+</ul>
+
+<h3>Engine-specific specialists</h3>
+<table>
+<tr><th>Engine</th><th>Agents</th></tr>
+<tr><td>Unity (4)</td><td>Unity Architect, Shader Graph Artist, Multiplayer Engineer, Editor Tool Developer</td></tr>
+<tr><td>Unreal Engine (4)</td><td>Systems Engineer, Technical Artist, Multiplayer Architect, World Builder</td></tr>
+<tr><td>Godot (3)</td><td>Gameplay Scripter, Multiplayer Engineer, Shader Developer</td></tr>
+<tr><td>Roblox Studio (3)</td><td>Systems Scripter, Experience Designer, Avatar Creator</td></tr>
+<tr><td>Blender (1)</td><td>Addon Engineer</td></tr>
+</table>
+
+<h3>Academic Division (5 agents)</h3>
+<p>Hỗ trợ world-building cho game: Anthropologist, Geographer, Historian, Narratologist, Psychologist.</p>
+
+<h2 id="other-divisions">Other Divisions</h2>
+
+<table>
+<tr><th>Division</th><th>Số lượng</th><th>Agents tiêu biểu</th></tr>
+<tr><td>Sales</td><td>9</td><td>Outbound Strategist, Discovery Coach, Deal Strategist, Sales Engineer, Proposal Strategist, Pipeline Analyst, Account Strategist, Sales Coach</td></tr>
+<tr><td>Support</td><td>6</td><td>Support Responder, Analytics Reporter, Finance Tracker, Infrastructure Maintainer, Legal Compliance Checker, Executive Summary Generator</td></tr>
+<tr><td>Finance</td><td>5</td><td>Bookkeeper &amp; Controller, Financial Analyst, FP&amp;A Analyst, Investment Researcher, Tax Strategist</td></tr>
+<tr><td>Spatial Computing</td><td>8</td><td>XR Interface Architect, macOS Spatial/Metal Engineer, visionOS Spatial Engineer, XR Immersive Developer, XR Cockpit Interaction Specialist</td></tr>
+<tr><td>GIS</td><td>14</td><td>GIS Analyst, Spatial Data Engineer, GeoAI/ML Engineer, BIM/GIS Specialist, 3D &amp; Scene Developer, Drone/Reality Mapping, Web GIS Developer, Cartography Designer</td></tr>
+<tr><td>Specialized</td><td>48+</td><td>Agents Orchestrator, MCP Builder, Cultural Intelligence Strategist, Chief of Staff, CFO, M&amp;A Integration Manager, Legal (Billing, Client Intake, Document Review), Healthcare, Real Estate, HR Onboarding</td></tr>
+</table>
+
+<h2 id="install">Installation</h2>
+
+<pre><code># Clone repository
+git clone https://github.com/msitarzewski/agency-agents.git
+cd agency-agents
+
+# Interactive installer (auto-detects installed tools)
+./scripts/install.sh
+
+# Generate integration files for all supported tools
+./scripts/convert.sh
+
+# Tool-specific installation
+./scripts/install.sh --tool claude-code
+./scripts/install.sh --tool cursor
+./scripts/install.sh --tool copilot
+
+# Selective — theo division
+./scripts/install.sh --tool claude-code --division engineering,security
+
+# Selective — theo agent cụ thể
+./scripts/install.sh --tool cursor --agent frontend-developer,ui-designer
+
+# Parallel (nhanh hơn trên multi-core)
+./scripts/convert.sh --parallel
+./scripts/install.sh --no-interactive --parallel
+
+# Preview không thực hiện thay đổi
+./scripts/install.sh --dry-run</code></pre>
+
+<div class="callout callout-green">
+<strong>Claude Code:</strong> Agents được copy vào <code>~/.claude/agents/</code> dưới dạng file <code>.md</code> native. Sau khi install, kích hoạt bằng cách tham chiếu agent trong conversation: "Use the Frontend Developer agent to review this component."
+</div>
+
+<h2 id="platforms">12 Supported Platforms</h2>
+
+<table>
+<tr><th>Platform</th><th>Format</th><th>Install Location</th></tr>
+<tr><td>Claude Code</td><td><code>.md</code></td><td><code>~/.claude/agents/</code></td></tr>
+<tr><td>GitHub Copilot</td><td><code>.md</code></td><td><code>~/.github/agents/</code></td></tr>
+<tr><td>Cursor</td><td><code>.mdc</code></td><td><code>.cursor/rules/</code></td></tr>
+<tr><td>Antigravity (Gemini)</td><td><code>SKILL.md</code></td><td><code>~/.gemini/antigravity/skills/</code></td></tr>
+<tr><td>Gemini CLI</td><td><code>SKILL.md</code></td><td><code>~/.gemini/extensions/</code></td></tr>
+<tr><td>OpenCode</td><td><code>.md</code></td><td><code>.opencode/agents/</code></td></tr>
+<tr><td>Aider</td><td><code>CONVENTIONS.md</code></td><td><code>./CONVENTIONS.md</code></td></tr>
+<tr><td>Windsurf</td><td><code>.windsurfrules</code></td><td><code>./.windsurfrules</code></td></tr>
+<tr><td>OpenClaw</td><td>YAML workspace</td><td><code>~/.openclaw/</code></td></tr>
+<tr><td>Qwen Code</td><td>YAML</td><td><code>.qwen/agents/</code></td></tr>
+<tr><td>Kimi Code</td><td>YAML</td><td><code>~/.config/kimi/agents/</code></td></tr>
+<tr><td>Codex</td><td>TOML</td><td><code>~/.codex/agents/</code></td></tr>
+</table>
+
+<h2 id="scenarios">Multi-Agent Workflow Scenarios</h2>
+
+<p>The Agency cung cấp 6 scenario thực tế minh họa cách phối hợp nhiều agents:</p>
+
+<h3>1. Startup MVP Launch</h3>
+<p>Frontend Developer + Backend Architect + Growth Hacker + Rapid Prototyper + Reality Checker</p>
+
+<h3>2. Marketing Campaign</h3>
+<p>Content Creator + Twitter Engager + Instagram Curator + Reddit Community Builder + Analytics Reporter</p>
+
+<h3>3. Enterprise Feature Development</h3>
+<p>Senior Project Manager + Senior Developer + UI Designer + Experiment Tracker + Evidence Collector + Reality Checker</p>
+
+<h3>4. Paid Media Account Takeover</h3>
+<p>Paid Media Auditor + Tracking &amp; Measurement Specialist + PPC Campaign Strategist + Search Query Analyst + Ad Creative Strategist + Analytics Reporter</p>
+
+<h3>5. Full Product Discovery (Nexus Spatial)</h3>
+<p>Tất cả 8 divisions phối hợp song song: Product Trend Researcher + Backend Architect + Brand Guardian + Growth Hacker + Support Responder + UX Researcher + Project Shepherd + XR Interface Architect</p>
+
+<h3>6. Smart Campus Digital Twin</h3>
+<p>Technical Consultant + BIM/GIS Specialist + Drone/Reality Mapping + Web GIS Developer + 3D Scene Developer + GeoAI/ML Engineer + GIS QA Engineer</p>
+
+<div class="callout callout-amber">
+<strong>Lưu ý khi kết hợp agents:</strong> Không cần dùng tất cả agents cùng lúc. Chọn agents phù hợp với task hiện tại. Mỗi agent hoạt động độc lập hoặc kết hợp theo scenario. Bắt đầu với 2-3 agents trước khi scale lên toàn division.
+</div>
+
+<h2 id="community">Community &amp; Translations</h2>
+
+<p>The Agency được dịch sang 7 ngôn ngữ bởi cộng đồng:</p>
+
+<table>
+<tr><th>Ngôn ngữ</th><th>Chi tiết</th></tr>
+<tr><td>Simplified Chinese (zh-CN)</td><td>2 bản dịch độc lập</td></tr>
+<tr><td>Brazilian Portuguese (pt-BR)</td><td>Community maintained</td></tr>
+<tr><td>Russian (ru)</td><td>Community maintained</td></tr>
+<tr><td>Indonesian (id)</td><td>Community maintained</td></tr>
+<tr><td>Arabic (ar)</td><td>Community maintained</td></tr>
+<tr><td>Korean (ko)</td><td>Community maintained</td></tr>
+<tr><td>Japanese (ja-JP)</td><td>281 localized agents + 97 Japan-market originals</td></tr>
+</table>
+
+<p>Engagement channels: GitHub Discussions (success stories), Issues (bugs/features), Reddit r/ClaudeAI, Twitter/X #TheAgency.</p>
+
+<div class="callout callout-blue">
+<strong>License:</strong> MIT — miễn phí cho commercial và personal use. Được phát triển bởi cộng đồng, cho cộng đồng. "Coded with love by the community, for the community."
+</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17 - Directions & Transport - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./16-food-restaurant.html">16. Food & Restaurant</a>
+      <a href="./17-directions-transport.html" class="active">17. Directions & Transport</a>
+      <a href="./18-health-body.html">18. Health & Body</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 17
+  </div>
+  <div class="card-nav">
+    <a href="./16-food-restaurant.html">← Previous: Food & Restaurant</a>
+    <a href="./18-health-body.html">Next: Health & Body →</a>
+  </div>
+
+  <h1>Directions & Transport</h1>
+  <p class="subtitle">Hoi duong va phuong tien — cach chi duong, hoi duong, va su dung giao thong cong cong</p>
+
+  <h2>Hoi duong</h2>
+  <div class="formula">
+    <strong>Excuse me, how do I get to [place]?</strong><br>
+    <strong>Could you tell me the way to [place]?</strong><br>
+    <strong>Is there a [place] near here?</strong><br>
+    <strong>How far is it from here?</strong><br>
+    <strong>Can I walk there, or should I take a bus?</strong>
+  </div>
+
+  <h3>Chi duong</h3>
+  <ul>
+    <li><strong>Go straight</strong> — di thang</li>
+    <li><strong>Turn left / Turn right</strong> — re trai / re phai</li>
+    <li><strong>Take the first/second left</strong> — re trai o nga re thu nhat/thu hai</li>
+    <li><strong>It's on your left/right</strong> — no o ben trai/phai ban</li>
+    <li><strong>Go past the [landmark]</strong> — di qua [dia diem]</li>
+    <li><strong>It's at the corner</strong> — no o goc duong</li>
+    <li><strong>It's across from / opposite</strong> — no doi dien voi</li>
+    <li><strong>It's next to / beside</strong> — no ben canh</li>
+    <li><strong>It's between [A] and [B]</strong> — no nam giua [A] va [B]</li>
+    <li><strong>Go down this street for about 5 minutes</strong> — di doc con duong nay khoang 5 phut</li>
+  </ul>
+
+  <h2>Phuong tien giao thong</h2>
+
+  <h3>Gioi tu voi phuong tien</h3>
+  <div class="formula">
+    <strong>by</strong> + phuong tien (khong co "the"): by bus, by train, by car, by taxi, by plane<br>
+    <strong>on</strong> + phuong tien cu the: on the bus, on the train, on a plane<br>
+    <strong>in</strong> + xe nho (ngoi ben trong): in a car, in a taxi, in an Uber<br>
+    <strong>on foot</strong> = di bo (khong noi "by foot" hoac "by walk")
+  </div>
+
+  <h3>Mau cau ve giao thong</h3>
+  <ul>
+    <li><strong>How do I get to the airport?</strong> — Lam sao den san bay?</li>
+    <li><strong>Which bus goes to [place]?</strong> — Xe bus nao di den [noi]?</li>
+    <li><strong>Where's the nearest subway station?</strong> — Tram metro gan nhat o dau?</li>
+    <li><strong>How long does it take by bus?</strong> — Di bus mat bao lau?</li>
+    <li><strong>Is this the right platform for [destination]?</strong> — Day co phai ke dung de di [noi] khong?</li>
+    <li><strong>Does this bus stop at [place]?</strong> — Xe nay co dung o [noi] khong?</li>
+    <li><strong>I'd like a one-way/return ticket to [place].</strong> — Toi muon ve mot chieu/khu hoi di [noi].</li>
+    <li><strong>What time is the next train?</strong> — Chuyen tau tiep theo may gio?</li>
+  </ul>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu dung cac cum chi huong (trai, phai, thang) va moc dia diem de chi duong.</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"by + phuong tien"</strong> (by bus) — khong co mao tu. Tieng Viet: "bang xe bus" hoac "di xe bus".</li>
+      <li>Tieng Anh phan biet <strong>"on" (xe lon) va "in" (xe nho)</strong>. Tieng Viet dung "tren" cho ca hai.</li>
+      <li>Tieng Anh noi <strong>"on foot"</strong> (di bo). Tieng Viet: "di bo". Khong noi "by foot" hay "by walk".</li>
+      <li>Tieng Anh dung <strong>"take"</strong> voi phuong tien: "take a bus/taxi". Tieng Viet: "bat/di taxi".</li>
+      <li>Tieng Anh dung <strong>ordinal numbers</strong> khi chi duong: "the first left, the second right". Tieng Viet: "nga re thu nhat".</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>intersection</td><td>/ˌɪn.tərˈsek.ʃən/</td><td>n.</td><td>nga tu</td></tr>
+    <tr><td>crossroads</td><td>/ˈkrɒs.rəʊdz/</td><td>n.</td><td>nga tu (Anh)</td></tr>
+    <tr><td>roundabout</td><td>/ˈraʊnd.ə.baʊt/</td><td>n.</td><td>vong xoay</td></tr>
+    <tr><td>pedestrian</td><td>/pəˈdes.tri.ən/</td><td>n.</td><td>nguoi di bo</td></tr>
+    <tr><td>sidewalk/pavement</td><td>/ˈsaɪd.wɔːk/</td><td>n.</td><td>via he (My/Anh)</td></tr>
+    <tr><td>platform</td><td>/ˈplæt.fɔːrm/</td><td>n.</td><td>ke ga/san ga</td></tr>
+    <tr><td>fare</td><td>/fer/</td><td>n.</td><td>gia ve (xe/tau)</td></tr>
+    <tr><td>transfer</td><td>/trænsˈfɜːr/</td><td>v./n.</td><td>chuyen tuyen</td></tr>
+    <tr><td>commute</td><td>/kəˈmjuːt/</td><td>v./n.</td><td>di lam hang ngay</td></tr>
+    <tr><td>traffic jam</td><td>/ˈtræf.ɪk dʒæm/</td><td>n.</td><td>ket xe</td></tr>
+    <tr><td>one-way</td><td>/wʌn weɪ/</td><td>adj.</td><td>mot chieu</td></tr>
+    <tr><td>return/round-trip</td><td>/rɪˈtɜːrn/</td><td>adj.</td><td>khu hoi</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Hoi duong tren pho</h3>
+  <div class="dialogue">
+    <p><span class="speaker">You:</span> Excuse me, could you tell me how to get to the train station?</p>
+    <p><span class="speaker">Local:</span> Sure! Go straight down this road for about two blocks. Then turn right at the traffic lights.</p>
+    <p><span class="speaker">You:</span> Turn right at the traffic lights. Got it.</p>
+    <p><span class="speaker">Local:</span> Yes, and then it's on your left — you'll see a big sign. It's about a 10-minute walk.</p>
+    <p><span class="speaker">You:</span> Great, thank you! Is there a bus I can take instead?</p>
+    <p><span class="speaker">Local:</span> You can take the number 5 bus from that stop over there. It goes directly to the station.</p>
+    <p><span class="speaker">You:</span> Perfect. Thanks so much!</p>
+  </div>
+
+  <h3>Tinh huong 2: Mua ve tau</h3>
+  <div class="dialogue">
+    <p><span class="speaker">You:</span> Hi, I'd like a return ticket to Manchester, please.</p>
+    <p><span class="speaker">Staff:</span> When are you travelling?</p>
+    <p><span class="speaker">You:</span> Today. What time is the next train?</p>
+    <p><span class="speaker">Staff:</span> The next one leaves at 2:15 from platform 3. It arrives at 4:30.</p>
+    <p><span class="speaker">You:</span> Do I need to transfer?</p>
+    <p><span class="speaker">Staff:</span> No, it's a direct service. That'll be £45.</p>
+    <p><span class="speaker">You:</span> Can I pay by card?</p>
+    <p><span class="speaker">Staff:</span> Of course. Here's your ticket. Platform 3 is down the stairs on your right.</p>
+    <p><span class="speaker">You:</span> Thank you!</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I go to work by walk." → <strong>Dung:</strong> "I <em>walk</em> to work." hoac "I go to work <em>on foot</em>."</li>
+      <li><strong>Sai:</strong> "Turn to the left." → <strong>Dung:</strong> "<em>Turn left</em>." (khong can "to the")</li>
+      <li><strong>Sai:</strong> "I take bus number 5." → <strong>Dung:</strong> "I take <em>the</em> number 5 bus." (can mao tu "the")</li>
+      <li><strong>Sai:</strong> "Go straight about 100 meters." → <strong>Dung:</strong> "Go straight <em>for</em> about 100 meters." (can "for" truoc khoang cach)</li>
+      <li><strong>Sai:</strong> "It's in the left." → <strong>Dung:</strong> "It's <em>on</em> the/your left." (dung "on" voi left/right)</li>
+      <li><strong>Sai:</strong> "How long time does it take?" → <strong>Dung:</strong> "How <em>long</em> does it take?" (khong can "time")</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>Bat dau bang "Excuse me"</strong> khi hoi duong nguoi la — the hien lich su.</li>
+      <li><strong>Nhac lai chi dan</strong> de xac nhan: "So I turn right at the lights?" — giup tranh hieu nham.</li>
+      <li><strong>Dung landmarks</strong> de mo ta: "It's next to the big supermarket" de hon "It's 200m north".</li>
+      <li><strong>Google Maps</strong> la ban tot nhat, nhung biet hoi duong bang tieng Anh van rat huu ich khi mat mang.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Dien gioi tu: "I go to work ___ bus every day." (by / on / in)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>by</strong> bus (by + phuong tien, khong co "the")</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "I go to school by walk."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I <strong>walk</strong> to school. / I go to school <strong>on foot</strong>.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Dien gioi tu: "She's sitting ___ the car." (on / in / by)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>in</strong> the car (xe nho → dung "in")</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Sap xep lai: "the / turn / at / right / traffic lights"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Turn right at the traffic lights.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Ban muon hoi duong den buu dien. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Excuse me, how do I get to the post office? / Could you tell me the way to the post office?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Sua loi: "Go straight about 200 meters."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Go straight <strong>for</strong> about 200 meters.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Dien vao cho trong: "The bank is ___ the supermarket and the pharmacy."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>between</strong> the supermarket and the pharmacy</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Ban muon mua ve khu hoi di London. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'd like a return ticket to London, please. / Can I get a round-trip ticket to London?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Phan biet "on" va "in":<br>a) I was ___ the train for 2 hours.<br>b) She's waiting ___ the car.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">a) <strong>on</strong> the train (phuong tien lon)<br>b) <strong>in</strong> the car (phuong tien nho)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Chi duong tu truong hoc den sieu thi gan nhat (viet 3-4 cau dung: go straight, turn, it's on your...).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du: Go straight for about 200 meters. Turn left at the intersection. Go past the park and take the first right. The supermarket is on your left, next to the bank.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./16-food-restaurant.html">← Previous: Food & Restaurant</a>
+    <a href="./18-health-body.html">Next: Health & Body →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

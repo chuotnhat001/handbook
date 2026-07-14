@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 - Past Simple - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./03-present-simple.html">03. Present Simple</a>
+      <a href="./04-present-continuous.html">04. Present Continuous</a>
+      <a href="./05-past-simple.html" class="active">05. Past Simple</a>
+      <a href="./06-past-continuous.html">06. Past Continuous</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 5 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./04-present-continuous.html">← Previous: Present Continuous</a>
+    <a href="./06-past-continuous.html">Next: Past Continuous →</a>
+  </div>
+
+  <h1>Past Simple</h1>
+  <p class="subtitle">Thì quá khứ đơn — hành động đã xảy ra và kết thúc trong quá khứ</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Past Simple dùng để nói về: hành động đã hoàn thành trong quá khứ, chuỗi sự kiện liên tiếp, và thói quen trong quá khứ (không còn nữa).</p>
+
+  <div class="formula">
+    <strong>Công thức:</strong><br><br>
+    <strong>(+) Khẳng định:</strong> Subject + V-ed (hoặc V2 bất quy tắc)<br>
+    → I <strong>worked</strong> yesterday. / She <strong>went</strong> home.<br><br>
+    <strong>(-) Phủ định:</strong> Subject + <strong>did not (didn't)</strong> + V (nguyên mẫu)<br>
+    → I <strong>didn't work</strong> yesterday. / She <strong>didn't go</strong> home.<br><br>
+    <strong>(?) Nghi vấn:</strong> <strong>Did</strong> + Subject + V (nguyên mẫu)?<br>
+    → <strong>Did</strong> you <strong>work</strong> yesterday? / <strong>Did</strong> she <strong>go</strong> home?<br><br>
+    <strong>Với "be":</strong> was (I/he/she/it) / were (you/we/they)<br>
+    → I <strong>was</strong> tired. / They <strong>were</strong> happy.<br>
+    → <strong>Was</strong> he at home? / They <strong>weren't</strong> ready.
+  </div>
+
+  <h3>Quy tắc thêm -ed (động từ có quy tắc)</h3>
+  <table>
+    <tr><th>Quy tắc</th><th>Ví dụ</th></tr>
+    <tr><td>Thường: thêm <strong>-ed</strong></td><td>work → worked, play → played</td></tr>
+    <tr><td>Kết thúc -e: thêm <strong>-d</strong></td><td>live → lived, like → liked</td></tr>
+    <tr><td>Phụ âm + y: đổi y → <strong>-ied</strong></td><td>study → studied, carry → carried</td></tr>
+    <tr><td>1 nguyên âm + 1 phụ âm: gấp đôi + <strong>-ed</strong></td><td>stop → stopped, plan → planned</td></tr>
+  </table>
+
+  <h3>Động từ bất quy tắc phổ biến (phải học thuộc)</h3>
+  <table>
+    <tr><th>V1 (nguyên mẫu)</th><th>V2 (quá khứ)</th><th>Nghĩa</th></tr>
+    <tr><td>go</td><td><strong>went</strong></td><td>đi</td></tr>
+    <tr><td>come</td><td><strong>came</strong></td><td>đến</td></tr>
+    <tr><td>see</td><td><strong>saw</strong></td><td>thấy</td></tr>
+    <tr><td>have</td><td><strong>had</strong></td><td>có</td></tr>
+    <tr><td>do</td><td><strong>did</strong></td><td>làm</td></tr>
+    <tr><td>make</td><td><strong>made</strong></td><td>tạo</td></tr>
+    <tr><td>take</td><td><strong>took</strong></td><td>lấy</td></tr>
+    <tr><td>get</td><td><strong>got</strong></td><td>nhận</td></tr>
+    <tr><td>give</td><td><strong>gave</strong></td><td>cho</td></tr>
+    <tr><td>say</td><td><strong>said</strong></td><td>nói</td></tr>
+    <tr><td>eat</td><td><strong>ate</strong></td><td>ăn</td></tr>
+    <tr><td>drink</td><td><strong>drank</strong></td><td>uống</td></tr>
+    <tr><td>buy</td><td><strong>bought</strong></td><td>mua</td></tr>
+    <tr><td>think</td><td><strong>thought</strong></td><td>nghĩ</td></tr>
+    <tr><td>know</td><td><strong>knew</strong></td><td>biết</td></tr>
+  </table>
+
+  <h3>Dấu hiệu nhận biết</h3>
+  <p>Các từ/cụm từ thường đi kèm Past Simple:</p>
+  <ul>
+    <li><strong>yesterday</strong> (hôm qua)</li>
+    <li><strong>last week/month/year</strong> (tuần/tháng/năm trước)</li>
+    <li><strong>ago</strong> (trước đây): two days ago, a year ago</li>
+    <li><strong>in 2020</strong> (vào năm 2020)</li>
+    <li><strong>when I was young</strong> (khi tôi còn nhỏ)</li>
+  </ul>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Cả hai đều nói về sự việc đã xảy ra. "Tôi đã đi Đà Nẵng" = "I went to Da Nang".</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt dùng từ "<strong>đã</strong>" (tùy chọn) để chỉ quá khứ. Tiếng Anh <strong>bắt buộc chia động từ</strong> (V-ed hoặc V2).</li>
+      <li>Tiếng Anh có <strong>động từ bất quy tắc</strong> (go → went, see → saw). Tiếng Việt không có khái niệm này.</li>
+      <li>Câu phủ định/nghi vấn tiếng Anh cần <strong>"did"</strong> và động từ trở về nguyên mẫu. Tiếng Việt chỉ thêm "không".</li>
+      <li>Tiếng Anh phân biệt <strong>was/were</strong> theo ngôi. Tiếng Việt: "là" không thay đổi.</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>yesterday</td><td>/ˈjes.tər.deɪ/</td><td>adv.</td><td>hôm qua</td></tr>
+    <tr><td>ago</td><td>/əˈɡoʊ/</td><td>adv.</td><td>trước đây</td></tr>
+    <tr><td>last</td><td>/læst/</td><td>adj.</td><td>trước, vừa rồi</td></tr>
+    <tr><td>irregular</td><td>/ɪˈreɡ.jə.lər/</td><td>adj.</td><td>bất quy tắc</td></tr>
+    <tr><td>regular</td><td>/ˈreɡ.jə.lər/</td><td>adj.</td><td>có quy tắc</td></tr>
+    <tr><td>past</td><td>/pæst/</td><td>n./adj.</td><td>quá khứ</td></tr>
+    <tr><td>finish</td><td>/ˈfɪn.ɪʃ/</td><td>v.</td><td>hoàn thành</td></tr>
+    <tr><td>arrive</td><td>/əˈraɪv/</td><td>v.</td><td>đến nơi</td></tr>
+    <tr><td>decide</td><td>/dɪˈsaɪd/</td><td>v.</td><td>quyết định</td></tr>
+    <tr><td>happen</td><td>/ˈhæp.ən/</td><td>v.</td><td>xảy ra</td></tr>
+    <tr><td>remember</td><td>/rɪˈmem.bər/</td><td>v.</td><td>nhớ</td></tr>
+    <tr><td>forget</td><td>/fərˈɡet/</td><td>v.</td><td>quên</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li>I <span class="highlight">visited</span> my grandmother last weekend. — Hành động hoàn thành.</li>
+    <li>She <span class="highlight">didn't come</span> to the party. — Phủ định.</li>
+    <li><span class="highlight">Did</span> you <span class="highlight">see</span> that movie? — Câu hỏi.</li>
+    <li>He <span class="highlight">was</span> very tired after work. — Trạng thái quá khứ với "be".</li>
+    <li>We <span class="highlight">went</span> to the beach and <span class="highlight">swam</span> all day. — Chuỗi sự kiện.</li>
+    <li>They <span class="highlight">lived</span> in Japan for 5 years. — Thời gian xác định trong quá khứ.</li>
+    <li>I <span class="highlight">woke up</span>, <span class="highlight">brushed</span> my teeth, and <span class="highlight">left</span> the house. — Chuỗi hành động liên tiếp.</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Không chia động từ:</strong> ❌ "I go to school yesterday" → ✅ "I <strong>went</strong> to school yesterday". Phải dùng V2.</li>
+      <li><strong>Dùng V2 sau "did":</strong> ❌ "Did you <strong>went</strong>?" → ✅ "Did you <strong>go</strong>?" Sau did, động từ trở về nguyên mẫu.</li>
+      <li><strong>Nhầm was/were:</strong> ❌ "They <strong>was</strong> happy" → ✅ "They <strong>were</strong> happy". They/we/you dùng were.</li>
+      <li><strong>Thêm -ed cho động từ bất quy tắc:</strong> ❌ "I <strong>goed</strong>" → ✅ "I <strong>went</strong>". Phải học thuộc V2.</li>
+      <li><strong>Dùng "did" với "was/were":</strong> ❌ "Did he <strong>was</strong> tired?" → ✅ "<strong>Was</strong> he tired?" Be không cần trợ động từ.</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Chia động từ trong ngoặc ở thì Past Simple:</em></p>
+
+  <div class="exercise">
+    <p>1. She ___ (go) to the market yesterday.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ went (bất quy tắc: go → went)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. They ___ (not/watch) the game last night.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ didn't watch (didn't + V nguyên mẫu)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. ___ you ___ (eat) breakfast this morning?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Did you eat (Did + S + V nguyên mẫu)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. He ___ (study) English for 3 hours yesterday.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ studied (phụ âm + y → ied)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. We ___ (be) very happy at the party.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ were (we dùng were)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. I ___ (buy) a new phone last week.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ bought (bất quy tắc: buy → bought)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. The movie ___ (start) at 8 PM.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ started (có quy tắc: start → started)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. She ___ (not/know) the answer.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ didn't know (didn't + V nguyên mẫu)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. ___ it ___ (rain) yesterday?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Did it rain (Did + S + V nguyên mẫu)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. He ___ (stop) smoking two years ago.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ stopped (1 nguyên âm + 1 phụ âm → gấp đôi + ed)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./04-present-continuous.html">← Previous: Present Continuous</a>
+    <a href="./06-past-continuous.html">Next: Past Continuous →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

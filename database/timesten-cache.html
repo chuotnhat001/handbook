@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle TimesTen Cache - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">TimesTen là gì</a>
+      <a href="#architecture">Kiến trúc</a>
+      <a href="#versions">Phiên bản</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cache Groups</div>
+    <div class="nav-items">
+      <a href="#cache-groups">Khái niệm</a>
+      <a href="#read-only">Read-Only</a>
+      <a href="#awt">AWT (Async Write)</a>
+      <a href="#swt">SWT (Sync Write)</a>
+      <a href="#user-managed">User-Managed</a>
+      <a href="#dynamic-load">Dynamic Load</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Triển Khai</div>
+    <div class="nav-items">
+      <a href="#deployment">Deployment Models</a>
+      <a href="#ha">High Availability</a>
+      <a href="#setup">Cài đặt cơ bản</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Vận Hành</div>
+    <div class="nav-items">
+      <a href="#best-practices">Best Practices</a>
+      <a href="#monitoring">Monitoring</a>
+      <a href="#comparison">So sánh</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Oracle TimesTen In-Memory Database Cache</h1>
+<p class="subtitle">In-memory relational database — cache layer cho Oracle Database với microsecond latency</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://docs.oracle.com/en/database/other-databases/timesten/" target="_blank">docs.oracle.com/timesten</a> — Oracle Documentation</span>
+</div>
+
+<p>Oracle TimesTen là relational database được tối ưu hoàn toàn cho bộ nhớ RAM. Có thể hoạt động <strong>standalone</strong> (độc lập) hoặc làm <strong>Application-Tier Database Cache</strong> cho Oracle Database — đặt ở tầng ứng dụng để giảm latency xuống microsecond.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Thay vì để ứng dụng truy vấn trực tiếp Oracle Database qua mạng và disk I/O, TimesTen cache một tập con dữ liệu hot vào RAM ngay tại application tier. Ứng dụng đọc/ghi local memory — TimesTen tự động đồng bộ với Oracle Database phía sau.
+</div>
+
+<h2 id="architecture">Kiến trúc</h2>
+
+<h3>In-Memory Storage Model</h3>
+<p>Toàn bộ dataset được nạp vào RAM khi database khởi động. Khác biệt cơ bản với disk-based database:</p>
+<ul>
+<li>Không có disk I/O trong data path thông thường</li>
+<li>Data structures tối ưu cho memory access patterns, không phải disk block I/O</li>
+<li>Kernel DBMS overhead nhỏ hơn đáng kể so với traditional database</li>
+</ul>
+
+<h3>ACID & Persistence</h3>
+<p>Dù là in-memory, TimesTen vẫn đảm bảo đầy đủ <strong>ACID</strong>. Persistence qua transaction log files và checkpoint files trên disk — đây chỉ là durability path, không phải data path chính.</p>
+
+<h3>APIs hỗ trợ</h3>
+<p>SQL, ODBC, JDBC, OCI, ODP.NET, PL/SQL — tương thích cao với Oracle Database, giúp migration ứng dụng dễ dàng.</p>
+
+<h3>Cache Architecture</h3>
+<div class="flow">
+<span class="flow-step">Application</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">TimesTen (RAM)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Cache Agent</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Oracle Database</span>
+</div>
+<p>Ứng dụng kết nối trực tiếp đến TimesTen (shared memory hoặc client-server). TimesTen đồng bộ với Oracle Database qua <strong>cache agent process</strong>.</p>
+
+<h2 id="versions">Các phiên bản</h2>
+
+<table>
+<tr><th>Release</th><th>Trạng thái</th><th>Tính năng nổi bật</th></tr>
+<tr><td><strong>26.1</strong></td><td>Current</td><td>JSON support, encryption at rest, TLS 1.3, log-based cache groups</td></tr>
+<tr><td><strong>22.1</strong></td><td>Long-Term Release</td><td>Phiên bản ổn định được hỗ trợ dài hạn</td></tr>
+<tr><td><strong>18.1</strong></td><td>Long-Term Release</td><td>TimesTen Scaleout (horizontal scaling)</td></tr>
+</table>
+
+<h2 id="cache-groups">Cache Groups — Khái niệm trung tâm</h2>
+
+<p>Cache group là đơn vị cơ bản của TimesTen Cache. Mỗi cache group chứa một hoặc nhiều bảng TimesTen ánh xạ tới bảng tương ứng trong Oracle Database. Cache group xác định:</p>
+<ul>
+<li><strong>Dữ liệu nào</strong> được cache</li>
+<li><strong>Chiều propagation</strong> — chỉ đọc, ghi async, hay ghi sync</li>
+<li><strong>Cách refresh</strong> — tự động hay thủ công</li>
+</ul>
+
+<h3 id="read-only">Read-Only Cache Groups</h3>
+<p>Dữ liệu trong TimesTen là <strong>read-only</strong> — ứng dụng chỉ đọc. Thay đổi thực hiện tại Oracle Database, sau đó refresh vào TimesTen.</p>
+
+<div class="callout callout-green">
+<strong>Cơ chế refresh:</strong> AUTOREFRESH với mode INCREMENTAL (chỉ refresh hàng thay đổi) hoặc FULL (toàn bộ bảng). Interval cấu hình theo giây/phút.
+</div>
+
+<p><strong>Use case:</strong> Reference data, lookup tables, danh mục sản phẩm, tỷ giá — dữ liệu thay đổi ít nhưng đọc nhiều.</p>
+
+<h3 id="awt">AWT — Asynchronous WriteThrough</h3>
+<p>Ứng dụng ghi vào TimesTen → commit ngay lập tức → TimesTen propagate <strong>bất đồng bộ</strong> về Oracle qua cache agent.</p>
+
+<table>
+<tr><th>Ưu điểm</th><th>Rủi ro</th></tr>
+<tr><td>Throughput cao nhất trong các loại write-back</td><td>Window không nhất quán ngắn nếu TimesTen crash trước khi propagate</td></tr>
+<tr><td>Hỗ trợ parallel propagation</td><td>Cần monitor transaction log file threshold</td></tr>
+<tr><td>SQL array processing (batch operations)</td><td>Propagation lag cần theo dõi</td></tr>
+</table>
+
+<p><strong>Use case:</strong> Telecom billing, order management, financial trading — cần tốc độ ghi cao.</p>
+
+<h3 id="swt">SWT — Synchronous WriteThrough</h3>
+<p>Ghi phải được confirm tại <strong>cả TimesTen và Oracle</strong> trước khi commit trả về cho ứng dụng.</p>
+
+<div class="callout callout-amber">
+<strong>Lưu ý:</strong> Consistency mạnh nhất nhưng throughput thấp hơn AWT. SWT KHÔNG hỗ trợ Active Standby Pair replication.
+</div>
+
+<p><strong>Use case:</strong> Tài chính, ngân hàng — tính nhất quán tuyệt đối quan trọng hơn throughput.</p>
+
+<h3 id="user-managed">User-Managed Cache Groups</h3>
+<p>Admin kiểm soát thủ công. Mỗi bảng trong group có thể là <code>READONLY</code> hoặc <code>PROPAGATE</code>:</p>
+<ul>
+<li><code>LOAD CACHE GROUP</code> — nạp dữ liệu từ Oracle (hỗ trợ WHERE clause)</li>
+<li><code>REFRESH CACHE GROUP</code> — cập nhật cache từ Oracle</li>
+<li><code>FLUSH CACHE GROUP</code> — ghi thay đổi về Oracle</li>
+<li><code>UNLOAD CACHE GROUP</code> — xóa dữ liệu khỏi cache</li>
+</ul>
+
+<h3 id="dynamic-load">Dynamic Load</h3>
+<p>Cache dữ liệu theo demand (lazy loading). Không cần load toàn bộ bảng — hữu ích cho bảng rất lớn.</p>
+<p><strong>Passthrough levels (0–3):</strong> kiểm soát hành vi khi dữ liệu chưa có trong cache. Level 0 trả lỗi, level cao hơn tự động chuyển query sang Oracle.</p>
+
+<h2 id="deployment">Deployment Models</h2>
+
+<table>
+<tr><th>Model</th><th>Mô tả</th><th>Phù hợp khi</th></tr>
+<tr><td><strong>Classic</strong></td><td>Install trực tiếp trên server/VM. In-process hoặc client-server</td><td>Latency thấp nhất, dataset vừa RAM 1 server</td></tr>
+<tr><td><strong>Scaleout</strong></td><td>Horizontal scaling, dữ liệu sharded trên nhiều nodes</td><td>Dataset lớn hơn RAM đơn server</td></tr>
+<tr><td><strong>Kubernetes</strong></td><td>TimesTen Operator cho OKE hoặc on-premises K8s</td><td>Cloud-native deployment</td></tr>
+</table>
+
+<h2 id="ha">Replication & High Availability</h2>
+
+<h3>Active Standby Pair</h3>
+<p>Cơ chế HA chính: một database <strong>active</strong>, một <strong>standby</strong>. Active replicate transactions sang standby real-time. Khi active fail, standby promote lên active.</p>
+
+<table>
+<tr><th>Cache Group Type</th><th>Hỗ trợ Active Standby?</th></tr>
+<tr><td>Read-Only</td><td>✅ Có</td></tr>
+<tr><td>AWT</td><td>✅ Có</td></tr>
+<tr><td>SWT</td><td>❌ Không</td></tr>
+<tr><td>User-Managed</td><td>❌ Không</td></tr>
+</table>
+
+<h3>Return Services</h3>
+<ul>
+<li><strong>RETURN RECEIPT</strong> — Active chờ standby nhận transaction</li>
+<li><strong>RETURN TWOSAFE</strong> — Active chờ standby confirm commit (mạnh nhất)</li>
+<li><strong>RETURN NOREPLY</strong> — Không chờ, throughput cao nhất, có thể mất data khi failover</li>
+</ul>
+
+<h2 id="setup">Cài đặt & Cấu hình cơ bản</h2>
+
+<h3>Yêu cầu</h3>
+<ol>
+<li>Oracle Database user với đủ privileges</li>
+<li>TimesTen cache administration user</li>
+<li>Credentials: Oracle Wallet hoặc connection attributes</li>
+<li><code>tnsnames.ora</code> cấu hình net service name trỏ đến Oracle Database</li>
+<li>TimesTen DSN (Data Source Name)</li>
+</ol>
+
+<h3>Tạo Cache Group</h3>
+<pre><code>-- 1. Cấu hình cache agent credentials
+CALL ttCacheUidPwdSet('oracle_user', 'password');
+
+-- 2. Start cache agent
+CALL ttCacheStart;
+
+-- 3. Tạo read-only cache group
+CREATE READONLY CACHE GROUP cg_products
+AUTOREFRESH INTERVAL 30 SECONDS
+FROM oracle_schema.products (
+  product_id NUMBER NOT NULL PRIMARY KEY,
+  product_name VARCHAR2(100),
+  price NUMBER
+);
+
+-- 4. Load data từ Oracle
+LOAD CACHE GROUP cg_products COMMIT EVERY 1000 ROWS;</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<pre><code>-- Tạo AWT cache group
+CREATE ASYNCHRONOUS WRITETHROUGH CACHE GROUP cg_orders
+FROM oracle_schema.orders (
+  order_id NUMBER NOT NULL PRIMARY KEY,
+  customer_id NUMBER,
+  amount NUMBER
+);
+
+-- Cấu hình Active Standby Pair
+CREATE ACTIVE STANDBY PAIR active_dsn, standby_dsn
+RETURN RECEIPT
+CACHE GROUP cg_products
+CACHE GROUP cg_orders;</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="best-practices">Best Practices triển khai</h2>
+
+<h3>Chọn Cache Group Type</h3>
+<table>
+<tr><th>Tình huống</th><th>Chọn</th></tr>
+<tr><td>Reference data, đọc nhiều ghi ít</td><td>Read-Only</td></tr>
+<tr><td>High-throughput write, chấp nhận lag ngắn</td><td>AWT</td></tr>
+<tr><td>Consistency tuyệt đối bắt buộc</td><td>SWT</td></tr>
+<tr><td>Dataset lớn, chỉ cache subset theo demand</td><td>User-Managed + Dynamic Load</td></tr>
+</table>
+
+<h3>Memory Management</h3>
+<ul>
+<li>Implement <strong>aging policies</strong>: LRU hoặc time-based aging để tự động free memory</li>
+<li>Chỉ cache subset dữ liệu thực sự cần thiết cho hot path</li>
+<li>Monitor tablespace usage thường xuyên</li>
+</ul>
+
+<h3>AWT Performance Tuning</h3>
+<ul>
+<li>Bật <strong>parallel propagation</strong> để tăng throughput ghi về Oracle</li>
+<li>Tăng batch size cho SQL array processing</li>
+<li>Monitor transaction log — nếu log tích tụ nhanh, tăng propagation workers</li>
+<li>Defragment change log tables định kỳ</li>
+</ul>
+
+<h3>Autorefresh Optimization</h3>
+<ul>
+<li>Dùng <strong>INCREMENTAL</strong> thay vì FULL cho bảng lớn</li>
+<li>Chọn interval phù hợp — không phải lúc nào cũng cần real-time</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Quan trọng:</strong> Luôn deploy Active Standby Pair cho production. Chỉ dùng AWT hoặc Read-Only cache groups nếu cần replicate. Test failover scenario trước khi đưa vào production.
+</div>
+
+<h2 id="monitoring">Monitoring</h2>
+<ul>
+<li><strong>Cache agent status</strong> — set start policy <code>always</code> để tự restart</li>
+<li><strong>Autorefresh statistics</strong> — đảm bảo refresh không bị delay</li>
+<li><strong>Transaction log file levels</strong> — cho AWT, tránh đầy disk</li>
+<li><strong>Propagation lag</strong> — giữa TimesTen và Oracle</li>
+<li><strong>Memory usage & aging</strong> — theo dõi cache hit ratio</li>
+</ul>
+
+<h2 id="comparison">So sánh với giải pháp khác</h2>
+
+<table>
+<tr><th>Khía cạnh</th><th>TimesTen</th><th>Redis/Memcached</th><th>Oracle In-Memory Option</th></tr>
+<tr><td>Data model</td><td>Full relational, SQL</td><td>Key-value / data structures</td><td>Relational (column store)</td></tr>
+<tr><td>ACID</td><td>Đầy đủ</td><td>Giới hạn</td><td>Đầy đủ</td></tr>
+<tr><td>Oracle sync</td><td>Native, tự động</td><td>Phải tự implement</td><td>N/A (cùng DB)</td></tr>
+<tr><td>Compatibility</td><td>Cao (PL/SQL, SQL)</td><td>Thấp</td><td>Hoàn toàn</td></tr>
+<tr><td>Deployment</td><td>Application tier</td><td>Separate cache tier</td><td>Trong Oracle process</td></tr>
+<tr><td>Focus</td><td>OLTP real-time</td><td>General caching</td><td>Analytics acceleration</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Khi nào chọn TimesTen:</strong> Cần full SQL/ACID với Oracle Database integration chặt chẽ, ứng dụng đã dùng Oracle làm system of record, và yêu cầu microsecond latency cho OLTP workloads.
+</div>
+
+</main>
+</div>
+
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');var text=code.innerText;navigator.clipboard.writeText(text).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var id=this.getAttribute('href').slice(1);var el=document.getElementById(id);if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var id=entry.target.id;var link=document.querySelector('.nav-items a[href="#'+id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

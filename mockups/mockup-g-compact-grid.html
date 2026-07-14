@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handbook — Mẫu G: Compact Header Grid</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+      min-height: 100vh;
+      font-size: 16px;
+    }
+
+    /* COMPACT HEADER */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: .75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .header-left h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #1e293b;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-left .divider {
+      width: 1px;
+      height: 20px;
+      background: #e2e8f0;
+    }
+    .header-left p {
+      font-size: .8rem;
+      color: #94a3b8;
+    }
+    .header-search {
+      width: 280px;
+    }
+    .header-search input {
+      width: 100%;
+      padding: .45rem .85rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: .82rem;
+      background: #f8fafc;
+      outline: none;
+      transition: all .2s;
+    }
+    .header-search input:focus {
+      border-color: #667eea;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(102,126,234,.08);
+    }
+    .header-search input::placeholder { color: #94a3b8; }
+
+    /* CONTENT */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 4rem;
+    }
+    .group {
+      margin-bottom: 2rem;
+    }
+    .group-title {
+      font-size: .73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #64748b;
+      margin-bottom: .75rem;
+      padding-left: .25rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: .85rem;
+    }
+
+    /* CARDS */
+    .card {
+      display: flex;
+      align-items: flex-start;
+      gap: .85rem;
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,.06);
+      transform: translateY(-2px);
+      border-color: transparent;
+    }
+    .card-accent {
+      width: 3px;
+      align-self: stretch;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: .25rem;
+    }
+    .card-title svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+    .card-title span {
+      font-size: .88rem;
+      font-weight: 620;
+      color: #1e293b;
+    }
+    .card p {
+      font-size: .78rem;
+      color: #64748b;
+      line-height: 1.45;
+    }
+    .no-results {
+      text-align: center;
+      color: #94a3b8;
+      padding: 3rem;
+      display: none;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 600px) {
+      .header { flex-wrap: wrap; }
+      .header-search { width: 100%; order: 3; }
+      .header-left p { display: none; }
+      .container { padding: 1rem; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Handbook</h1>
+      <div class="divider"></div>
+      <p>Personal knowledge base</p>
+    </div>
+    <div class="header-search">
+      <input type="text" id="search" placeholder="Search topics..." aria-label="Search topics">
+    </div>
+  </div>
+  <div class="container">
+    <div id="content"></div>
+    <div class="no-results" id="no-results">No topics found.</div>
+  </div>
+  <script>
+    var groups = [
+      {
+        name: "AI Engineering",
+        topics: [
+          { title: "Claude Code Handbook", url: "ai-engineering/claude-code-handbook.html", desc: "Tài liệu học tập hoàn chỉnh về Claude Code — từ cơ bản đến nâng cao, workflow thực chiến", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 9l3 3-3 3"/><path d="M13 15h3"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>', color: "#667eea" },
+          { title: "Superpowers", url: "ai-engineering/superpowers.html", desc: "Phương pháp luận phát triển phần mềm cho AI agents — TDD, planning, execution có kỷ luật", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>', color: "#dc2626" },
+          { title: "GStack Sprint Playbook", url: "ai-engineering/gstack-sprint-playbook.html", desc: "Phân tích & thực hành tốt nhất từ triết lý Sprint của Garry Tan (YC)", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h6"/></svg>', color: "#06d6a0" },
+          { title: "GSD Framework", url: "ai-engineering/gsd-framework.html", desc: "Get Stuff Done — hệ thống meta-prompting và context-engineering cho AI coding assistants", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', color: "#10b981" },
+          { title: "Skills Stack", url: "ai-engineering/skills-stack.html", desc: "Kết hợp Superpowers, GStack và GSD — mô hình 3 lớp decision/context/execution", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', color: "#f59e0b" },
+          { title: "GStack Sprint Practice", url: "ai-engineering/gstack-sprint-practice.html", desc: "Hướng dẫn thực hành 7 bước Sprint với prompt sẵn sàng sử dụng", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>', color: "#e94560" },
+          { title: "Multica", url: "ai-engineering/multica.html", desc: "Nền tảng open-source biến AI coding agents thành đồng đội thực sự", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', color: "#8b5cf6" },
+          { title: "ECC", url: "ai-engineering/ecc.html", desc: "Harness-native operator system — 63 agents, 249 skills, 12+ ngôn ngữ, tối ưu hiệu suất AI agent", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 15l-2-5 2-2 2 2-2 5z"/><circle cx="12" cy="12" r="10"/><path d="M2 12h4M18 12h4M12 2v4M12 18v4"/></svg>', color: "#0ea5e9" },
+          { title: "The Agency", url: "ai-engineering/agency-agents.html", desc: "144+ AI agent personalities chuyên biệt — 12 divisions từ Engineering đến Game Development", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', color: "#ec4899" },
+          { title: "Skills for Real Engineers", url: "ai-engineering/skills-real-engineers.html", desc: "Bộ agent skills composable của Matt Pocock — TDD, debugging, architecture, handoff", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>', color: "#6366f1" },
+          { title: "Spec Kit", url: "ai-engineering/spec-kit.html", desc: "Spec-Driven Development by GitHub — biến specifications thành executable, generate implementations", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6M9 16h6M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z"/><path d="M13 2v7h7"/></svg>', color: "#2563eb" },
+          { title: "Claude Code Best Practice", url: "ai-engineering/claude-code-best-practice.html", desc: "Tổng hợp 83 best practices — context management, session strategy, agent architecture", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>', color: "#059669" }
+        ]
+      },
+      {
+        name: "English",
+        topics: [
+          { title: "English Learning Roadmap", url: "english/index.html", desc: "Lộ trình tự học tiếng Anh — 12 bài ngữ pháp + ôn tập + quick reference", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>', color: "#059669" },
+          { title: "Quick Reference", url: "english/quick-reference.html", desc: "Bảng tóm tắt ngữ pháp tiếng Anh — cheat sheet tra cứu nhanh", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>', color: "#0891b2" }
+        ]
+      },
+      {
+        name: "Productivity",
+        topics: [
+          { title: "Obsidian", url: "productivity/obsidian.html", desc: "Ứng dụng ghi chú và quản lý kiến thức cá nhân, local-first, Markdown", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>', color: "#7c3aed" }
+        ]
+      }
+    ];
+
+    var contentEl = document.getElementById("content");
+    var noResults = document.getElementById("no-results");
+    var searchInput = document.getElementById("search");
+
+    function render(query) {
+      var q = (query || "").toLowerCase();
+      var html = "";
+      var hasResults = false;
+
+      for (var i = 0; i < groups.length; i++) {
+        var group = groups[i];
+        var cards = "";
+        for (var j = 0; j < group.topics.length; j++) {
+          var t = group.topics[j];
+          if (q && t.title.toLowerCase().indexOf(q) === -1 && t.desc.toLowerCase().indexOf(q) === -1) continue;
+          cards += '<a class="card" href="' + t.url + '">' +
+            '<div class="card-accent" style="background:' + t.color + '"></div>' +
+            '<div class="card-body">' +
+            '<div class="card-title" style="color:' + t.color + '">' + t.icon + '<span>' + t.title + '</span></div>' +
+            '<p>' + t.desc + '</p>' +
+            '</div></a>';
+        }
+        if (cards) {
+          hasResults = true;
+          html += '<div class="group"><div class="group-title">' + group.name + '</div><div class="card-grid">' + cards + '</div></div>';
+        }
+      }
+
+      contentEl.innerHTML = html;
+      noResults.style.display = hasResults ? "none" : "block";
+    }
+
+    searchInput.addEventListener("input", function() { render(this.value); });
+    render("");
+  </script>
+</body>
+</html>

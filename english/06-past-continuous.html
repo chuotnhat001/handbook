@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 - Past Continuous - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./04-present-continuous.html">04. Present Continuous</a>
+      <a href="./05-past-simple.html">05. Past Simple</a>
+      <a href="./06-past-continuous.html" class="active">06. Past Continuous</a>
+      <a href="./07-future.html">07. Future</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 6 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./05-past-simple.html">← Previous: Past Simple</a>
+    <a href="./07-future.html">Next: Future →</a>
+  </div>
+
+  <h1>Past Continuous</h1>
+  <p class="subtitle">Thì quá khứ tiếp diễn — hành động đang xảy ra tại một thời điểm trong quá khứ</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Past Continuous dùng để nói về: hành động đang diễn ra tại một thời điểm cụ thể trong quá khứ, hành động bị ngắt bởi hành động khác (when/while), và hai hành động xảy ra đồng thời.</p>
+
+  <div class="formula">
+    <strong>Công thức:</strong><br><br>
+    <strong>(+) Khẳng định:</strong> Subject + was/were + V-ing<br>
+    → I <strong>was sleeping</strong> at 10 PM. / They <strong>were studying</strong>.<br><br>
+    <strong>(-) Phủ định:</strong> Subject + was/were + not + V-ing<br>
+    → I <strong>wasn't sleeping</strong>. / They <strong>weren't studying</strong>.<br><br>
+    <strong>(?) Nghi vấn:</strong> Was/Were + Subject + V-ing?<br>
+    → <strong>Were</strong> you <strong>sleeping</strong>? / <strong>Was</strong> he <strong>working</strong>?
+  </div>
+
+  <h3>When vs While</h3>
+  <div class="formula">
+    <strong>Pattern 1: When + Past Simple, Past Continuous</strong><br>
+    Hành động ngắn (Past Simple) ngắt hành động dài (Past Continuous):<br>
+    → I <strong>was cooking</strong> <span class="highlight">when</span> the phone <strong>rang</strong>.<br>
+    → She <strong>was walking</strong> home <span class="highlight">when</span> it <strong>started</strong> to rain.<br><br>
+
+    <strong>Pattern 2: While + Past Continuous, Past Simple</strong><br>
+    → <span class="highlight">While</span> I <strong>was cooking</strong>, the phone <strong>rang</strong>.<br><br>
+
+    <strong>Pattern 3: While + Past Continuous, Past Continuous</strong><br>
+    Hai hành động xảy ra đồng thời:<br>
+    → <span class="highlight">While</span> she <strong>was reading</strong>, he <strong>was watching</strong> TV.
+  </div>
+
+  <h3>Past Simple vs Past Continuous</h3>
+  <table>
+    <tr><th>Past Simple</th><th>Past Continuous</th></tr>
+    <tr><td>Hành động hoàn thành, kết thúc</td><td>Hành động đang diễn ra, chưa kết thúc</td></tr>
+    <tr><td>I <strong>read</strong> a book yesterday.</td><td>I <strong>was reading</strong> a book at 9 PM.</td></tr>
+    <tr><td>Chuỗi hành động liên tiếp</td><td>Bối cảnh/nền cho hành động khác</td></tr>
+    <tr><td>He <strong>came</strong> home and <strong>ate</strong> dinner.</td><td>He <strong>was eating</strong> when I <strong>arrived</strong>.</td></tr>
+  </table>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Tiếng Việt cũng diễn tả "đang làm gì đó" trong quá khứ: "Lúc đó tôi đang ngủ".</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt dùng "<strong>đang</strong>" + ngữ cảnh thời gian. Tiếng Anh dùng cấu trúc <strong>was/were + V-ing</strong>.</li>
+      <li>Tiếng Việt không phân biệt rõ "when" vs "while". Cả hai đều dịch là "khi". Tiếng Anh: <strong>when</strong> + hành động ngắn, <strong>while</strong> + hành động dài.</li>
+      <li>Tiếng Việt không cần thay đổi hình thức động từ khi kể chuyện quá khứ. Tiếng Anh bắt buộc dùng was/were.</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>while</td><td>/waɪl/</td><td>conj.</td><td>trong khi</td></tr>
+    <tr><td>when</td><td>/wen/</td><td>conj.</td><td>khi</td></tr>
+    <tr><td>at that time</td><td>/æt ðæt taɪm/</td><td>phrase</td><td>lúc đó</td></tr>
+    <tr><td>suddenly</td><td>/ˈsʌd.ən.li/</td><td>adv.</td><td>đột nhiên</td></tr>
+    <tr><td>interrupt</td><td>/ˌɪn.təˈrʌpt/</td><td>v.</td><td>ngắt, gián đoạn</td></tr>
+    <tr><td>meanwhile</td><td>/ˈmiːn.waɪl/</td><td>adv.</td><td>trong khi đó</td></tr>
+    <tr><td>background</td><td>/ˈbæk.ɡraʊnd/</td><td>n.</td><td>nền, bối cảnh</td></tr>
+    <tr><td>continue</td><td>/kənˈtɪn.juː/</td><td>v.</td><td>tiếp tục</td></tr>
+    <tr><td>notice</td><td>/ˈnoʊ.tɪs/</td><td>v.</td><td>nhận ra</td></tr>
+    <tr><td>happen</td><td>/ˈhæp.ən/</td><td>v.</td><td>xảy ra</td></tr>
+    <tr><td>during</td><td>/ˈdʊr.ɪŋ/</td><td>prep.</td><td>trong suốt</td></tr>
+    <tr><td>at the same time</td><td>/æt ðə seɪm taɪm/</td><td>phrase</td><td>cùng lúc</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li>I <span class="highlight">was watching</span> TV <span class="highlight">when</span> the doorbell <span class="highlight">rang</span>. — Bị ngắt.</li>
+    <li><span class="highlight">While</span> she <span class="highlight">was cooking</span>, the children <span class="highlight">were playing</span> outside. — Đồng thời.</li>
+    <li>At 8 PM last night, we <span class="highlight">were having</span> dinner. — Thời điểm cụ thể.</li>
+    <li>He <span class="highlight">wasn't listening</span> when the teacher called his name. — Phủ định + when.</li>
+    <li>What <span class="highlight">were</span> you <span class="highlight">doing</span> at 3 o'clock? — Câu hỏi.</li>
+    <li>It <span class="highlight">was raining</span> heavily, so we stayed home. — Bối cảnh.</li>
+    <li>They <span class="highlight">were walking</span> in the park when they <span class="highlight">saw</span> a snake. — Hành động bất ngờ.</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Nhầm was/were:</strong> ❌ "I <strong>were</strong> sleeping" → ✅ "I <strong>was</strong> sleeping". I/he/she/it dùng was.</li>
+      <li><strong>Dùng Past Simple thay Past Continuous cho bối cảnh:</strong> ❌ "I cooked when he came" → ✅ "I <strong>was cooking</strong> when he came". Hành động đang diễn ra dùng Past Continuous.</li>
+      <li><strong>Nhầm when/while:</strong> ❌ "While the phone rang..." → ✅ "<strong>When</strong> the phone rang..." (rang = hành động ngắn → dùng when).</li>
+      <li><strong>Dùng Past Continuous cho chuỗi hành động:</strong> ❌ "I was waking up, was brushing teeth..." → ✅ "I <strong>woke up, brushed</strong> my teeth..." Chuỗi liên tiếp dùng Past Simple.</li>
+      <li><strong>Quên -ing:</strong> ❌ "She was cook dinner" → ✅ "She was <strong>cooking</strong> dinner". Phải có V-ing sau was/were.</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Chọn Past Simple hoặc Past Continuous cho động từ trong ngoặc:</em></p>
+
+  <div class="exercise">
+    <p>1. I ___ (sleep) when the alarm ___ (go off).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ was sleeping / went off (đang ngủ → bị ngắt bởi chuông)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. While she ___ (read), her brother ___ (play) games.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ was reading / was playing (hai hành động đồng thời)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. They ___ (walk) home when it ___ (start) to rain.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ were walking / started (đang đi → trời bắt đầu mưa)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. What ___ you ___ (do) at 9 PM last night?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ were you doing (hỏi về hành động tại thời điểm cụ thể)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. He ___ (not/listen) to the teacher. He ___ (look) out the window.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ wasn't listening / was looking (hai hành động đồng thời, mô tả bối cảnh)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. The sun ___ (shine) and the birds ___ (sing). It ___ (be) a beautiful day.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ was shining / were singing / was (mô tả bối cảnh + trạng thái)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. I ___ (see) an accident while I ___ (drive) to work.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ saw / was driving (saw = hành động ngắn, was driving = hành động dài)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. She ___ (fall) asleep while she ___ (watch) a movie.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ fell / was watching (fell = hành động ngắn ngắt hành động dài)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. At this time yesterday, I ___ (sit) in a meeting.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ was sitting (thời điểm cụ thể trong quá khứ)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. When I ___ (arrive), everyone ___ (dance).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ arrived / was dancing (arrived = hành động ngắn, was dancing = đang diễn ra)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./05-past-simple.html">← Previous: Past Simple</a>
+    <a href="./07-future.html">Next: Future →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

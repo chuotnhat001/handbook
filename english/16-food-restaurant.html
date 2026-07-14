@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 - Food & Restaurant - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./15-shopping-money.html">15. Shopping & Money</a>
+      <a href="./16-food-restaurant.html" class="active">16. Food & Restaurant</a>
+      <a href="./17-directions-transport.html">17. Directions & Transport</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 16
+  </div>
+  <div class="card-nav">
+    <a href="./15-shopping-money.html">← Previous: Shopping & Money</a>
+    <a href="./17-directions-transport.html">Next: Directions & Transport →</a>
+  </div>
+
+  <h1>Food & Restaurant</h1>
+  <p class="subtitle">An uong va nha hang — goi mon, hoi ve thuc don, thanh toan</p>
+
+  <h2>Mau cau co ban</h2>
+
+  <h3>Dat ban / Vao nha hang</h3>
+  <div class="formula">
+    <strong>I'd like to make a reservation for [number] people.</strong><br>
+    <strong>Do you have a table for two?</strong><br>
+    <strong>I have a reservation under [name].</strong><br>
+    <strong>How long is the wait?</strong> — Doi bao lau?
+  </div>
+
+  <h3>Goi mon</h3>
+  <ul>
+    <li><strong>Can I see the menu, please?</strong> — Cho toi xem thuc don.</li>
+    <li><strong>I'll have the...</strong> — Toi goi...</li>
+    <li><strong>I'd like the...</strong> — Toi muon goi...</li>
+    <li><strong>What do you recommend?</strong> — Ban goi y mon gi?</li>
+    <li><strong>What's today's special?</strong> — Mon dac biet hom nay la gi?</li>
+    <li><strong>Can I get this without [ingredient]?</strong> — Bo [nguyen lieu] duoc khong?</li>
+    <li><strong>I'm allergic to [food].</strong> — Toi bi di ung voi [thuc an].</li>
+    <li><strong>Is this spicy?</strong> — Mon nay cay khong?</li>
+  </ul>
+
+  <h3>Trong bua an</h3>
+  <ul>
+    <li><strong>Could I have some more water?</strong> — Cho toi them nuoc.</li>
+    <li><strong>This is delicious!</strong> — Mon nay ngon qua!</li>
+    <li><strong>Excuse me, this isn't what I ordered.</strong> — Xin loi, day khong phai mon toi goi.</li>
+    <li><strong>Can I have the bill/check, please?</strong> — Tinh tien giup toi.</li>
+  </ul>
+
+  <h3>Thanh toan</h3>
+  <ul>
+    <li><strong>Can we split the bill?</strong> — Chia tien duoc khong?</li>
+    <li><strong>I'll get this.</strong> / <strong>It's on me.</strong> — De toi tra.</li>
+    <li><strong>Do you accept cards?</strong> — Nhan the khong?</li>
+    <li><strong>Is the tip included?</strong> — Tien tip da tinh chua?</li>
+  </ul>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu co cau truc goi mon, hoi gia, yeu cau phuc vu tuong tu.</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh dung <strong>"I'll have..."</strong> (tuong lai) de goi mon. Tieng Viet: "Cho toi..." (menh lenh nhe).</li>
+      <li>Tieng Anh co <strong>van hoa tip</strong> (15-20% o My). Viet Nam khong bat buoc tip.</li>
+      <li>Tieng Anh phan biet <strong>"bill" (Anh)</strong> va <strong>"check" (My)</strong> — cung nghia. Tieng Viet chi co "tinh tien".</li>
+      <li><strong>"I'm full"</strong> = no. Khong noi "I'm enough" (sai ngu phap).</li>
+      <li>Tieng Anh noi <strong>"It's on me"</strong> (de toi tra). Tieng Viet: "De toi" hoac "Toi moi".</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>appetizer</td><td>/ˈæp.ɪ.taɪ.zər/</td><td>n.</td><td>mon khai vi</td></tr>
+    <tr><td>main course</td><td>/meɪn kɔːrs/</td><td>n.</td><td>mon chinh</td></tr>
+    <tr><td>dessert</td><td>/dɪˈzɜːrt/</td><td>n.</td><td>mon trang mieng</td></tr>
+    <tr><td>beverage</td><td>/ˈbev.ər.ɪdʒ/</td><td>n.</td><td>do uong</td></tr>
+    <tr><td>reservation</td><td>/ˌrez.ərˈveɪ.ʃən/</td><td>n.</td><td>dat truoc (ban)</td></tr>
+    <tr><td>waiter/waitress</td><td>/ˈweɪ.tər/</td><td>n.</td><td>phuc vu nam/nu</td></tr>
+    <tr><td>tip</td><td>/tɪp/</td><td>n.</td><td>tien boa</td></tr>
+    <tr><td>allergic</td><td>/əˈlɜːr.dʒɪk/</td><td>adj.</td><td>di ung</td></tr>
+    <tr><td>vegetarian</td><td>/ˌvedʒ.əˈter.i.ən/</td><td>n./adj.</td><td>an chay</td></tr>
+    <tr><td>takeaway/to-go</td><td>/ˈteɪk.ə.weɪ/</td><td>n./adj.</td><td>mang di</td></tr>
+    <tr><td>rare/medium/well-done</td><td></td><td>adj.</td><td>tai/vua/chin ky (thit)</td></tr>
+    <tr><td>portion</td><td>/ˈpɔːr.ʃən/</td><td>n.</td><td>phan an</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Goi mon tai nha hang</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Waiter:</span> Good evening! Welcome. Table for two?</p>
+    <p><span class="speaker">You:</span> Yes, please. Could we sit by the window?</p>
+    <p><span class="speaker">Waiter:</span> Of course. Here are your menus. Can I get you something to drink?</p>
+    <p><span class="speaker">You:</span> I'll have a sparkling water, please.</p>
+    <p><span class="speaker">Friend:</span> And a glass of red wine for me.</p>
+    <p><span class="speaker">Waiter:</span> Are you ready to order, or do you need a few more minutes?</p>
+    <p><span class="speaker">You:</span> I think we're ready. What do you recommend?</p>
+    <p><span class="speaker">Waiter:</span> The grilled salmon is very popular today.</p>
+    <p><span class="speaker">You:</span> Sounds good. I'll have that. And can I get it without the mushrooms? I'm allergic.</p>
+    <p><span class="speaker">Waiter:</span> No problem at all. And for you?</p>
+    <p><span class="speaker">Friend:</span> I'd like the steak, medium rare, please.</p>
+    <p><span class="speaker">Waiter:</span> Excellent choices. I'll be right back with your drinks.</p>
+  </div>
+
+  <h3>Tinh huong 2: Quan cafe / goi nhanh</h3>
+  <div class="dialogue">
+    <p><span class="speaker">Barista:</span> Hi! What can I get for you?</p>
+    <p><span class="speaker">You:</span> Can I have a large iced latte, please?</p>
+    <p><span class="speaker">Barista:</span> Sure! Any milk preference? We have oat, almond, and regular.</p>
+    <p><span class="speaker">You:</span> Oat milk, please. And a blueberry muffin.</p>
+    <p><span class="speaker">Barista:</span> For here or to go?</p>
+    <p><span class="speaker">You:</span> To go, please.</p>
+    <p><span class="speaker">Barista:</span> That'll be $8.50.</p>
+    <p><span class="speaker">You:</span> Here you go. Keep the change.</p>
+    <p><span class="speaker">Barista:</span> Thanks! Your latte will be ready at the end of the counter.</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I want the chicken." → <strong>Dung:</strong> "I'll <em>have</em> the chicken." / "I'd <em>like</em> the chicken." (lich su hon "want")</li>
+      <li><strong>Sai:</strong> "Give me water." → <strong>Dung:</strong> "<em>Could I have</em> some water, please?" (them "please" va dung cau hoi)</li>
+      <li><strong>Sai:</strong> "I'm enough." (khi no) → <strong>Dung:</strong> "I'm <em>full</em>." hoac "No more, thanks."</li>
+      <li><strong>Sai:</strong> "The food is very delicious." → <strong>Dung:</strong> "The food is <em>delicious</em>." (delicious da la muc do cao, khong can "very")</li>
+      <li><strong>Sai:</strong> "Can you calculate?" (tinh tien) → <strong>Dung:</strong> "Can I have the <em>bill/check</em>, please?"</li>
+      <li><strong>Sai:</strong> "I eat vegetable." (an chay) → <strong>Dung:</strong> "I'm <em>vegetarian</em>." hoac "I don't eat meat."</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>"I'll have..."</strong> la cach goi mon pho bien va lich su nhat.</li>
+      <li><strong>Luon noi "please"</strong> khi yeu cau — thieu "please" nghe bat lich.</li>
+      <li><strong>Tip o My:</strong> 15-20% tong hoa don. O Anh/Uc: 10% hoac khong bat buoc.</li>
+      <li><strong>"For here or to go?"</strong> — cau hoi ban se nghe o moi quan fast food/cafe.</li>
+      <li><strong>Dietary needs:</strong> Bao truoc neu di ung hoac an kieng — "I'm vegetarian / I'm allergic to nuts."</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Ban muon goi mon ga. Noi cau nao lich su?<br>a) I want chicken.<br>b) Give me chicken.<br>c) I'll have the chicken, please.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>c) I'll have the chicken, please.</strong></div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Sua loi: "I'm enough, thank you." (khi da no)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'm <strong>full</strong>, thank you.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Dien vao cho trong: "Could I have the ___, please?" (tinh tien — o My)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>check</strong> (o My) hoac <strong>bill</strong> (o Anh)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Ban bi di ung voi dau phong. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'm allergic to peanuts. / Does this contain peanuts?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Phuc vu hoi "For here or to go?" — ban muon mang di. Tra loi?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">To go, please.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Ban muon hoi mon dac biet. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">What's today's special? / What do you recommend?</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Sua loi: "The food is very delicious."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">The food is <strong>delicious</strong>. (khong can "very" — delicious da la muc do cao)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Ban muon chia tien voi ban. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Can we split the bill? / Let's go Dutch.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Ban muon goi steak chin vua. Noi the nao?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I'd like the steak, <strong>medium</strong>, please. (rare = tai, medium = vua, well-done = chin ky)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Viet hoi thoai ngan (4-6 cau): ban goi do uong tai quan cafe.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du:<br>Barista: Hi! What can I get you?<br>You: Can I have a medium cappuccino, please?<br>Barista: Hot or iced?<br>You: Hot, please. And do you have any pastries?<br>Barista: We have croissants and banana bread today.<br>You: I'll take a croissant. How much is that?<br>Barista: That's $6.50 altogether.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./15-shopping-money.html">← Previous: Shopping & Money</a>
+    <a href="./17-directions-transport.html">Next: Directions & Transport →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

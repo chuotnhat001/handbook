@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub MCP Server - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">GitHub MCP Server là gì</a>
+      <a href="#deployment">Mô hình triển khai</a>
+      <a href="#hosts">Supported MCP Hosts</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài Đặt</div>
+    <div class="nav-items">
+      <a href="#remote-setup">Remote Setup</a>
+      <a href="#local-setup">Local Setup (Docker)</a>
+      <a href="#build-source">Build from Source</a>
+      <a href="#auth">Authentication</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cấu Hình</div>
+    <div class="nav-items">
+      <a href="#toolsets">Toolsets</a>
+      <a href="#tools">Available Tools</a>
+      <a href="#config-options">Config Options</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính Năng</div>
+    <div class="nav-items">
+      <a href="#features">Core Features</a>
+      <a href="#insiders">Insiders Mode</a>
+      <a href="#enterprise">Enterprise Support</a>
+      <a href="#security">Token Security</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">GitHub MCP Server</h1>
+<p class="subtitle">GitHub's official Model Context Protocol server — kết nối AI tools trực tiếp với GitHub platform qua natural language</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/github/github-mcp-server" target="_blank">github.com/github/github-mcp-server</a> — by GitHub, MIT License</span>
+</div>
+
+<p>GitHub MCP Server là implementation chính thức của GitHub cho Model Context Protocol (MCP). Server này cho phép AI agents và assistants tương tác trực tiếp với repositories, quản lý issues và pull requests, phân tích code, và tự động hóa workflows thông qua ngôn ngữ tự nhiên.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Thay vì AI chỉ đọc code, GitHub MCP Server cho phép AI agents hành động trực tiếp trên GitHub — tạo PR, quản lý issues, phân tích CI/CD, kiểm tra security alerts — tất cả qua một giao diện MCP chuẩn hóa với hơn 100 tools sẵn có.
+</div>
+
+<h2 id="deployment">Mô hình triển khai</h2>
+
+<p>Server hoạt động theo hai mô hình triển khai:</p>
+
+<table>
+<tr><th>Mô hình</th><th>Endpoint / Image</th><th>Authentication</th><th>Đặc điểm</th></tr>
+<tr><td><strong>Remote Server</strong></td><td><code>https://api.githubcopilot.com/mcp/</code></td><td>OAuth</td><td>Hosted bởi GitHub, setup tối giản</td></tr>
+<tr><td><strong>Local Server</strong></td><td><code>ghcr.io/github/github-mcp-server</code></td><td>OAuth hoặc PAT</td><td>Docker-based, kiểm soát hoàn toàn</td></tr>
+</table>
+
+<h2 id="hosts">Supported MCP Hosts</h2>
+
+<p>GitHub MCP Server hoạt động với hầu hết các MCP hosts phổ biến:</p>
+
+<table>
+<tr><th>Category</th><th>Tools</th></tr>
+<tr><td>IDE-based</td><td>VS Code / VS Code Insiders, Cursor, Windsurf, Zed, JetBrains IDEs, Visual Studio, Eclipse, Xcode</td></tr>
+<tr><td>CLI-based</td><td>Claude Desktop, Claude Code CLI, GitHub Copilot, Google Gemini CLI, OpenCode</td></tr>
+</table>
+
+<h2 id="remote-setup">Remote Setup</h2>
+
+<p>Remote setup là cách đơn giản nhất — không cần Docker hay cài đặt thêm. GitHub host server tại <code>https://api.githubcopilot.com/mcp/</code>.</p>
+
+<ul>
+<li>Hỗ trợ one-click installation cho VS Code 1.101+, VS Code Insiders, và Visual Studio</li>
+<li>Authentication qua OAuth (browser-based login)</li>
+<li>Hoặc dùng Personal Access Token (PAT)</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Khuyến nghị:</strong> Với hầu hết người dùng cá nhân, Remote Setup + OAuth là lựa chọn nhanh nhất để bắt đầu.
+</div>
+
+<h2 id="local-setup">Local Setup (Docker)</h2>
+
+<p>Chạy server local bằng Docker image chính thức:</p>
+
+<pre><code>docker run -i --rm \
+  -p 127.0.0.1:8085:8085 \
+  -e GITHUB_OAUTH_CALLBACK_PORT=8085 \
+  ghcr.io/github/github-mcp-server</code></pre>
+
+<p>Port mặc định cho OAuth callback là <code>127.0.0.1:8085</code>. Có thể thay đổi qua biến môi trường <code>GITHUB_OAUTH_CALLBACK_PORT</code>.</p>
+
+<h2 id="build-source">Build from Source</h2>
+
+<p>Yêu cầu Go. Build ra binary rồi cấu hình thủ công trong MCP host settings:</p>
+
+<pre><code># Clone và build
+git clone https://github.com/github/github-mcp-server
+cd github-mcp-server
+go build -o github-mcp-server ./cmd/github-mcp-server</code></pre>
+
+<h2 id="auth">Authentication</h2>
+
+<p>Ba phương thức authentication được hỗ trợ:</p>
+
+<table>
+<tr><th>Phương thức</th><th>Cách dùng</th><th>Đặc điểm</th></tr>
+<tr><td><strong>OAuth</strong></td><td>Mặc định cho remote</td><td>Browser-based login, token chỉ lưu trong memory</td></tr>
+<tr><td><strong>Personal Access Token (PAT)</strong></td><td><code>GITHUB_PERSONAL_ACCESS_TOKEN</code> env var</td><td>Phù hợp cho automation, CI/CD</td></tr>
+<tr><td><strong>GitHub Enterprise</strong></td><td><code>GITHUB_HOST</code> env var</td><td>Hỗ trợ cả Server và Cloud với data residency</td></tr>
+</table>
+
+<pre><code># Dùng PAT
+export GITHUB_PERSONAL_ACCESS_TOKEN="ghp_your_token_here"
+
+# Trỏ tới GitHub Enterprise instance
+export GITHUB_HOST="github.your-company.com"</code></pre>
+
+<h2 id="toolsets">Toolsets</h2>
+
+<p>Server tổ chức functionality thành khoảng 20 toolsets. Default toolset bao gồm: <code>context</code>, <code>repos</code>, <code>issues</code>, <code>pull_requests</code>, <code>users</code>.</p>
+
+<p>Cấu hình toolsets qua environment variable hoặc CLI flag:</p>
+
+<pre><code># Chọn toolsets cụ thể
+GITHUB_TOOLSETS="repos,issues,pull_requests,actions"
+
+# Bật tất cả toolsets
+--toolsets all</code></pre>
+
+<table>
+<tr><th>Toolset</th><th>Chức năng</th></tr>
+<tr><td><code>context</code></td><td>Thông tin user và context hiện tại</td></tr>
+<tr><td><code>repos</code></td><td>Quản lý repositories, files, commits</td></tr>
+<tr><td><code>issues</code></td><td>Tạo, đọc, cập nhật issues</td></tr>
+<tr><td><code>pull_requests</code></td><td>Quản lý pull requests, reviews</td></tr>
+<tr><td><code>actions</code></td><td>GitHub Actions workflows, runs</td></tr>
+<tr><td><code>code_security</code></td><td>Code scanning alerts</td></tr>
+<tr><td><code>dependabot</code></td><td>Dependabot alerts và updates</td></tr>
+<tr><td><code>discussions</code></td><td>GitHub Discussions</td></tr>
+<tr><td><code>gists</code></td><td>GitHub Gists</td></tr>
+<tr><td><code>notifications</code></td><td>GitHub Notifications</td></tr>
+<tr><td><code>projects</code></td><td>GitHub Projects (v2)</td></tr>
+</table>
+
+<h2 id="tools">Available Tools</h2>
+
+<p>Có hơn 100 individual tools, ví dụ một số tools tiêu biểu:</p>
+
+<table>
+<tr><th>Category</th><th>Tools</th></tr>
+<tr><td>Repositories</td><td><code>get_file_contents</code>, <code>search_code</code>, <code>search_commits</code></td></tr>
+<tr><td>Issues / PRs</td><td><code>issue_read</code>, <code>issue_write</code>, <code>create_pull_request</code></td></tr>
+<tr><td>Code Security</td><td><code>list_code_scanning_alerts</code>, <code>get_dependabot_alert</code></td></tr>
+<tr><td>Actions</td><td><code>actions_get</code>, <code>actions_list</code>, <code>actions_run_trigger</code></td></tr>
+</table>
+
+<p>Dùng CLI để tìm kiếm tools theo keyword:</p>
+
+<pre><code>github-mcp-server tool-search "pull request review"</code></pre>
+
+<h2 id="config-options">Config Options</h2>
+
+<p>Các tùy chọn cấu hình quan trọng:</p>
+
+<table>
+<tr><th>Option</th><th>Loại</th><th>Mô tả</th></tr>
+<tr><td><code>--toolsets all</code></td><td>CLI flag</td><td>Bật toàn bộ functionality</td></tr>
+<tr><td><code>--insiders</code></td><td>CLI flag</td><td>Truy cập experimental features</td></tr>
+<tr><td><code>--read-only</code></td><td>CLI flag</td><td>Vô hiệu hóa write operations — an toàn hơn cho môi trường production</td></tr>
+<tr><td><code>GITHUB_HOST</code></td><td>Env var</td><td>Trỏ tới GitHub Enterprise instance</td></tr>
+<tr><td><code>GITHUB_TOOLSETS</code></td><td>Env var</td><td>Danh sách toolsets được phép, phân cách bằng dấu phẩy</td></tr>
+<tr><td><code>GITHUB_PERSONAL_ACCESS_TOKEN</code></td><td>Env var</td><td>PAT để authenticate</td></tr>
+<tr><td><code>GITHUB_OAUTH_CALLBACK_PORT</code></td><td>Env var</td><td>Port cho OAuth callback, mặc định 8085</td></tr>
+</table>
+
+<h2 id="features">Core Features</h2>
+
+<ul>
+<li><strong>Repository Management</strong> — Browse code, search files, analyze commits, hiểu project structure</li>
+<li><strong>Issue &amp; PR Automation</strong> — Tạo, cập nhật, và quản lý issues và pull requests với AI assistance</li>
+<li><strong>CI/CD Intelligence</strong> — Monitor GitHub Actions workflows, phân tích build failures, quản lý releases</li>
+<li><strong>Code Analysis</strong> — Kiểm tra security findings, review Dependabot alerts, phân tích code patterns</li>
+<li><strong>Team Collaboration</strong> — Truy cập discussions, quản lý notifications, streamline team processes</li>
+</ul>
+
+<h2 id="insiders">Insiders Mode</h2>
+
+<p>Insiders Mode cung cấp early access tới experimental tools và features chưa được release chính thức:</p>
+
+<pre><code># Bật insiders mode
+github-mcp-server --insiders</code></pre>
+
+<div class="callout callout-amber">
+<strong>Lưu ý:</strong> Insiders features là experimental — có thể thay đổi hoặc bị loại bỏ bất kỳ lúc nào. Không nên dùng trong production workflows quan trọng.
+</div>
+
+<h2 id="enterprise">Enterprise Support</h2>
+
+<p>GitHub MCP Server hỗ trợ đầy đủ GitHub Enterprise:</p>
+
+<ul>
+<li><strong>GitHub Enterprise Server (GHES)</strong> — Trỏ tới on-premise instance qua <code>GITHUB_HOST</code></li>
+<li><strong>GitHub Enterprise Cloud with Data Residency</strong> — Hỗ trợ <code>ghe.com</code> domains</li>
+</ul>
+
+<pre><code># GitHub Enterprise Server
+export GITHUB_HOST="github.your-company.com"
+
+# GitHub Enterprise Cloud với data residency
+export GITHUB_HOST="your-org.ghe.com"</code></pre>
+
+<h2 id="security">Token Security</h2>
+
+<p>GitHub repo nhấn mạnh các best practices sau khi dùng PAT:</p>
+
+<ul>
+<li>Lưu PAT trong environment variables — không hardcode vào source code</li>
+<li>Thêm file chứa token vào <code>.gitignore</code></li>
+<li>Dùng minimum required scopes: <code>repo</code>, <code>read:packages</code>, <code>read:org</code></li>
+<li>Rotate tokens định kỳ</li>
+<li>Hạn chế file permissions trên các file chứa credentials</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Anti-pattern:</strong> Không bao giờ commit PAT hoặc OAuth token vào Git history. Dùng <code>--read-only</code> flag khi chỉ cần đọc dữ liệu để giảm thiểu rủi ro nếu token bị lộ.
+</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

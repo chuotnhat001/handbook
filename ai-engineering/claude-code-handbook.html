@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Handbook - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Giới thiệu</a>
+      <a href="#problem">Vấn đề &amp; Giải pháp</a>
+      <a href="#modules">10 Tutorial Modules</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Các Tính Năng</div>
+    <div class="nav-items">
+      <a href="#slash-commands">Slash Commands</a>
+      <a href="#memory">Memory</a>
+      <a href="#skills">Skills</a>
+      <a href="#subagents">Subagents</a>
+      <a href="#hooks">Hooks</a>
+      <a href="#mcp">MCP Protocol</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính Năng Nâng Cao</div>
+    <div class="nav-items">
+      <a href="#plugins">Plugins</a>
+      <a href="#checkpoints">Checkpoints</a>
+      <a href="#advanced">Advanced Features</a>
+      <a href="#cli">CLI Reference</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Workflows &amp; Cài Đặt</div>
+    <div class="nav-items">
+      <a href="#workflows">Real-World Workflows</a>
+      <a href="#install">Cài Đặt Nhanh</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Claude Code Handbook</h1>
+<p class="subtitle">Hướng dẫn toàn diện từ cơ bản đến nâng cao — từ Slash Commands đến orchestrating agents, hooks, skills và MCP servers</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/luongnv89/claude-howto" target="_blank">github.com/luongnv89/claude-howto</a> — MIT License, v2.1.160 (June 2026), 38.8k stars</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Tài liệu chính thức của Claude Code mô tả từng tính năng riêng lẻ nhưng không chỉ ra cách kết hợp chúng thành workflows thực tế. Hướng dẫn này lấp đầy khoảng trống đó bằng các visual tutorials, production-ready templates, và learning path có cấu trúc từ beginner đến advanced.
+</div>
+
+<p>Claude Code Handbook là hướng dẫn có cấu trúc, example-driven để làm chủ Claude Code. Được tổ chức thành 10 modules với tổng thời gian học 11-13 giờ, tương thích với Claude Sonnet 4.6, Opus 4.8, và Haiku 4.5.</p>
+
+<h2 id="problem">Vấn đề &amp; Giải pháp</h2>
+
+<p>Ba khoảng trống mà tài liệu chính thức chưa giải quyết được:</p>
+<ul>
+<li>Tài liệu mô tả tính năng nhưng không chỉ cách kết hợp chúng thành workflows</li>
+<li>Không có learning path rõ ràng từ beginner đến advanced</li>
+<li>Các ví dụ quá cơ bản, chưa đủ cho production use</li>
+</ul>
+
+<p>Handbook cung cấp: structured tutorials với Mermaid diagrams, copy-paste configurations, self-assessment tools, và guided progression.</p>
+
+<h2 id="modules">10 Tutorial Modules</h2>
+
+<table>
+<tr><th>#</th><th>Module</th><th>Cấp độ</th><th>Thời gian</th></tr>
+<tr><td>1</td><td>Slash Commands</td><td>Beginner</td><td>30 phút</td></tr>
+<tr><td>2</td><td>Memory</td><td>Beginner+</td><td>45 phút</td></tr>
+<tr><td>3</td><td>Checkpoints</td><td>Intermediate</td><td>45 phút</td></tr>
+<tr><td>4</td><td>CLI Basics</td><td>Beginner+</td><td>30 phút</td></tr>
+<tr><td>5</td><td>Skills</td><td>Intermediate</td><td>1 giờ</td></tr>
+<tr><td>6</td><td>Hooks</td><td>Intermediate</td><td>1 giờ</td></tr>
+<tr><td>7</td><td>MCP Protocol</td><td>Intermediate+</td><td>1 giờ</td></tr>
+<tr><td>8</td><td>Subagents</td><td>Intermediate+</td><td>1.5 giờ</td></tr>
+<tr><td>9</td><td>Advanced Features</td><td>Advanced</td><td>2-3 giờ</td></tr>
+<tr><td>10</td><td>Plugins</td><td>Advanced</td><td>2 giờ</td></tr>
+</table>
+
+<p><strong>Tổng thời gian theo cấp độ:</strong> Beginner ~2.5h · Intermediate ~3.5h · Advanced ~5h · Full path 11-13h</p>
+
+<h2 id="slash-commands">Module 1: Slash Commands</h2>
+
+<p>User-invoked shortcuts được lưu dưới dạng Markdown files trong <code>.claude/commands/</code>. Người dùng gọi thủ công khi cần.</p>
+
+<ul>
+<li>Mỗi command là một file <code>.md</code> trong <code>.claude/commands/</code></li>
+<li>Ví dụ: <code>optimize.md</code>, <code>pr.md</code>, <code>generate-api-docs.md</code></li>
+<li>Gọi bằng cú pháp <code>/tên-file</code> trong Claude Code</li>
+</ul>
+
+<pre><code># Cài đặt slash commands từ repo
+cp 01-slash-commands/*.md .claude/commands/</code></pre>
+
+<h2 id="memory">Module 2: Memory</h2>
+
+<p>Persistent context duy trì thông tin xuyên suốt các sessions thông qua file <code>CLAUDE.md</code>.</p>
+
+<ul>
+<li><strong>Project-level</strong> — <code>./CLAUDE.md</code> trong thư mục project</li>
+<li><strong>Directory-level</strong> — <code>CLAUDE.md</code> trong từng subdirectory</li>
+<li><strong>Personal-level</strong> — <code>~/.claude/CLAUDE.md</code> cho preferences cá nhân</li>
+</ul>
+
+<pre><code># Cài đặt project memory
+cp 02-memory/project-CLAUDE.md ./CLAUDE.md</code></pre>
+
+<div class="callout callout-green">
+<strong>Best practice:</strong> Ghi lại trong CLAUDE.md: project context, coding conventions, thông tin team, và các quyết định kiến trúc quan trọng. Đây là "bộ nhớ dài hạn" của Claude Code cho project.
+</div>
+
+<h2 id="skills">Module 5: Skills</h2>
+
+<p>Reusable, auto-invoked capabilities — khác với slash commands ở chỗ Skills được Claude tự động gọi khi phù hợp, không cần người dùng gọi thủ công.</p>
+
+<ul>
+<li>Lưu tại <code>~/.claude/skills/</code></li>
+<li>Mỗi skill có instructions và scripts đi kèm</li>
+<li>Ví dụ: <code>code-review-specialist</code> — tự động kích hoạt khi Claude review code</li>
+</ul>
+
+<pre><code># Cài đặt skill
+cp -r 03-skills/code-review-specialist ~/.claude/skills/</code></pre>
+
+<h2 id="subagents">Module 8: Subagents</h2>
+
+<p>Specialized AI assistants với isolated contexts, mỗi subagent chuyên về một nhiệm vụ cụ thể.</p>
+
+<ul>
+<li>Lưu tại <code>.claude/agents/</code></li>
+<li>Mỗi agent có context riêng biệt, không bị ảnh hưởng bởi conversation chính</li>
+<li>Use cases: code review, testing, documentation, security analysis</li>
+<li>Hỗ trợ parallel execution — nhiều agents chạy đồng thời</li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>Tư duy subagents:</strong> Thay vì để một Claude làm tất cả, decompose công việc thành các specialists. Mỗi subagent nhận task, thực hiện trong isolated context, và trả kết quả về orchestrator.
+</div>
+
+<h2 id="hooks">Module 6: Hooks</h2>
+
+<p>Event-driven shell commands tự động chạy khi các sự kiện nhất định xảy ra trong Claude Code. Tổng cộng có 29 events trên 5 hook types.</p>
+
+<table>
+<tr><th>Hook Type</th><th>Khi nào kích hoạt</th></tr>
+<tr><td><code>PreToolUse</code></td><td>Trước khi Claude dùng một tool</td></tr>
+<tr><td><code>PostToolUse</code></td><td>Sau khi Claude dùng một tool</td></tr>
+<tr><td><code>SessionStart</code></td><td>Khi bắt đầu session mới</td></tr>
+<tr><td><code>TaskCompleted</code></td><td>Khi task hoàn thành</td></tr>
+<tr><td>(và 1 type khác)</td><td>Xem tài liệu hook types đầy đủ</td></tr>
+</table>
+
+<ul>
+<li>Hook scripts lưu tại <code>~/.claude/hooks/</code></li>
+<li>Dùng để: auto-format code, run linters, log actions, trigger CI/CD</li>
+</ul>
+
+<h2 id="mcp">Module 7: MCP Protocol</h2>
+
+<p>Model Context Protocol (MCP) cho phép Claude Code kết nối với external tools và services.</p>
+
+<ul>
+<li>Truy cập GitHub, databases, filesystems qua giao thức chuẩn</li>
+<li>Cấu hình qua environment variables và CLI setup</li>
+<li>Cho phép Claude đọc/ghi files ngoài project, query databases, gọi APIs bên ngoài</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Lưu ý bảo mật:</strong> MCP servers chạy với permissions của user. Chỉ cài đặt MCP servers từ nguồn đáng tin cậy và kiểm tra kỹ permissions trước khi enable.
+</div>
+
+<h2 id="plugins">Module 10: Plugins</h2>
+
+<p>Bundled feature collections — đóng gói nhiều components lại với nhau thành một gói có thể cài đặt một lần.</p>
+
+<ul>
+<li>Một plugin có thể bao gồm: commands, agents, MCP configs, và hooks</li>
+<li>Ví dụ: <code>pr-review</code> plugin, <code>devops-automation</code> plugin</li>
+<li>Cài đặt bằng <code>/plugin install</code> command</li>
+</ul>
+
+<h2 id="checkpoints">Module 3: Checkpoints</h2>
+
+<p>Session snapshots cho phép lưu trạng thái hiện tại và rewind về điểm trước đó.</p>
+
+<ul>
+<li>Tạo checkpoint tại bất kỳ thời điểm nào trong session</li>
+<li>Rewind để thử các cách tiếp cận khác nhau từ cùng một điểm</li>
+<li>Hữu ích khi thử nghiệm nhiều solutions cho cùng một vấn đề</li>
+</ul>
+
+<h2 id="advanced">Module 9: Advanced Features</h2>
+
+<p>Các tính năng nâng cao dành cho power users:</p>
+
+<table>
+<tr><th>Tính năng</th><th>Mô tả</th></tr>
+<tr><td><strong>Planning Mode</strong></td><td>Claude lập kế hoạch chi tiết trước khi thực thi, giảm sai sót</td></tr>
+<tr><td><strong>Extended Thinking</strong></td><td>Claude dành thêm thời gian suy nghĩ cho các vấn đề phức tạp</td></tr>
+<tr><td><strong>Background Tasks</strong></td><td>Chạy tasks ở background trong khi tiếp tục làm việc khác</td></tr>
+<tr><td><strong>Permission Modes</strong></td><td>Kiểm soát mức độ autonomy của Claude (read-only, write, execute...)</td></tr>
+<tr><td><strong>Headless Mode</strong></td><td>Chạy Claude Code không có UI, phù hợp cho CI/CD automation</td></tr>
+<tr><td><strong>Session Management</strong></td><td>Quản lý và resume sessions, chia sẻ context giữa các instances</td></tr>
+</table>
+
+<h2 id="cli">Module 4: CLI Reference</h2>
+
+<p>Các terminal commands cho Claude Code:</p>
+
+<ul>
+<li><strong>Interactive mode</strong> — Giao diện tương tác mặc định</li>
+<li><strong>Print mode</strong> — Output trực tiếp ra terminal, không cần interaction</li>
+<li><strong>File processing</strong> — Xử lý files như input</li>
+<li><strong>JSON output</strong> — Structured output cho programmatic use</li>
+<li><strong>Session resumption</strong> — Tiếp tục session đã dừng trước đó</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>CI/CD Integration:</strong> CLI Reference module đặc biệt hữu ích cho việc tích hợp Claude Code vào CI/CD pipelines, sử dụng headless mode và JSON output để automate code review, documentation generation, và security scanning.
+</div>
+
+<h2 id="workflows">Real-World Workflows</h2>
+
+<p>Handbook trình bày cách kết hợp các tính năng để giải quyết các use cases thực tế:</p>
+
+<h3>Automated Code Review</h3>
+<div class="flow">
+  <span class="flow-step">Slash Commands</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Subagents</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Memory</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">MCP</span>
+</div>
+<p>Trigger review qua slash command, subagent chuyên biệt thực hiện, memory giữ context về coding standards, MCP truy cập GitHub để tạo PR comments.</p>
+
+<h3>Documentation Generation</h3>
+<div class="flow">
+  <span class="flow-step">Skills</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Subagents</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Memory</span>
+</div>
+<p>Skills tự động nhận diện code cần document, subagents generate docs cho từng component, memory duy trì style guide nhất quán.</p>
+
+<h3>DevOps Deployment</h3>
+<div class="flow">
+  <span class="flow-step">Plugins</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">MCP</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Hooks</span>
+</div>
+<p>Plugin cung cấp deployment commands, MCP kết nối cloud services, hooks trigger notifications và rollback khi cần.</p>
+
+<h3>Các workflows khác được đề cập</h3>
+<ul>
+<li>Team onboarding automation</li>
+<li>Security audit pipeline</li>
+<li>Complex refactoring với checkpoints</li>
+</ul>
+
+<h2 id="install">Cài Đặt Nhanh</h2>
+
+<h3>Quick Setup (15 phút)</h3>
+<pre><code>git clone https://github.com/luongnv89/claude-howto.git
+cp 01-slash-commands/*.md .claude/commands/
+cp 02-memory/project-CLAUDE.md ./CLAUDE.md</code></pre>
+
+<h3>Full Setup</h3>
+<pre><code># Cài đặt skills
+cp -r 03-skills/code-review-specialist ~/.claude/skills/
+
+# Cài đặt subagents
+cp -r subagents/.claude/agents/ .claude/agents/
+
+# Cài đặt hooks
+cp hooks/*.sh ~/.claude/hooks/</code></pre>
+
+<div class="callout callout-amber">
+<strong>Phiên bản tương thích:</strong> v2.1.160 (June 2026). Tương thích với Claude Sonnet 4.6, Opus 4.8, Haiku 4.5. Repo được duy trì active theo từng release của Claude Code.
+</div>
+
+<h3>Tài nguyên bổ sung</h3>
+<ul>
+<li>Testing infrastructure: pytest, Ruff, Bandit, mypy</li>
+<li>EPUB generation cho offline reading</li>
+<li>Multi-language support: Vietnamese, Chinese, Ukrainian, Japanese</li>
+<li>Interactive quizzes và self-assessment tools</li>
+<li>Feature catalog với installation commands đầy đủ</li>
+</ul>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review 7-9 - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+.key-points{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Ôn tập</div>
+    <div class="nav-items">
+      <a href="./review-03.html" class="active">Review 7-9</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Bài học liên quan</div>
+    <div class="nav-items">
+      <a href="./07-future.html">07. Future</a>
+      <a href="./08-present-perfect.html">08. Present Perfect</a>
+      <a href="./09-modal-verbs.html">09. Modal Verbs</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Review 3
+  </div>
+
+  <h1>Review 7-9</h1>
+  <p class="subtitle">Ôn tập tổng hợp — Future, Present Perfect, Modal Verbs</p>
+
+  <h2>Key Points to Remember</h2>
+
+  <div class="key-points">
+    <h3>Future (Tương lai)</h3>
+    <ul>
+      <li><strong>Will + V:</strong> quyết định tại chỗ, dự đoán không có bằng chứng, lời hứa, đề nghị.</li>
+      <li><strong>Be going to + V:</strong> kế hoạch đã quyết định trước, dự đoán có bằng chứng rõ ràng.</li>
+      <li>"Look at those clouds! It <strong>is going to</strong> rain." (có bằng chứng) vs "I think it <strong>will</strong> rain tomorrow." (dự đoán cá nhân)</li>
+      <li>Phủ định: won't + V / am not/isn't/aren't going to + V.</li>
+    </ul>
+  </div>
+
+  <div class="key-points">
+    <h3>Present Perfect (Hiện tại hoàn thành)</h3>
+    <ul>
+      <li>Công thức: S + <strong>have/has + V3 (past participle)</strong>.</li>
+      <li>Dùng <strong>since</strong> + mốc thời gian (since 2020, since Monday). Dùng <strong>for</strong> + khoảng thời gian (for 3 years, for a long time).</li>
+      <li><strong>Already</strong> (đã rồi, khẳng định), <strong>yet</strong> (chưa, phủ định/hỏi), <strong>just</strong> (vừa mới).</li>
+      <li>Khác Past Simple: Present Perfect không có thời gian cụ thể. "I <strong>have visited</strong> Paris." vs "I <strong>visited</strong> Paris in 2019."</li>
+    </ul>
+  </div>
+
+  <div class="key-points">
+    <h3>Modal Verbs (Động từ khiếm khuyết)</h3>
+    <ul>
+      <li><strong>Can/Could:</strong> khả năng, xin phép. <strong>Must:</strong> bắt buộc, suy luận chắc chắn.</li>
+      <li><strong>Should:</strong> lời khuyên. <strong>May/Might:</strong> khả năng xảy ra (may > might).</li>
+      <li>Modal + V nguyên mẫu (không chia, không thêm "to"): She <strong>can swim</strong>. (không phải "can swims" hay "can to swim")</li>
+      <li>Phủ định: can't, mustn't, shouldn't, may not, might not.</li>
+    </ul>
+  </div>
+
+  <h2>Part A: Will vs Going to (5 câu)</h2>
+  <p><em>Chọn "will" hoặc "be going to" phù hợp:</em></p>
+
+  <div class="exercise">
+    <p>1. I've already booked the tickets. We ___ (visit) Paris next month.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ are going to visit (kế hoạch đã quyết định trước — đã đặt vé)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. "The phone is ringing!" — "I ___ (get) it."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ will get (quyết định tại chỗ, ngay lúc nói)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. Look at that car! It ___ (crash) into the wall!</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ is going to crash (dự đoán có bằng chứng — nhìn thấy xe đang lao tới)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. I think Brazil ___ (win) the World Cup.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ will win (dự đoán cá nhân, ý kiến — "I think")</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. She ___ (start) a new job next Monday. She told me yesterday.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ is going to start (kế hoạch đã quyết định trước — đã nói từ hôm qua)</div>
+  </div>
+
+  <h2>Part B: Present Perfect (5 câu)</h2>
+  <p><em>Chia động từ ở Present Perfect, chọn since/for, hoặc phân biệt với Past Simple:</em></p>
+
+  <div class="exercise">
+    <p>6. I ___ (live) in Hanoi ___ 2015.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ have lived ... since (since + mốc thời gian cụ thể "2015")</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. She ___ (already/finish) her homework.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ has already finished (have/has + already + V3)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. They ___ (not/see) that movie ___.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ haven't seen ... yet (haven't + V3 + yet — phủ định dùng "yet")</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. Chọn đúng: "I ___ (have been / was) to Japan twice." hay "I ___ (have been / was) to Japan in 2019."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ "have been" (không có thời gian cụ thể) / "was" hoặc "went" (có thời gian cụ thể "in 2019" → Past Simple)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. We ___ (know) each other ___ ten years.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ have known ... for (for + khoảng thời gian "ten years")</div>
+  </div>
+
+  <h2>Part C: Modal Verbs (5 câu)</h2>
+  <p><em>Chọn modal verb phù hợp:</em></p>
+
+  <div class="exercise">
+    <p>11. You look tired. You ___ go to bed early tonight. (lời khuyên)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ should (lời khuyên = should)</div>
+  </div>
+
+  <div class="exercise">
+    <p>12. ___ I borrow your pen, please? (xin phép lịch sự)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Could / Can / May (xin phép — "Could" lịch sự nhất, "May" trang trọng)</div>
+  </div>
+
+  <div class="exercise">
+    <p>13. Students ___ wear uniforms. It's the school rule. (bắt buộc)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ must (quy định bắt buộc = must)</div>
+  </div>
+
+  <div class="exercise">
+    <p>14. She ___ be at home. I'm not sure. (khả năng không chắc chắn)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ might / may (khả năng không chắc chắn — "I'm not sure")</div>
+  </div>
+
+  <div class="exercise">
+    <p>15. He ___ speak three languages when he was ten. (khả năng trong quá khứ)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ could (khả năng trong quá khứ = could)</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

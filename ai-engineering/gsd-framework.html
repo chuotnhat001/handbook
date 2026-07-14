@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSD Framework - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">GSD là gì</a>
+      <a href="#problem">Vấn đề Context Rot</a>
+      <a href="#solution">Giải pháp</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Phase Loop</div>
+    <div class="nav-items">
+      <a href="#five-phases">Five-Phase Loop</a>
+      <a href="#discuss">1. Discuss</a>
+      <a href="#plan">2. Plan</a>
+      <a href="#execute">3. Execute</a>
+      <a href="#verify">4. Verify</a>
+      <a href="#ship">5. Ship</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Artifacts</div>
+    <div class="nav-items">
+      <a href="#artifacts">State Artifacts</a>
+      <a href="#state-md">STATE.md</a>
+      <a href="#context-md">CONTEXT.md</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài Đặt & Sử Dụng</div>
+    <div class="nav-items">
+      <a href="#install">Installation</a>
+      <a href="#platforms">Supported Platforms</a>
+      <a href="#commands">Commands</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">GSD Framework</h1>
+<p class="subtitle">Git. Ship. Done — Framework lightweight quản lý context cho AI-driven development workflows</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/open-gsd/gsd-core" target="_blank">github.com/open-gsd/gsd-core</a> — MIT License, 5.3k stars</span>
+</div>
+
+<p>GSD Core là framework mã nguồn mở được thiết kế để nâng cao AI-driven development workflows trên nhiều nền tảng khác nhau — Claude Code, Gemini CLI, Copilot, Cursor, Windsurf và nhiều công cụ khác. Framework phân phối công việc sang các subagent có fresh context để duy trì chất lượng đầu ra ổn định xuyên suốt cả session làm việc dài.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Thay vì nhét toàn bộ công việc vào một AI session và chịu đựng "context rot", GSD chia nhỏ công việc thành các milestone độc lập, mỗi executor nhận ~200k token fresh context để thực thi song song — chất lượng được duy trì ổn định từ đầu đến cuối project.
+</div>
+
+<h2 id="problem">Vấn đề: Context Rot</h2>
+
+<p>Khi làm việc với AI coding assistant trong session dài, một vấn đề phổ biến xảy ra: chất lượng output giảm dần theo thời gian. Hiện tượng này được gọi là <strong>context rot</strong> — sự suy giảm chất lượng tích lũy khi AI lấp đầy context window của mình.</p>
+
+<p>Biểu hiện của context rot:</p>
+<ul>
+<li>AI bắt đầu "quên" các quyết định đã đưa ra trước đó trong session</li>
+<li>Output không còn nhất quán với các phần đã viết trước</li>
+<li>Chất lượng code giảm dần ở giai đoạn cuối của một session dài</li>
+<li>AI phải "tóm tắt lại" context, mất đi nhiều chi tiết quan trọng</li>
+</ul>
+
+<h2 id="solution">Giải pháp của GSD</h2>
+
+<p>GSD Core giải quyết context rot bằng hai cơ chế:</p>
+
+<ol>
+<li><strong>Structured artifacts</strong> — Lưu trữ quyết định, trạng thái và context dưới dạng file (<code>STATE.md</code>, <code>CONTEXT.md</code>) để persist thông tin qua các session thay vì phụ thuộc vào AI memory</li>
+<li><strong>Fresh-context subagents</strong> — Phân phối công việc thực thi sang các subagent riêng biệt, mỗi agent nhận ~200k token context sạch, không bị "nhiễm" bởi lịch sử session</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Kết quả:</strong> Session chính (orchestrator) giữ context gọn nhẹ bằng cách delegate công việc nặng sang subagents. Subagents hoạt động với fresh context, cho ra output chất lượng cao nhất quán dù project có phức tạp đến đâu.
+</div>
+
+<h2 id="five-phases">Five-Phase Loop</h2>
+
+<p>GSD Core tổ chức công việc theo vòng lặp 5 phase, lặp lại cho mỗi milestone:</p>
+
+<div class="flow">
+  <span class="flow-step">1. Discuss</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">2. Plan</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">3. Execute</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">4. Verify</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">5. Ship</span>
+</div>
+
+<p>Mỗi milestone (tính năng lớn, module, sprint) đi qua đủ 5 phase này trước khi kết thúc. Sau đó vòng lặp bắt đầu lại cho milestone tiếp theo.</p>
+
+<h2 id="discuss">Phase 1: Discuss</h2>
+
+<p>Ghi lại các quyết định implementation trước khi bắt đầu lập kế hoạch. Mục tiêu là capture <em>tại sao</em> một approach được chọn, không chỉ là <em>cái gì</em> sẽ build.</p>
+
+<ul>
+<li>Làm rõ yêu cầu và constraints</li>
+<li>Xác định các trade-off và quyết định architecture</li>
+<li>Document vào <code>CONTEXT.md</code> để tham chiếu ở các phase sau</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Tại sao cần Discuss trước Plan:</strong> Nếu bỏ qua phase này, các quyết định quan trọng chỉ tồn tại trong context window. Khi bắt đầu session mới hoặc spawn subagent mới, những quyết định đó sẽ mất — gây ra inconsistency trong codebase.
+</div>
+
+<h2 id="plan">Phase 2: Plan</h2>
+
+<p>Research và decompose công việc sao cho phù hợp với fresh context window của executor agents.</p>
+
+<ul>
+<li>Nghiên cứu kỹ thuật, thư viện, API cần dùng</li>
+<li>Phân rã thành các task cụ thể, có thể thực thi độc lập</li>
+<li>Ước lượng scope của từng task để phù hợp với context window</li>
+<li>Ghi kết quả vào <code>PLAN.md</code></li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Nguyên tắc Plan:</strong> Mỗi task trong plan phải đủ nhỏ để một executor agent có thể hoàn thành trong một lần với ~200k token context — không cần gọi lại hay tham chiếu lịch sử dài.
+</div>
+
+<h2 id="execute">Phase 3: Execute</h2>
+
+<p>Chạy các task song song. Mỗi executor agent nhận fresh context (~200k token sạch) và chỉ cần biết đúng phần task được giao.</p>
+
+<ul>
+<li>Dispatch nhiều subagents chạy song song cho các task độc lập</li>
+<li>Mỗi executor nhận context tối thiểu cần thiết: task description + relevant code + plan</li>
+<li>Không accumulate lịch sử session trong executor</li>
+</ul>
+
+<table>
+<tr><th>Sequential (truyền thống)</th><th>Parallel với GSD</th></tr>
+<tr><td>Một AI session xử lý hết — context tích lũy</td><td>Nhiều subagent chạy song song — mỗi agent fresh</td></tr>
+<tr><td>Chất lượng giảm dần cuối session</td><td>Chất lượng đồng đều ở tất cả tasks</td></tr>
+<tr><td>Không thể scale</td><td>Scale tuyến tính theo số lượng task</td></tr>
+</table>
+
+<h2 id="verify">Phase 4: Verify</h2>
+
+<p>Validate code đã build và diagnose/fix issues trước khi hoàn thành phase. Đây là gate quan trọng — không được skip.</p>
+
+<ul>
+<li>Review output của các executor agents</li>
+<li>Chạy tests, kiểm tra integration</li>
+<li>Diagnose lỗi và fix trong phase này (không carry sang phase sau)</li>
+<li>Cập nhật <code>STATE.md</code> với trạng thái hiện tại</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Anti-pattern:</strong> Chuyển sang phase Ship khi Verify chưa pass. GSD yêu cầu code phải thực sự hoạt động trước khi tạo PR — không ship code "probably works".
+</div>
+
+<h2 id="ship">Phase 5: Ship</h2>
+
+<p>Tạo PR và chuyển sang milestone tiếp theo.</p>
+
+<ul>
+<li>Tạo Pull Request với mô tả đầy đủ</li>
+<li>Cập nhật <code>STATE.md</code> — đánh dấu milestone hoàn thành</li>
+<li>Reset context cho milestone tiếp theo</li>
+<li>Vòng lặp bắt đầu lại từ Discuss cho milestone mới</li>
+</ul>
+
+<h2 id="artifacts">State Artifacts</h2>
+
+<p>GSD duy trì trạng thái project qua các file artifacts, giải quyết vấn đề mất context giữa các session:</p>
+
+<table>
+<tr><th>Artifact</th><th>Mục đích</th><th>Ai cập nhật</th></tr>
+<tr><td><code>STATE.md</code></td><td>Trạng thái hiện tại của project — phase nào, milestone nào, blockers</td><td>Cập nhật sau mỗi phase</td></tr>
+<tr><td><code>CONTEXT.md</code></td><td>Quyết định, constraints, assumptions đã được document</td><td>Cập nhật trong Discuss phase</td></tr>
+<tr><td><code>PLAN.md</code></td><td>Task breakdown cho milestone hiện tại</td><td>Tạo trong Plan phase</td></tr>
+</table>
+
+<h2 id="state-md">STATE.md</h2>
+
+<p>File trung tâm để resume công việc sau khi context bị mất (restart session, switch agent). Chứa:</p>
+
+<ul>
+<li>Milestone hiện tại đang làm</li>
+<li>Phase hiện tại trong five-phase loop</li>
+<li>Tasks đã hoàn thành / đang làm / chưa làm</li>
+<li>Blockers hoặc vấn đề cần giải quyết</li>
+<li>Quyết định quan trọng đã được đưa ra</li>
+</ul>
+
+<blockquote>Khi bắt đầu một session mới, AI đọc STATE.md trước — đây là "bản đồ" để biết mình đang ở đâu trong project mà không cần phải recap toàn bộ lịch sử.</blockquote>
+
+<h2 id="context-md">CONTEXT.md</h2>
+
+<p>Lưu trữ các quyết định và context quan trọng được document trong Discuss phase:</p>
+
+<ul>
+<li>Lý do chọn architecture hiện tại</li>
+<li>Constraints và assumptions của project</li>
+<li>Các approach đã bị loại bỏ và lý do</li>
+<li>Dependencies và integration requirements</li>
+</ul>
+
+<h2 id="install">Installation</h2>
+
+<h3>Cài đặt nhanh (npm)</h3>
+
+<pre><code>npx @opengsd/gsd-core@latest</code><button class="copy-btn">Copy</button></pre>
+
+<p>Installer sẽ hỏi về runtime và installation preference (global hoặc local). Với môi trường không dùng Node.js, GSD cung cấp hướng dẫn cài đặt riêng cho từng runtime.</p>
+
+<h3>Khởi tạo project mới</h3>
+
+<pre><code>/gsd-new-project</code><button class="copy-btn">Copy</button></pre>
+
+<p>Command này khởi tạo cấu trúc artifacts và hướng dẫn bắt đầu five-phase loop cho project mới.</p>
+
+<div class="callout callout-amber">
+<strong>Lưu ý môi trường:</strong> GSD được thiết kế để hoạt động với nhiều AI runtime khác nhau. Installer tự detect runtime và cung cấp hướng dẫn phù hợp. Với non-Node.js environments, xem runtime-specific installation guides trên repo.
+</div>
+
+<h2 id="platforms">Supported Platforms</h2>
+
+<p>GSD Core hoạt động với hầu hết AI coding tools hiện tại:</p>
+
+<table>
+<tr><th>Platform</th><th>Tools</th></tr>
+<tr><td>CLI-based</td><td>Claude Code, Gemini CLI, Codex, OpenCode, Kimi CLI</td></tr>
+<tr><td>IDE-based</td><td>GitHub Copilot, Cursor, Windsurf, Kilo, Kiro</td></tr>
+</table>
+
+<p>Framework không tied với bất kỳ AI provider cụ thể nào — cùng một workflow và artifacts hoạt động đồng nhất trên tất cả các tools trên.</p>
+
+<h2 id="commands">Commands</h2>
+
+<table>
+<tr><th>Command</th><th>Mục đích</th><th>Phase</th></tr>
+<tr><td><code>/gsd-new-project</code></td><td>Khởi tạo project mới với GSD structure</td><td>Setup</td></tr>
+<tr><td><code>/gsd-discuss-phase</code></td><td>Bắt đầu Discuss phase — thu thập context và quyết định</td><td>Discuss</td></tr>
+<tr><td><code>/gsd-plan-phase</code></td><td>Bắt đầu Plan phase — research và decompose tasks</td><td>Plan</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Tài liệu đầy đủ về commands:</strong> Chi tiết về tất cả commands, flags, và examples có trong <code>COMMANDS.md</code> trên repository. Xem thêm <code>CONFIGURATION.md</code> cho full config schema, model profiles, và git branching strategies.
+</div>
+
+<h3>Sử dụng với Claude Code</h3>
+
+<pre><code># Cài đặt
+npx @opengsd/gsd-core@latest
+
+# Khởi tạo project
+/gsd-new-project
+
+# Bắt đầu discuss cho milestone đầu tiên
+/gsd-discuss-phase
+
+# Sau khi có đủ context, chuyển sang plan
+/gsd-plan-phase</code><button class="copy-btn">Copy</button></pre>
+
+<h3>Onboarding existing codebase</h3>
+
+<p>GSD cũng hỗ trợ onboarding các codebase hiện có — không chỉ dành cho project mới. Quy trình tương tự: đọc codebase hiện tại trong Discuss phase để document existing architecture và decisions vào <code>CONTEXT.md</code>, sau đó proceed bình thường với five-phase loop.</p>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

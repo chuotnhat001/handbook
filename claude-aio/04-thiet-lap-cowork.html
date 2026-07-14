@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiết Lập Claude Cowork - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Giới thiệu</a>
+      <a href="#folder-structure">Cấu trúc thư mục</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cấu Hình</div>
+    <div class="nav-items">
+      <a href="#about-me">Ba file ABOUT ME</a>
+      <a href="#global-instructions">Global Instructions</a>
+      <a href="#templates">Templates</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Công Cụ & Hiệu Năng</div>
+    <div class="nav-items">
+      <a href="#wispr-flow">Wispr Flow</a>
+      <a href="#tiet-kiem-credit">Tiết kiệm Credit</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Bắt Đầu</div>
+    <div class="nav-items">
+      <a href="#setup-20-min">Thiết lập 20 phút</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Thiết Lập Claude Cowork Đúng Cách</h1>
+<p class="subtitle">Hướng dẫn thực chiến từ Phan Đồng Giang — cấu trúc folder, file context, Global Instructions, Wispr Flow và 6 cách tiết kiệm token</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://phandonggiang.com/khoa-hoc-ai/thiet-lap-claude-cowork" target="_blank">phandonggiang.com</a> — Khóa học AI thực chiến</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Claude Cowork hoạt động tốt nhất khi bạn đầu tư 20 phút thiết lập đúng ngay từ đầu — ba file context gọn (dưới 6.000 token), Global Instructions rõ ràng, và dùng giọng nói thay vì gõ để giữ ngữ cảnh tự nhiên.
+</div>
+
+<h2 id="folder-structure">Cấu trúc thư mục Cowork</h2>
+
+<p>Bộ ba thư mục chính tạo nên nền tảng làm việc với Claude Cowork:</p>
+
+<table>
+<tr><th>Thư mục</th><th>Nội dung</th><th>Mục đích</th></tr>
+<tr><td><code>ABOUT ME/</code></td><td>3 file mô tả về người dùng</td><td>Claude đọc trước mỗi tác vụ để hiểu ngữ cảnh</td></tr>
+<tr><td><code>OUTPUTS/</code></td><td>Kết quả công việc của Claude</td><td>Lưu trữ theo từng project con</td></tr>
+<tr><td><code>TEMPLATES/</code></td><td>Sản phẩm tốt nhất đã được lược bỏ nội dung cụ thể</td><td>Tái sử dụng khung sườn cho lần sau</td></tr>
+</table>
+
+<h2 id="about-me">Ba file cốt lõi trong ABOUT ME</h2>
+
+<p>Đây là phần quan trọng nhất. Ba file này giúp Claude hiểu bạn là ai và làm việc theo đúng phong cách của bạn.</p>
+
+<h3>File 1: about-me.md</h3>
+<p>Mô tả bạn là ai, cách bạn suy nghĩ, phong cách viết yêu thích. Giữ dưới 2.000 từ để tiết kiệm context window. Nội dung cần bao gồm:</p>
+<ul>
+  <li>Vai trò, công ty, ngành nghề</li>
+  <li>Công cụ dùng hằng ngày, quy trình làm việc</li>
+  <li>Tiêu chí chất lượng công việc</li>
+  <li>Thói quen hoặc lĩnh vực thường sai</li>
+  <li>Nguyên tắc cốt lõi bạn tuân theo</li>
+  <li>Quan điểm cá nhân khác biệt</li>
+</ul>
+
+<h3>File 2: anti-ai-writing-style.md</h3>
+<p>Liệt kê các từ, cấu trúc câu bạn ghét để Claude tránh dùng. Bao gồm:</p>
+<ul>
+  <li>Danh sách từ bị cấm — ví dụ: hơn 80 từ kiểu "delve, harness, tapestry"</li>
+  <li>Quy tắc định dạng ưa thích</li>
+  <li>Các cấu trúc câu nghe giả tạo hoặc quá "AI"</li>
+</ul>
+
+<h3>File 3: my-company.md</h3>
+<p>Dưới 1.000 từ. Chỉ ba mục:</p>
+<ul>
+  <li>Mục tiêu (của công ty hoặc dự án)</li>
+  <li>Đang tập trung vào gì trong quý này</li>
+  <li>Đang từ chối những gì</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Giới hạn tổng cộng:</strong> Ba file cộng lại không nên vượt quá 6.000 token. Claude đọc toàn bộ trước mỗi tác vụ — file quá lớn đồng nghĩa với hàng nghìn token lãng phí mỗi lần.
+</div>
+
+<h2 id="global-instructions">Thiết lập Global Instructions</h2>
+
+<blockquote>Đây giống như một prompt cố định mà Claude Cowork luôn đọc trước khi làm bất cứ việc gì.</blockquote>
+
+<p>Truy cập qua: Settings → Cowork → Edit Global Instructions. Các nguyên tắc cần cấu hình:</p>
+
+<ul>
+  <li>Claude phải đọc hết các file trong <code>ABOUT ME/</code> trước mỗi tác vụ</li>
+  <li>Không bao giờ đọc <code>OUTPUTS/</code> hay <code>TEMPLATES/</code> trừ khi được chỉ định rõ</li>
+  <li>Lưu mọi sản phẩm vào <code>OUTPUTS/</code> trong folder con theo tên project</li>
+  <li>Dùng <code>AskUserQuestion</code> thay vì tự đoán khi thiếu thông tin</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Mẹo:</strong> Sau khi dán Global Instructions, chỉnh lại tên file cho khớp chính xác với tên folder và file bạn đã tạo trên máy.
+</div>
+
+<h2 id="templates">Cách Templates hoạt động</h2>
+
+<p>Templates giúp tái sử dụng khung sườn của những sản phẩm tốt mà không cần tạo lại từ đầu.</p>
+
+<div class="flow">
+  <span class="flow-step">Tạo sản phẩm tốt</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Yêu cầu lưu template</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Claude lược bỏ nội dung cụ thể</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Dùng lại lần sau</span>
+</div>
+
+<p>Khi Cowork tạo ra sản phẩm bạn thích, chỉ cần nói: <em>"Lưu kết quả này thành template"</em>. Claude sẽ giữ lại khung sườn và cấu trúc, loại bỏ nội dung cụ thể.</p>
+
+<p>Lần sau muốn dùng lại: <em>"Dùng template trong TEMPLATES/[tên-file]"</em>.</p>
+
+<h2 id="wispr-flow">Wispr Flow — Nói thay vì gõ</h2>
+
+<p>Wispr Flow là ứng dụng chuyển giọng nói thành văn bản trực tiếp vào bất kỳ ô nhập liệu nào — bao gồm chat với Claude.</p>
+
+<table>
+<tr><th>Cách nhập</th><th>Tốc độ</th><th>Chất lượng ngữ cảnh</th></tr>
+<tr><td>Gõ bàn phím</td><td>~60 từ/phút</td><td>Thường ngắn gọn, thiếu chi tiết</td></tr>
+<tr><td>Nói với Wispr Flow</td><td>~150 từ/phút</td><td>Tự nhiên hơn, đúng giọng của bạn hơn</td></tr>
+</table>
+
+<blockquote>"Não bạn suy nghĩ khác hẳn khi phải nói ra thành lời."</blockquote>
+
+<h3>Cài đặt Wispr Flow</h3>
+<ol>
+  <li>Vào <strong>wispr.ai</strong>, tải và cài đặt ứng dụng</li>
+  <li>Chọn phím tắt yêu thích (ví dụ: phím Shift)</li>
+  <li>Giữ phím và nói, thả ra — chữ tự động xuất hiện vào ô đang focus</li>
+</ol>
+
+<h3>Cách sử dụng hiệu quả</h3>
+<ul>
+  <li><strong>Prompt ban đầu:</strong> nói ra thay vì gõ để truyền đủ ngữ cảnh</li>
+  <li><strong>Trả lời AskUserQuestion:</strong> click lựa chọn hoặc nói thêm để bổ sung ngữ cảnh</li>
+  <li><strong>Phản hồi điều chỉnh:</strong> mô tả bằng lời thay vì tự chỉnh sửa trực tiếp</li>
+</ul>
+
+<h2 id="tiet-kiem-credit">Tiết kiệm Credit (Token)</h2>
+
+<p>Claude tính phí theo token — mỗi tin nhắn phải đọc lại toàn bộ lịch sử hội thoại. Hiểu cơ chế này giúp giảm chi phí đáng kể.</p>
+
+<div class="callout callout-amber">
+<strong>Token tích lũy nhanh hơn bạn nghĩ:</strong> 20 tin nhắn = ~105.000 token. 30 tin nhắn = ~232.000 token. Mỗi tin nhắn thêm vào buộc Claude đọc lại toàn bộ phía trên.
+</div>
+
+<h3>6 cách giảm token tiêu thụ</h3>
+
+<ol>
+  <li>
+    <strong>Restart cuộc trò chuyện thay vì gửi tin nhắn tiếp</strong><br>
+    Bấm nút restart ở vị trí cao hơn trong lịch sử thay vì tiếp tục cuộc trò chuyện dài.
+  </li>
+  <li>
+    <strong>Bắt đầu phiên mới sau ~20 tin nhắn</strong><br>
+    Yêu cầu Claude tóm tắt toàn bộ → mở phiên mới → dán tóm tắt làm tin nhắn đầu tiên.
+  </li>
+  <li>
+    <strong>Gộp nhiều việc vào một tin nhắn</strong><br>
+    3 prompt riêng = 3 lần tải ngữ cảnh. 1 prompt gộp = 1 lần tải.
+  </li>
+  <li>
+    <strong>Dùng Sonnet cho việc đơn giản</strong><br>
+    Kiểm tra ngữ pháp, brainstorm, định dạng — chi phí chỉ bằng phần nhỏ so với Opus. Để Opus + Extended Thinking cho việc phức tạp.
+  </li>
+  <li>
+    <strong>Giữ file ABOUT ME gọn nhẹ</strong><br>
+    Cowork đọc trước mỗi tác vụ. Target: dưới 6.000 token tổng cộng 3 file.
+  </li>
+  <li>
+    <strong>Dàn trải công việc trong ngày</strong><br>
+    Claude dùng khung giới hạn 5 giờ xoay vòng. Chia thành 2–3 phiên: sáng, chiều, tối. Tránh khung cao điểm (5–11h sáng giờ Thái Bình Dương).
+  </li>
+</ol>
+
+<h2 id="setup-20-min">Thiết lập trong 20 phút</h2>
+
+<p>Toàn bộ quá trình từ zero đến sẵn sàng làm việc chỉ mất 20 phút.</p>
+
+<table>
+<tr><th>Thời gian</th><th>Việc cần làm</th></tr>
+<tr><td>Phút 0–5</td><td>Tải Claude Desktop, đăng ký gói trả phí. Tạo cấu trúc: <code>ABOUT ME/</code> (3 file) + <code>OUTPUTS/</code> + <code>TEMPLATES/</code></td></tr>
+<tr><td>Phút 5–6</td><td>Dán Global Instructions vào Settings → Cowork → Edit Global Instructions. Chỉnh tên file khớp với folder.</td></tr>
+<tr><td>Phút 6–8</td><td>Vào wispr.ai, tải và cài đặt Wispr Flow. Chọn phím tắt.</td></tr>
+<tr><td>Phút 8–15</td><td>Chạy phiên làm việc đầu tiên bằng giọng nói. Trả lời câu hỏi bằng giọng nói.</td></tr>
+<tr><td>Phút 15–20</td><td>Yêu cầu tạo template từ cuộc trò chuyện. Kiểm tra lại từng folder trên máy.</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Kết quả sau 20 phút:</strong> Claude biết bạn là ai, biết lưu kết quả đúng chỗ, không tự đoán khi thiếu thông tin, và bạn có một workflow nhập liệu nhanh gấp 2,5 lần so với gõ tay.
+</div>
+
+</main>
+</div>
+<aside class="aside">
+<div class="aside-title">Danh sách bài</div>
+<div class="level-label">Nhập môn</div>
+<a href="01-claude-cho-nguoi-moi.html">01. Claude Cho Người Mới</a>
+<a href="02-gioi-ai-don-gian.html">02. Giỏi AI Đơn Giản</a>
+<a href="03-chung-chi-claude.html">03. Chứng Chỉ Claude</a>
+<div class="level-label">Trung cấp</div>
+<a href="04-thiet-lap-cowork.html" class="current">04. Thiết Lập Cowork</a>
+<a href="05-claude-cho-team.html">05. Claude Cho Team</a>
+<a href="06-giao-dien-claude-moi.html">06. Giao Diện Claude Mới</a>
+<a href="07-tao-du-an-cowork.html">07. Tạo Dự Án Cowork</a>
+<a href="08-tao-slide-voi-claude.html">08. Tạo Slide Với Claude</a>
+<a href="09-tao-claude-skill.html">09. Tạo Claude Skill</a>
+<div class="level-label">Nâng cao</div>
+<a href="10-huan-luyen-giong-noi.html">10. Huấn Luyện Giọng Nói</a>
+<a href="11-tiet-kiem-token.html">11. Tiết Kiệm Token</a>
+<a href="12-ngung-prompt-kieu-cu.html">12. Ngừng Prompt Kiểu Cũ</a>
+<a href="13-xay-skill-day-tung-buoc.html">13. Xây Skill Từng Bước</a>
+<a href="14-ngung-noi-nhu-ai.html">14. Ngừng Nói Như AI</a>
+<a href="15-lam-bang-tinh.html">15. Làm Bảng Tính</a>
+<div class="level-label">Chuyên sâu</div>
+<a href="16-ket-noi-ung-dung.html">16. Kết Nối Ứng Dụng</a>
+<a href="17-claude-code-khong-biet-code.html">17. Claude Code</a>
+<a href="18-dung-claude-cong-ty.html">18. Dùng Claude Công Ty</a>
+</aside>
+
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.nav-items a');
+  var sections = [];
+  links.forEach(function(link){
+    var id = link.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, link:link});
+  });
+  window.addEventListener('scroll', function(){
+    var scrollPos = window.scrollY + 80;
+    var current = null;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    links.forEach(function(l){ l.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  });
+})();
+
+(function(){
+  var pres = document.querySelectorAll('pre');
+  pres.forEach(function(pre){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(){
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

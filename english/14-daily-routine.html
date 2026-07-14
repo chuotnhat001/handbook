@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14 - Daily Routine - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+.card-nav .disabled{color:#cbd5e1;pointer-events:none}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.dialogue{background:#f0fdf4;border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.dialogue p{margin-bottom:.4rem}
+.dialogue .speaker{font-weight:600;color:#059669}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.tip{background:#eff6ff;border-left:3px solid #3b82f6;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chu
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Noi dung bai hoc</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Giai doan 2</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./13-self-introduction.html">13. Self Introduction</a>
+      <a href="./14-daily-routine.html" class="active">14. Daily Routine</a>
+      <a href="./15-shopping-money.html">15. Shopping & Money</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 14
+  </div>
+  <div class="card-nav">
+    <a href="./13-self-introduction.html">← Previous: Self Introduction</a>
+    <a href="./15-shopping-money.html">Next: Shopping & Money →</a>
+  </div>
+
+  <h1>Daily Routine</h1>
+  <p class="subtitle">Thoi quen hang ngay — mo ta nhung viec ban lam moi ngay bang tieng Anh</p>
+
+  <h2>Ngu phap trong tam</h2>
+  <div class="formula">
+    <strong>Present Simple</strong> dung de mo ta thoi quen hang ngay:<br><br>
+    <strong>S + V(s/es) + time expression</strong><br>
+    I <strong>wake up</strong> at 6 a.m. every day.<br>
+    She <strong>goes</strong> to work by bus.<br><br>
+    <strong>Adverbs of frequency:</strong> always, usually, often, sometimes, rarely, never<br>
+    Vi tri: truoc dong tu thuong, sau "be"<br>
+    I <strong>usually</strong> have breakfast at 7. / She <strong>is always</strong> on time.
+  </div>
+
+  <h3>Time expressions (Cum tu chi thoi gian)</h3>
+  <ul>
+    <li><strong>at</strong> + gio cu the: at 6 a.m., at noon, at midnight</li>
+    <li><strong>in</strong> + buoi: in the morning, in the afternoon, in the evening</li>
+    <li><strong>at</strong> + night (ngoai le: khong dung "in")</li>
+    <li><strong>every</strong> + day/morning/week: every morning, every weekend</li>
+    <li><strong>on</strong> + thu: on Monday, on weekdays</li>
+  </ul>
+
+  <h3>Phrasal verbs thuong gap</h3>
+  <ul>
+    <li><strong>wake up</strong> — thuc day</li>
+    <li><strong>get up</strong> — roi giuong</li>
+    <li><strong>get dressed</strong> — mac quan ao</li>
+    <li><strong>go to work/school</strong> — di lam/di hoc</li>
+    <li><strong>get home</strong> — ve den nha</li>
+    <li><strong>work out / exercise</strong> — tap the duc</li>
+    <li><strong>hang out</strong> — di choi voi ban</li>
+    <li><strong>stay up late</strong> — thuc khuya</li>
+    <li><strong>go to bed</strong> — di ngu</li>
+  </ul>
+
+  <h2>So sanh voi tieng Viet</h2>
+  <div class="compare-vn">
+    <p><strong>Giong:</strong> Ca hai ngon ngu deu mo ta thoi quen theo trinh tu thoi gian (sang → trua → toi).</p>
+    <p><strong>Khac:</strong></p>
+    <ul>
+      <li>Tieng Anh <strong>chia dong tu</strong> theo ngo thu 3 so it (he/she/it + V-s/es). Tieng Viet khong chia.</li>
+      <li>Tieng Anh dung <strong>gioi tu</strong> truoc thoi gian (at 6, in the morning). Tieng Viet dat thoi gian linh hoat hon.</li>
+      <li>Tieng Anh co <strong>adverbs of frequency</strong> voi vi tri co dinh. Tieng Viet dung "thuong", "luon" linh hoat hon.</li>
+      <li>Tieng Anh phan biet <strong>"wake up"</strong> (thuc) va <strong>"get up"</strong> (roi giuong). Tieng Viet thuong gop chung "day".</li>
+    </ul>
+  </div>
+
+  <h2>Tu vung</h2>
+  <table>
+    <tr><th>Tu/Cum tu</th><th>Phien am</th><th>Loai tu</th><th>Nghia</th></tr>
+    <tr><td>alarm clock</td><td>/əˈlɑːrm klɒk/</td><td>n.</td><td>dong ho bao thuc</td></tr>
+    <tr><td>commute</td><td>/kəˈmjuːt/</td><td>v./n.</td><td>di lam (hanh trinh)</td></tr>
+    <tr><td>schedule</td><td>/ˈʃed.juːl/</td><td>n.</td><td>lich trinh</td></tr>
+    <tr><td>routine</td><td>/ruːˈtiːn/</td><td>n.</td><td>thoi quen, le thuong</td></tr>
+    <tr><td>habit</td><td>/ˈhæb.ɪt/</td><td>n.</td><td>thoi quen</td></tr>
+    <tr><td>productive</td><td>/prəˈdʌk.tɪv/</td><td>adj.</td><td>nang suat</td></tr>
+    <tr><td>deadline</td><td>/ˈded.laɪn/</td><td>n.</td><td>han chot</td></tr>
+    <tr><td>break</td><td>/breɪk/</td><td>n.</td><td>gio nghi</td></tr>
+    <tr><td>overtime</td><td>/ˈəʊ.və.taɪm/</td><td>n./adv.</td><td>lam them gio</td></tr>
+    <tr><td>nap</td><td>/næp/</td><td>n./v.</td><td>giac ngu ngan</td></tr>
+  </table>
+
+  <h2>Dialogue mau</h2>
+
+  <h3>Tinh huong 1: Hoi ve thoi quen hang ngay</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> What does your typical day look like?</p>
+    <p><span class="speaker">B:</span> Well, I usually wake up around 6:30. I make coffee, check my emails, and then start working by 8.</p>
+    <p><span class="speaker">A:</span> Do you work from home?</p>
+    <p><span class="speaker">B:</span> Yes, most days. I take a lunch break at noon — usually just a quick sandwich. Then I work until about 5:30.</p>
+    <p><span class="speaker">A:</span> What do you do after work?</p>
+    <p><span class="speaker">B:</span> I go for a run or hit the gym. After dinner, I usually read or watch something on Netflix. I try to go to bed before 11.</p>
+  </div>
+
+  <h3>Tinh huong 2: So sanh thoi quen</h3>
+  <div class="dialogue">
+    <p><span class="speaker">A:</span> Are you a morning person or a night owl?</p>
+    <p><span class="speaker">B:</span> Definitely a night owl. I rarely go to bed before midnight. How about you?</p>
+    <p><span class="speaker">A:</span> I'm the opposite! I wake up at 5 a.m. every day — even on weekends.</p>
+    <p><span class="speaker">B:</span> Wow, that's early! What do you do that early?</p>
+    <p><span class="speaker">A:</span> I meditate for 20 minutes, then go for a walk. It helps me feel more focused during the day.</p>
+    <p><span class="speaker">B:</span> I should try that. My mornings are always rushed — I usually hit snooze three times before getting up.</p>
+  </div>
+
+  <h2>Loi thuong gap cua nguoi Viet</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Sai:</strong> "I wake up at 6 hour." → <strong>Dung:</strong> "I wake up at 6 <em>o'clock</em> / at 6 a.m."</li>
+      <li><strong>Sai:</strong> "I go to work by walk." → <strong>Dung:</strong> "I <em>walk</em> to work." hoac "I go to work <em>on foot</em>."</li>
+      <li><strong>Sai:</strong> "She go to school every day." → <strong>Dung:</strong> "She <em>goes</em> to school every day." (ngo thu 3 + s)</li>
+      <li><strong>Sai:</strong> "I usually am tired." → <strong>Dung:</strong> "I <em>am usually</em> tired." (adverb sau "be")</li>
+      <li><strong>Sai:</strong> "In night I watch TV." → <strong>Dung:</strong> "<em>At</em> night I watch TV." (dung "at" voi night)</li>
+      <li><strong>Sai:</strong> "I sleep at 11 p.m." → <strong>Dung:</strong> "I <em>go to bed</em> at 11 p.m." (sleep = dang ngu, go to bed = hanh dong di ngu)</li>
+    </ul>
+  </div>
+
+  <h2>Meo giao tiep</h2>
+  <div class="tip">
+    <ul>
+      <li><strong>Dung sequencing words</strong> de ke chuyen tron tru: First, Then, After that, Finally.</li>
+      <li><strong>Hoi lai</strong> de tao hoi thoai: "How about you?" / "What about your morning?"</li>
+      <li><strong>Them chi tiet</strong> de tu nhien hon: thay vi "I eat breakfast", noi "I usually grab a quick coffee and some toast."</li>
+      <li><strong>Morning person vs Night owl</strong> — cach hoi thu vi ve thoi quen ngu.</li>
+    </ul>
+  </div>
+
+  <h2>Bai tap</h2>
+
+  <div class="exercise">
+    <p><strong>1.</strong> Dien vao cho trong: "She always ___ (get up) at 7 a.m."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">gets up (ngo thu 3 so it + s)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>2.</strong> Chon gioi tu dung: "I have lunch ___ noon." (at / in / on)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>at</strong> noon</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>3.</strong> Sap xep lai: "usually / I / coffee / drink / the morning / in"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I usually drink coffee in the morning.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>4.</strong> Sua loi: "He go to work by bus every day."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">He <strong>goes</strong> to work by bus every day.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>5.</strong> Dien adverb of frequency: "I ___ eat fast food. Maybe once a month." (always / usually / rarely)</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>rarely</strong> (chi 1 lan/thang = rat it khi)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>6.</strong> Sua loi: "In night, I usually watch YouTube."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>At</strong> night, I usually watch YouTube.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>7.</strong> Phan biet: "wake up" va "get up" — dien vao cho trong:<br>"My alarm rings at 6 but I don't ___ until 6:30."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer"><strong>get up</strong> (wake up = mo mat, get up = roi giuong)</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>8.</strong> Viet lai cho tu nhien hon: "I eat breakfast at 7. I go to work at 8. I come home at 6."</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">I usually have breakfast around 7, then head to work by 8. I get home at about 6.</div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>9.</strong> Dien vao cho trong: "Are you a morning ___ or a night ___?"</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">morning <strong>person</strong> / night <strong>owl</strong></div>
+  </div>
+
+  <div class="exercise">
+    <p><strong>10.</strong> Mo ta thoi quen buoi sang cua ban bang 4-5 cau (dung Present Simple + time expressions).</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+    <div class="answer">Vi du: I wake up at 6:30 every morning. First, I brush my teeth and take a quick shower. Then I make coffee and check my phone. I usually leave for work around 7:45. I always listen to a podcast on my commute.</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;padding-top:.75rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none">
+    <a href="./13-self-introduction.html">← Previous: Self Introduction</a>
+    <a href="./15-shopping-money.html">Next: Shopping & Money →</a>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('.main h2');
+  for (var i = 0; i < headings.length; i++) {
+    var id = 'section-' + i;
+    headings[i].id = id;
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = headings[i].textContent;
+    toc.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>

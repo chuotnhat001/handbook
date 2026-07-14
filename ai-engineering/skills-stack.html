@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skills Stack - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#f59e0b;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">Mô hình 3 lớp</a>
+      <a href="#when">Khi nào dùng tool nào</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">3 Layers</div>
+    <div class="nav-items">
+      <a href="#decision">Layer 1: Decision (GStack)</a>
+      <a href="#context">Layer 2: Context (GSD)</a>
+      <a href="#execution">Layer 3: Execution (Superpowers)</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Workflow</div>
+    <div class="nav-items">
+      <a href="#workflow">Workflow kết hợp</a>
+      <a href="#gates">Gates & Checkpoints</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Hướng Dẫn</div>
+    <div class="nav-items">
+      <a href="#scale">Scale theo task</a>
+      <a href="#antipatterns">Anti-patterns</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Skills Stack</h1>
+<p class="subtitle">Mô hình 3 lớp: Decision / Context / Execution — kết hợp GStack, GSD Core và Superpowers</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/obra/Superpowers" target="_blank">Superpowers</a> + <a href="https://github.com/garrytan/gstack" target="_blank">GStack</a> + <a href="https://github.com/open-gsd/gsd-core" target="_blank">GSD Core</a> — Three-layer skills architecture</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> Ba tool giải quyết ba câu hỏi khác nhau theo thứ tự: GStack hỏi "Nên build gì?", GSD hỏi "Đang build đến đâu?", Superpowers hỏi "Build cụ thể ra sao?". Chạy sai thứ tự hoặc bỏ lớp giữa là nguồn gốc của context rot và scope creep.
+</div>
+
+<h2 id="decision">Layer 1 — Decision: GStack</h2>
+
+<p><strong>Repo:</strong> <a href="https://github.com/garrytan/gstack" target="_blank">garrytan/gstack</a> — MIT License</p>
+
+<p>GStack cung cấp 23 vai trò chuyên biệt (CEO, Designer, Engineering Manager, QA Lead, Security Officer, Release Engineer...) hoạt động qua slash commands, giúp đưa ra quyết định sản phẩm và kỹ thuật <strong>trước khi viết code</strong>.</p>
+
+<table>
+<tr><th>Command</th><th>Vai trò</th></tr>
+<tr><td><code>/office-hours</code></td><td>Phỏng vấn kiểu YC, stress-test ý tưởng bằng câu hỏi buộc phải đối mặt</td></tr>
+<tr><td><code>/plan-ceo-review</code></td><td>CEO review scope và ambition, thách thức giả định</td></tr>
+<tr><td><code>/plan-eng-review</code></td><td>Lock architecture, data flow, edge cases trước khi build</td></tr>
+<tr><td><code>/plan-design-review</code></td><td>Audit design với taste calibration, phát hiện AI slop</td></tr>
+<tr><td><code>/review</code></td><td>Staff engineer audit, phát hiện bug production thoát qua CI</td></tr>
+<tr><td><code>/cso</code></td><td>OWASP + STRIDE security audit</td></tr>
+<tr><td><code>/ship</code></td><td>Tự động hoá PR + deploy</td></tr>
+</table>
+
+<p><strong>Vai trò trong mô hình:</strong> Trả lời câu hỏi "Có nên build không? Build cái gì? Build như thế nào về mặt kiến trúc và sản phẩm?" trước khi chạm vào code.</p>
+
+<h2 id="context">Layer 2 — Context: GSD Core</h2>
+
+<p><strong>Repo:</strong> <a href="https://github.com/open-gsd/gsd-core" target="_blank">open-gsd/gsd-core</a> — Install: <code>npx @opengsd/gsd-core@latest</code></p>
+
+<p>Framework meta-prompting và context engineering, giúp AI coding agent duy trì trạng thái và context qua nhiều session dài mà không bị "context rot".</p>
+
+<table>
+<tr><th>Feature</th><th>Mô tả</th></tr>
+<tr><td>Phase Loop 5 bước</td><td>Discuss → Plan → Execute → Verify → Ship, lặp theo milestone</td></tr>
+<tr><td>Subagent delegation</td><td>Research/execution nặng chạy trong context window 200k sạch riêng</td></tr>
+<tr><td>Persistent artifacts</td><td><code>STATE.md</code>, <code>CONTEXT.md</code>, <code>PLAN.md</code> — memory cross-session</td></tr>
+<tr><td>Multi-runtime</td><td>Claude Code, Gemini CLI, Copilot, Cursor, Windsurf</td></tr>
+</table>
+
+<p><strong>Vai trò trong mô hình:</strong> Trả lời câu hỏi "Chúng ta đang ở đâu? Task tiếp theo là gì? Quyết định đã lock là gì?" Là lớp trung gian giữ memory và điều phối execution theo kế hoạch.</p>
+
+<h2 id="execution">Layer 3 — Execution: Superpowers</h2>
+
+<p><strong>Repo:</strong> <a href="https://github.com/obra/Superpowers" target="_blank">obra/Superpowers</a> — Cross-platform (Claude Code, Cursor, GitHub Copilot, Gemini, Kimi...)</p>
+
+<p>Methodology toàn diện cho coding agent, tập trung vào thực thi code chất lượng cao theo chu trình TDD, với subagent coordination và systematic debugging.</p>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>test-driven-development</code></td><td>RED-GREEN-REFACTOR cycle bắt buộc, không exception</td></tr>
+<tr><td><code>writing-plans</code></td><td>Break work thành task 2-5 phút với exact specification</td></tr>
+<tr><td><code>executing-plans</code></td><td>Dispatch subagent xử lý song song</td></tr>
+<tr><td><code>using-git-worktrees</code></td><td>Isolated workspace cho parallel dev</td></tr>
+<tr><td><code>systematic-debugging</code></td><td>Root cause analysis, không patch triệu chứng</td></tr>
+<tr><td><code>requesting-code-review</code></td><td>Severity-based review (CRITICAL/HIGH/MEDIUM/LOW)</td></tr>
+<tr><td><code>brainstorming</code></td><td>Refine ý tưởng qua câu hỏi, khám phá alternatives</td></tr>
+</table>
+
+<p><strong>Vai trò trong mô hình:</strong> "Build như thế nào từng dòng code?" Đảm bảo mỗi task đi qua chu trình kiểm chứng trước khi claim done.</p>
+
+<h2 id="workflow">Workflow kết hợp đầy đủ</h2>
+
+<pre><code>PHASE 1 — DECISION (GStack)
+  /office-hours          ← stress-test ý tưởng
+  /plan-ceo-review       ← validate scope & ambition
+  /plan-eng-review       ← lock architecture, data flow
+  [/plan-design-review]  ← chỉ khi có UI
+  ↓ Gate 1: scope approved, architecture locked
+
+PHASE 2 — CONTEXT (GSD Core)
+  /gsd-new-project       ← init STATE.md, ROADMAP.md
+  /gsd-discuss-phase     ← gather context cho milestone
+  /gsd-plan-phase        ← tạo PLAN.md với atomic tasks
+  ↓ Gate 2: artifacts khớp Gate 1, tasks fit 1 context window
+
+PHASE 3 — EXECUTION (Superpowers)
+  using-git-worktrees    ← isolate workspace
+  writing-plans          ← break tasks 2-5 min (skip nếu PLAN.md đủ chi tiết)
+  executing-plans        ← dispatch subagents song song
+  test-driven-development← RED → GREEN → REFACTOR
+  systematic-debugging   ← khi gặp lỗi
+  ↓ Gate 3: mọi task pass TDD cycle
+
+PHASE 4 — REVIEW (GStack + Superpowers)
+  requesting-code-review ← review theo plan, severity-based
+  /review                ← staff audit catch production bug
+  [/cso]                 ← security audit khi cần
+  [/qa]                  ← live browser test khi có UI
+  ↓ Gate 4: không còn CRITICAL issue
+
+PHASE 5 — SHIP (GStack + GSD)
+  finishing-a-development-branch
+  /ship                  ← sync main, push, open PR
+  /land-and-deploy       ← merge, CI, deploy verify
+  Update STATE.md / DECISIONS.md</code></pre>
+
+<h2 id="gates">Gates &amp; Checkpoints</h2>
+
+<table>
+<tr><th>Gate</th><th>Điều kiện</th><th>Nếu fail</th></tr>
+<tr><td><strong>Gate 1</strong></td><td>Scope approved, architecture locked</td><td>Quay lại Decision layer</td></tr>
+<tr><td><strong>Gate 2</strong></td><td>Artifacts khớp Gate 1, tasks fit context window</td><td>Chia nhỏ hoặc revisit scope</td></tr>
+<tr><td><strong>Gate 3</strong></td><td>Mọi task pass TDD cycle</td><td>Fix tại Execution layer</td></tr>
+<tr><td><strong>Gate 4</strong></td><td>Không CRITICAL issue, tests pass</td><td>Minor bug → Gate 3; Architectural issue → Gate 1</td></tr>
+</table>
+
+<h2 id="when">Khi nào dùng tool nào</h2>
+
+<table>
+<tr><th>Tình huống</th><th>Tool</th><th>Lý do</th></tr>
+<tr><td>Ý tưởng còn mờ, chưa rõ scope</td><td>GStack <code>/office-hours</code></td><td>Cần bị thách thức trước khi đầu tư</td></tr>
+<tr><td>Cần lock architecture</td><td>GStack <code>/plan-eng-review</code></td><td>Ngăn architectural debt</td></tr>
+<tr><td>Project dài nhiều session</td><td>GSD Core</td><td>STATE.md giữ memory cross-session</td></tr>
+<tr><td>Track tiến trình milestone</td><td>GSD <code>/gsd-plan-phase</code></td><td>PLAN.md với atomic tasks, dependencies rõ</td></tr>
+<tr><td>Viết feature mới / fix bug</td><td>Superpowers <code>test-driven-development</code></td><td>TDD đảm bảo không claim done khi chưa pass</td></tr>
+<tr><td>Task nhỏ, rõ ràng, 1 file</td><td>Superpowers light mode</td><td>Không cần ceremony GStack/GSD</td></tr>
+<tr><td>Build phức tạp, nhiều file</td><td>Superpowers <code>subagent-driven-development</code></td><td>Parallel execution</td></tr>
+<tr><td>Gặp lỗi không rõ nguyên nhân</td><td>Superpowers <code>systematic-debugging</code></td><td>Root cause first</td></tr>
+<tr><td>Code có auth/payment/data</td><td>GStack <code>/cso</code></td><td>OWASP + STRIDE audit</td></tr>
+</table>
+
+<h2 id="scale">Scale theo task size</h2>
+
+<table>
+<tr><th>Task type</th><th>Layers sử dụng</th></tr>
+<tr><td>2-line fix, config change</td><td>Superpowers light mode only. Skip Phases 1, 2</td></tr>
+<tr><td>Prototype, single-session project</td><td>GStack (decision) + Superpowers (execution). Skip GSD</td></tr>
+<tr><td>Large feature, long project, multi-stream</td><td>Full 5 phases + parallel subagents</td></tr>
+</table>
+
+<h2 id="antipatterns">Anti-patterns cần tránh</h2>
+
+<div class="callout callout-red">
+<strong>Lãng phí token:</strong> Chạy full ceremony (cả 3 lớp) cho task 2-line fix — tốn 10k+ token vô nghĩa.
+</div>
+
+<ul>
+<li><strong>Bỏ qua GSD với project dài</strong> → context rot sau vài session</li>
+<li><strong>Chạy cả <code>/gsd-plan-phase</code> lẫn <code>writing-plans</code></strong> cho cùng scope → double planning</li>
+<li><strong>Nhảy thẳng vào Superpowers khi scope chưa lock</strong> → scope creep mid-execution</li>
+<li><strong>Claim "done" mà không qua Gate 3</strong> (TDD pass) hoặc Gate 4 (review clean)</li>
+<li><strong>Bật tất cả GStack review roles cho task nhỏ</strong> → burns 10k+ tokens không cần thiết</li>
+</ul>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(function(btn){btn.addEventListener('click',function(){var code=this.parentElement.querySelector('code');navigator.clipboard.writeText(code.textContent);this.textContent='Copied!';this.classList.add('copied');var b=this;setTimeout(function(){b.textContent='Copy';b.classList.remove('copied')},2000)})});
+</script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 2: Domain Knowledge - CRM Knowledge Base</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+.doc-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.doc-card h4{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.82rem;color:#555b6e}
+.doc-meta span{display:flex;align-items:center;gap:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge-critical{background:#fee2e2;color:#dc2626}
+.badge-high{background:#fef3c7;color:#d97706}
+.badge-medium{background:#e0f2fe;color:#0284c7}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    CRM Knowledge Base
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Domain 2.1 — Sales</div>
+    <div class="nav-items">
+      <a href="#sales-process">Sales Process</a>
+      <a href="#pipeline-mgmt">Pipeline Management</a>
+      <a href="#sales-automation">Sales Automation</a>
+      <a href="#forecasting">Forecasting & Quota</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Domain 2.2 — Marketing</div>
+    <div class="nav-items">
+      <a href="#marketing-automation">Marketing Automation</a>
+      <a href="#campaign-mgmt">Campaign Management</a>
+      <a href="#lead-mgmt">Lead Management</a>
+      <a href="#content-personalization">Personalization</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Domain 2.3 — Service</div>
+    <div class="nav-items">
+      <a href="#case-mgmt">Case Management</a>
+      <a href="#omnichannel">Omnichannel Support</a>
+      <a href="#knowledge-base">Knowledge Base</a>
+      <a href="#field-service">Field Service</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Domain 2.4 — Data</div>
+    <div class="nav-items">
+      <a href="#customer-360">Customer 360</a>
+      <a href="#analytics">Analytics & BI</a>
+      <a href="#reporting">Reporting</a>
+      <a href="#data-quality">Data Quality</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">CRM Knowledge Base</div>
+  <div class="level-label">Learning Phases</div>
+  <a href="01-foundation.html">Phase 1: Foundation</a>
+  <a href="02-domain-knowledge.html" class="current">Phase 2: Domain Knowledge</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture</a>
+  <a href="04-implementation.html">Phase 4: Implementation</a>
+  <a href="05-operations.html">Phase 5: Operations</a>
+  <a href="06-advanced-innovation.html">Phase 6: Advanced</a>
+  <div class="level-label">Reference</div>
+  <a href="knowledge-graph.html">Knowledge Graph</a>
+  <a href="architecture-maps.html">Architecture Maps</a>
+  <a href="matrices-roadmap.html">Matrices & Roadmap</a>
+  <a href="glossary-standards.html">Glossary & Standards</a>
+  <a href="competency-checklist.html">Competency & Checklist</a>
+</aside>
+<main class="main">
+<h1 id="overview">Phase 2: Domain Knowledge</h1>
+<p class="subtitle">Kiến thức nghiệp vụ cốt lõi — Sales, Marketing, Service và Data Analytics</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+<span>4 domains · 16 modules · ~120 giờ học · Vai trò: CRM Consultant, Domain Expert, Business Analyst</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Phase này đi sâu vào 4 trụ cột nghiệp vụ CRM: Sales quản lý pipeline doanh thu, Marketing tạo demand, Service giữ chân khách hàng, và Data Analytics cung cấp insights xuyên suốt. Mỗi domain có quy trình, KPIs và best practices riêng.
+</div>
+
+<h2 id="sales-process">Domain 2.1 — Sales Management</h2>
+<p>Quản lý toàn bộ chu trình bán hàng từ prospecting đến closing và account management.</p>
+
+<h3>Module 2.1.1 — Sales Process & Pipeline</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Thiết kế "máy bán hàng" có hệ thống — biến sales từ nghệ thuật cá nhân thành quy trình repeatable và measurable. Không có standardized process, mỗi sales rep làm theo cách riêng, khiến forecasting không chính xác và onboarding rep mới mất 6+ tháng thay vì 6 tuần.
+</div>
+
+<div class="doc-card">
+<h4>DOC-201: Sales Process Design</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế quy trình bán hàng chuẩn hóa</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> MEDDIC, SPIN Selling, Challenger Sale</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Chọn Sales Methodology phù hợp</strong> — So sánh 4 methodologies: Solution Selling (complex B2B), Consultative Selling (advisory), MEDDIC/MEDDPICC (enterprise, long cycle), Challenger Sale (insight-led). Criteria: deal size, sales cycle length, buyer complexity. Mục đích: methodology quyết định cách reps interact với buyers — chọn sai = reps frustrated và deals stalled.</li>
+<li><strong>Thiết kế Pipeline Stages</strong> — Định nghĩa 5-8 stages từ "Lead" đến "Closed Won/Lost". Mỗi stage có: entry criteria (điều kiện để deal vào stage), exit criteria (điều kiện để chuyển stage tiếp), key activities (rep phải làm gì), và verifiable outcomes (bằng chứng khách quan). Mục đích: mọi người nói chung ngôn ngữ — "Stage 3" nghĩa chính xác cùng một điều cho mọi rep và manager.</li>
+<li><strong>Xây dựng Lead Qualification Framework</strong> — Áp dụng MEDDPICC: Metrics (quantified pain), Economic Buyer (decision maker), Decision Criteria, Decision Process, Paper Process (procurement), Identify Pain, Champion, Competition. Mục đích: reps spend time đúng deals — qualify out bad deals sớm thay vì chasing 6 tháng rồi lose.</li>
+<li><strong>Map Lead-to-Cash Flow end-to-end</strong> — Vẽ BPMN cho toàn bộ flow: Marketing generates lead → Sales qualifies → Opportunity created → Proposal → Negotiation → Contract → Onboarding → First invoice. Xác định handoffs giữa teams. Mục đích: phát hiện bottlenecks và drops trong conversion funnel, input cho system design.</li>
+<li><strong>Thiết kế Territory & Account Planning</strong> — Xác định territory assignment logic (geographic, industry, company size, named accounts). Tạo Account Plan template: account overview, stakeholder map, whitespace analysis, action plan. Mục đích: đảm bảo coverage đều, tránh conflict giữa reps, maximize wallet share từ existing accounts.</li>
+<li><strong>Xây dựng Win/Loss Analysis Process</strong> — Cho mỗi deal closed (won or lost): structured debrief interview (internal + buyer feedback), coding reasons, pattern analysis quarterly. Mục đích: continuous improvement loop — hiểu tại sao win/lose để tune process, training, và product.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Sales Process BPMN (full Lead-to-Cash), Pipeline Stage Diagram (with entry/exit criteria), Lead Qualification Flowchart (MEDDPICC decision tree)</p>
+<p><strong>Deliverables:</strong> Sales Process Document (official playbook), Stage Definitions (with examples), Qualification Criteria Checklist, Win/Loss Analysis Template</p>
+<p><strong>Công cụ:</strong> Salesforce Sales Cloud, HubSpot CRM, Pipedrive (pipeline visualization), Draw.io/Miro (process design)</p>
+</div>
+
+<h3 id="pipeline-mgmt">Module 2.1.2 — Pipeline & Forecasting</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Pipeline là "bức tranh tài chính tương lai" của công ty. Module này xây dựng khả năng forecast revenue với accuracy >80% — CEO cần con số đáng tin để plan hiring, spending, và board reporting. Bad forecast = missed targets hoặc over-hiring.
+</div>
+
+<div class="doc-card">
+<h4>DOC-202: Pipeline Management & Revenue Forecasting</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Quản lý pipeline và dự báo doanh thu chính xác</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-201</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Định nghĩa Pipeline Metrics</strong> — Xác định core KPIs: Pipeline Coverage Ratio (3-4x target), Velocity (days per stage), Conversion Rates (stage-to-stage), Win Rate, Average Deal Size, Sales Cycle Length. Mục đích: baseline numbers để detect anomalies sớm — nếu velocity tăng đột ngột = deals đang stall.</li>
+<li><strong>Xây dựng Forecasting Model</strong> — Implement 3 methods song song: Weighted Pipeline (mỗi stage có probability %), Historical Run Rate (last 4 quarters trend), và AI-assisted (ML model trên deal attributes). So sánh accuracy monthly. Mục đích: không rely single method — triangulate cho forecast đáng tin hơn.</li>
+<li><strong>Thiết kế Deal Scoring Model</strong> — Scoring dựa trên: engagement level (email opens, meeting attendance), qualification completeness (MEDDPICC filled?), buying signals (timeline mentioned, budget confirmed), và historical patterns (deals giống thế này thường win/lose?). Mục đích: prioritize rep attention vào deals most likely to close, automate "deal risk" alerts.</li>
+<li><strong>Xây dựng Pipeline Review Cadence</strong> — Weekly: rep reviews own pipeline (15 min). Bi-weekly: manager 1:1 deal coaching (30 min per rep). Monthly: team pipeline review (focus deals >$X). Quarterly: leadership forecast review. Mục đích: cadence tạo accountability — deals không được update = red flag, managers catch issues early.</li>
+<li><strong>Thiết kế Quota & Attainment Tracking</strong> — Quota setting methodology (top-down from revenue target vs bottom-up from capacity), quota distribution (equal vs territory-weighted), tracking dashboard (pace to quota, quota attainment trending). Mục đích: transparent goal-setting, reps always know where they stand, managers can intervene early khi at-risk.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Pipeline Funnel Dashboard (with metrics per stage), Forecast Accuracy Tracking Chart, Deal Velocity Analysis (time-in-stage distribution)</p>
+<p><strong>Deliverables:</strong> Forecasting Model Template (Excel/BI tool), Pipeline Review Cadence Document, KPI Dashboard Specification</p>
+<p><strong>Công cụ:</strong> Clari/Aviso (AI forecasting), InsightSquared, Tableau/Power BI (dashboards), Salesforce Reports</p>
+</div>
+
+<h3 id="sales-automation">Module 2.1.3 — Sales Automation & Enablement</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Sales reps spend chỉ 28% thời gian thực sự selling (Salesforce research) — phần còn lại là admin, data entry, tìm content, tạo proposals. Module này thiết kế automation để tăng selling time lên 40%+ và đảm bảo mỗi rep có right content, right tool, right time.
+</div>
+
+<div class="doc-card">
+<h4>DOC-203: Sales Automation & CPQ</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Tự động hóa và hỗ trợ đội ngũ bán hàng</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-201, DOC-202</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế CPQ Engine</strong> — Map product catalog: products, bundles, pricing tiers, discount rules, approval thresholds. Define configuration rules (compatible products, required add-ons). Define pricing rules (volume discounts, contract terms, ramp schedules). Mục đích: reps tạo quotes chính xác trong phút thay vì ngày, eliminate "invalid quote" errors đến legal/finance.</li>
+<li><strong>Xây dựng Email Sequence Automation</strong> — Thiết kế outbound sequences: prospecting (5-7 touches over 3 weeks), follow-up (post-meeting, post-demo), re-engagement (dormant opportunities). Include: timing rules, personalization tokens, A/B test variants, auto-stop on reply. Mục đích: consistent follow-up without rep effort, no leads fall through cracks.</li>
+<li><strong>Thiết kế Document Generation</strong> — Auto-generate: proposals (pull deal data + product config), contracts (merge templates + legal clauses), SOWs (scope from opportunity fields). Include e-signature workflow. Mục đích: reduce proposal creation from 2 hours to 5 minutes, ensure compliance with latest legal terms.</li>
+<li><strong>Xây dựng Guided Selling & Playbooks</strong> — Context-aware guidance: given deal stage + industry + size → suggest next best actions, relevant case studies, objection handling scripts, competitive battle cards. Embed in CRM workflow. Mục đích: encode top performer behavior into system, reduce ramp time for new reps from 6 months to 6 weeks.</li>
+<li><strong>Thiết kế Commission Calculation Engine</strong> — Define: commission structures (tiered, accelerator, kicker bonuses), split rules (team selling, overlay roles), attainment calculation logic, payout timing. Automate from closed-won to finance. Mục đích: accurate, timely commission statements build trust, manual calculation errors destroy morale.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> CPQ Process Flow (config → price → quote → approval), Automation Workflow BPMN (email sequences), Commission Structure Diagram (tiers + accelerators)</p>
+<p><strong>Deliverables:</strong> Automation Rules Specification, CPQ Configuration Document, Sales Playbook Template, Commission Plan Document</p>
+<p><strong>Công cụ:</strong> Salesforce CPQ/Conga, PandaDoc/DocuSign (proposals + e-sign), Outreach/Salesloft (sequences), Xactly/CaptivateIQ (commissions)</p>
+</div>
+
+<h2 id="marketing-automation">Domain 2.2 — Marketing Automation</h2>
+<p>Demand generation, campaign orchestration và lead nurturing trên quy mô lớn.</p>
+
+<h3>Module 2.2.1 — Marketing Automation Platform</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Marketing Automation biến manual, one-at-a-time marketing thành scalable, data-driven engine. Module này thiết kế nền tảng cho phép marketers launch campaigns targeting hàng nghìn prospects mà vẫn personalized — giao đúng message, đúng người, đúng thời điểm, trên đúng channel.
+</div>
+
+<div class="doc-card">
+<h4>DOC-204: Marketing Automation Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế nền tảng marketing automation</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> GDPR, CAN-SPAM, CASL</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Email Marketing Foundation</strong> — Xây dựng: sender domain authentication (SPF, DKIM, DMARC), IP warming strategy, list hygiene automation (bounce handling, sunset policy), template system (responsive, brand-compliant). Mục đích: deliverability là nền tảng — email đẹp mà vào spam = vô nghĩa. Đặt kỹ thuật trước creative.</li>
+<li><strong>Xây dựng Journey Builder Architecture</strong> — Thiết kế multi-touch customer journeys: entry criteria (triggers), decision nodes (if/then based on behavior), actions (email, SMS, webhook, task creation), wait steps, exit criteria. Support branching và A/B path testing. Mục đích: thay thế "blast to all" bằng contextual, behavior-driven communication — right message at right moment.</li>
+<li><strong>Thiết kế Lead Scoring & Grading Model</strong> — Scoring (behavioral): email opens (+1), content download (+5), pricing page visit (+10), demo request (+20), no activity 30d (-10). Grading (demographic/firmographic): company size, industry fit, title seniority, geography. Threshold = MQL. Mục đích: focus sales on hottest leads, don't waste time on low-intent browsing.</li>
+<li><strong>Định nghĩa Marketing-Sales SLA</strong> — Xác định: MQL definition (score threshold + grade), SQL definition (sales-accepted criteria), handoff process (notification, timing), SLA metrics (time-to-follow-up, acceptance rate, feedback loop). Mục đích: eliminate "marketing sends bad leads" vs "sales ignores our leads" conflict — data-driven agreement between teams.</li>
+<li><strong>Xây dựng Attribution Framework</strong> — Implement multiple models song song: First-touch (which channel brought them in?), Last-touch (what closed the deal?), Multi-touch linear (credit shared equally), W-shaped (40/20/40 to first, lead creation, opportunity creation). Mục đích: understand true ROI per channel/campaign to optimize budget — no single model tells full story.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Journey Builder Flowchart (with decision logic), Lead Scoring Matrix (behavior × fit), Attribution Model Comparison Diagram</p>
+<p><strong>Deliverables:</strong> MAP Configuration Guide, Lead Scoring Rubric (documented rules), Marketing-Sales SLA Document (signed by both VPs)</p>
+<p><strong>Công cụ:</strong> Marketo (enterprise), HubSpot (mid-market), Pardot/Account Engagement (Salesforce shops), ActiveCampaign (SMB)</p>
+</div>
+
+<h3 id="campaign-mgmt">Module 2.2.2 — Campaign & Content Management</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Campaigns là execution vehicle cho marketing strategy. Module này thiết kế campaign management system cho phép: plan → execute → measure → optimize across tất cả channels, với ability to prove ROI cho mỗi dollar spent. Không có measurement = marketing là "cost center" thay vì "revenue driver".
+</div>
+
+<div class="doc-card">
+<h4>DOC-205: Campaign Orchestration</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Quản lý chiến dịch marketing đa kênh</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 6 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-204</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Campaign Hierarchy</strong> — Structure: Program (annual initiative) → Campaign (quarterly theme) → Tactic (specific execution: email series, webinar, ad set). Mỗi level có budget, owner, và success metrics. Mục đích: traceability từ strategic initiative xuống individual asset, know exactly what's driving results.</li>
+<li><strong>Xây dựng Multi-channel Orchestration</strong> — Coordinate across: email, social (organic + paid), web (landing pages, pop-ups), events (webinar, conference), content syndication, retargeting. Define channel selection logic per segment/stage. Mục đích: consistent message across channels, avoid fatigue (cap touches per person per week).</li>
+<li><strong>Thiết kế Content Personalization Engine</strong> — Dynamic content rules: swap hero image by industry, personalize subject line by name + company, show different CTA by lifecycle stage, recommend content based on past consumption. Mục đích: 1-to-1 feel at scale — personalized emails get 6x higher transaction rates than generic.</li>
+<li><strong>Xây dựng Campaign Analytics & ROI Measurement</strong> — Track per campaign: spend, impressions, clicks, MQLs generated, pipeline influenced, revenue attributed. Calculate: Cost per MQL, Cost per Opportunity, ROI (revenue attributed / spend). Mục đích: prove marketing value to CFO, optimize budget allocation to highest-performing channels.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Campaign Hierarchy Diagram, Channel Mix Decision Tree, ROI Funnel (spend → MQL → pipeline → revenue)</p>
+<p><strong>Deliverables:</strong> Campaign Planning Template (reusable), Channel Strategy Document, Campaign Performance Dashboard Specification</p>
+<p><strong>Công cụ:</strong> Salesforce Marketing Cloud, Adobe Campaign, Hubspot (campaign tracking), Google Analytics 4 (attribution)</p>
+</div>
+
+<h3 id="lead-mgmt">Module 2.2.3 — Lead Management & Nurturing</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Chỉ 3% leads are ready to buy ngay lập tức. 97% còn lại cần nurture — giáo dục, build trust, và stay top-of-mind cho đến khi timing đúng. Module này thiết kế máy nurture tự động: capture lead ở mọi touchpoint, score/route đúng nơi, nurture cho đến khi ready, và recycle khi lost.
+</div>
+
+<div class="doc-card">
+<h4>DOC-206: Lead Lifecycle Management</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Quản lý leads từ capture đến conversion</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-201, DOC-204</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Lead Capture Strategy</strong> — Xác định tất cả entry points: web forms (gated content, contact us, demo request), chatbots (website, messaging apps), events (trade shows, webinars), integrations (partner referrals, review sites). Cho mỗi capture point: minimum fields required, progressive profiling logic. Mục đích: maximize capture rate (fewer fields = more conversions) while getting enough data to score and route.</li>
+<li><strong>Xây dựng Lead Routing Rules</strong> — Define routing logic: by geography (round-robin within region), by company size (enterprise → named rep, SMB → SDR team), by product interest (route to specialist), by source (partner lead → partner manager). SLA: route within 5 minutes. Mục đích: speed-to-contact = #1 factor in conversion. 5-minute response = 9x higher connect rate vs 30-minute response.</li>
+<li><strong>Thiết kế Nurture Programs</strong> — Build program library: Awareness nurture (educational content for cold leads), Consideration nurture (use case + social proof for warm leads), Re-engagement (win-back for dormant leads), Post-sale nurture (onboarding + expansion for customers). Each program: 5-8 touches, behavior-triggered exits. Mục đích: automated "drip" that moves leads through funnel without rep effort, until ready for human conversation.</li>
+<li><strong>Định nghĩa Lead-to-Opportunity Conversion</strong> — Criteria for conversion: scoring threshold met + sales-accepted + budget confirmed OR explicit buying intent (demo booked). Process: marketing notification → sales review (24h SLA) → accept/reject with reason → convert to opportunity. Mục đích: clean handoff, clear accountability, no leads "stuck" between marketing and sales.</li>
+<li><strong>Thiết kế Recycling & Database Health</strong> — Disqualification rules (bad fit, no budget, competitor employee), recycle rules (opportunity lost → back to nurture after 90 days), database hygiene automation (merge duplicates, archive 1-year inactive, verify emails quarterly). Mục đích: database quality directly impacts deliverability and campaign performance — garbage in, garbage out.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Lead Lifecycle State Machine (all states + transitions), Routing Logic Diagram (decision tree), Nurture Program Flow (per program type)</p>
+<p><strong>Deliverables:</strong> Lead Management Process Document, Routing Rules Specification, Nurture Program Playbooks (per stage)</p>
+<p><strong>Công cụ:</strong> Marketo/HubSpot (nurture automation), Drift/Intercom (chatbot capture), LeanData/Distribution Engine (routing), ZoomInfo (enrichment)</p>
+</div>
+
+<h2 id="case-mgmt">Domain 2.3 — Customer Service</h2>
+<p>Quản lý hỗ trợ khách hàng đa kênh, SLA compliance và self-service.</p>
+
+<h3>Module 2.3.1 — Case & Ticket Management</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Service là "bộ mặt" của doanh nghiệp sau bán hàng — nơi trust được xây dựng hoặc phá hủy. Module này thiết kế "máy giải quyết vấn đề" có hệ thống: mỗi request được track, route đúng người, resolve đúng SLA, và feedback loop liên tục cải thiện chất lượng. Bad service = churn; great service = loyalty + upsell opportunities.
+</div>
+
+<div class="doc-card">
+<h4>DOC-207: Service Process Design</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế quy trình hỗ trợ khách hàng</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> ITIL v4, HDI</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Case Lifecycle</strong> — Định nghĩa states: New → Assigned → In Progress → Pending Customer → Resolved → Closed → Reopened. Cho mỗi transition: trigger (what causes it), validation (is it allowed?), automation (what happens automatically). Mục đích: mọi case đều trackable, không case nào "rớt" giữa cracks, managers thấy bottlenecks real-time.</li>
+<li><strong>Xây dựng SLA Framework</strong> — Thiết kế multi-tier SLA: Priority (P1-P4) × Customer Tier (Enterprise/Standard/Free). Cho mỗi combination: First Response Time, Resolution Time, Update Frequency. Add business-hours logic và holiday calendars. Mục đích: measurable service commitments — agents know exactly how much time they have, customers know what to expect.</li>
+<li><strong>Thiết kế Escalation Matrix</strong> — Define escalation paths: Functional (to specialist team), Hierarchical (to manager/director), Customer-initiated (complaint). Triggers: approaching SLA breach (80% time elapsed), customer explicit request, technical complexity beyond agent skill. Mục đích: ensure no case is stuck — automatic safety net khi normal resolution fails.</li>
+<li><strong>Xây dựng Routing Engine Rules</strong> — Routing logic: skill-based (route billing issues to billing team), capacity-based (balance load across agents), priority-based (P1 → senior agents), language-based (match customer language preference). Include round-robin and overflow rules. Mục đích: right case to right agent = faster resolution + higher agent satisfaction (working within competency).</li>
+<li><strong>Thiết kế Entitlements & Service Contracts</strong> — Link customer to service level: which channels they can access (phone/chat/email only), what SLA tier applies, what's covered vs billable, remaining support hours/incidents. Auto-check at case creation. Mục đích: prevent over-servicing (free tier getting enterprise SLA) và under-servicing (enterprise customer waiting in generic queue).</li>
+<li><strong>Xây dựng CSAT/NPS/CES Measurement</strong> — Post-resolution survey: CSAT (1-5 scale, per interaction), NPS (0-10, relationship health quarterly), CES (effort score, ease of resolution). Auto-trigger after case closure, analyze trends. Mục đích: lagging indicator of service quality — correlates directly with retention and expansion revenue.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Case Lifecycle BPMN (with all states + transitions), Escalation Flowchart (decision tree), SLA Tiers Matrix Diagram</p>
+<p><strong>Deliverables:</strong> Service Blueprint (end-to-end), SLA Matrix Document (all tiers defined), Escalation Procedures (with contacts and timing)</p>
+<p><strong>Công cụ:</strong> Zendesk, Salesforce Service Cloud, Freshdesk, ServiceNow</p>
+</div>
+
+<h3 id="omnichannel">Module 2.3.2 — Omnichannel & Self-Service</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Khách hàng muốn chọn channel MÌNH thích (chat, phone, email, social) và kỳ vọng context được giữ nguyên khi switch channels. Module này thiết kế unified experience: bắt đầu trên chat, chuyển qua phone, agent thấy full history — không bắt khách nhắc lại. Bonus: self-service giải quyết 60-80% issues mà không cần agent.
+</div>
+
+<div class="doc-card">
+<h4>DOC-208: Omnichannel Service Architecture</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế trải nghiệm hỗ trợ liền mạch đa kênh</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-207</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Map Channel Strategy</strong> — Xác định channels to support: phone (high-touch, complex issues), email (async, documentation needed), live chat (quick questions, browsing context), social media (public complaints, brand), messaging apps (WhatsApp/LINE — mobile-first markets), video (screen share for complex tech support). Mục đích: not every channel for every issue — match channel to use case for efficiency.</li>
+<li><strong>Thiết kế Unified Agent Desktop</strong> — Single interface showing: customer 360 (profile, history, open cases), conversation across all channels (unified timeline), knowledge base search (AI-suggested articles), response templates, collaboration tools (internal notes, transfers). Mục đích: agent never says "let me look that up" or "can you repeat?" — everything visible in one screen.</li>
+<li><strong>Xây dựng Knowledge Base Architecture</strong> — Structure: Category → Sub-category → Article. Content types: how-to guides, troubleshooting trees, FAQ, known issues. Include: search optimization, feedback loop (was this helpful?), auto-surfacing in chatbot/agent desktop. Mục đích: self-service deflection (reduce agent contacts 40-60%) + agent assist (faster resolution).</li>
+<li><strong>Thiết kế Chatbot & Virtual Assistant</strong> — Build conversational flows: intent recognition (top 20 customer intents), entity extraction, decision trees, handoff-to-human triggers (frustration detection, 3 failed attempts, explicit request). Include RAG for knowledge retrieval. Mục đích: 24/7 instant response for common questions, seamless escalation khi bot can't help.</li>
+<li><strong>Xây dựng Customer Portal</strong> — Self-service features: submit/track tickets, browse knowledge base, community forums (peer support), account management (update info, view invoices), download resources. Mobile-responsive. Mục đích: empower customers to solve own problems, reduce inbound volume, increase satisfaction (many prefer self-service over waiting for agent).</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Channel Architecture Diagram (all channels → unified platform), Agent Desktop Wireframe, Chatbot Decision Tree (conversation flows)</p>
+<p><strong>Deliverables:</strong> Channel Strategy Document, Knowledge Base Architecture (taxonomy + governance), Customer Portal Wireframes &amp; Requirements</p>
+<p><strong>Công cụ:</strong> Genesys/Five9 (contact center), Twilio (programmable channels), Ada/Intercom (chatbot), Zendesk Guide/Salesforce Knowledge (KB)</p>
+</div>
+
+<h3 id="field-service">Module 2.3.3 — Field Service Management</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Khi vấn đề không thể giải quyết remote — cần kỹ thuật viên đến tận nơi: sửa thiết bị, lắp đặt, bảo trì. Module này thiết kế logistics cho mobile workforce: ai đi đâu, mang theo gì, khi nào, và làm sao communicate với khách hàng. Applicable cho: telecom, HVAC, medical equipment, utilities, IT services.
+</div>
+
+<div class="doc-card">
+<h4>DOC-209: Field Service Operations</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Quản lý đội ngũ dịch vụ thực địa</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-medium">Medium</span></span>
+<span><strong>Thời gian:</strong> 6 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-207</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế Work Order Lifecycle</strong> — States: Created → Scheduled → Dispatched → In Transit → On Site → Completed → Verified. Capture: required skills, required parts, estimated duration, customer availability windows. Mục đích: structured tracking from "customer reports issue" to "issue confirmed resolved in field".</li>
+<li><strong>Xây dựng Scheduling & Dispatch Engine</strong> — Optimization criteria: minimize travel time (geography), match skills (certified technician), respect SLA (priority first), balance workload (fair distribution). Support: emergency dispatch override, same-day urgent, recurring maintenance schedules. Mục đích: maximize technician utilization (target: 6-8 jobs/day) while meeting SLA and minimizing windshield time.</li>
+<li><strong>Thiết kế Mobile Workforce App</strong> — Technician needs: daily schedule view, navigation to site, work order details (history, parts needed, customer notes), ability to update status, capture signature/photos, access knowledge base offline. Mục đích: technician has everything needed on phone/tablet — no calling dispatch for info, no paper forms.</li>
+<li><strong>Xây dựng Inventory & Parts Management</strong> — Track: van stock (what's in each truck), warehouse stock, parts consumption per work order, auto-replenishment triggers. Support: parts request (order specific part for next visit), return (defective parts). Mục đích: first-time fix rate (target >85%) — most failures are because technician didn't have the right part.</li>
+<li><strong>Thiết kế Customer Communication</strong> — Automated notifications: appointment confirmation (24h before), technician ETA (real-time tracking), on-the-way alert (30 min), arrival confirmation, completion summary + invoice. Mục đích: reduce "where's my technician?" calls by 90%, customer always informed without effort.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Dispatch Workflow (scheduling optimization), Work Order State Machine (all transitions), Territory/Coverage Map</p>
+<p><strong>Deliverables:</strong> FSM Process Document, Mobile App Requirements Spec, Field Service SLA (including first-time-fix-rate targets)</p>
+<p><strong>Công cụ:</strong> Salesforce Field Service, ServiceMax, IFS, Microsoft Field Service, Route4Me (optimization)</p>
+</div>
+
+<h2 id="customer-360">Domain 2.4 — Data & Analytics</h2>
+<p>Customer 360 view, business intelligence và data-driven decision making.</p>
+
+<h3>Module 2.4.1 — Customer Data Platform</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+"Single view of customer" là holy grail của CRM — và cũng là problem khó nhất. Customer data nằm rải rác: CRM, website, mobile app, billing system, support tickets, social media. Module này thiết kế CDP architecture hợp nhất tất cả thành 1 unified profile có thể activate real-time cho personalization, analytics, và AI.
+</div>
+
+<div class="doc-card">
+<h4>DOC-210: Customer 360 & CDP</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng unified customer view</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-critical">Critical</span></span>
+<span><strong>Thời gian:</strong> 10 giờ</span>
+<span><strong>Tiêu chuẩn:</strong> DAMA-DMBOK, ISO 8000</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Thiết kế CDP Architecture</strong> — Define layers: Data Ingestion (connectors to all sources), Identity Resolution (matching records across systems), Profile Store (unified customer record), Segmentation Engine (audience builder), Activation Layer (push segments to channels). Mục đích: blueprint cho unified customer data infrastructure — tách từ application layer, serve all downstream systems.</li>
+<li><strong>Xây dựng Identity Resolution</strong> — Matching logic: deterministic (email, phone, customer ID) + probabilistic (name + address + behavior patterns). Handle: merge (two records = same person), split (one record = two people), hierarchy (company → division → individual). Mục đích: solve the "same customer, 5 records" problem — single golden record per individual.</li>
+<li><strong>Thiết kế Data Unification Schema</strong> — Unified profile structure: Identity (IDs, demographics), Behavioral (page views, clicks, purchases), Transactional (orders, payments, subscriptions), Engagement (email opens, support tickets, NPS responses), Computed (CLV score, churn risk, segment membership). Mục đích: standard schema mọi team đều query được — marketing dùng cho personalization, service dùng cho context, sales dùng cho prioritization.</li>
+<li><strong>Xây dựng Consent Management</strong> — Track per customer: what data collected, legal basis (consent, legitimate interest, contract), channel preferences (email opt-in, SMS opt-out), purposes consented to (marketing, analytics, sharing with partners). Enforcement: auto-suppress from campaigns khi consent revoked. Mục đích: GDPR/CCPA compliance built into data layer — not manual checking by marketers.</li>
+<li><strong>Thiết kế Real-time Profile Updates</strong> — Event streaming: as customer takes action (page view, purchase, support call) → profile updated within seconds → downstream systems react (personalization, alerts, scoring). Architecture: event bus → enrichment → profile store → activation. Mục đích: "real-time" personalization requires real-time data — batch overnight syncs mean stale context.</li>
+<li><strong>Xây dựng Audience Segmentation Engine</strong> — Visual segment builder: combine profile attributes (demographics), behaviors (actions in timeframe), computed scores (CLV > X), and relationship rules (account with > 5 users). Support: static lists, dynamic segments (auto-update), lookalike audiences. Mục đích: marketers self-serve targeting without SQL or engineering tickets — faster campaign execution, better targeting.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> CDP Architecture Diagram (all layers), Identity Graph (resolution logic), Data Unification Pipeline (sources → profile → activation)</p>
+<p><strong>Deliverables:</strong> CDP Requirements Document, Unified Customer Data Model, Integration Specification (per source system)</p>
+<p><strong>Công cụ:</strong> Segment, mParticle, Tealium (CDP platforms), Salesforce Data Cloud, Adobe Real-Time CDP, RudderStack (open-source)</p>
+</div>
+
+<h3 id="analytics">Module 2.4.2 — CRM Analytics & BI</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Data without insights = storage cost. Module này biến raw CRM data thành actionable intelligence: dashboards cho decisions, predictive models cho proactive action, và self-service BI cho mọi user. Mục tiêu: mỗi team member có answer cho "how are we doing?" trong 30 seconds, không cần request analyst.
+</div>
+
+<div class="doc-card">
+<h4>DOC-211: CRM Analytics Framework</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Xây dựng hệ thống analytics cho CRM</span>
+<span><strong>Độ khó:</strong> Advanced <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 8 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-210</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng KPI Framework theo domain</strong> — Sales KPIs: pipeline value, win rate, cycle length, quota attainment. Marketing KPIs: MQL volume, cost per MQL, campaign ROI, engagement rate. Service KPIs: CSAT, first response time, resolution time, deflection rate. Cross-cutting: NPS, CLV, churn rate, adoption metrics. Mục đích: aligned measurement language across org — CEO dashboard pulls from same definitions as team dashboards.</li>
+<li><strong>Thiết kế Dashboard Hierarchy</strong> — 3 levels: Executive (5-7 KPIs, trends, exceptions), Manager (team performance, pipeline health, forecasts), Operational (individual metrics, queue status, today's tasks). Design principles: answer one question per dashboard, progressive disclosure, context (vs target, vs last period). Mục đích: right information at right level — CEO doesn't need ticket queue, agent doesn't need board metrics.</li>
+<li><strong>Xây dựng Self-service BI Layer</strong> — Enable business users to: create own reports (drag-and-drop), filter/drill-down (no SQL needed), schedule/share reports, create alerts (threshold triggers). Governance: certified data sources (curated), exploratory (raw, with caveats), admin-managed permissions. Mục đích: reduce time-to-insight from "file Jira ticket for analyst" (days) to "build own report" (minutes).</li>
+<li><strong>Thiết kế Predictive Analytics Use Cases</strong> — Priority use cases: Churn Prediction (which customers likely to leave? intervention opportunities), CLV Prediction (expected future value for investment decisions), Next-Best-Action (what to recommend to this customer right now?), Lead Scoring (behavioral + firmographic prediction of conversion). Mục đích: move from reactive (reporting what happened) to proactive (predicting what will happen and suggesting action).</li>
+<li><strong>Xây dựng A/B Testing Infrastructure</strong> — Enable: randomized experiment assignment, variant tracking, statistical significance calculation, auto-termination (winner declared), impact attribution (actual lift measurement). Apply to: email subject lines, pricing page layouts, feature rollouts, sales playbook variants. Mục đích: data-driven optimization — stop guessing whether change X improved metric Y, actually measure it.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Analytics Architecture (data sources → warehouse → BI → consumers), KPI Hierarchy Tree (CEO → VP → Manager → Individual), Dashboard Wireframes (per level)</p>
+<p><strong>Deliverables:</strong> KPI Dictionary (all metrics defined: formula, source, owner, target), Dashboard Specifications (per audience), Analytics Strategy Document</p>
+<p><strong>Công cụ:</strong> Tableau, Power BI, Looker, Domo, Einstein Analytics</p>
+</div>
+
+<h3 id="reporting">Module 2.4.3 — Reporting & Data Governance</h3>
+
+<div class="callout callout-amber">
+<strong>Mục đích module</strong>
+Reports là "sản phẩm" mà data team deliver cho business users hàng ngày. Module này thiết kế reporting infrastructure bền vững: từ raw CRM data → transformed → modeled → served. Kèm theo là data governance đảm bảo data luôn trustworthy — vì dashboard sai = decisions sai = revenue impact.
+</div>
+
+<div class="doc-card">
+<h4>DOC-212: Reporting Architecture & Governance</h4>
+<div class="doc-meta">
+<span><strong>Mục tiêu:</strong> Thiết kế hệ thống reporting và governance</span>
+<span><strong>Độ khó:</strong> Intermediate <span class="badge badge-high">High</span></span>
+<span><strong>Thời gian:</strong> 6 giờ</span>
+<span><strong>Phụ thuộc:</strong> DOC-107, DOC-211</span>
+</div>
+<p><strong>Các bước thực hiện:</strong></p>
+<ol>
+<li><strong>Xây dựng Report Catalog & Taxonomy</strong> — Inventory tất cả reports hiện tại và cần thiết. Classify: Operational (real-time, transactional — agent queue status), Analytical (historical, aggregated — monthly pipeline trend), Regulatory (compliance-mandated — GDPR data inventory). Mục đích: single source of truth cho "what reports exist" — avoid duplicate reports answering same question differently.</li>
+<li><strong>Thiết kế Data Warehouse Schema</strong> — Star Schema cho CRM analytics: Fact tables (fact_opportunities, fact_cases, fact_activities, fact_campaigns) + Dimension tables (dim_customer, dim_product, dim_time, dim_channel, dim_agent). Define grain per fact table. Mục đích: optimized for analytical queries — join once, slice any way (by time, customer segment, product, territory).</li>
+<li><strong>Xây dựng ETL/ELT Pipeline</strong> — Design data flow: Extract (from CRM operational DB, marketing tools, service platforms) → Load (into warehouse staging) → Transform (clean, deduplicate, business logic via dbt models). Schedule: real-time CDC for critical metrics, hourly for operational, daily for analytical. Mục đích: fresh, reliable data in warehouse — analysts never query production DB directly.</li>
+<li><strong>Thiết kế Data Quality Monitoring</strong> — Automated checks: freshness (data arrived on schedule?), volume (row counts within expected range?), schema (no unexpected nulls or type changes?), accuracy (business rule validation — e.g., close date cannot be before create date). Alert on failures. Mục đích: catch data issues before they reach dashboards — stakeholder trust is destroyed by one wrong number in exec meeting.</li>
+<li><strong>Xây dựng Data Stewardship Model</strong> — Define roles: Data Owner (business — defines what "correct" means), Data Steward (operational — monitors quality daily), Data Engineer (technical — fixes pipelines). Create escalation path for data issues. Run monthly Data Quality Review meetings. Mục đích: accountability — when data is wrong, clear ownership means fast resolution instead of finger-pointing.</li>
+</ol>
+<p><strong>Sơ đồ:</strong> Reporting Architecture (sources → staging → warehouse → BI tool → users), Star Schema ERD, ETL Pipeline Diagram (with scheduling)</p>
+<p><strong>Deliverables:</strong> Report Catalog (all reports documented with owner + schedule), Data Warehouse Design Document, Data Quality Scorecard (measured monthly)</p>
+<p><strong>Công cụ:</strong> dbt (transformation), Snowflake/BigQuery (warehouse), Great Expectations/Soda (DQ monitoring), Airflow/Dagster (orchestration), Tableau/Power BI (visualization)</p>
+</div>
+
+<div class="callout callout-green">
+<strong>Tổng kết Phase 2</strong>
+Hoàn thành Phase 2 trang bị kiến thức nghiệp vụ sâu về 4 trụ cột CRM. Đây là nền tảng để thiết kế architecture (Phase 3) — vì architecture phải phục vụ business requirements, không ngược lại.
+</div>
+
+<div class="prev-next">
+  <a href="01-foundation.html">← Phase 1: Foundation</a>
+  <a href="03-architecture-design.html">Phase 3: Architecture & Design →</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

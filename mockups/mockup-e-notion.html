@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handbook — Mẫu E: Notion-style</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #ffffff; color: #37352f; line-height: 1.6; min-height: 100vh; }
+
+    /* CONTAINER */
+    .page { max-width: 780px; margin: 0 auto; padding: 4rem 2rem; }
+
+    /* COVER */
+    .cover { margin-bottom: 2.5rem; }
+    .cover h1 { font-size: 2.5rem; font-weight: 700; color: #37352f; margin-bottom: .25rem; }
+    .cover p { font-size: 1rem; color: #787774; }
+
+    /* SEARCH */
+    .search { margin-bottom: 2.5rem; }
+    .search input { width: 100%; padding: .65rem 1rem; border: 1px solid #e3e3e0; border-radius: 6px; font-size: .9rem; background: #fbfbfa; outline: none; color: #37352f; }
+    .search input:focus { border-color: #2eaadc; box-shadow: 0 0 0 2px rgba(46,170,220,.15); }
+
+    /* TOGGLE GROUP */
+    .toggle-group { margin-bottom: 1.5rem; border: 1px solid #e3e3e0; border-radius: 8px; overflow: hidden; }
+    .toggle-header { display: flex; align-items: center; gap: .6rem; padding: .75rem 1rem; cursor: pointer; background: #fbfbfa; user-select: none; }
+    .toggle-header:hover { background: #f7f6f3; }
+    .toggle-header .arrow { font-size: .75rem; color: #787774; transition: transform .2s; }
+    .toggle-header.open .arrow { transform: rotate(90deg); }
+    .toggle-header h2 { font-size: .95rem; font-weight: 600; color: #37352f; }
+    .toggle-header .badge { font-size: .72rem; color: #787774; background: #e3e3e0; padding: 1px 7px; border-radius: 3px; margin-left: auto; }
+    .toggle-body { display: none; border-top: 1px solid #e3e3e0; }
+    .toggle-body.open { display: block; }
+
+    /* ITEMS */
+    .item { display: flex; align-items: center; gap: .75rem; padding: .6rem 1rem .6rem 2.25rem; border-bottom: 1px solid #f0f0ee; text-decoration: none; color: inherit; transition: background .1s; }
+    .item:last-child { border-bottom: none; }
+    .item:hover { background: #f7f6f3; }
+    .item-icon { width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: .7rem; color: #fff; font-weight: 700; }
+    .item-title { font-size: .88rem; color: #37352f; font-weight: 500; }
+    .item-desc { font-size: .78rem; color: #787774; margin-left: auto; max-width: 320px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    @media (max-width: 600px) { .item-desc { display: none; } .page { padding: 2rem 1rem; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="cover">
+    <h1>Handbook</h1>
+    <p>Personal knowledge base</p>
+  </div>
+
+  <div class="search">
+    <input type="text" placeholder="Search...">
+  </div>
+
+  <!-- AI Engineering -->
+  <div class="toggle-group">
+    <div class="toggle-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span class="arrow">&#9654;</span>
+      <h2>AI Engineering</h2>
+      <span class="badge">12</span>
+    </div>
+    <div class="toggle-body open">
+      <a href="#" class="item"><span class="item-icon" style="background:#667eea">CC</span><span class="item-title">Claude Code Handbook</span><span class="item-desc">Từ cơ bản đến nâng cao</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#dc2626">SP</span><span class="item-title">Superpowers</span><span class="item-desc">TDD, planning, execution</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#06d6a0">GS</span><span class="item-title">GStack Sprint Playbook</span><span class="item-desc">Sprint methodology</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#10b981">GD</span><span class="item-title">GSD Framework</span><span class="item-desc">Meta-prompting system</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#f59e0b">SS</span><span class="item-title">Skills Stack</span><span class="item-desc">3-layer model</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#e94560">GP</span><span class="item-title">GStack Sprint Practice</span><span class="item-desc">7 bước thực hành</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#8b5cf6">MC</span><span class="item-title">Multica</span><span class="item-desc">Multi-agent platform</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#0ea5e9">EC</span><span class="item-title">ECC</span><span class="item-desc">63 agents, 249 skills</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#ec4899">AG</span><span class="item-title">The Agency</span><span class="item-desc">144+ agent personalities</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#6366f1">SR</span><span class="item-title">Skills for Real Engineers</span><span class="item-desc">Composable skills</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#2563eb">SK</span><span class="item-title">Spec Kit</span><span class="item-desc">SDD by GitHub</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#059669">BP</span><span class="item-title">Claude Code Best Practice</span><span class="item-desc">83 tips curated</span></a>
+    </div>
+  </div>
+
+  <!-- English -->
+  <div class="toggle-group">
+    <div class="toggle-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span class="arrow">&#9654;</span>
+      <h2>English</h2>
+      <span class="badge">2</span>
+    </div>
+    <div class="toggle-body open">
+      <a href="#" class="item"><span class="item-icon" style="background:#059669">EN</span><span class="item-title">English Learning Roadmap</span><span class="item-desc">12 bài ngữ pháp + ôn tập</span></a>
+      <a href="#" class="item"><span class="item-icon" style="background:#0891b2">QR</span><span class="item-title">Quick Reference</span><span class="item-desc">Cheat sheet</span></a>
+    </div>
+  </div>
+
+  <!-- Productivity -->
+  <div class="toggle-group">
+    <div class="toggle-header open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span class="arrow">&#9654;</span>
+      <h2>Productivity</h2>
+      <span class="badge">1</span>
+    </div>
+    <div class="toggle-body open">
+      <a href="#" class="item"><span class="item-icon" style="background:#7c3aed">OB</span><span class="item-title">Obsidian</span><span class="item-desc">Local-first notes</span></a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

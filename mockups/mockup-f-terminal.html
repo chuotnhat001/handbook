@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handbook — Mẫu F: Terminal/Hacker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'SF Mono', 'Cascadia Code', 'Consolas', 'Fira Code', monospace; background: #0a0a0a; color: #a3a3a3; line-height: 1.7; min-height: 100vh; font-size: 14px; }
+
+    /* CONTAINER */
+    .terminal { max-width: 900px; margin: 0 auto; padding: 2rem; }
+
+    /* HEADER */
+    .prompt-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
+    .prompt-header .line1 { color: #4ade80; }
+    .prompt-header .line2 { color: #fbbf24; font-size: .85rem; }
+    .prompt-header h1 { color: #f5f5f5; font-size: 1.5rem; font-weight: 700; margin: .5rem 0 .25rem; }
+    .prompt-header p { color: #737373; font-size: .85rem; }
+
+    /* SEARCH */
+    .search-line { display: flex; align-items: center; gap: .5rem; margin-bottom: 2rem; }
+    .search-line .prompt { color: #4ade80; }
+    .search-line input { flex: 1; background: none; border: none; border-bottom: 1px solid #333; color: #f5f5f5; font-family: inherit; font-size: .9rem; padding: .3rem 0; outline: none; }
+    .search-line input:focus { border-bottom-color: #4ade80; }
+
+    /* SECTION */
+    .section { margin-bottom: 2rem; }
+    .section-header { color: #4ade80; margin-bottom: .75rem; font-size: .8rem; }
+    .section-header span { color: #737373; }
+
+    /* ITEMS */
+    .item { display: flex; align-items: baseline; gap: .75rem; padding: .35rem 0; text-decoration: none; color: inherit; transition: all .1s; border-left: 2px solid transparent; padding-left: .75rem; }
+    .item:hover { color: #f5f5f5; border-left-color: #4ade80; background: rgba(74,222,128,.03); }
+    .item .idx { color: #525252; font-size: .75rem; width: 20px; }
+    .item .name { color: #e5e5e5; font-weight: 500; }
+    .item .sep { color: #404040; }
+    .item .desc { color: #737373; font-size: .82rem; }
+    .item .tag { color: #0a0a0a; background: #4ade80; padding: 0 5px; border-radius: 2px; font-size: .65rem; font-weight: 700; margin-left: auto; }
+
+    /* FOOTER */
+    .footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #222; color: #525252; font-size: .78rem; }
+    .footer .cursor { display: inline-block; width: 8px; height: 14px; background: #4ade80; animation: blink 1s infinite; vertical-align: middle; margin-left: 4px; }
+    @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+
+    @media (max-width: 600px) { .item .desc { display: none; } .terminal { padding: 1rem; } }
+  </style>
+</head>
+<body>
+<div class="terminal">
+  <div class="prompt-header">
+    <div class="line1">~/handbook</div>
+    <div class="line2">$ cat index</div>
+    <h1>Handbook</h1>
+    <p>Personal knowledge base — 15 topics, 3 categories</p>
+  </div>
+
+  <div class="search-line">
+    <span class="prompt">$</span>
+    <input type="text" placeholder="grep -i ...">
+  </div>
+
+  <!-- AI Engineering -->
+  <div class="section">
+    <div class="section-header">## ai-engineering/ <span>(12 files)</span></div>
+    <a href="#" class="item"><span class="idx">01</span><span class="name">claude-code-handbook</span><span class="sep">—</span><span class="desc">Từ cơ bản đến nâng cao, workflow thực chiến</span></a>
+    <a href="#" class="item"><span class="idx">02</span><span class="name">superpowers</span><span class="sep">—</span><span class="desc">TDD, planning, execution có kỷ luật</span></a>
+    <a href="#" class="item"><span class="idx">03</span><span class="name">gstack-sprint-playbook</span><span class="sep">—</span><span class="desc">Sprint methodology by Garry Tan</span></a>
+    <a href="#" class="item"><span class="idx">04</span><span class="name">gsd-framework</span><span class="sep">—</span><span class="desc">Meta-prompting & context-engineering</span><span class="tag">NEW</span></a>
+    <a href="#" class="item"><span class="idx">05</span><span class="name">skills-stack</span><span class="sep">—</span><span class="desc">3-layer decision/context/execution</span></a>
+    <a href="#" class="item"><span class="idx">06</span><span class="name">gstack-sprint-practice</span><span class="sep">—</span><span class="desc">7 bước thực hành với prompts</span></a>
+    <a href="#" class="item"><span class="idx">07</span><span class="name">multica</span><span class="sep">—</span><span class="desc">Multi-agent orchestration platform</span></a>
+    <a href="#" class="item"><span class="idx">08</span><span class="name">ecc</span><span class="sep">—</span><span class="desc">63 agents, 249 skills, 12+ languages</span><span class="tag">NEW</span></a>
+    <a href="#" class="item"><span class="idx">09</span><span class="name">agency-agents</span><span class="sep">—</span><span class="desc">144+ specialized AI personalities</span><span class="tag">NEW</span></a>
+    <a href="#" class="item"><span class="idx">10</span><span class="name">skills-real-engineers</span><span class="sep">—</span><span class="desc">Composable skills by Matt Pocock</span><span class="tag">NEW</span></a>
+    <a href="#" class="item"><span class="idx">11</span><span class="name">spec-kit</span><span class="sep">—</span><span class="desc">Spec-Driven Development by GitHub</span><span class="tag">NEW</span></a>
+    <a href="#" class="item"><span class="idx">12</span><span class="name">claude-code-best-practice</span><span class="sep">—</span><span class="desc">83 curated best practices</span><span class="tag">NEW</span></a>
+  </div>
+
+  <!-- English -->
+  <div class="section">
+    <div class="section-header">## english/ <span>(2 files)</span></div>
+    <a href="#" class="item"><span class="idx">01</span><span class="name">learning-roadmap</span><span class="sep">—</span><span class="desc">12 bài ngữ pháp + ôn tập + exercises</span></a>
+    <a href="#" class="item"><span class="idx">02</span><span class="name">quick-reference</span><span class="sep">—</span><span class="desc">Cheat sheet tra cứu nhanh</span></a>
+  </div>
+
+  <!-- Productivity -->
+  <div class="section">
+    <div class="section-header">## productivity/ <span>(1 file)</span></div>
+    <a href="#" class="item"><span class="idx">01</span><span class="name">obsidian</span><span class="sep">—</span><span class="desc">Local-first notes, Markdown</span></a>
+  </div>
+
+  <div class="footer">
+    <span class="prompt" style="color:#4ade80">$</span> <span class="cursor"></span>
+  </div>
+</div>
+</body>
+</html>

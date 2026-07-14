@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 - Modal Verbs - English</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+.breadcrumb{font-size:.82rem;color:#64748b;margin-bottom:1.5rem}
+.breadcrumb a{color:#4c51bf;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.card-nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;margin-bottom:1.5rem;border-bottom:1px solid rgba(0,0,0,.06)}
+.card-nav a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.card-nav a:hover{text-decoration:underline}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+.formula{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:.92rem}
+.compare-vn{background:#fef3c7;border-left:3px solid #f59e0b;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes{background:#fef2f2;border-left:3px solid #ef4444;padding:.85rem 1.1rem;margin:1rem 0;border-radius:0 8px 8px 0;font-size:.9rem}
+.mistakes li{margin-bottom:.5rem}
+.exercise{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0}
+.exercise p{margin-bottom:.5rem}
+.answer{display:none;color:#059669;font-weight:500;margin-top:.25rem}
+.answer.show{display:block}
+.toggle-btn{cursor:pointer;background:#667eea;color:#fff;border:none;padding:5px 14px;border-radius:5px;font-size:.78rem;font-weight:500;transition:background .15s}
+.toggle-btn:hover{background:#4c51bf}
+.highlight{background:rgba(102,126,234,.12);padding:1px 4px;border-radius:3px;font-weight:500}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Nội dung bài học</div>
+    <div class="nav-items" id="toc"></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lộ trình</div>
+    <div class="nav-items">
+      <a href="./index.html">← English Index</a>
+      <a href="./08-present-perfect.html">08. Present Perfect</a>
+      <a href="./09-modal-verbs.html" class="active">09. Modal Verbs</a>
+      <a href="./10-comparatives.html">10. Comparatives</a>
+      <a href="./11-conditionals.html">11. Conditionals</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="breadcrumb">
+    <a href="../index.html">Handbook</a> / <a href="./index.html">English</a> / Card 9 of 12
+  </div>
+  <div class="card-nav">
+    <a href="./08-present-perfect.html">← Previous: Present Perfect</a>
+    <a href="./10-comparatives.html">Next: Comparatives →</a>
+  </div>
+
+  <h1>Modal Verbs</h1>
+  <p class="subtitle">Động từ khuyết thiếu — can, could, should, must, may, might</p>
+
+  <h2>Ngữ pháp</h2>
+  <p>Modal verbs (động từ khuyết thiếu) là nhóm động từ đặc biệt: không chia theo ngôi (không thêm -s), không có dạng -ing hay to-infinitive, và luôn đi với động từ nguyên mẫu (bare infinitive) phía sau.</p>
+
+  <div class="formula">
+    <strong>Công thức chung:</strong><br><br>
+    <strong>(+) Khẳng định:</strong> Subject + modal + V (nguyên mẫu, không "to")<br>
+    → She <strong>can swim</strong>. / You <strong>must go</strong>.<br><br>
+    <strong>(-) Phủ định:</strong> Subject + modal + not + V<br>
+    → He <strong>cannot (can't) drive</strong>. / You <strong>mustn't smoke</strong> here.<br><br>
+    <strong>(?) Nghi vấn:</strong> Modal + Subject + V?<br>
+    → <strong>Can</strong> you <strong>help</strong> me? / <strong>Should</strong> I <strong>call</strong> a doctor?
+  </div>
+
+  <h3>Các Modal Verbs chính</h3>
+  <table>
+    <tr><th>Modal</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+    <tr><td><strong>can</strong></td><td>có thể (khả năng, xin phép)</td><td>I <strong>can</strong> speak English.</td></tr>
+    <tr><td><strong>could</strong></td><td>có thể (quá khứ, lịch sự hơn can)</td><td><strong>Could</strong> you open the door?</td></tr>
+    <tr><td><strong>should</strong></td><td>nên (lời khuyên)</td><td>You <strong>should</strong> see a doctor.</td></tr>
+    <tr><td><strong>must</strong></td><td>phải (bắt buộc, suy luận chắc chắn)</td><td>You <strong>must</strong> wear a seatbelt.</td></tr>
+    <tr><td><strong>may</strong></td><td>có thể (khả năng, xin phép trang trọng)</td><td>It <strong>may</strong> rain later.</td></tr>
+    <tr><td><strong>might</strong></td><td>có thể (khả năng thấp hơn may)</td><td>She <strong>might</strong> come tonight.</td></tr>
+  </table>
+
+  <h3>Must vs Have to</h3>
+  <div class="formula">
+    <strong>Must</strong> = bắt buộc (từ người nói, quy tắc chung):<br>
+    → You <strong>must</strong> be quiet in the library. (quy tắc)<br><br>
+    <strong>Have to</strong> = bắt buộc (từ bên ngoài, hoàn cảnh):<br>
+    → I <strong>have to</strong> wear a uniform at work. (quy định công ty)<br><br>
+    <strong>Phủ định khác nhau:</strong><br>
+    → <strong>mustn't</strong> = cấm (không được phép): You <strong>mustn't</strong> park here.<br>
+    → <strong>don't have to</strong> = không cần thiết: You <strong>don't have to</strong> come if you're busy.
+  </div>
+
+  <h3>Mức độ chắc chắn</h3>
+  <div class="formula">
+    <strong>must</strong> (chắc chắn 95%) → <strong>will</strong> (90%) → <strong>should</strong> (75%) → <strong>may</strong> (50%) → <strong>might/could</strong> (30%)<br><br>
+    → He <strong>must be</strong> tired. (Chắc chắn anh ấy mệt — có bằng chứng rõ)<br>
+    → He <strong>may be</strong> tired. (Có thể anh ấy mệt — không chắc)<br>
+    → He <strong>might be</strong> tired. (Có lẽ anh ấy mệt — ít chắc chắn)
+  </div>
+
+  <h2>So sánh với tiếng Việt</h2>
+  <div class="compare-vn">
+    <p><strong>Giống:</strong> Tiếng Việt cũng có "có thể, nên, phải" tương ứng với can, should, must.</p>
+    <p><strong>Khác:</strong></p>
+    <ul>
+      <li>Tiếng Việt không thay đổi hình thức động từ. Tiếng Anh: modals <strong>không chia theo ngôi</strong> (không thêm -s), <strong>không thêm -ing</strong>, luôn + V nguyên mẫu (không "to").</li>
+      <li>Tiếng Việt: "Anh ấy có thể bơi" = "He can swim." Nhưng tiếng Anh phân biệt can (hiện tại) vs could (quá khứ/lịch sự).</li>
+      <li>Tiếng Việt: "không phải" = don't have to (không cần). "không được" = mustn't (cấm). Tiếng Anh phân biệt rõ mustn't vs don't have to.</li>
+      <li>Tiếng Việt dùng "có thể" cho cả may, might, can, could. Tiếng Anh phân biệt mức độ chắc chắn.</li>
+    </ul>
+  </div>
+
+  <h2>Từ vựng</h2>
+  <table>
+    <tr><th>Từ</th><th>Phiên âm</th><th>Loại từ</th><th>Nghĩa</th></tr>
+    <tr><td>ability</td><td>/əˈbɪl.ə.ti/</td><td>n.</td><td>khả năng</td></tr>
+    <tr><td>permission</td><td>/pəˈmɪʃ.ən/</td><td>n.</td><td>sự cho phép</td></tr>
+    <tr><td>obligation</td><td>/ˌɒb.lɪˈɡeɪ.ʃən/</td><td>n.</td><td>nghĩa vụ</td></tr>
+    <tr><td>possibility</td><td>/ˌpɒs.əˈbɪl.ə.ti/</td><td>n.</td><td>khả năng xảy ra</td></tr>
+    <tr><td>advice</td><td>/ədˈvaɪs/</td><td>n.</td><td>lời khuyên</td></tr>
+    <tr><td>prohibition</td><td>/ˌprəʊ.hɪˈbɪʃ.ən/</td><td>n.</td><td>sự cấm</td></tr>
+    <tr><td>request</td><td>/rɪˈkwest/</td><td>n.</td><td>yêu cầu, lời đề nghị</td></tr>
+    <tr><td>offer</td><td>/ˈɒf.ər/</td><td>n./v.</td><td>lời đề nghị / đề nghị</td></tr>
+    <tr><td>suggestion</td><td>/səˈdʒes.tʃən/</td><td>n.</td><td>gợi ý</td></tr>
+    <tr><td>necessary</td><td>/ˈnes.ə.ser.i/</td><td>adj.</td><td>cần thiết</td></tr>
+    <tr><td>allowed</td><td>/əˈlaʊd/</td><td>adj.</td><td>được phép</td></tr>
+    <tr><td>forbidden</td><td>/fəˈbɪd.ən/</td><td>adj.</td><td>bị cấm</td></tr>
+  </table>
+
+  <h2>Câu mẫu</h2>
+  <ol>
+    <li>She <span class="highlight">can</span> speak three languages fluently. — Khả năng (can).</li>
+    <li><span class="highlight">Could</span> you please pass me the salt? — Yêu cầu lịch sự (could).</li>
+    <li>You <span class="highlight">should</span> drink more water. — Lời khuyên (should).</li>
+    <li>Students <span class="highlight">must</span> wear uniforms at school. — Bắt buộc (must).</li>
+    <li>It <span class="highlight">may</span> snow tomorrow. — Khả năng 50% (may).</li>
+    <li>He <span class="highlight">might</span> be at home, but I'm not sure. — Khả năng thấp (might).</li>
+    <li>You <span class="highlight">mustn't</span> use your phone during the exam. — Cấm (mustn't).</li>
+  </ol>
+
+  <h2>Lỗi thường gặp của người Việt</h2>
+  <div class="mistakes">
+    <ul>
+      <li><strong>Thêm -s vào modal:</strong> ❌ "He <strong>cans</strong> swim." → ✅ "He <strong>can</strong> swim." Modal không bao giờ thêm -s.</li>
+      <li><strong>Thêm "to" sau modal:</strong> ❌ "You must <strong>to go</strong>." → ✅ "You must <strong>go</strong>." Modal + V nguyên mẫu (không "to").</li>
+      <li><strong>Dùng "can" cho quá khứ:</strong> ❌ "Yesterday I <strong>can</strong> swim." → ✅ "Yesterday I <strong>could</strong> swim." Quá khứ của can = could.</li>
+      <li><strong>Nhầm mustn't và don't have to:</strong> ❌ "You mustn't come" (= cấm đến) ≠ "You don't have to come" (= không cần đến). Mustn't = cấm, don't have to = không bắt buộc.</li>
+      <li><strong>Dùng modal với trợ động từ:</strong> ❌ "I <strong>don't can</strong> swim." → ✅ "I <strong>can't</strong> swim." Modal tự phủ định, không cần do/does.</li>
+    </ul>
+  </div>
+
+  <h2>Bài tập</h2>
+  <p><em>Chọn modal verb phù hợp (can, could, should, must, may, might, mustn't, don't have to):</em></p>
+
+  <div class="exercise">
+    <p>1. You ___ drive without a license. It's illegal.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ mustn't (cấm — vi phạm pháp luật)</div>
+  </div>
+
+  <div class="exercise">
+    <p>2. ___ you swim when you were five years old?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Could (hỏi khả năng trong quá khứ)</div>
+  </div>
+
+  <div class="exercise">
+    <p>3. You look tired. You ___ go to bed early tonight.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ should (lời khuyên)</div>
+  </div>
+
+  <div class="exercise">
+    <p>4. It's Saturday. I ___ go to work today.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ don't have to (không cần thiết — ngày nghỉ)</div>
+  </div>
+
+  <div class="exercise">
+    <p>5. She ___ be at the office. I saw her car in the parking lot.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ must (suy luận chắc chắn — có bằng chứng: thấy xe)</div>
+  </div>
+
+  <div class="exercise">
+    <p>6. ___ I borrow your pen, please?</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ Can / Could / May (xin phép — Could/May lịch sự hơn)</div>
+  </div>
+
+  <div class="exercise">
+    <p>7. Take an umbrella. It ___ rain this afternoon.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ might / may (khả năng — không chắc chắn)</div>
+  </div>
+
+  <div class="exercise">
+    <p>8. All passengers ___ fasten their seatbelts during takeoff.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ must (bắt buộc — quy định an toàn)</div>
+  </div>
+
+  <div class="exercise">
+    <p>9. He ___ play the piano beautifully. He's very talented.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ can (khả năng hiện tại)</div>
+  </div>
+
+  <div class="exercise">
+    <p>10. You ___ eat so much sugar. It's bad for your health.</p>
+    <button class="toggle-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+    <div class="answer">→ shouldn't (lời khuyên — không nên)</div>
+  </div>
+
+  <div class="card-nav" style="margin-top:3rem;border-top:1px solid rgba(0,0,0,.06);border-bottom:none;padding-top:.75rem">
+    <a href="./08-present-perfect.html">← Previous: Present Perfect</a>
+    <a href="./10-comparatives.html">Next: Comparatives →</a>
+  </div>
+</div>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+document.querySelectorAll('.main h2').forEach((h, i) => {
+  h.id = 'section-' + i;
+  const a = document.createElement('a');
+  a.href = '#section-' + i;
+  a.textContent = h.textContent;
+  toc.appendChild(a);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GStack - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+/* LEFT MENU */
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+
+/* COPY BUTTON */
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+
+/* MAIN CONTENT */
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+
+/* CODE */
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+
+/* CALLOUTS */
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+
+/* SOURCE */
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+
+/* BLOCKQUOTE */
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng Quan</div>
+    <div class="nav-items">
+      <a href="#overview">gstack là gì</a>
+      <a href="#install">Cài đặt</a>
+      <a href="#sprint">Sprint Workflow</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Skills (23)</div>
+    <div class="nav-items">
+      <a href="#planning">Planning Phase</a>
+      <a href="#review">Review Phase</a>
+      <a href="#testing">Testing &amp; Quality</a>
+      <a href="#release">Release Phase</a>
+      <a href="#design">Design &amp; UI</a>
+      <a href="#safety">Safety &amp; Config</a>
+      <a href="#utilities">Utilities</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Công cụ</div>
+    <div class="nav-items">
+      <a href="#browse">Browser Tools</a>
+      <a href="#gbrain">GBrain &amp; Memory</a>
+      <a href="#ios">iOS Tools</a>
+      <a href="#clis">Standalone CLIs</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng Cao</div>
+    <div class="nav-items">
+      <a href="#parallel">Parallel Development</a>
+      <a href="#checkpoint">Checkpoint Mode</a>
+      <a href="#multiagent">Multi-Agent Support</a>
+      <a href="#config">Configuration</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tham Khảo</div>
+    <div class="nav-items">
+      <a href="#examples">Workflow Examples</a>
+      <a href="#philosophy">Philosophy</a>
+      <a href="#troubleshoot">Troubleshooting</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">gstack</h1>
+<p class="subtitle">AI-Powered Software Factory — biến Claude Code thành một đội engineering ảo với 23 skills chuyên biệt, tổ chức quanh sprint workflow: Think → Plan → Build → Review → Test → Ship → Reflect.</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/garrytan/gstack" target="_blank">github.com/garrytan/gstack</a> — by Garry Tan (Y Combinator President &amp; CEO), MIT License, 118K stars</span>
+</div>
+
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi:</strong> gstack là một quy trình, không phải tập hợp công cụ. Mỗi skill trong sprint đọc output của skill trước và nuôi dưỡng skill tiếp theo — /office-hours tạo design doc, /plan-eng-review đọc nó để viết test plan, /qa tự động pick up test plan đó. Không có thông tin nào bị mất giữa các handoff.
+</div>
+
+<p>gstack là framework mã nguồn mở biến Claude Code thành một đội engineering ảo có phối hợp. Được xây dựng và duy trì bởi Garry Tan (Y Combinator President &amp; CEO), nó cho phép developer cá nhân ship với tốc độ chưa từng có thông qua structured workflows, specialized AI roles, và integrated development tools.</p>
+
+<p><strong>Metrics thực tế (Garry Tan, 2026):</strong></p>
+<ul>
+<li>Tốc độ logical line/ngày: 11,417 (so với 14 năm 2013) — ~810× tăng trưởng sau khi normalize</li>
+<li>Year-to-date output: 240× toàn bộ output năm 2013</li>
+<li>60 ngày gần nhất: 3 production services + 40+ features (làm part-time trong khi lãnh đạo YC)</li>
+<li>GitHub 2026: 1,237+ contributions</li>
+</ul>
+
+<blockquote>Andrej Karpathy tuyên bố ông không tự viết code từ tháng 12/2025, đạt năng suất khổng lồ thông qua AI agents. gstack operationalize cách tiếp cận này với 23 specialist roles và 8 power tools.</blockquote>
+
+<h2 id="install">Cài đặt</h2>
+
+<h3>Yêu cầu</h3>
+<ul>
+<li>Claude Code</li>
+<li>Git</li>
+<li>Bun v1.0+</li>
+<li>Node.js (chỉ Windows)</li>
+</ul>
+
+<h3>Quick Setup (30 giây)</h3>
+<pre><code>git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git \
+  ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup</code></pre>
+
+<h3>Team Mode (auto-update cho shared repos)</h3>
+<pre><code>(cd ~/.claude/skills/gstack && ./setup --team) && \
+  ~/.claude/skills/gstack/bin/gstack-team-init required && \
+  git add .claude/ CLAUDE.md && git commit -m "require gstack for AI-assisted work"</code></pre>
+
+<p>Team mode bật auto-update mỗi session (throttled 1/giờ, network-failure-safe, silent). Có thể chọn <code>required</code> (block teammate không có gstack) hoặc <code>optional</code> (nudge không block).</p>
+
+<h3>Cài đặt cho các AI agents khác</h3>
+<table>
+<tr><th>Agent</th><th>Flag</th></tr>
+<tr><td>OpenAI Codex CLI</td><td><code>--host codex</code></td></tr>
+<tr><td>OpenCode</td><td><code>--host opencode</code></td></tr>
+<tr><td>Cursor</td><td><code>--host cursor</code></td></tr>
+<tr><td>Factory Droid</td><td><code>--host factory</code></td></tr>
+<tr><td>Kiro</td><td><code>--host kiro</code></td></tr>
+<tr><td>Hermes</td><td><code>--host hermes</code></td></tr>
+</table>
+
+<h2 id="sprint">Sprint Workflow</h2>
+
+<p>gstack cấu trúc phát triển thành pipeline 7 giai đoạn. Mỗi giai đoạn có specialized skills đọc context từ giai đoạn trước và truyền output xuống giai đoạn sau.</p>
+
+<div class="flow">
+  <span class="flow-step">Think</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Plan</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Build</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Review</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Test</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Ship</span><span class="flow-arrow">&rarr;</span>
+  <span class="flow-step">Reflect</span>
+</div>
+
+<h3>Smart Review Routing</h3>
+<p>gstack tự detect loại review phù hợp và bỏ qua những bước không cần thiết: design review bị skip cho backend-only changes, CEO review bị skip cho infra bug fixes. Các independent tasks được parallelize tự động.</p>
+
+<h2 id="planning">Planning Phase Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Vai trò</th><th>Mô tả</th></tr>
+<tr><td><code>/office-hours</code></td><td>YC Office Hours</td><td>6 forcing questions reframe product intent trước khi code; sinh ra design doc</td></tr>
+<tr><td><code>/plan-ceo-review</code></td><td>Founder/CEO</td><td>Strategic scope analysis: Expansion, Selective Expansion, Hold, Reduction modes</td></tr>
+<tr><td><code>/plan-eng-review</code></td><td>Engineering Manager</td><td>Architecture lock-in, data flow diagrams, edge cases, test matrix</td></tr>
+<tr><td><code>/plan-design-review</code></td><td>Senior Designer</td><td>Design dimension scoring (0-10), AI slop detection, interactive refinement</td></tr>
+<tr><td><code>/plan-devex-review</code></td><td>DX Lead</td><td>Developer-focused: personas, time-to-hello-world, friction analysis</td></tr>
+<tr><td><code>/autoplan</code></td><td>Review Pipeline</td><td>Unified planning: tự động chạy CEO → design → eng → DX reviews theo thứ tự</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Karpathy's 4 Failure Modes — gstack giải quyết thế nào:</strong>
+Wrong assumptions → <code>/office-hours</code> force assumptions ra ánh sáng trước khi code. Overcomplexity → <code>/review</code> bắt unnecessary complexity. Orthogonal edits → Confusion Protocol ngăn Claude đoán mò architectural decisions. Imperative over declarative → <code>/ship</code> biến tasks thành verifiable goals với test-first execution.
+</div>
+
+
+<h2 id="review">Review Phase Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Vai trò</th><th>Mô tả</th></tr>
+<tr><td><code>/review</code></td><td>Staff Engineer</td><td>Production-readiness audit; auto-fixes common issues; flags gaps cho approval</td></tr>
+<tr><td><code>/design-review</code></td><td>Designer-Coder</td><td>Post-ship design audit với atomic fixes và before/after screenshots</td></tr>
+<tr><td><code>/devex-review</code></td><td>DX Tester</td><td>Live onboarding audit: docs navigation, TTHW measurement, error capture</td></tr>
+<tr><td><code>/codex</code></td><td>Second Opinion</td><td>Independent review qua OpenAI Codex CLI — pass/fail gate hoặc adversarial challenge</td></tr>
+<tr><td><code>/investigate</code></td><td>Debugger</td><td>Systematic root-cause analysis; dừng sau 3 failed hypotheses</td></tr>
+<tr><td><code>/cso</code></td><td>Chief Security Officer</td><td>OWASP Top 10 + STRIDE threat modeling; 17 false-positive exclusions; 8/10+ confidence gate</td></tr>
+</table>
+
+<h2 id="testing">Testing &amp; Quality Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>/qa</code></td><td>Real browser testing, bug discovery, atomic fixes, auto-generated regression tests</td></tr>
+<tr><td><code>/qa-only</code></td><td>Pure bug reporting không thay đổi code</td></tr>
+<tr><td><code>/benchmark</code></td><td>Page load time, Core Web Vitals, resource size baselines với before/after comparison</td></tr>
+</table>
+
+<h2 id="release">Release &amp; Deploy Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>/ship</code></td><td>Sync main, run tests, audit coverage, push, open PR; bootstraps test frameworks nếu chưa có</td></tr>
+<tr><td><code>/land-and-deploy</code></td><td>Merge PR, wait for CI, deploy, verify production health</td></tr>
+<tr><td><code>/canary</code></td><td>Post-deploy monitoring: console errors, performance regressions, page failures</td></tr>
+<tr><td><code>/document-release</code></td><td>Update all project docs để match shipped changes; builds Diataxis coverage map</td></tr>
+<tr><td><code>/document-generate</code></td><td>Generate missing docs từ scratch dùng Diataxis framework</td></tr>
+</table>
+
+<h2 id="design">Design &amp; UI Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>/design-consultation</code></td><td>Build complete design system từ scratch; research landscape, propose creative risks, generate mockups</td></tr>
+<tr><td><code>/design-shotgun</code></td><td>Generate 4-6 AI mockup variants; mở comparison board; collect feedback; iterate; learns taste preferences</td></tr>
+<tr><td><code>/design-html</code></td><td>Convert approved mockup thành production HTML/CSS dùng Pretext; detect React/Svelte/Vue; 30KB overhead, zero deps</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Design pipeline:</strong> Describe intent → <code>/design-shotgun</code> generates options → iterate visually → approve → <code>/design-html</code> produces shippable code.
+</div>
+
+<h2 id="safety">Safety &amp; Configuration Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>/careful</code></td><td>Cảnh báo trước destructive commands (rm -rf, DROP TABLE, force-push); có thể override</td></tr>
+<tr><td><code>/freeze</code></td><td>Restrict file edits trong một directory; ngăn scope creep khi debugging</td></tr>
+<tr><td><code>/guard</code></td><td>Kết hợp <code>/careful</code> + <code>/freeze</code> cho maximum safety khi làm production work</td></tr>
+<tr><td><code>/unfreeze</code></td><td>Gỡ bỏ edit boundary đã set bởi /freeze</td></tr>
+</table>
+
+<h2 id="utilities">Utilities &amp; Reflection Skills</h2>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>/retro</code></td><td>Weekly retrospective với per-person breakdowns, shipping streaks, test health, growth opportunities; <code>--global</code> chạy across all projects</td></tr>
+<tr><td><code>/learn</code></td><td>Manage project-specific patterns, pitfalls, preferences across sessions; auto-decay 5%/week</td></tr>
+<tr><td><code>/pair-agent</code></td><td>Cross-agent coordination — nhiều AI agents từ các vendors khác nhau share một browser</td></tr>
+<tr><td><code>/make-pdf</code></td><td>Markdown → publication-quality PDF; Mermaid/excalidraw render as vector; <code>--to html</code> hoặc <code>--to docx</code></td></tr>
+<tr><td><code>/diagram</code></td><td>English description → editable diagram triplet (Mermaid source + excalidraw + SVG/PNG); zero network</td></tr>
+</table>
+
+<h2 id="browse">Browser Tools</h2>
+
+<h3>/browse — Real Browser Automation</h3>
+<p>Cung cấp Chromium được AI điều khiển:</p>
+<ul>
+<li>~100ms per command</li>
+<li>Real clicks, screenshots, interactions</li>
+<li>Anti-bot stealth built-in</li>
+<li>Native support cho authenticated pages</li>
+</ul>
+
+<p><strong>Escape hatches:</strong></p>
+<ul>
+<li><strong>Domain skills:</strong> Lưu per-site notes (ví dụ "Apply button in iframe") tự động fire khi revisit</li>
+<li><strong>Raw CDP:</strong> <code>$B cdp &lt;Domain.method&gt;</code> cho Chrome DevTools Protocol calls</li>
+</ul>
+
+<h3>/open-gstack-browser — Headed Browser Mode</h3>
+<p>Launch GStack Browser (custom Chromium build):</p>
+<ul>
+<li>Anti-bot stealth và custom branding</li>
+<li>Sidebar agent extension — natural language commands, routes to Sonnet (fast actions) hoặc Opus (reading/analysis), up to 5 minutes per task</li>
+<li>One-click cookie import từ Chrome/Arc/Brave/Edge</li>
+<li>Persistent session, không idle timeout</li>
+<li>Real-world site compatibility (Google, NYTimes không bị CAPTCHA)</li>
+</ul>
+
+<p><strong>Prompt injection defense:</strong> 22MB ML classifier + Haiku transcript check + canary tokens + verdict combiner. Shield icon hiện status (green/amber/red). Opt-in 721MB DeBERTa ensemble qua <code>GSTACK_SECURITY_ENSEMBLE=deberta</code>.</p>
+
+<p><strong>Handoff:</strong> Gặp CAPTCHA/MFA? <code>$B handoff</code> mở Chrome visible ở cùng page với cookies/tabs. Solve xong, báo Claude, <code>$B resume</code> tiếp tục.</p>
+
+<h3>Các browser tools khác</h3>
+<table>
+<tr><th>Tool</th><th>Mô tả</th></tr>
+<tr><td><code>/setup-browser-cookies</code></td><td>Import session cookies từ real browser vào headless session</td></tr>
+<tr><td><code>/connect-chrome</code></td><td>Attach vào existing Chrome/Chromium instance cho debugging</td></tr>
+<tr><td><code>/setup-deploy</code></td><td>One-time config cho <code>/land-and-deploy</code>; auto-detects platform, production URL, deploy commands</td></tr>
+</table>
+
+<h2 id="gbrain">GBrain &amp; Memory Systems</h2>
+
+<h3>/setup-gbrain — Persistent Knowledge Base</h3>
+<p>Five-minute onboarding cho gbrain (persistent code memory). Bốn paths:</p>
+
+<table>
+<tr><th>Mode</th><th>Mô tả</th><th>Setup</th></tr>
+<tr><td>Supabase existing</td><td>Paste Session Pooler URL để kết nối</td><td>~10s</td></tr>
+<tr><td>Supabase auto-provision</td><td>Paste Personal Access Token; tự tạo project mới</td><td>~90s</td></tr>
+<tr><td>PGLite local</td><td>Zero accounts, zero network, isolated brain trên máy hiện tại</td><td>~30s</td></tr>
+<tr><td>Remote MCP</td><td>Point đến external gbrain instance (Tailscale, ngrok, LAN)</td><td>Varies</td></tr>
+</table>
+
+<p><strong>Trust tiers per repo:</strong> <code>read-write</code> (search và write back), <code>read-only</code> (search only), <code>deny</code> (no access).</p>
+<p><strong>Keeping current:</strong> <code>/sync-gbrain</code> re-indexes repo code (incremental by default). Registers code search guidance trong <code>CLAUDE.md</code>.</p>
+
+<h3>/learn — Session Memory</h3>
+<p>Manage per-project learnings across sessions: review, search, prune patterns; export project-specific preferences; auto-decay 5%/week để giữ knowledge base không bị stale.</p>
+
+<h2 id="ios">iOS Development Tools</h2>
+
+<table>
+<tr><th>Skill</th><th>Mô tả</th></tr>
+<tr><td><code>/ios-qa</code></td><td>Drive real iPhone qua USB CoreDevice; read Swift source, codegen typed accessors; <code>--tailnet</code> cho remote agents</td></tr>
+<tr><td><code>/ios-fix</code></td><td>iOS bug-fix loop</td></tr>
+<tr><td><code>/ios-design-review</code></td><td>HIG audit từ designer's perspective</td></tr>
+<tr><td><code>/ios-clean</code></td><td>Debug-bridge cleanup</td></tr>
+<tr><td><code>/ios-sync</code></td><td>Accessor resync</td></tr>
+</table>
+
+<h2 id="clis">Standalone CLIs</h2>
+
+<table>
+<tr><th>Binary</th><th>Mô tả</th></tr>
+<tr><td><code>gstack-model-benchmark</code></td><td>So sánh Claude, GPT (qua Codex CLI), Gemini trên cùng prompt; measure latency, tokens, cost, quality</td></tr>
+<tr><td><code>gstack-taste-update</code></td><td>Ghi design preferences từ <code>/design-shotgun</code> vào persistent taste profile cho future variant generation</td></tr>
+<tr><td><code>gstack-ios-qa-daemon</code></td><td>Mac-side broker giữa agent và iPhone qua USB CoreDevice; <code>--tailnet</code> cho remote agents</td></tr>
+<tr><td><code>gstack-ios-qa-mint</code></td><td>Quản lý allowlist cho remote iOS QA agents (grant/revoke/list)</td></tr>
+</table>
+
+<h2 id="parallel">Parallel Development</h2>
+
+<p>gstack scale từ 1 sprint lên 10–15 sprint chạy đồng thời qua Conductor — nhiều Claude Code sessions trong isolated workspaces. Sprint structure ngăn chaos: mỗi agent biết chính xác phải làm gì và khi nào dừng. CEO reviews xử lý taste decisions; process xử lý determinism.</p>
+
+<h3>OpenClaw Integration</h3>
+<p>gstack skills hoạt động natively trong OpenClaw (multi-agent coordinator). Bốn methodology skills có thể cài trực tiếp trong OpenClaw qua ClawHub:</p>
+<pre><code>clawhub install gstack-openclaw-office-hours gstack-openclaw-ceo-review \
+  gstack-openclaw-investigate gstack-openclaw-retro</code></pre>
+
+<h2 id="checkpoint">Checkpoint Mode</h2>
+
+<p>Opt-in, local by default:</p>
+<pre><code>gstack-config set checkpoint_mode continuous</code></pre>
+<ul>
+<li>Auto-commits work với prefix <code>WIP:</code> và structured <code>[gstack-context]</code> body (decisions, remaining, failed approaches)</li>
+<li>Survives crashes — <code>/context-restore</code> reconstruct session từ WIP commits</li>
+<li><code>/ship</code> filter-squash WIP commits trước PR (giữ non-WIP cho clean bisect history)</li>
+<li>Push opt-in: <code>checkpoint_push=true</code> (mặc định local-only để tránh trigger CI trên mọi WIP)</li>
+</ul>
+
+<h2 id="multiagent">Multi-Agent Support</h2>
+
+<p>Setup auto-detects installed AI agents. gstack hoạt động với Claude Code, OpenAI Codex CLI, OpenCode, Cursor, Factory Droid, Kiro, Hermes, và GBrain mod.</p>
+
+<p><strong>Cross-Model Analysis:</strong> Chạy cả <code>/review</code> (Claude) và <code>/codex</code> (OpenAI) trên cùng branch để identify overlapping findings và highlight model-specific insights.</p>
+
+<h2 id="config">Configuration &amp; Preferences</h2>
+
+<h3>Command Prefix Options</h3>
+<p>Mặc định là short names (<code>/qa</code>, <code>/review</code>, <code>/ship</code>). Có thể chuyển sang namespaced (<code>/gstack-qa</code>, etc.):</p>
+<pre><code># Short names (default)
+cd ~/.claude/skills/gstack && ./setup --no-prefix
+
+# Namespaced
+cd ~/.claude/skills/gstack && ./setup --prefix</code></pre>
+
+<h3>Auto-Upgrade</h3>
+<pre><code>gstack-config set auto_upgrade true</code></pre>
+<p>Tự động upgrade khi first use mỗi session.</p>
+
+<h3>Privacy &amp; Telemetry</h3>
+<p>Telemetry là <strong>opt-in</strong> (mặc định tắt). Nếu bật: gửi skill name, duration, success/fail, version, OS. Không bao giờ gửi: code, file paths, repo names, prompts, user content.</p>
+<pre><code>gstack-config set telemetry off
+gstack-analytics  # local dashboard từ JSONL cá nhân</code></pre>
+
+<h2 id="examples">Workflow Examples</h2>
+
+<h3>Single Feature Sprint</h3>
+<pre><code>You:    /office-hours
+Claude: [6 forcing questions reframe vấn đề]
+        [sinh ra design doc]
+
+You:    /plan-ceo-review
+You:    /plan-eng-review
+You:    Approve plan
+
+[Code implementation: ~8 phút, ~2,400 lines trên 11 files]
+
+You:    /review
+Claude: [auto-fix 2 issues, flag 1 race condition cho approval]
+
+You:    /qa https://staging.myapp.com
+Claude: [real browser testing, tìm và fix bug]
+        [generate regression test]
+
+You:    /ship
+        Tests: 42 → 51 (+9 new)
+        PR: github.com/you/app/pull/42</code></pre>
+
+<h3>Security &amp; Production Workflow</h3>
+<pre><code>/guard              # /careful + /freeze combined
+/cso                # OWASP + STRIDE audit
+[fix findings]
+/review             # production-readiness audit
+/qa https://prod    # real browser trên production
+/land-and-deploy    # merge, deploy, verify health
+/canary             # monitor post-deploy</code></pre>
+
+<h3>Multi-Phase Design</h3>
+<pre><code>/design-consultation    # build design system từ scratch
+/design-shotgun         # generate 4-6 mockup variants
+[iterate trên variants]
+/design-html            # convert approved mockup → production code
+/design-review          # post-ship design audit</code></pre>
+
+<h3>Cross-Project Memory</h3>
+<pre><code>/sync-gbrain            # index current repo vào persistent brain
+/learn                  # review project-specific patterns
+[dùng gbrain search, code-def, code-refs trong downstream skills]</code></pre>
+
+<h2 id="philosophy">Philosophy &amp; Approach</h2>
+
+<h3>Builder Ethos</h3>
+<ul>
+<li><strong>Boil the Ocean:</strong> Đừng assume narrow scope. <code>/office-hours</code> reframes vague requests thành complete problems.</li>
+<li><strong>Search Before Building:</strong> Đọc related code trước khi viết code mới. Match project style, conventions, libraries.</li>
+<li><strong>Three Layers of Knowledge:</strong> (1) Codebase patterns từ reading, (2) Project learnings từ <code>/learn</code>, (3) Design preferences từ <code>/design-shotgun</code> taste memory.</li>
+</ul>
+
+<h2 id="troubleshoot">Troubleshooting</h2>
+
+<table>
+<tr><th>Vấn đề</th><th>Cách xử lý</th></tr>
+<tr><td>Skill không hiện</td><td><code>cd ~/.claude/skills/gstack &amp;&amp; ./setup</code></td></tr>
+<tr><td><code>/browse</code> fails</td><td><code>cd ~/.claude/skills/gstack &amp;&amp; bun install &amp;&amp; bun run build</code></td></tr>
+<tr><td>Stale install</td><td><code>/gstack-upgrade</code> hoặc set <code>auto_upgrade: true</code> trong <code>~/.gstack/config.yaml</code></td></tr>
+<tr><td>Codex error "invalid SKILL.md"</td><td><code>cd ~/.codex/skills/gstack &amp;&amp; git pull &amp;&amp; ./setup --host codex</code></td></tr>
+<tr><td>Windows symlink issue</td><td>Re-run <code>./setup</code> sau mỗi <code>git pull</code> (non-Developer-Mode dùng file copies thay symlinks)</td></tr>
+</table>
+
+<h3>Gỡ cài đặt</h3>
+<pre><code># Automated
+~/.claude/skills/gstack/bin/gstack-uninstall
+# --keep-state để giữ config, --force để skip confirmation
+
+# Manual: xóa browse daemons, per-skill dirs, gstack dir, integrations
+pkill -f "gstack.*browse" 2>/dev/null || true
+rm -rf ~/.claude/skills/gstack ~/.gstack</code></pre>
+
+<div class="callout callout-amber">
+<strong>Lưu ý khi gỡ cài đặt thủ công:</strong> Cần xóa thêm các integration dirs (<code>~/.codex/skills/gstack*</code>, <code>~/.kiro/skills/gstack*</code>...) và remove sections "## gstack" và "## Skill routing" khỏi <code>CLAUDE.md</code> trong các project.
+</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+var links=document.querySelectorAll('.nav-items a');
+function setActive(){
+var scrollY=window.scrollY+80;
+var current='';
+document.querySelectorAll('[id]').forEach(function(el){
+if(el.offsetTop<=scrollY)current=el.id;
+});
+links.forEach(function(a){
+a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+});
+}
+window.addEventListener('scroll',setActive);
+setActive();
+
+document.querySelectorAll('pre').forEach(function(pre){
+var btn=document.createElement('button');
+btn.className='copy-btn';
+btn.textContent='Copy';
+btn.addEventListener('click',function(){
+var code=pre.querySelector('code');
+var text=code?code.textContent:pre.textContent;
+navigator.clipboard.writeText(text).then(function(){
+btn.textContent='Copied!';
+btn.classList.add('copied');
+setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied');},2000);
+});
+});
+pre.appendChild(btn);
+});
+})();
+</script>
+</body>
+</html>

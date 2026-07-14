@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring & Observability - Cloud Native Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1);position:relative}
+pre code{background:none;padding:0;color:inherit;border:none}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{margin-right:220px}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Cloud Native Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">3 Trụ Cột</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu</a>
+      <a href="#metrics">Metrics (Prometheus)</a>
+      <a href="#logs">Logs (ELK, Loki)</a>
+      <a href="#traces">Traces (Jaeger)</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Platform</div>
+    <div class="nav-items">
+      <a href="#otel">OpenTelemetry</a>
+      <a href="#grafana">Grafana</a>
+      <a href="#alerting">Alerting</a>
+      <a href="#summary">Tóm tắt</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Cloud Native Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-tong-quan-cntt.html">01. Tổng Quan CNTT</a>
+  <a href="02-kien-truc-phan-mem.html">02. Kiến Trúc Phần Mềm</a>
+  <a href="03-he-sinh-thai-cloud-native.html">03. Hệ Sinh Thái Cloud Native</a>
+  <div class="level-label">Container & Orchestration</div>
+  <a href="04-container-docker.html">04. Container & Docker</a>
+  <a href="05-kubernetes.html">05. Kubernetes</a>
+  <a href="06-okd-openshift.html">06. OKD / OpenShift</a>
+  <div class="level-label">Nâng cao</div>
+  <a href="07-kafka-event-driven.html">07. Kafka & Event-Driven</a>
+  <a href="08-devops-cicd.html">08. DevOps & CI/CD</a>
+  <a href="09-monitoring-observability.html" class="current">09. Monitoring</a>
+  <a href="10-security.html">10. Security</a>
+  <div class="level-label">Thực chiến</div>
+  <a href="11-banking-architecture.html">11. Kiến Trúc Ngân Hàng</a>
+</aside>
+<main class="main">
+<h1 id="overview">Monitoring & Observability</h1>
+<p class="subtitle">ELK, Loki, Prometheus, Grafana, OpenTelemetry, Jaeger, Alerting, Dashboards</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://prometheus.io/docs/" target="_blank">Prometheus</a>, <a href="https://grafana.com/docs/" target="_blank">Grafana</a>, <a href="https://opentelemetry.io/" target="_blank">OpenTelemetry</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành chương này, bạn sẽ:</strong>
+Phân biệt Monitoring vs. Observability. Hiểu 3 trụ cột: Metrics, Logs, Traces. Nắm stack phổ biến nhất (Prometheus + Grafana + Loki + Tempo). Biết dùng OpenTelemetry làm chuẩn instrumentation. Thiết kế alerting hiệu quả.
+</div>
+
+<h2>Monitoring vs. Observability</h2>
+<table>
+<tr><th>Monitoring</th><th>Observability</th></tr>
+<tr><td>Trả lời: "Hệ thống có đang hoạt động?"</td><td>Trả lời: "Tại sao hệ thống hoạt động như vậy?"</td></tr>
+<tr><td>Predefined dashboards, known unknowns</td><td>Ad-hoc exploration, unknown unknowns</td></tr>
+<tr><td>Detect problems</td><td>Diagnose và understand root cause</td></tr>
+</table>
+
+<h2 id="metrics">Metrics — Prometheus</h2>
+
+<h3>Prometheus Architecture</h3>
+<div class="flow">
+<span class="flow-step">Application /metrics</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Prometheus (scrape)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">TSDB (time-series)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Grafana (visualize)</span>
+</div>
+
+<h3>Pull-based model</h3>
+<p>Prometheus chủ động scrape metrics từ targets theo interval (thường 15-30s). Targets expose HTTP endpoint <code>/metrics</code> ở format text.</p>
+
+<h3>4 Metric Types</h3>
+<table>
+<tr><th>Type</th><th>Mô tả</th><th>Ví dụ</th></tr>
+<tr><td><strong>Counter</strong></td><td>Chỉ tăng (hoặc reset 0). Monotonically increasing.</td><td>http_requests_total, errors_total</td></tr>
+<tr><td><strong>Gauge</strong></td><td>Giá trị hiện tại, tăng/giảm tự do.</td><td>temperature, active_connections</td></tr>
+<tr><td><strong>Histogram</strong></td><td>Distribution: count, sum, buckets.</td><td>request_duration_seconds</td></tr>
+<tr><td><strong>Summary</strong></td><td>Quantiles (p50, p90, p99) client-side.</td><td>response_time (pre-calculated percentiles)</td></tr>
+</table>
+
+<h3>PromQL — Query Language</h3>
+<pre><code># Request rate (requests/second) over 5 minutes
+rate(http_requests_total[5m])
+
+# 99th percentile latency
+histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+
+# Error rate percentage
+sum(rate(http_requests_total{status=~"5.."}[5m])) /
+sum(rate(http_requests_total[5m])) * 100</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Key Metrics cho Microservices (RED method)</h3>
+<ul>
+<li><strong>R</strong>ate — requests per second</li>
+<li><strong>E</strong>rrors — error rate (5xx responses)</li>
+<li><strong>D</strong>uration — latency distribution (p50, p95, p99)</li>
+</ul>
+
+<h2 id="logs">Logs — ELK & Loki</h2>
+
+<h3>ELK Stack (Elasticsearch + Logstash + Kibana)</h3>
+<table>
+<tr><th>Component</th><th>Vai trò</th></tr>
+<tr><td><strong>Elasticsearch</strong></td><td>Search engine, lưu trữ và index logs</td></tr>
+<tr><td><strong>Logstash/Fluentd</strong></td><td>Collect, transform, forward logs</td></tr>
+<tr><td><strong>Kibana</strong></td><td>UI visualization và search</td></tr>
+</table>
+
+<h3>Grafana Loki (lightweight alternative)</h3>
+<ul>
+<li><strong>Không index log content</strong> — chỉ index labels (like Prometheus)</li>
+<li>Storage rẻ hơn ELK 10-100x (object storage: S3, MinIO)</li>
+<li>Query bằng LogQL (tương tự PromQL)</li>
+<li>Integrates native với Grafana</li>
+<li>Phù hợp khi không cần full-text search phức tạp</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>ELK vs. Loki — khi nào chọn gì</strong>
+ELK: cần full-text search phức tạp, compliance yêu cầu search across tất cả fields, team đã có ELK expertise. Loki: cost-sensitive, đã dùng Grafana cho metrics, logs chủ yếu dùng để correlate với metrics/traces.
+</div>
+
+<h3>Structured Logging Best Practices</h3>
+<pre><code>// JSON structured log — dễ parse, filter, aggregate
+{
+  "timestamp": "2025-01-15T10:23:45.123Z",
+  "level": "ERROR",
+  "service": "crm-api",
+  "traceId": "abc123def456",
+  "spanId": "span789",
+  "message": "Failed to update customer",
+  "customerId": "C-10042",
+  "error": "ConnectionTimeout",
+  "duration_ms": 5023
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="traces">Distributed Traces — Jaeger & Tempo</h2>
+
+<h3>Vấn đề</h3>
+<p>1 request đi qua 5-10 microservices. Khi chậm hoặc fail — lỗi ở service nào? Bao lâu ở mỗi hop?</p>
+
+<h3>Concepts</h3>
+<ul>
+<li><strong>Trace</strong> — full journey của 1 request qua system (tree of spans)</li>
+<li><strong>Span</strong> — 1 operation trong 1 service (tên, start time, duration, tags)</li>
+<li><strong>Context Propagation</strong> — traceId truyền qua HTTP headers giữa services</li>
+<li><strong>Parent-Child</strong> — spans liên kết thành cây gọi</li>
+</ul>
+
+<h3>Jaeger vs. Tempo</h3>
+<table>
+<tr><th>Jaeger</th><th>Grafana Tempo</th></tr>
+<tr><td>CNCF graduated, standalone</td><td>Part of Grafana LGTM stack</td></tr>
+<tr><td>Own UI</td><td>Query qua Grafana</td></tr>
+<tr><td>Elasticsearch/Cassandra backend</td><td>Object storage (S3, MinIO) — rẻ hơn</td></tr>
+<tr><td>Tốt cho standalone deployment</td><td>Tốt khi đã dùng Grafana ecosystem</td></tr>
+</table>
+
+<h2 id="otel">OpenTelemetry (OTel)</h2>
+
+<h3>Khái niệm</h3>
+<p>OpenTelemetry là CNCF standard cho instrumentation — cách thu thập metrics, logs, traces từ applications. Vendor-neutral: instrument 1 lần, gửi đến bất kỳ backend.</p>
+
+<h3>Architecture</h3>
+<div class="flow">
+<span class="flow-step">App (SDK/Agent)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">OTel Collector</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Backends (Prometheus, Jaeger, Loki)</span>
+</div>
+
+<h3>OTel Collector</h3>
+<ul>
+<li><strong>Receivers</strong> — nhận data (OTLP, Prometheus, Jaeger, Zipkin formats)</li>
+<li><strong>Processors</strong> — transform, filter, batch, sample</li>
+<li><strong>Exporters</strong> — gửi đến backends (Prometheus, Jaeger, Loki, Datadog...)</li>
+</ul>
+
+<h3>Auto-instrumentation</h3>
+<p>Java agent, .NET agent, Python agent — attach vào app không cần code change. Tự động capture HTTP calls, DB queries, messaging operations.</p>
+
+<div class="callout callout-green">
+<strong>Tại sao OpenTelemetry quan trọng</strong>
+Tránh vendor lock-in. Instrument 1 lần với OTel SDK → switch backend (Datadog → Grafana Cloud → self-hosted) không cần re-instrument code. Chuẩn duy nhất cho tất cả 3 pillars.
+</div>
+
+<h2 id="grafana">Grafana — Visualization Platform</h2>
+
+<h3>LGTM Stack</h3>
+<table>
+<tr><th>Component</th><th>Pillar</th><th>Vai trò</th></tr>
+<tr><td><strong>Loki</strong></td><td>Logs</td><td>Log aggregation, label-based</td></tr>
+<tr><td><strong>Grafana</strong></td><td>Visualization</td><td>Dashboards, explore, alerting</td></tr>
+<tr><td><strong>Tempo</strong></td><td>Traces</td><td>Distributed tracing backend</td></tr>
+<tr><td><strong>Mimir</strong></td><td>Metrics</td><td>Long-term Prometheus storage (scalable)</td></tr>
+</table>
+
+<h3>Dashboard Best Practices</h3>
+<ul>
+<li><strong>USE method cho infrastructure</strong>: Utilization, Saturation, Errors (per resource)</li>
+<li><strong>RED method cho services</strong>: Rate, Errors, Duration</li>
+<li><strong>Golden Signals</strong>: Latency, Traffic, Errors, Saturation (Google SRE)</li>
+<li>Mỗi service có dashboard riêng + overview dashboard cho toàn system</li>
+<li>Link từ dashboard → logs → traces (correlation bằng traceId)</li>
+</ul>
+
+<h2 id="alerting">Alerting</h2>
+
+<h3>Nguyên tắc</h3>
+<ul>
+<li><strong>Alert on symptoms, not causes</strong> — "error rate > 1%" thay vì "CPU > 80%"</li>
+<li><strong>Actionable</strong> — mỗi alert phải có người cần hành động</li>
+<li><strong>Avoid alert fatigue</strong> — quá nhiều alerts = mọi người ignore</li>
+<li><strong>Severity levels</strong>: Critical (page), Warning (ticket), Info (dashboard only)</li>
+</ul>
+
+<h3>SLO-based Alerting</h3>
+<ul>
+<li>Define SLO: "99.9% requests succeed within 500ms"</li>
+<li>Track error budget: 0.1% allowed failures per month = ~43 minutes downtime</li>
+<li>Alert khi error budget burn rate quá nhanh (multi-window, multi-burn-rate)</li>
+</ul>
+
+<pre><code># Alert khi error rate burn > 14x trong 1 giờ (sẽ exhaust budget trong 3 ngày)
+- alert: HighErrorBudgetBurn
+  expr: |
+    (
+      sum(rate(http_requests_total{status=~"5.."}[1h])) /
+      sum(rate(http_requests_total[1h]))
+    ) > (14 * 0.001)
+  for: 5m
+  labels:
+    severity: critical
+  annotations:
+    summary: "CRM API burning error budget 14x faster than allowed"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-red">
+<strong>Lỗi thường gặp</strong>
+1) Alert CPU > 80% → gây noise (CPU spike tạm thời không phải vấn đề nếu latency OK). 2) Không có runbook cho alert → on-call không biết phải làm gì. 3) Alert không test → phát hiện lúc 3AM rằng alert config sai.
+</div>
+
+<h2 id="summary">Tóm Tắt</h2>
+
+<h3>Observability Stack cho Ngân Hàng</h3>
+<div class="flow">
+<span class="flow-step">OTel Agent</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">OTel Collector</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Mimir + Loki + Tempo</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Grafana</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">PagerDuty/Slack</span>
+</div>
+
+<h3>Thuật ngữ cần nhớ</h3>
+<table>
+<tr><th>Thuật ngữ</th><th>Định nghĩa ngắn</th></tr>
+<tr><td>Prometheus</td><td>Pull-based metrics collection + TSDB</td></tr>
+<tr><td>PromQL</td><td>Query language cho Prometheus metrics</td></tr>
+<tr><td>Loki</td><td>Log aggregation, label-indexed (like Prometheus for logs)</td></tr>
+<tr><td>Jaeger/Tempo</td><td>Distributed tracing backends</td></tr>
+<tr><td>OpenTelemetry</td><td>Vendor-neutral instrumentation standard</td></tr>
+<tr><td>SLO/SLI</td><td>Service Level Objective / Indicator</td></tr>
+<tr><td>Error Budget</td><td>Allowed failure within SLO window</td></tr>
+<tr><td>RED method</td><td>Rate, Errors, Duration — service metrics</td></tr>
+</table>
+
+<h3>Câu hỏi ôn tập</h3>
+<ol>
+<li>Tại sao Prometheus dùng pull model thay vì push?</li>
+<li>Histogram khác Summary khi nào chọn cái nào?</li>
+<li>OpenTelemetry Collector giải quyết vấn đề gì?</li>
+<li>Tại sao alert on symptoms tốt hơn alert on causes?</li>
+<li>Thiết kế SLO-based alerting cho CRM API (99.9% availability).</li>
+</ol>
+
+<div class="prev-next">
+  <a href="08-devops-cicd.html">← Bài 08: DevOps & CI/CD</a>
+  <a href="10-security.html">Bài 10: Security →</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

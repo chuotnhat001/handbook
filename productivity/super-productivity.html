@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Productivity - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+blockquote{border-left:3px solid #7c3aed;padding:.75rem 1rem;margin:1rem 0;background:#f5f3ff;border-radius:0 8px 8px 0;font-size:.9rem;color:#4a5568;font-style:italic}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-purple{background:#f5f3ff;color:#5b21b6;border-color:#7c3aed}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng quan</div>
+    <div class="nav-items">
+      <a href="#what">Super Productivity là gì?</a>
+      <a href="#install">Cài đặt</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Quản lý Task</div>
+    <div class="nav-items">
+      <a href="#tasks">Tạo & quản lý task</a>
+      <a href="#views">Các chế độ view</a>
+      <a href="#workflow">Workflow hàng ngày</a>
+      <a href="#repeating">Repeating tasks</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Time Tracking</div>
+    <div class="nav-items">
+      <a href="#tracking">Theo dõi thời gian</a>
+      <a href="#pomodoro">Pomodoro & Focus Mode</a>
+      <a href="#worklog">Work Log & Báo cáo</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tích hợp & Đồng bộ</div>
+    <div class="nav-items">
+      <a href="#integrations">Issue Integrations</a>
+      <a href="#calendar">Calendar</a>
+      <a href="#sync">Sync dữ liệu</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Phím tắt</div>
+    <div class="nav-items">
+      <a href="#shortcuts">Keyboard Shortcuts</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tư duy & Workflow</div>
+    <div class="nav-items">
+      <a href="#mindset">Tư duy vận hành</a>
+      <a href="#structure">Cấu trúc thực tế</a>
+      <a href="#daily">Quy trình hằng ngày</a>
+      <a href="#priority">Ưu tiên & Deadline</a>
+      <a href="#waiting">Quản lý Waiting</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tips thực tế</div>
+    <div class="nav-items">
+      <a href="#tips">Tính năng nên dùng</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">IT Lead / PM</div>
+    <div class="nav-items">
+      <a href="#manager">Workflow cho Lead</a>
+      <a href="#templates">Templates</a>
+      <a href="#checklist">Checklist 7 ngày</a>
+      <a href="#backup">Backup & Bảo mật</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="what">Super Productivity</h1>
+<p class="subtitle">Ứng dụng quản lý công việc và theo dõi thời gian. Open-source, local-first, miễn phí.</p>
+
+<div class="callout callout-purple">
+<strong>Ý tưởng cốt lõi:</strong> Super Productivity là công cụ todo + time tracker thiết kế cho deep work. Dữ liệu lưu trên máy bạn, không telemetry, không phụ thuộc cloud. Hỗ trợ tích hợp Jira, GitHub, GitLab để track thời gian trực tiếp trên issues.
+</div>
+
+<h2 id="install">Cài đặt & Cấu hình ban đầu</h2>
+
+<h3>Cài đặt</h3>
+<table>
+<tr><th>Nền tảng</th><th>Cách cài</th></tr>
+<tr><td>Windows</td><td>Tải installer từ GitHub Releases hoặc Microsoft Store</td></tr>
+<tr><td>macOS</td><td>Tải .dmg từ GitHub Releases hoặc Homebrew</td></tr>
+<tr><td>Linux</td><td>AppImage, Snap, hoặc Flatpak</td></tr>
+<tr><td>Web App</td><td>Truy cập <code>app.super-productivity.com</code> — dùng ngay, không cần cài</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Miễn phí hoàn toàn:</strong> Open-source (MIT license), không có plan trả phí, không quảng cáo. Mã nguồn trên GitHub: johannesjo/super-productivity.
+</div>
+
+<div class="callout callout-amber">
+<strong>Lưu ý môi trường doanh nghiệp:</strong> Nếu dữ liệu công việc có thông tin nội bộ, nên dùng local/offline và tuân thủ quy định bảo mật của đơn vị. Không tự ý bật sync lên cloud cá nhân nếu chưa được phép. Với máy cơ quan, ưu tiên bản cài đặt được IT cho phép hoặc bản portable.
+</div>
+
+<h3>Cấu hình ban đầu khuyến nghị</h3>
+<table>
+<tr><th>Thiết lập</th><th>Khuyến nghị</th><th>Lý do</th></tr>
+<tr><td>Theme</td><td>Light hoặc Dark theo thói quen</td><td>Dùng lâu không mỏi mắt</td></tr>
+<tr><td>Start page</td><td>Today / Planner</td><td>Mở app là biết hôm nay làm gì</td></tr>
+<tr><td>Pomodoro</td><td>Bật sau, không bắt buộc</td><td>Quản lý thường bị ngắt quãng, không nên ép Pomodoro ngay</td></tr>
+<tr><td>Time tracking</td><td>Dùng nhẹ cho việc lớn</td><td>Giúp biết việc nào tốn thời gian, không cần track từng việc nhỏ</td></tr>
+<tr><td>Backup</td><td>Bật backup định kỳ</td><td>Tránh mất dữ liệu task</td></tr>
+</table>
+
+<h2 id="tasks">Tạo & quản lý Task</h2>
+
+<h3>Tạo task mới</h3>
+<ul>
+<li>Nhấn <kbd>Shift+A</kbd> để mở thanh thêm task nhanh</li>
+<li>Gõ tên task → Enter để tạo</li>
+<li>Mỗi task có thể gắn: notes, time estimate, due date, tags, project, color</li>
+</ul>
+
+<h3>Subtasks</h3>
+<ul>
+<li>Chọn task → nhấn <kbd>A</kbd> để thêm subtask</li>
+<li>Subtask được quản lý trong màn hình chi tiết của task cha</li>
+<li>Dùng task cho kết quả cần hoàn thành, subtask cho các bước nhỏ</li>
+</ul>
+
+<pre><code>Task: Hoàn thiện tài liệu hướng dẫn RCA
+Subtasks:
+- Xác định scope
+- Thiết kế quy trình
+- Bổ sung template biên bản
+- Review với team
+- Xuất file DOCX</code></pre>
+
+<h3>Notes</h3>
+<ul>
+<li>Dùng Notes để ghi link tài liệu, context ngắn, kết quả trao đổi</li>
+<li>Không nên ghi quá dài — tài liệu dài nên để ở file riêng hoặc hệ thống tài liệu chính thức</li>
+<li>Phù hợp cho: link Google Docs, tóm tắt cuộc gọi, ghi chú nhanh về context</li>
+</ul>
+
+<h3>Projects & Tags</h3>
+<table>
+<tr><th>Khái niệm</th><th>Vai trò</th><th>Đặc điểm</th></tr>
+<tr><td>Project</td><td>Container dọc</td><td>Mỗi task thuộc 1 project. Có Project View riêng</td></tr>
+<tr><td>Tag</td><td>Label ngang</td><td>1 task có nhiều tags. Dùng để filter cross-project</td></tr>
+</table>
+
+<h2 id="views">Các chế độ View</h2>
+
+<table>
+<tr><th>View</th><th>Mô tả</th></tr>
+<tr><td>Today View</td><td>Tasks được chọn làm hôm nay — nơi bạn làm việc chính</td></tr>
+<tr><td>Inbox View</td><td>Tasks chưa plan/schedule — tương đương backlog</td></tr>
+<tr><td>Planner View</td><td>Lên kế hoạch cho ngày/tuần</td></tr>
+<tr><td>Schedule View</td><td>Xem theo thời gian biểu</td></tr>
+<tr><td>Board View</td><td>Kanban board, Eisenhower Matrix, hoặc custom layout</td></tr>
+<tr><td>Project View</td><td>Tasks theo từng project</td></tr>
+<tr><td>Tag View</td><td>Tasks theo tag</td></tr>
+</table>
+
+<h3>Board View — Chi tiết</h3>
+<ul>
+<li><strong>Kanban:</strong> Cột theo status (To Do → In Progress → Done)</li>
+<li><strong>Eisenhower Matrix:</strong> 4 ô theo Urgent/Important</li>
+<li><strong>Compact list:</strong> Danh sách gọn</li>
+<li><strong>Custom layout:</strong> Tự cấu hình theo nhu cầu</li>
+</ul>
+
+<h2 id="workflow">Workflow hàng ngày</h2>
+
+<ol>
+<li><strong>Sáng:</strong> Mở app → xem Inbox, kéo tasks quan trọng vào Today View</li>
+<li><strong>Làm việc:</strong> Chọn task → nhấn Play (hoặc <kbd>Y</kbd>) để bắt đầu tracking</li>
+<li><strong>Chuyển task:</strong> Click task khác → tự động dừng task cũ, tracking task mới</li>
+<li><strong>Nghỉ:</strong> Nhấn <kbd>F</kbd> để vào Focus Mode với Pomodoro timer</li>
+<li><strong>Cuối ngày:</strong> Xem work log, đánh dấu Done cho tasks hoàn thành</li>
+</ol>
+
+<div class="callout callout-amber">
+<strong>Automatic rollover:</strong> Tasks chưa xong sẽ tự động chuyển sang ngày hôm sau. Không cần kéo thủ công.
+</div>
+
+<h2 id="repeating">Repeating Tasks</h2>
+
+<ul>
+<li>Tạo task lặp cho habits và maintenance work</li>
+<li>Cấu hình lịch lặp (daily, weekly, custom schedule)</li>
+<li>App tự động tạo instance mới khi đến ngày — không cần copy thủ công</li>
+<li>Phù hợp cho: stand-up, review code, backup, exercise...</li>
+</ul>
+
+<h2 id="tracking">Theo dõi thời gian</h2>
+
+<div class="callout callout-blue">
+<strong>Khi nào nên dùng:</strong> Không cần bật cho mọi việc. Nên dùng cho nhóm việc lớn: thiết kế, review tài liệu, viết báo cáo, xử lý sự cố. Sau 1–2 tuần sẽ biết loại việc nào đang chiếm nhiều thời gian nhất.
+</div>
+
+<h3>Cơ chế hoạt động</h3>
+<p>App phát ra các "tick" (khoảng thời gian nhỏ) liên tục và gán vào task đang active. Tại một thời điểm chỉ có 1 task được tracking.</p>
+
+<h3>Bắt đầu / Dừng</h3>
+<ul>
+<li><strong>Bắt đầu:</strong> Click nút Play bên cạnh task, hoặc nhấn <kbd>Y</kbd></li>
+<li><strong>Dừng:</strong> Click Pause, hoặc bắt đầu track task khác (tự động dừng task cũ)</li>
+<li><strong>Lưu ý:</strong> Đánh dấu "Done" KHÔNG tự dừng timer — phải pause hoặc switch task</li>
+</ul>
+
+<h3>Idle Time Detection</h3>
+<ul>
+<li>Khi phát hiện máy không hoạt động → tự động pause</li>
+<li>Khi quay lại, app hỏi bạn muốn: gán idle time vào task cũ, chuyển sang task khác, hoặc bỏ qua</li>
+<li>Cấu hình ngưỡng idle time trong Settings</li>
+</ul>
+
+<h3>Thời gian được lưu ở 3 cấp</h3>
+<ul>
+<li><strong>Task level:</strong> Tổng thời gian + breakdown theo ngày</li>
+<li><strong>Context level:</strong> Tổng hợp theo project hoặc tag</li>
+<li><strong>Archive:</strong> Lịch sử sau khi task hoàn thành</li>
+</ul>
+
+<h2 id="pomodoro">Pomodoro & Focus Mode</h2>
+
+<h3>Ba chế độ timer</h3>
+<table>
+<tr><th>Chế độ</th><th>Mô tả</th></tr>
+<tr><td>Pomodoro</td><td>Work 25 phút → Short break 5 phút → Long break 15 phút sau 4 cycles</td></tr>
+<tr><td>Flowtime</td><td>Không giới hạn thời gian — bạn tự quyết định khi nào dừng</td></tr>
+<tr><td>Countdown</td><td>Bạn chọn thời lượng mỗi lần bắt đầu session</td></tr>
+</table>
+
+<h3>Cấu hình Pomodoro</h3>
+<p>Vào <strong>Settings → Pomodoro</strong> để tuỳ chỉnh:</p>
+<ul>
+<li>Thời gian work session (mặc định 25 phút)</li>
+<li>Short break (mặc định 5 phút)</li>
+<li>Long break (mặc định 15 phút)</li>
+<li>Số cycles trước long break (mặc định 4)</li>
+<li>Tick sound, notifications, auto-start breaks</li>
+</ul>
+
+<h3>Focus Mode</h3>
+<ul>
+<li>Nhấn <kbd>F</kbd> hoặc nút Focus trên header để vào</li>
+<li>Màn hình full-screen, distraction-free — chỉ hiển thị task hiện tại + timer</li>
+<li>Nhấn <kbd>Escape</kbd> để thoát</li>
+<li>Bật "sync session with task tracking" → timer tự đồng bộ với time tracking:
+  <ul>
+  <li>Start tracking task → tự động bắt đầu focus session</li>
+  <li>Pause session (vào break) → tự động pause task tracking, thời gian break không bị log vào task</li>
+  </ul>
+</li>
+</ul>
+
+<h3>Thực tế cho quản lý</h3>
+<p>Quản lý thường bị gián đoạn liên tục (email, họp, hỏi nhanh). Không nên ép Pomodoro cứng nhắc. Thay vào đó:</p>
+<ul>
+<li>Dùng block 25–45 phút cho việc cần tập trung (thiết kế, review tài liệu dài, viết báo cáo)</li>
+<li>Gắn tag <strong>DeepWork</strong> cho task cần focus — chỉ bật Pomodoro khi làm những task này</li>
+<li>Không cần track time cho việc nhỏ lẻ — chỉ track cho nhóm việc lớn để biết thời gian đang đi đâu</li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>Khuyến nghị:</strong> Target 4 giờ deep focus mỗi ngày để duy trì bền vững lâu dài. Không cần ép 8 tiếng — chất lượng quan trọng hơn số lượng.
+</div>
+
+<h2 id="worklog">Work Log & Báo cáo</h2>
+
+<ul>
+<li><strong>Worklog view:</strong> Chọn khoảng thời gian bất kỳ → xem tổng hợp thời gian đã dùng</li>
+<li><strong>Metrics:</strong> Progress = time spent ÷ time estimate, hiển thị trên UI</li>
+<li><strong>Export:</strong> Xuất ra CSV, JSON, hoặc plain text — phù hợp cho invoice hoặc báo cáo</li>
+</ul>
+
+<h2 id="integrations">Issue Integrations</h2>
+
+<h3>Cách thêm Issue Provider</h3>
+<ol>
+<li>Mở <strong>Issue Provider Panel</strong> (nút trên header)</li>
+<li>Chọn tab <strong>+</strong> → chọn platform (Jira / GitHub / GitLab)</li>
+<li>Điền: Host URL, Authentication token, Project/Repository ID</li>
+<li>Dùng search field để tìm issues → click <strong>+</strong> để import vào task board</li>
+</ol>
+
+<h3>So sánh tích hợp</h3>
+<table>
+<tr><th>Tính năng</th><th>Jira</th><th>GitHub</th><th>GitLab</th></tr>
+<tr><td>Import issues</td><td>JQL search</td><td>Repo-based</td><td>Repo-based</td></tr>
+<tr><td>Status transitions</td><td>Configurable</td><td>Không</td><td>Auto-done khi close</td></tr>
+<tr><td>Worklog sync</td><td>Đầy đủ</td><td>Không</td><td>Deprecated</td></tr>
+<tr><td>Subtasks</td><td>Có</td><td>Không</td><td>Không</td></tr>
+<tr><td>Comments</td><td>Có</td><td>Có</td><td>Có</td></tr>
+<tr><td>Auto re-assign</td><td>Có</td><td>Không</td><td>Không</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Jira sâu nhất:</strong> Jira có tích hợp 2-way sync thực sự (worklog, status, re-assign). GitHub và GitLab chủ yếu import một chiều.
+</div>
+
+<h3>Các platform khác</h3>
+<p>Ngoài 3 provider chính, app còn hỗ trợ: Gitea, Trello, ClickUp, Linear, OpenProject, Azure DevOps.</p>
+
+<h2 id="calendar">Calendar Integration</h2>
+
+<table>
+<tr><th>Loại</th><th>Hướng sync</th><th>Ghi chú</th></tr>
+<tr><td>iCal</td><td>Một chiều (read-only)</td><td>Cấu hình bằng subscription URL</td></tr>
+<tr><td>CalDAV</td><td>Hai chiều</td><td>Sync completion status ngược về server. Hỗ trợ Nextcloud, Fastmail, Radicale</td></tr>
+<tr><td>Google Calendar</td><td>Một chiều</td><td>Authorization lưu local, mỗi thiết bị kết nối riêng</td></tr>
+</table>
+
+<h2 id="sync">Sync dữ liệu</h2>
+
+<p>Super Productivity là <strong>local-first</strong> — dữ liệu luôn ở trên thiết bị, sync là optional. Bật tại <strong>Settings → Sync & Backup</strong>.</p>
+
+<table>
+<tr><th>Provider</th><th>Authentication</th><th>Platform</th><th>Ghi chú</th></tr>
+<tr><td>Dropbox</td><td>OAuth 2.0</td><td>Desktop, Web, Mobile</td><td>Stable, phổ biến nhất</td></tr>
+<tr><td>Nextcloud</td><td>Username + app password</td><td>Desktop, Web, Mobile</td><td>Self-hosted</td></tr>
+<tr><td>WebDAV</td><td>URL + username + password</td><td>Desktop, Web, Mobile</td><td>Experimental, CORS giới hạn trên browser</td></tr>
+<tr><td>Local File</td><td>Không cần</td><td>Desktop only</td><td>Chỉ dùng backup hoặc 1 thiết bị</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Cảnh báo:</strong> KHÔNG dùng Syncthing hoặc folder-sync tools để sync thư mục Local File sang nhiều thiết bị — nguy cơ conflict cao. Dùng Dropbox/Nextcloud/WebDAV thay thế.
+</div>
+
+<p>Tất cả provider đều hỗ trợ <strong>optional client-side encryption</strong> — dữ liệu được mã hóa trước khi gửi lên remote.</p>
+
+<h2 id="shortcuts">Keyboard Shortcuts</h2>
+
+<h3>Time Tracking</h3>
+<table>
+<tr><th>Phím</th><th>Chức năng</th></tr>
+<tr><td><kbd>Y</kbd></td><td>Bật/tắt time tracking cho task đang chọn</td></tr>
+<tr><td><kbd>T</kbd></td><td>Chỉnh sửa time estimate / thời gian đã dùng</td></tr>
+<tr><td><kbd>F</kbd></td><td>Vào Focus Mode</td></tr>
+<tr><td><kbd>Escape</kbd></td><td>Thoát Focus Mode</td></tr>
+</table>
+
+<h3>Task Management</h3>
+<table>
+<tr><th>Phím</th><th>Chức năng</th></tr>
+<tr><td><kbd>Shift+A</kbd></td><td>Mở thanh thêm task</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>Chỉnh sửa tiêu đề task</td></tr>
+<tr><td><kbd>D</kbd></td><td>Đánh dấu task hoàn thành</td></tr>
+<tr><td><kbd>A</kbd></td><td>Thêm subtask</td></tr>
+<tr><td><kbd>Backspace</kbd></td><td>Xóa task</td></tr>
+<tr><td><kbd>Shift+B</kbd></td><td>Chuyển task vào Backlog</td></tr>
+<tr><td><kbd>Shift+T</kbd></td><td>Chuyển task vào Today</td></tr>
+</table>
+
+<h3>Navigation</h3>
+<table>
+<tr><th>Phím</th><th>Chức năng</th></tr>
+<tr><td><kbd>W</kbd></td><td>Đi đến Work View</td></tr>
+<tr><td><kbd>B</kbd></td><td>Hiện/ẩn Task Backlog</td></tr>
+<tr><td><kbd>S</kbd></td><td>Mở Schedule dialog</td></tr>
+<tr><td><kbd>Ctrl+Shift+↑/↓</kbd></td><td>Di chuyển task lên/xuống</td></tr>
+<tr><td><kbd>Ctrl+Alt+↑/↓</kbd></td><td>Di chuyển task lên đầu/xuống cuối</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Tùy chỉnh:</strong> Tất cả keyboard shortcuts đều có thể cấu hình lại trong Settings.
+</div>
+
+<h2 id="mindset">Tư duy vận hành</h2>
+
+<div class="callout callout-purple">
+<strong>Nguyên tắc cốt lõi:</strong> Super Productivity không nên được dùng như một nơi "ghi cho có". Mục tiêu là biến nó thành một hệ thống đáng tin cậy để bạn không phải ghi nhớ thủ công trong đầu. Việc phải nằm trong hệ thống, có trạng thái, có mức ưu tiên và có ngày xem lại nếu cần.
+</div>
+
+<h3>Phù hợp với ai?</h3>
+<p>Ứng dụng phù hợp với người có nhiều việc đan xen: email, họp, review tài liệu, follow-up vendor, xử lý sự cố, quản lý dự án, phân công team, công việc cá nhân. Đặc biệt hữu ích cho IT Lead, PM, và knowledge workers.</p>
+
+<h3>Mục tiêu sử dụng</h3>
+<ul>
+<li><strong>Không bỏ sót việc:</strong> Mọi việc mới đều được đưa vào Inbox hoặc Project tương ứng ngay khi phát sinh</li>
+<li><strong>Biết việc nào cần làm trước:</strong> Mỗi sáng chỉ cần xem quá hạn, deadline hôm nay, lịch họp và Top 3 việc quan trọng</li>
+<li><strong>Không quên follow-up:</strong> Các việc đang chờ người khác được tách riêng bằng tag Waiting</li>
+<li><strong>Giảm nhiễu:</strong> Không nhồi tất cả vào Today. Today chỉ là danh sách việc thực sự cần xử lý trong ngày</li>
+</ul>
+
+<h3>Không biến công cụ thành gánh nặng</h3>
+<p>Ban đầu chỉ dùng ít trường thông tin. Mỗi task nên đủ rõ để hành động, nhưng không cần biến thành một hồ sơ quản trị phức tạp.</p>
+
+<h3>Nên làm vs. Không nên làm</h3>
+<table>
+<tr><th>Nên làm</th><th>Không nên làm</th></tr>
+<tr><td>Ghi task ngắn, rõ hành động</td><td>Ghi task quá dài như biên bản họp</td></tr>
+<tr><td>Dùng due date cho việc có hạn thật</td><td>Gán deadline giả cho mọi việc</td></tr>
+<tr><td>Mỗi ngày chọn 3 việc quan trọng</td><td>Kéo 20–30 việc vào Today rồi không xử lý hết</td></tr>
+<tr><td>Dùng tag Waiting để follow-up</td><td>Để việc chờ phản hồi lẫn với việc mình phải làm</td></tr>
+</table>
+
+<h3>Luồng xử lý chuẩn</h3>
+<pre><code>Phát sinh việc mới → Inbox
+Inbox → làm rõ hành động → gán Project/Tag/Due Date
+Chọn việc hôm nay → Today
+Đang xử lý → In Progress
+Chờ người khác → Waiting
+Hoàn thành → Done</code></pre>
+
+<h2 id="structure">Cấu trúc thực tế cho IT Lead / PM</h2>
+
+<h3>Projects khuyến nghị</h3>
+<table>
+<tr><th>Project</th><th>Dùng cho</th><th>Ví dụ task</th></tr>
+<tr><td>CRM</td><td>Các việc liên quan CRM, data model, vendor</td><td>Review phương án chia Epic CRM</td></tr>
+<tr><td>FlowX / Approval</td><td>Luồng phê duyệt, email template, migration</td><td>Rà soát template email CAM/CAS</td></tr>
+<tr><td>Operations</td><td>Sự cố, log, RCA, vận hành</td><td>Kiểm tra nguyên nhân timeout Loyalty</td></tr>
+<tr><td>AI Tools</td><td>Kiro, Claude Code, prompt engineering</td><td>Hoàn thiện CLAUDE.MD cho team</td></tr>
+<tr><td>Team Management</td><td>Phân công, đánh giá, họp team</td><td>Chuẩn bị nội dung họp tuần</td></tr>
+<tr><td>Personal</td><td>Việc cá nhân</td><td>Đặt sân tennis, mua thiết bị</td></tr>
+</table>
+
+<h3>Tags khuyến nghị</h3>
+<table>
+<tr><th>Tag</th><th>Ý nghĩa</th></tr>
+<tr><td>P1</td><td>Việc quan trọng/cần xử lý trước, ảnh hưởng lớn hoặc có deadline gần</td></tr>
+<tr><td>P2</td><td>Việc cần làm nhưng không gấp bằng P1</td></tr>
+<tr><td>P3</td><td>Việc nhỏ, có thể xử lý khi rảnh</td></tr>
+<tr><td>Waiting</td><td>Đang chờ phản hồi từ người khác</td></tr>
+<tr><td>Email</td><td>Cần soạn/gửi/trả lời email</td></tr>
+<tr><td>Review</td><td>Cần đọc, rà soát, góp ý</td></tr>
+<tr><td>Meeting</td><td>Liên quan cuộc họp</td></tr>
+<tr><td>DeepWork</td><td>Cần tập trung, không nên làm vụn</td></tr>
+</table>
+
+<h3>Cách đặt tên task</h3>
+<p>Task nên bắt đầu bằng <strong>động từ</strong> để nhìn vào là làm được ngay:</p>
+<table>
+<tr><th>Chưa tốt</th><th>Tốt hơn</th></tr>
+<tr><td>CRM</td><td>Review phương án chia Epic CRM RB/CB</td></tr>
+<tr><td>Email anh Tiến</td><td>Soạn email phản hồi anh Tiến về hồ sơ quá hạn</td></tr>
+<tr><td>RCA</td><td>Hoàn thiện quy trình RCA sự cố nghiêm trọng</td></tr>
+<tr><td>Vendor</td><td>Follow-up vendor CRM về license sau khi dừng support</td></tr>
+</table>
+
+<h2 id="daily">Quy trình hằng ngày</h2>
+
+<h3>Buổi sáng: 5–10 phút</h3>
+<ol>
+<li>Mở Today/Planner</li>
+<li>Kiểm tra việc quá hạn</li>
+<li>Kiểm tra deadline hôm nay và ngày mai</li>
+<li>Xem lịch họp trong ngày</li>
+<li>Chọn <strong>Today's Big 3</strong>: 3 việc quan trọng nhất</li>
+</ol>
+
+<pre><code>Today's Big 3
+1. Hoàn thiện nội dung trình phương án CRM
+2. Review email template FlowX
+3. Follow-up HR về mapping user TPB/AMC</code></pre>
+
+<h3>Trong ngày: bắt việc nhanh</h3>
+<p>Khi có việc mới, đưa vào Inbox trước. Áp dụng <strong>quy tắc 2 phút</strong>:</p>
+<ul>
+<li>Việc dưới 2 phút và không làm gián đoạn việc quan trọng → xử lý luôn rồi đánh dấu Done</li>
+<li>Việc trên 2 phút → ghi vào Inbox, gán Project/Tag/Due Date khi có thời gian</li>
+<li>Việc đang làm dở bị gián đoạn → ghi nhanh context vào note trước khi chuyển sang việc mới</li>
+</ul>
+
+<h3>Cuối ngày: 5 phút</h3>
+<ol>
+<li>Đánh dấu việc đã xong</li>
+<li>Chuyển việc chưa xong sang ngày phù hợp</li>
+<li>Cập nhật Waiting</li>
+<li>Chọn sơ bộ Big 3 cho ngày mai</li>
+</ol>
+
+<div class="callout callout-blue">
+<strong>Nguyên tắc:</strong> Cuối ngày không cần dọn sạch toàn bộ backlog. Chỉ cần đảm bảo không có việc quan trọng bị trôi mất.
+</div>
+
+<h2 id="priority">Ưu tiên & Deadline</h2>
+
+<h3>Ma trận ưu tiên</h3>
+<table>
+<tr><th>Loại việc</th><th>Cách xử lý</th><th>Ví dụ</th></tr>
+<tr><td>Quan trọng + Gấp</td><td>Làm trong hôm nay</td><td>Sự cố production, báo cáo deadline hôm nay</td></tr>
+<tr><td>Quan trọng + Không gấp</td><td>Timebox vào lịch</td><td>Thiết kế data model CRM</td></tr>
+<tr><td>Không quan trọng + Gấp</td><td>Xử lý nhanh hoặc giao người khác</td><td>Nhắc gửi file, xác nhận thông tin nhỏ</td></tr>
+<tr><td>Không quan trọng + Không gấp</td><td>Đưa backlog hoặc loại bỏ</td><td>Ý tưởng chưa rõ giá trị</td></tr>
+</table>
+
+<h3>Cách dùng deadline</h3>
+<p>Deadline chỉ nên dùng khi có hạn thật. Với việc lớn, tạo các mốc trung gian:</p>
+<pre><code>Ví dụ: Báo cáo CRM deadline 12/07
+08/07 - Thu thập input RB/CB
+09/07 - Draft phương án
+10/07 - Review nội bộ
+11/07 - Chỉnh sửa cuối
+12/07 - Gửi báo cáo</code></pre>
+
+<h3>Quy tắc Top 3</h3>
+<p>Mỗi ngày chỉ chọn tối đa 3 việc lớn. Các việc nhỏ có thể làm xen kẽ nhưng không được lấn át Big 3.</p>
+
+<h2 id="waiting">Quản lý việc chờ phản hồi (Waiting)</h2>
+
+<p>Nhiều việc không bị quên vì bạn không nhớ, mà vì nó đang nằm ở người khác và không có cơ chế nhắc lại.</p>
+
+<h3>Cách tạo task Waiting</h3>
+<pre><code>Task: Follow-up HR phản hồi mapping user TPB/AMC
+Project: Team Management / HR
+Tag: Waiting
+Due Date: 09/07
+Note:
+- Đã gửi email ngày 05/07
+- Chờ HR xác nhận nguyên tắc 1 Employee Code - 1 Username
+- Nếu chưa phản hồi đến 09/07 → gọi trực tiếp</code></pre>
+
+<h3>Review Waiting mỗi ngày</h3>
+<p>Mỗi sáng hoặc cuối ngày, lọc tag <strong>Waiting</strong>. Với việc quá hạn phản hồi, chuyển thành task hành động cụ thể:</p>
+<pre><code>Gọi HR để chốt phản hồi mapping TPB/AMC (quá hạn 2 ngày)
+Soạn email nhắc vendor CRM xác nhận license (gửi lần 2)
+Ping DEV cập nhật tiến độ fix timeout Loyalty (chờ từ 03/07)</code></pre>
+
+<h3>Khi nào chuyển Waiting → Action?</h3>
+<ul>
+<li>Quá hạn phản hồi 2+ ngày → escalate: gọi điện hoặc nhắn trực tiếp</li>
+<li>Đã nhắc 2 lần không phản hồi → báo cáo lên cấp trên hoặc đổi người phụ trách</li>
+<li>Nhận được phản hồi → chuyển thành task hành động mới (ví dụ: "Triển khai theo phương án HR đã xác nhận")</li>
+</ul>
+
+<h2 id="tips">Tính năng nên dùng — Hướng dẫn thực tế</h2>
+
+<p>Dưới đây là cách tận dụng các tính năng chính một cách hiệu quả, phù hợp với người bận rộn — không cần dùng hết tất cả.</p>
+
+<h3>Tasks và Subtasks</h3>
+<p>Dùng <strong>task</strong> cho kết quả cần hoàn thành. Dùng <strong>subtask</strong> cho các bước nhỏ bên trong. Quy tắc: nếu task mất hơn 1 ngày, nên tách subtask.</p>
+<pre><code>Task: Hoàn thiện tài liệu hướng dẫn RCA
+Subtasks:
+  - Xác định scope (loại sự cố nào phải làm RCA)
+  - Thiết kế quy trình (ai trigger, ai tham gia, timeline)
+  - Bổ sung template biên bản RCA
+  - Review với team (họp 30 phút)
+  - Xuất file DOCX gửi lãnh đạo</code></pre>
+
+<p><strong>Khi nào KHÔNG cần subtask:</strong></p>
+<ul>
+<li>Việc đơn giản, 1 hành động là xong (gửi email, gọi điện confirm)</li>
+<li>Việc ngắn dưới 30 phút — ghi task đủ rõ là đủ</li>
+</ul>
+
+<h3>Time Tracking — Dùng đúng cách</h3>
+<p>Không cần bật cho mọi việc. Nên bắt đầu track cho nhóm việc lớn trước:</p>
+
+<table>
+<tr><th>Nên track</th><th>Không cần track</th></tr>
+<tr><td>Thiết kế data model, architecture</td><td>Trả lời email nhanh</td></tr>
+<tr><td>Review tài liệu dài (>30 phút)</td><td>Confirm thông tin 2 phút</td></tr>
+<tr><td>Viết báo cáo, presentation</td><td>Chat nhanh với đồng nghiệp</td></tr>
+<tr><td>Xử lý sự cố production</td><td>Approve request thường ngày</td></tr>
+<tr><td>Coding / debugging phức tạp</td><td>Việc hành chính nhỏ</td></tr>
+</table>
+
+<p><strong>Lợi ích sau 1–2 tuần track:</strong></p>
+<ul>
+<li>Biết loại việc nào đang chiếm nhiều thời gian nhất (thường là họp + sự cố)</li>
+<li>Có data để negotiate giảm họp hoặc delegate việc tốn thời gian</li>
+<li>Ước lượng chính xác hơn cho việc tương tự trong tương lai</li>
+</ul>
+
+<h3>Pomodoro / Focus — Dùng linh hoạt</h3>
+<p>Quản lý thường bị ngắt quãng liên tục. Không nên ép Pomodoro cứng nhắc cho mọi việc. Thay vào đó:</p>
+
+<table>
+<tr><th>Tình huống</th><th>Cách dùng</th></tr>
+<tr><td>Cần viết báo cáo, thiết kế CRM</td><td>Bật Focus Mode 45 phút, tắt notifications</td></tr>
+<tr><td>Review tài liệu vendor dài</td><td>Pomodoro 25 phút, break 5 phút để trả lời email gấp</td></tr>
+<tr><td>Buổi chiều xử lý email + việc vặt</td><td>Không cần Pomodoro — chỉ track time nếu muốn</td></tr>
+<tr><td>Ngày toàn họp</td><td>Không dùng Pomodoro — dùng gap giữa các họp cho quick wins</td></tr>
+</table>
+
+<h3>Notes — Ghi đúng mức</h3>
+<p>Notes trong task nên ngắn gọn, đủ context để quay lại làm tiếp mà không cần nhớ. Quy tắc:</p>
+<ul>
+<li><strong>Ghi:</strong> Link tài liệu, tên người liên quan, kết quả trao đổi ngắn, quyết định đã chốt</li>
+<li><strong>Không ghi:</strong> Toàn bộ biên bản họp, nội dung tài liệu dài — những thứ này để ở file riêng</li>
+</ul>
+
+<pre><code>Ví dụ note tốt:
+- Context: Sếp yêu cầu trong họp 03/07
+- Stakeholder: Anh Tiến (phụ trách CRM), chị Lan (BA)
+- Link: [Google Docs - Phương án CRM v2]
+- Quyết định: Chia 3 Epic (RB, CB, Common), mỗi Epic ≤ 4 Sprint
+- Blockers: Chờ vendor confirm license model mới</code></pre>
+
+<h3>Tích hợp Jira/GitHub/GitLab — Khi nào nên bật?</h3>
+<p>Nếu team đang dùng Jira hoặc Git, cân nhắc:</p>
+
+<table>
+<tr><th>Giai đoạn</th><th>Khuyến nghị</th><th>Lý do</th></tr>
+<tr><td>Tuần 1–2</td><td>Dùng độc lập, không tích hợp</td><td>Ổn định workflow cá nhân trước</td></tr>
+<tr><td>Tuần 3+</td><td>Cân nhắc bật Jira integration</td><td>Import issues quan trọng để track time, tránh mở 2 tool</td></tr>
+<tr><td>Khi đã quen</td><td>Bật GitHub/GitLab nếu cần</td><td>Track PRs/issues kỹ thuật trực tiếp</td></tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Nguyên tắc:</strong> Đừng bật tất cả tính năng cùng lúc. Bắt đầu nhẹ (Task + Today + Inbox), sau 1 tuần thêm Tags + Waiting, rồi mới cân nhắc Time Tracking và Integration. Thêm dần khi thấy cần — không thêm vì "có sẵn".
+</div>
+
+<h2 id="manager">Workflow cho IT Lead / PM</h2>
+
+<h3>Dashboard cá nhân đề xuất</h3>
+<pre><code>Today
+  - Big 3
+  - Quick wins
+  - Meeting follow-up
+
+This Week
+  - Deadline tuần này
+  - Việc thiết kế cần deep work
+
+Waiting
+  - HR / Vendor / DEV / Business
+
+Projects
+  - CRM / FlowX / Operations / AI Tools / Team Management</code></pre>
+
+<h3>Cách xử lý sau cuộc họp</h3>
+<p>Không để action item chỉ nằm trong biên bản. Ngay sau khi họp xong (hoặc trong vòng 30 phút), xử lý như sau:</p>
+<ol>
+<li><strong>Mỗi action item → 1 task riêng.</strong> Không gom chung vào 1 task "việc sau họp"</li>
+<li><strong>Gán owner:</strong> Nếu việc của bạn → gán vào project tương ứng. Nếu việc của người khác → ghi owner trong note</li>
+<li><strong>Gắn due date:</strong> Theo deadline đã thống nhất trong họp</li>
+<li><strong>Việc chờ người khác:</strong> Gắn tag Waiting + ngày follow-up. Ghi rõ "đã thống nhất trong họp ngày dd/mm"</li>
+</ol>
+
+<pre><code>Ví dụ: Sau cuộc họp CRM ngày 05/07
+Task 1: Soạn draft phương án chia Epic CRM → P1, Due 08/07
+Task 2: Follow-up vendor xác nhận license → Waiting, Due 09/07
+Task 3: Gửi danh sách requirement cho BA → Email, Due 06/07
+Task 4: Follow-up DEV estimate effort module RB → Waiting, Due 10/07</code></pre>
+
+<h3>Cách quản lý email</h3>
+<p>Không biến inbox email thành todo list. Nguyên tắc: <strong>email là input, task là action</strong>. Quy trình:</p>
+<ol>
+<li>Đọc email → xác định có cần hành động không</li>
+<li>Nếu có → tạo task trong Super Productivity với context đầy đủ</li>
+<li>Nếu chỉ cần đọc/biết → archive email, không tạo task</li>
+<li>Nếu cần trả lời nhưng chưa có đủ thông tin → tạo task + tag Email + due date</li>
+</ol>
+<table>
+<tr><th>Email nhận được</th><th>Task nên tạo</th><th>Tag/Priority</th></tr>
+<tr><td>Sếp yêu cầu báo cáo phương án CRM</td><td>Soạn báo cáo phương án CRM gửi trước 10/07</td><td>P1, DeepWork</td></tr>
+<tr><td>HR hỏi về user AMC/TPB</td><td>Phản hồi HR về nguyên tắc username cho TPB/AMC</td><td>P2, Email</td></tr>
+<tr><td>Vendor gửi tài liệu</td><td>Review tài liệu vendor CRM và ghi câu hỏi cần làm rõ</td><td>P2, Review</td></tr>
+<tr><td>DEV báo hoàn thành fix bug</td><td>Verify fix timeout Loyalty trên staging</td><td>P1</td></tr>
+<tr><td>Mời họp tuần sau</td><td>Chuẩn bị agenda cho họp [tên] ngày dd/mm</td><td>P3, Meeting</td></tr>
+</table>
+
+<h2 id="templates">Templates áp dụng ngay</h2>
+
+<h3>Template task chuẩn</h3>
+<pre><code>Tên task: [Động từ] + [Kết quả cần đạt]
+Project: CRM / FlowX / Operations / AI Tools / Team Management / Personal
+Priority: P1 / P2 / P3
+Due Date: ngày cần hoàn thành hoặc ngày follow-up
+Tag: Email / Review / Waiting / Meeting / DeepWork
+Note:
+- Context:
+- Người liên quan:
+- Link tài liệu:
+- Kết quả mong muốn:</code></pre>
+
+<h3>Template review cuối ngày</h3>
+<pre><code>Cuối ngày - 5 phút
+[ ] Việc nào đã xong?
+[ ] Việc nào chưa xong và cần chuyển ngày?
+[ ] Có việc nào đang Waiting quá hạn?
+[ ] Có email/cuộc họp nào phát sinh action item?
+[ ] Big 3 ngày mai là gì?</code></pre>
+
+<h3>Template weekly review</h3>
+<pre><code>Weekly Review - 30 phút
+[ ] Xem toàn bộ Overdue
+[ ] Xem deadline 2 tuần tới
+[ ] Xem Waiting List
+[ ] Dọn Inbox
+[ ] Chọn 3–5 mục tiêu chính tuần sau
+[ ] Loại bỏ task không còn giá trị</code></pre>
+
+<h3>Template theo dõi việc giao người khác</h3>
+<pre><code>Task: Follow-up [người/đơn vị] về [nội dung]
+Owner: [Tên người/đơn vị]
+Ngày giao: [dd/mm]
+Ngày cần phản hồi: [dd/mm]
+Trạng thái: Waiting
+Ghi chú: [đã gửi qua email/Teams/cuộc họp nào]</code></pre>
+
+<h2 id="checklist">Checklist triển khai 7 ngày</h2>
+
+<table>
+<tr><th>Ngày</th><th>Mục tiêu</th><th>Kết quả cần có</th></tr>
+<tr><td>Ngày 1</td><td>Cài app, tạo project cơ bản</td><td>Có 5–6 project chính</td></tr>
+<tr><td>Ngày 2</td><td>Đưa toàn bộ việc đang nhớ vào Inbox</td><td>Không còn việc quan trọng nằm trong đầu</td></tr>
+<tr><td>Ngày 3</td><td>Gắn Project, Priority, Due Date cho task</td><td>Inbox được làm sạch lần đầu</td></tr>
+<tr><td>Ngày 4</td><td>Bắt đầu dùng Today và Big 3</td><td>Mỗi sáng biết 3 việc quan trọng nhất</td></tr>
+<tr><td>Ngày 5</td><td>Tạo Waiting List</td><td>Các việc chờ người khác không bị quên</td></tr>
+<tr><td>Ngày 6</td><td>Dùng review cuối ngày</td><td>Ngày hôm sau không bị rối</td></tr>
+<tr><td>Ngày 7</td><td>Weekly review và tinh chỉnh</td><td>Workflow ổn định, bỏ tag/project thừa</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Kết luận:</strong> Hãy dùng Super Productivity như một "bảng điều khiển cá nhân". Công cụ chỉ hiệu quả khi bạn duy trì 3 thói quen: ghi nhanh vào Inbox, chọn Big 3 mỗi sáng, review 5 phút cuối ngày.
+</div>
+
+<h2 id="backup">Backup & Bảo mật</h2>
+
+<h3>Backup</h3>
+<ul>
+<li>Bật backup định kỳ trong Settings</li>
+<li>Lưu file backup ở thư mục được sao lưu nội bộ</li>
+<li>Đặt lịch kiểm tra backup mỗi tuần một lần</li>
+</ul>
+
+<h3>Dữ liệu nhạy cảm</h3>
+<table>
+<tr><th>Nên ghi</th><th>Không nên ghi</th></tr>
+<tr><td>"Review log lỗi giao dịch Loyalty"</td><td>Thông tin khách hàng, số tài khoản, dữ liệu nhạy cảm</td></tr>
+<tr><td>"Follow-up vendor về license CRM"</td><td>Hợp đồng/license chi tiết nếu chưa được phép lưu</td></tr>
+<tr><td>Link tới tài liệu nội bộ được phân quyền</td><td>Copy toàn bộ nội dung mật vào task note</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Lưu ý môi trường ngân hàng:</strong> Nếu dữ liệu công việc có thông tin nội bộ, nên dùng local/offline và tuân thủ quy định bảo mật. Không tự ý bật sync lên cloud cá nhân nếu chưa được phép.
+</div>
+
+<blockquote>Nguồn: super-productivity.com · GitHub: johannesjo/super-productivity</blockquote>
+</main>
+</div>
+
+<script>
+(function(){
+var links=document.querySelectorAll('.nav-items a');
+function setActive(){
+var scrollY=window.scrollY+80;
+var current='';
+document.querySelectorAll('[id]').forEach(function(el){
+if(el.offsetTop<=scrollY)current=el.id;
+});
+links.forEach(function(a){
+a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+});
+}
+window.addEventListener('scroll',setActive);
+setActive();
+
+document.querySelectorAll('pre').forEach(function(pre){
+var btn=document.createElement('button');
+btn.className='copy-btn';
+btn.textContent='Copy';
+btn.addEventListener('click',function(){
+var code=pre.querySelector('code');
+var text=code?code.textContent:pre.textContent;
+navigator.clipboard.writeText(text).then(function(){
+btn.textContent='Copied!';
+btn.classList.add('copied');
+setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied');},2000);
+});
+});
+pre.appendChild(btn);
+});
+})();
+</script>
+</body>
+</html>
