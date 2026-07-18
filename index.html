@@ -40,7 +40,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .card-desc{font-size:.82rem;color:#64748b;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .no-results{text-align:center;padding:3rem;color:#94a3b8;font-size:.88rem;display:none}
 @media(max-width:900px){.cards{grid-template-columns:1fr}}
-@media(max-width:768px){.sidebar{display:none}.main-content{padding:1rem}.top-bar{padding:.75rem 1rem}}
+@media(max-width:768px){.sidebar{display:none}.main-content{padding:1rem}.top-bar{padding:.75rem 1rem}.card-title{font-size:1rem}.card-desc{font-size:.88rem}.group-name{font-size:1.1rem}}
   </style>
 </head>
 <body>
@@ -51,7 +51,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     </div>
     <h1 style="font-size:1.4rem;font-weight:700;color:#1a1a2e;margin-bottom:.5rem">Handbook</h1>
     <p style="color:#64748b;font-size:.88rem;margin-bottom:1.5rem">Nhập mật khẩu để truy cập</p>
-    <input id="auth-pass" type="password" placeholder="Mật khẩu..." style="width:100%;padding:.7rem 1rem;border:1.5px solid rgba(0,0,0,.1);border-radius:8px;font-size:.95rem;outline:none;margin-bottom:.75rem;transition:border-color .15s" autofocus>
+    <input id="auth-pass" type="password" placeholder="Mật khẩu..." style="width:100%;padding:.7rem 1rem;border:1.5px solid rgba(0,0,0,.1);border-radius:8px;font-size:.95rem;outline:none;margin-bottom:.75rem;transition:border-color .15s">
     <div id="auth-error" style="color:#dc2626;font-size:.8rem;margin-bottom:.75rem;display:none">Mật khẩu không đúng</div>
     <button id="auth-btn" style="width:100%;padding:.7rem;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:600;cursor:pointer;transition:opacity .15s">Xác nhận</button>
   </div>
@@ -62,10 +62,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   var KEY='handbook_auth';
   if(localStorage.getItem(KEY)===HASH){document.getElementById('auth-gate').style.display='none';return}
   var inp=document.getElementById('auth-pass'),btn=document.getElementById('auth-btn'),err=document.getElementById('auth-error');
+  function sha256Fallback(str){
+    function rightRotate(v,a){return(v>>>a)|(v<<(32-a))}
+    var m=[],l=str.length*8,i,j;
+    for(i=0;i<str.length;i++){if(i%4===0)m[i>>2]=0;m[i>>2]|=str.charCodeAt(i)<<(24-(i%4)*8)}
+    m[l>>5]|=0x80<<(24-l%32);m[((l+64>>9)<<4)+15]=l;
+    var H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    var K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    for(i=0;i<m.length;i+=16){
+      var w=[];for(j=0;j<16;j++)w[j]=m[i+j]||0;
+      for(j=16;j<64;j++){var s0=rightRotate(w[j-15],7)^rightRotate(w[j-15],18)^(w[j-15]>>>3);var s1=rightRotate(w[j-2],17)^rightRotate(w[j-2],19)^(w[j-2]>>>10);w[j]=(w[j-16]+s0+w[j-7]+s1)|0}
+      var a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+      for(j=0;j<64;j++){var S1=rightRotate(e,6)^rightRotate(e,11)^rightRotate(e,25);var ch=(e&f)^(~e&g);var t1=(h+S1+ch+K[j]+w[j])|0;var S0=rightRotate(a,2)^rightRotate(a,13)^rightRotate(a,22);var maj=(a&b)^(a&c)^(b&c);var t2=(S0+maj)|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0}
+      H[0]=(H[0]+a)|0;H[1]=(H[1]+b)|0;H[2]=(H[2]+c)|0;H[3]=(H[3]+d)|0;H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h)|0;
+    }
+    return H.map(function(v){return(v>>>0).toString(16).padStart(8,'0')}).join('');
+  }
   async function verify(){
-    var val=inp.value;
-    var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
-    var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+    var val=inp.value;var hash;
+    if(window.crypto&&window.crypto.subtle){
+      var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
+      hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+    }else{hash=sha256Fallback(val)}
     if(hash===HASH){localStorage.setItem(KEY,HASH);document.getElementById('auth-gate').style.display='none'}
     else{err.style.display='block';inp.style.borderColor='#dc2626';inp.value='';inp.focus()}
   }
@@ -217,7 +235,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
             '<div class="group-header">' +
             '<div class="group-icon" style="background:' + color + '">' + icon + '</div>' +
             '<span class="group-name">' + group.name + '</span>' +
-            '<span class="group-count">' + group.topics.length + '</span>' +
+            '<span class="group-count">' + (q ? cards.split('class="card"').length - 1 : group.topics.length) + '</span>' +
             '</div>' +
             '<div class="cards">' + cards + '</div></section>';
         }
