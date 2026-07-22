@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elasticsearch Handbook - Gi&#225;o tr&#236;nh Enterprise</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#f8fafc;color:#1a1a2e;min-height:100vh;font-size:17px}
+.top-bar{background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:.75rem 2rem;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:1.5rem}
+.back-btn{display:flex;align-items:center;gap:.5rem;color:#4c51bf;text-decoration:none;font-weight:600;font-size:.88rem;white-space:nowrap}
+.back-btn:hover{color:#667eea}
+.back-btn svg{width:16px;height:16px}
+.logo{font-size:1.1rem;font-weight:800;color:#1a1a2e;white-space:nowrap}
+.logo span{background:linear-gradient(135deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.top-meta{font-size:.75rem;color:#94a3b8;white-space:nowrap;margin-left:auto}
+.layout{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:200px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;padding:1.25rem .75rem;border-right:1px solid rgba(0,0,0,.04);background:#fff;flex-shrink:0}
+.sidebar-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;padding:.25rem .5rem;margin-bottom:.5rem}
+.sidebar a{display:flex;align-items:center;gap:.5rem;padding:.45rem .5rem;border-radius:6px;text-decoration:none;color:#64748b;font-size:.82rem;font-weight:500;transition:all .1s;margin-bottom:2px}
+.sidebar a:hover{background:#f0f4ff;color:#4c51bf}
+.sidebar a .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar a .cnt{margin-left:auto;font-size:.68rem;color:#94a3b8}
+.main-content{flex:1;padding:1.5rem 2rem 4rem;max-width:960px}
+.group{margin-bottom:2.5rem}
+.group-header{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;padding:.6rem .85rem;background:linear-gradient(135deg,#f8fafc 0%,#f0f4ff 100%);border-radius:10px;border:1px solid rgba(102,126,234,.1)}
+.group-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.group-icon svg{width:14px;height:14px;color:#fff}
+.group-name{font-size:1.05rem;font-weight:700;color:#1a1a2e}
+.group-count{font-size:.72rem;color:#fff;background:#667eea;padding:2px 8px;border-radius:10px;margin-left:auto;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.card{display:flex;align-items:flex-start;gap:.75rem;padding:.8rem 1rem;background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;text-decoration:none;color:inherit;transition:all .12s;cursor:pointer}
+.card:hover{border-color:rgba(102,126,234,.3);box-shadow:0 2px 8px rgba(102,126,234,.08);transform:translateY(-1px)}
+.card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;background:#f1f3f5;border:1px solid rgba(0,0,0,.06)}
+.card-icon svg{width:16px;height:16px;color:#475569}
+.card-body{flex:1;min-width:0}
+.card-num{font-size:.68rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.card-title{font-size:.92rem;font-weight:600;color:#1a1a2e;line-height:1.3;margin-top:2px}
+.card-desc{font-size:.82rem;color:#64748b;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.source-footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.06)}
+.source-footer a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.source-footer a:hover{text-decoration:underline}
+.source-footer p{color:#64748b;font-size:.78rem;margin-top:.5rem}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{display:none}.main-content{padding:1rem}.top-bar{padding:.75rem 1rem}.card-title{font-size:1rem}.card-desc{font-size:.88rem}.group-name{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<script>(function(){if(localStorage.getItem('handbook_auth')!=='80f5a1e2920a748674478bac37a035a9ddf71be718f4a5753caa02635f9382e2'){document.body.style.display='none';var p=window.location.pathname.split('/');var depth=p.filter(function(s){return s.length>0}).length-2;var base='';for(var i=0;i<depth;i++)base+='../';window.location.href=base+'index.html'}})()</script>
+<div class="top-bar">
+<a href="../index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg> Trang ch&#7911;</a>
+<div class="logo"><span>Elasticsearch</span> Handbook</div>
+<div class="top-meta">25 b&#224;i &#183; 8 t&#7853;p &#183; Elastic Stack, Kibana, Logstash, Beats</div>
+</div>
+<div class="layout">
+<aside class="sidebar">
+<div class="sidebar-title">M&#7909;c l&#7909;c</div>
+<a href="#vol1"><span class="dot" style="background:#10b981"></span>N&#7873;n T&#7843;ng<span class="cnt">2</span></a>
+<a href="#vol2"><span class="dot" style="background:#2563eb"></span>ES Core<span class="cnt">4</span></a>
+<a href="#vol3"><span class="dot" style="background:#7c3aed"></span>Search<span class="cnt">3</span></a>
+<a href="#vol4"><span class="dot" style="background:#f59e0b"></span>Cluster Ops<span class="cnt">3</span></a>
+<a href="#vol5"><span class="dot" style="background:#dc2626"></span>Security<span class="cnt">1</span></a>
+<a href="#vol6"><span class="dot" style="background:#ec4899"></span>Elastic Stack<span class="cnt">4</span></a>
+<a href="#vol7"><span class="dot" style="background:#0ea5e9"></span>Operations<span class="cnt">4</span></a>
+<a href="#vol8"><span class="dot" style="background:#0f172a"></span>Advanced<span class="cnt">4</span></a>
+</aside>
+<main class="main-content">
+<!-- Volume 1 -->
+<div class="group" id="vol1">
+<div class="group-header">
+<div class="group-icon" style="background:#10b981"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div>
+<div class="group-name">N&#7873;n T&#7843;ng H&#7879; Th&#7889;ng Ph&#226;n T&#225;n</div>
+<span class="group-count">2 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="01-distributed-systems.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 01</div><div class="card-title">H&#7879; Th&#7889;ng Ph&#226;n T&#225;n</div><div class="card-desc">CAP theorem, sharding, replication, consensus, quorum v&#224; split-brain</div></div>
+</a>
+<a href="02-lucene-fundamentals.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 02</div><div class="card-title">Apache Lucene</div><div class="card-desc">Inverted index, segments, merge policy, scoring BM25 &#8212; n&#7873;n t&#7843;ng search engine</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 2 -->
+<div class="group" id="vol2">
+<div class="group-header">
+<div class="group-icon" style="background:#2563eb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></div>
+<div class="group-name">Elasticsearch Core</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="03-elasticsearch-architecture.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 03</div><div class="card-title">Ki&#7871;n Tr&#250;c Elasticsearch</div><div class="card-desc">Node roles, cluster state, master election, shard = Lucene index</div></div>
+</a>
+<a href="04-installation-deployment.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 04</div><div class="card-title">C&#224;i &#272;&#7863;t &amp; Tri&#7875;n Khai</div><div class="card-desc">Docker, Docker Compose, Kubernetes (ECK), Linux &#8212; cluster 3 nodes</div></div>
+</a>
+<a href="05-index-document-crud.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 05</div><div class="card-title">Index &amp; Document CRUD</div><div class="card-desc">Create, Read, Update, Delete, Bulk API, routing, versioning</div></div>
+</a>
+<a href="06-mapping-data-types.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path d="M6 6h.008v.008H6V6z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 06</div><div class="card-title">Mapping &amp; Data Types</div><div class="card-desc">Dynamic/explicit mapping, text, keyword, nested, geo, multi-fields</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 3 -->
+<div class="group" id="vol3">
+<div class="group-header">
+<div class="group-icon" style="background:#7c3aed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg></div>
+<div class="group-name">Search &amp; Analytics</div>
+<span class="group-count">3 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="07-text-analysis.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.2 48.2 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 07</div><div class="card-title">Text Analysis</div><div class="card-desc">Analyzer pipeline, tokenizer, token filters, ICU cho ti&#7871;ng Vi&#7879;t</div></div>
+</a>
+<a href="08-search-dsl.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 08</div><div class="card-title">Search DSL</div><div class="card-desc">Query/filter context, bool, match, term, nested, highlighting, pagination</div></div>
+</a>
+<a href="09-aggregations.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 09</div><div class="card-title">Aggregations</div><div class="card-desc">Bucket, metric, pipeline aggregations &#8212; analytics tr&#234;n d&#7919; li&#7879;u l&#7899;n</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 4 -->
+<div class="group" id="vol4">
+<div class="group-header">
+<div class="group-icon" style="background:#f59e0b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.75 17.25v-.228a4.5 4.5 0 00-.12-1.03l-2.268-9.64a3.375 3.375 0 00-3.285-2.602H7.923a3.375 3.375 0 00-3.285 2.602l-2.268 9.64a4.5 4.5 0 00-.12 1.03v.228m19.5 0a3 3 0 01-3 3H5.25a3 3 0 01-3-3m19.5 0a3 3 0 00-3-3H5.25a3 3 0 00-3 3m16.5 0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008z"/></svg></div>
+<div class="group-name">Cluster Operations</div>
+<span class="group-count">3 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="10-cluster-management.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 10</div><div class="card-title">Cluster Management</div><div class="card-desc">Scaling, rolling restart, health monitoring, allocation awareness</div></div>
+</a>
+<a href="11-shard-allocation.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 11</div><div class="card-title">Shard Allocation</div><div class="card-desc">Sizing strategy, over-sharding, filtering, rebalancing best practices</div></div>
+</a>
+<a href="12-index-lifecycle.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 12</div><div class="card-title">Index Lifecycle (ILM)</div><div class="card-desc">Hot &#8594; warm &#8594; cold &#8594; frozen &#8594; delete, rollover, data tiers</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 5 -->
+<div class="group" id="vol5">
+<div class="group-header">
+<div class="group-icon" style="background:#dc2626"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></div>
+<div class="group-name">Security</div>
+<span class="group-count">1 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="13-security.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 13</div><div class="card-title">B&#7843;o M&#7853;t Elasticsearch</div><div class="card-desc">TLS/SSL, RBAC, LDAP/SAML/OIDC, field-level security, audit logging</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 6 -->
+<div class="group" id="vol6">
+<div class="group-header">
+<div class="group-icon" style="background:#ec4899"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/></svg></div>
+<div class="group-name">Elastic Stack</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="14-kibana.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 14</div><div class="card-title">Kibana</div><div class="card-desc">Discover, Lens, Dashboard, Canvas, Spaces, Dev Tools console</div></div>
+</a>
+<a href="15-logstash.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 15</div><div class="card-title">Logstash</div><div class="card-desc">Input &#8594; Filter &#8594; Output, grok, dead letter queue, persistent queue</div></div>
+</a>
+<a href="16-beats-elastic-agent.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 16</div><div class="card-title">Beats &amp; Elastic Agent</div><div class="card-desc">Filebeat, Metricbeat, Packetbeat, modules, auto-discovery</div></div>
+</a>
+<a href="17-fleet-integrations.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 17</div><div class="card-title">Fleet &amp; Integrations</div><div class="card-desc">Fleet Server, agent policies, integrations catalog, upgrade management</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 7 -->
+<div class="group" id="vol7">
+<div class="group-header">
+<div class="group-icon" style="background:#0ea5e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/></svg></div>
+<div class="group-name">Operations &amp; Performance</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="18-monitoring-alerting.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 18</div><div class="card-title">Monitoring &amp; Alerting</div><div class="card-desc">Stack monitoring, Watcher, Kibana Alerting, key JVM metrics</div></div>
+</a>
+<a href="19-performance-tuning.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 19</div><div class="card-title">Performance Tuning</div><div class="card-desc">Hardware sizing, JVM heap, indexing/search optimization, Rally benchmark</div></div>
+</a>
+<a href="20-snapshot-restore.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 20</div><div class="card-title">Snapshot &amp; Restore</div><div class="card-desc">Repository types, SLM, searchable snapshots, disaster recovery</div></div>
+</a>
+<a href="21-troubleshooting.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11.42 15.17l-5.1-5.1a2.34 2.34 0 010-3.31l.71-.71a2.34 2.34 0 013.31 0l.1.1a.7.7 0 001-.01.7.7 0 00.01-1l-.1-.1a2.34 2.34 0 010-3.31l.71-.71a2.34 2.34 0 013.31 0l5.1 5.1a2.34 2.34 0 010 3.31l-.71.71a2.34 2.34 0 01-3.31 0l-.1-.1a.7.7 0 00-1 .01.7.7 0 00-.01 1l.1.1a2.34 2.34 0 010 3.31l-.71.71a2.34 2.34 0 01-3.31 0zM3 21l3.15-3.15"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 21</div><div class="card-title">Troubleshooting</div><div class="card-desc">Unassigned shards, circuit breaker, watermark, slow logs, hot threads</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 8 -->
+<div class="group" id="vol8">
+<div class="group-header">
+<div class="group-icon" style="background:#0f172a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg></div>
+<div class="group-name">Advanced &amp; Production</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="22-cross-cluster.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 22</div><div class="card-title">Cross-Cluster Search &amp; Replication</div><div class="card-desc">CCS, CCR leader/follower, multi-datacenter architecture</div></div>
+</a>
+<a href="23-data-streams-tsds.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 23</div><div class="card-title">Data Streams &amp; TSDS</div><div class="card-desc">Time-series optimized, downsampling, synthetic _source (8.x+)</div></div>
+</a>
+<a href="24-comparison-alternatives.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 24</div><div class="card-title">So S&#225;nh N&#7873;n T&#7843;ng</div><div class="card-desc">Elasticsearch vs OpenSearch vs Solr vs ClickHouse vs Loki</div></div>
+</a>
+<a href="25-case-studies.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 25</div><div class="card-title">Case Studies Production</div><div class="card-desc">E-commerce search, centralized logging, SIEM, observability, banking</div></div>
+</a>
+</div>
+</div>
+<div class="source-footer">
+<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" target="_blank">Elastic Official Documentation</a>
+<p>Gi&#225;o tr&#236;nh Enterprise &#183; Elasticsearch 8.x &#183; C&#7853;p nh&#7853;t 2025</p>
+</div>
+</main>
+</div>
+</body>
+</html>
+<!-- Volume 5 -->
+<div class="group" id="vol5">
+<div class="group-header">
+<div class="group-icon" style="background:#dc2626"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></div>
+<div class="group-name">Security</div>
+<span class="group-count">1 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="13-security.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 13</div><div class="card-title">B&#7843;o M&#7853;t Elasticsearch</div><div class="card-desc">TLS/SSL, RBAC, LDAP/SAML/OIDC, field-level security, audit logging</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 6 -->
+<div class="group" id="vol6">
+<div class="group-header">
+<div class="group-icon" style="background:#ec4899"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/></svg></div>
+<div class="group-name">Elastic Stack</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="14-kibana.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 14</div><div class="card-title">Kibana</div><div class="card-desc">Discover, Lens, Dashboard, Canvas, Spaces, Dev Tools console</div></div>
+</a>
+<a href="15-logstash.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 15</div><div class="card-title">Logstash</div><div class="card-desc">Input &#8594; Filter &#8594; Output, grok, dead letter queue, persistent queue</div></div>
+</a>
+<a href="16-beats-elastic-agent.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 16</div><div class="card-title">Beats &amp; Elastic Agent</div><div class="card-desc">Filebeat, Metricbeat, Packetbeat, modules, auto-discovery</div></div>
+</a>
+<a href="17-fleet-integrations.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 17</div><div class="card-title">Fleet &amp; Integrations</div><div class="card-desc">Fleet Server, agent policies, integrations catalog, upgrade management</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 7 -->
+<div class="group" id="vol7">
+<div class="group-header">
+<div class="group-icon" style="background:#0ea5e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/></svg></div>
+<div class="group-name">Operations &amp; Performance</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="18-monitoring-alerting.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 18</div><div class="card-title">Monitoring &amp; Alerting</div><div class="card-desc">Stack monitoring, Watcher, Kibana Alerting, key JVM metrics</div></div>
+</a>
+<a href="19-performance-tuning.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 19</div><div class="card-title">Performance Tuning</div><div class="card-desc">Hardware sizing, JVM heap, indexing/search optimization, Rally benchmark</div></div>
+</a>
+<a href="20-snapshot-restore.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 20</div><div class="card-title">Snapshot &amp; Restore</div><div class="card-desc">Repository types, SLM, searchable snapshots, disaster recovery</div></div>
+</a>
+<a href="21-troubleshooting.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11.42 15.17l-5.67-5.67a8.014 8.014 0 01-.98-1.51M5.31 7.5c.34-.73.79-1.4 1.34-1.97M11.42 15.17l5.67-5.67a8.014 8.014 0 00.98-1.51M18.69 7.5c-.34-.73-.79-1.4-1.34-1.97M11.42 15.17L12 21m0 0l.58-5.83M12 21l-4.35-7.2M12 21l4.35-7.2"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 21</div><div class="card-title">Troubleshooting</div><div class="card-desc">Unassigned shards, circuit breaker, watermark, slow logs, hot threads</div></div>
+</a>
+</div>
+</div>
+<!-- Volume 8 -->
+<div class="group" id="vol8">
+<div class="group-header">
+<div class="group-icon" style="background:#0f172a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 003 12c0-1.605.42-3.113 1.157-4.418"/></svg></div>
+<div class="group-name">Advanced &amp; Production</div>
+<span class="group-count">4 b&#224;i</span>
+</div>
+<div class="cards">
+<a href="22-cross-cluster.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 22</div><div class="card-title">Cross-Cluster Search &amp; Replication</div><div class="card-desc">CCS, CCR leader/follower, multi-datacenter architecture</div></div>
+</a>
+<a href="23-data-streams-tsds.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 23</div><div class="card-title">Data Streams &amp; TSDS</div><div class="card-desc">Time-series optimized, downsampling, synthetic _source (8.x+)</div></div>
+</a>
+<a href="24-comparison-alternatives.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 24</div><div class="card-title">So S&#225;nh N&#7873;n T&#7843;ng</div><div class="card-desc">Elasticsearch vs OpenSearch vs Solr vs ClickHouse vs Loki</div></div>
+</a>
+<a href="25-case-studies.html" class="card">
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></div>
+<div class="card-body"><div class="card-num">B&#224;i 25</div><div class="card-title">Case Studies Production</div><div class="card-desc">E-commerce search, centralized logging, SIEM, observability, banking</div></div>
+</a>
+</div>
+</div>
+<div class="source-footer">
+<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" target="_blank">Elasticsearch Official Reference</a>
+<p>Gi&#225;o tr&#236;nh Enterprise &#183; Elasticsearch 8.x &#183; C&#7853;p nh&#7853;t 2025</p>
+</div>
+</main>
+</div>
+</body>
+</html>
