@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Ngược - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.compare-box{padding:1rem;border-radius:8px;font-size:.88rem}
+.compare-box.bad{background:#fef2f2;border:1px solid #fecaca}
+.compare-box.good{background:#f0fdf4;border:1px solid #bbf7d0}
+.compare-box strong{display:block;margin-bottom:.5rem;font-size:.78rem;text-transform:uppercase}
+.compare-box.bad strong{color:#dc2626}
+.compare-box.good strong{color:#16a34a}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}.compare{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng quan</div>
+    <div class="nav-items">
+      <a href="#overview">Prompt Ngược là gì?</a>
+      <a href="#problem">Vấn đề gốc rễ</a>
+      <a href="#levels">3 cấp độ sử dụng AI</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Framework</div>
+    <div class="nav-items">
+      <a href="#taccer">TACCER Framework</a>
+      <a href="#questions">Phân loại câu hỏi</a>
+      <a href="#when">Khi nào nên hỏi?</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#examples">Ví dụ Before/After</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#prompts">Prompt mẫu</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng cao</div>
+    <div class="nav-items">
+      <a href="#advanced">AI Interview Mode</a>
+      <a href="#takeaways">5 Takeaways</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<!-- SECTION: header -->
+<h1 id="overview">Prompt Ngược — Để AI Hỏi Trước Khi Làm</h1>
+<p class="subtitle">Kỹ thuật biến AI từ "người nhận lệnh" thành "người phỏng vấn" — làm rõ yêu cầu trước khi thực hiện</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Tổng hợp từ Anthropic, OpenAI docs, prompt engineering best practices</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Prompt tốt không nhất thiết là prompt chứa mọi thông tin. Prompt tốt còn có thể là prompt tạo ra một quy trình để AI tìm ra những thông tin còn thiếu.
+</div>
+
+<p>Khi bạn yêu cầu AI làm một việc gì đó mà thiếu thông tin, AI sẽ tự đưa ra giả định để lấp đầy khoảng trống. Những giả định này có thể sai, dẫn đến kết quả không như mong đợi. <strong>Prompt Ngược</strong> giải quyết vấn đề này bằng cách yêu cầu AI hỏi lại trước khi thực hiện.</p>
+
+<h2 id="problem">Vấn đề gốc rễ: Tại sao AI cần hỏi lại?</h2>
+
+<p>Khi nhận được yêu cầu thiếu thông tin, AI phải đối mặt với chuỗi vấn đề sau:</p>
+
+<div class="flow">
+<span class="flow-step">Yêu cầu thiếu thông tin</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">AI tự suy luận/giả định</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Giả định có thể sai</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Kết quả không phù hợp</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Sửa nhiều vòng</span>
+</div>
+
+<h3>Các loại "khoảng trống" thường gặp</h3>
+
+<table>
+<tr><th>Loại</th><th>Mô tả</th><th>Ví dụ</th></tr>
+<tr><td><strong>Context Gap</strong></td><td>Thiếu bối cảnh sử dụng</td><td>"Viết email" — nhưng gửi cho ai? Quan hệ thế nào?</td></tr>
+<tr><td><strong>Requirement Gap</strong></td><td>Thiếu yêu cầu cụ thể</td><td>"Thiết kế giáo án" — cho đối tượng nào? Thời lượng bao lâu?</td></tr>
+<tr><td><strong>Hidden Constraints</strong></td><td>Ràng buộc chưa nói ra</td><td>Giới hạn ngân sách, thời gian, công cụ</td></tr>
+<tr><td><strong>Ambiguity</strong></td><td>Có nhiều cách hiểu</td><td>"Tóm tắt ngắn gọn" — 1 câu hay 1 trang?</td></tr>
+<tr><td><strong>Output Criteria</strong></td><td>Chưa rõ tiêu chí thành công</td><td>Thế nào là "tốt"? Đo lường bằng gì?</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng</strong>
+AI trả lời sai không nhất thiết vì AI "không thông minh". Đôi khi vì AI chưa có đủ dữ liệu để xác định đúng bài toán.
+</div>
+
+<h2 id="levels">3 Cấp độ sử dụng AI</h2>
+
+<h3>Level 1 — Command (Ra lệnh)</h3>
+<p>Người dùng đưa prompt → AI thực hiện ngay → Output</p>
+<pre><code>Hãy thiết kế giáo án bài "Động từ khiếm khuyết".</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p><em>Vấn đề:</em> AI phải tự giả định lớp mấy, thời lượng, mục tiêu, sĩ số...</p>
+
+<h3>Level 2 — Context-rich Prompt (Cung cấp đầy đủ)</h3>
+<p>Người dùng tự mô tả chi tiết context → AI thực hiện → Output</p>
+<pre><code>Thiết kế giáo án bài "Động từ khiếm khuyết" cho:
+- Lớp 9, 35 học sinh, trình độ trung bình-khá
+- Thời lượng: 45 phút
+- Mục tiêu: Học sinh phân biệt được can/could/may/might
+- Thiết bị: Máy chiếu, bảng phụ</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p><em>Vấn đề:</em> Người dùng phải tự biết cần cung cấp thông tin gì.</p>
+
+<h3>Level 3 — AI Interview (Prompt Ngược)</h3>
+<p>Người dùng giao mục tiêu → AI hỏi → Người dùng trả lời → AI xác nhận → AI thực hiện</p>
+<pre><code>Tôi muốn thiết kế giáo án bài "Động từ khiếm khuyết".
+
+Trước khi bắt đầu, hãy hỏi tôi những thông tin cần thiết
+để tạo ra giáo án phù hợp nhất.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Level 3 không thay thế Level 2</strong>
+Mục tiêu cuối cùng vẫn là tạo ra đủ context. Sự khác biệt là AI hỗ trợ người dùng khám phá context còn thiếu, thay vì để người dùng tự nghĩ ra.
+</div>
+
+<h2 id="taccer">TACCER Framework</h2>
+
+<p>Thay vì coi Prompt Ngược như một mẹo viết prompt, hãy xem nó như một <strong>quy trình làm việc</strong> giữa người dùng và AI.</p>
+
+<div class="flow">
+<span class="flow-step">TASK</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">ASK</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">CLARIFY</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">CONFIRM</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">EXECUTE</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">REVIEW</span>
+</div>
+
+<table>
+<tr><th>Bước</th><th>Ai làm</th><th>Mô tả</th></tr>
+<tr><td><strong>TASK</strong></td><td>Người dùng</td><td>Mô tả mục tiêu ban đầu</td></tr>
+<tr><td><strong>ASK</strong></td><td>AI</td><td>Phân tích nhiệm vụ, xác định thông tin còn thiếu có thể ảnh hưởng đáng kể đến kết quả</td></tr>
+<tr><td><strong>CLARIFY</strong></td><td>AI hỏi → Người dùng trả lời</td><td>AI chỉ hỏi những câu hỏi thực sự cần thiết</td></tr>
+<tr><td><strong>CONFIRM</strong></td><td>AI</td><td>Tóm tắt: nhiệm vụ, yêu cầu chính, ràng buộc, kết quả mong muốn, giả định còn lại</td></tr>
+<tr><td><strong>EXECUTE</strong></td><td>AI</td><td>Chỉ bắt đầu tạo sản phẩm sau khi đã đủ thông tin</td></tr>
+<tr><td><strong>REVIEW</strong></td><td>AI + Người dùng</td><td>Đối chiếu kết quả với yêu cầu ban đầu, chỉ ra điểm cần xác nhận thêm</td></tr>
+</table>
+
+<h2 id="questions">Phân loại câu hỏi AI nên hỏi</h2>
+
+<p>Framework <strong>7W</strong> giúp AI đặt câu hỏi có cấu trúc:</p>
+
+<table>
+<tr><th>Loại</th><th>Câu hỏi</th><th>Ví dụ</th></tr>
+<tr><td><strong>WHO</strong></td><td>Ai sẽ sử dụng kết quả?</td><td>Học sinh lớp mấy? Trình độ? Sĩ số?</td></tr>
+<tr><td><strong>WHY</strong></td><td>Kết quả này nhằm giải quyết vấn đề gì?</td><td>Dạy kiến thức mới hay ôn tập? Kiểm tra hay luyện tập?</td></tr>
+<tr><td><strong>WHAT</strong></td><td>Nội dung nào cần có/không cần có?</td><td>Cần lý thuyết hay chỉ bài tập? Có cần rubric không?</td></tr>
+<tr><td><strong>CONSTRAINTS</strong></td><td>Thời gian, nguồn lực, quy định?</td><td>Thời lượng bao lâu? Thiết bị gì? Quy định của trường?</td></tr>
+<tr><td><strong>CONTEXT</strong></td><td>Kết quả được sử dụng trong tình huống nào?</td><td>Dạy online hay offline? Lớp đông hay ít?</td></tr>
+<tr><td><strong>OUTPUT</strong></td><td>Muốn nhận định dạng và mức độ chi tiết nào?</td><td>Giáo án chi tiết hay outline? Word hay PDF?</td></tr>
+<tr><td><strong>SUCCESS</strong></td><td>Thế nào được coi là kết quả tốt?</td><td>Tiêu chí đánh giá thành công là gì?</td></tr>
+</table>
+
+<h2 id="when">Khi nào AI nên hỏi và không nên hỏi?</h2>
+
+<p>Không nên biến Prompt Ngược thành nguyên tắc <em>"Lúc nào AI cũng phải hỏi trước"</em>.</p>
+
+<div class="compare">
+<div class="compare-box good">
+<strong>Nên hỏi khi</strong>
+<ul>
+<li>Thông tin thiếu có khả năng làm thay đổi đáng kể đầu ra</li>
+<li>Đối tượng sử dụng chưa rõ</li>
+<li>Mục tiêu có nhiều cách hiểu</li>
+<li>Có ràng buộc quan trọng chưa biết</li>
+<li>Tiêu chí thành công chưa xác định</li>
+</ul>
+</div>
+<div class="compare-box bad">
+<strong>Không cần hỏi khi</strong>
+<ul>
+<li>Thông tin thiếu không ảnh hưởng đáng kể</li>
+<li>Có thể dùng giả định phổ biến và nói rõ</li>
+<li>Người dùng chỉ cần bản nháp nhanh</li>
+<li>Chi phí hỏi thêm > lợi ích mang lại</li>
+<li>Task đơn giản, reversible, low-stakes</li>
+</ul>
+</div>
+</div>
+
+<div class="callout callout-blue">
+<strong>Decision Rule đơn giản</strong>
+Nếu thông tin còn thiếu có thể khiến kết quả thay đổi đáng kể → Hỏi.<br>
+Nếu không → Nêu giả định và tiếp tục.
+</div>
+
+<h2 id="examples">Ví dụ Before/After</h2>
+
+<h3>Ví dụ 1: Thiết kế giáo án</h3>
+<div class="compare">
+<div class="compare-box bad">
+<strong>Prompt thông thường</strong>
+<code>Thiết kế giáo án bài "Phương trình bậc hai".</code>
+<p style="margin-top:.5rem;font-size:.82rem">→ AI giả định: lớp 9, 45 phút, mục tiêu chung chung, không biết học sinh yếu hay khá</p>
+</div>
+<div class="compare-box good">
+<strong>Prompt Ngược</strong>
+<code>Thiết kế giáo án bài "Phương trình bậc hai". Trước khi làm, hãy hỏi tôi những thông tin cần thiết.</code>
+<p style="margin-top:.5rem;font-size:.82rem">→ AI hỏi: Lớp mấy? Thời lượng? Học sinh đã biết gì? Mục tiêu cụ thể? Thiết bị?</p>
+</div>
+</div>
+
+<h3>Ví dụ 2: Viết email</h3>
+<div class="compare">
+<div class="compare-box bad">
+<strong>Prompt thông thường</strong>
+<code>Viết email xin lỗi khách hàng vì giao hàng trễ.</code>
+<p style="margin-top:.5rem;font-size:.82rem">→ AI giả định tone, mức độ nghiêm trọng, giải pháp đền bù</p>
+</div>
+<div class="compare-box good">
+<strong>Prompt Ngược</strong>
+<code>Viết email xin lỗi khách hàng vì giao hàng trễ. Hỏi tôi context trước.</code>
+<p style="margin-top:.5rem;font-size:.82rem">→ AI hỏi: Trễ bao lâu? Khách VIP hay thường? Đã có giải pháp chưa? Tone formal hay friendly?</p>
+</div>
+</div>
+
+<h3>Ví dụ 3: Phân tích dữ liệu</h3>
+<div class="compare">
+<div class="compare-box bad">
+<strong>Prompt thông thường</strong>
+<code>Phân tích dữ liệu bán hàng tháng này.</code>
+<p style="margin-top:.5rem;font-size:.82rem">→ AI không biết muốn phân tích gì, so sánh với cái gì, để làm gì</p>
+</div>
+<div class="compare-box good">
+<strong>Prompt Ngược</strong>
+<code>Phân tích dữ liệu bán hàng tháng này. Trước tiên hãy hỏi tôi để hiểu rõ mục tiêu.</code>
+<p style="margin-top:.5rem;font-size:.82rem">→ AI hỏi: Muốn biết gì? So sánh với tháng trước? Theo sản phẩm hay khu vực? Báo cáo cho ai?</p>
+</div>
+</div>
+
+<h2 id="mistakes">Lỗi thường gặp khi dùng Prompt Ngược</h2>
+
+<table>
+<tr><th>Lỗi</th><th>Vấn đề</th><th>Giải pháp</th></tr>
+<tr><td><strong>Hỏi quá nhiều</strong></td><td>AI hỏi 15-20 câu, người dùng mệt mỏi</td><td>Giới hạn 3-7 câu quan trọng nhất</td></tr>
+<tr><td><strong>Hỏi không ảnh hưởng</strong></td><td>Câu hỏi không thay đổi output</td><td>Test: nếu trả lời A hay B đều ra cùng kết quả → đừng hỏi</td></tr>
+<tr><td><strong>Hỏi lại thông tin đã có</strong></td><td>AI không tận dụng context</td><td>Yêu cầu AI không hỏi lại những gì đã cung cấp</td></tr>
+<tr><td><strong>Câu hỏi quá chung</strong></td><td>"Bạn muốn kết quả thế nào?" — khó trả lời</td><td>Đặt câu hỏi cụ thể với lựa chọn rõ ràng</td></tr>
+<tr><td><strong>Hỏi tất cả cùng lúc</strong></td><td>Danh sách câu hỏi dài như form</td><td>Hỏi từng câu hoặc nhóm nhỏ 2-3 câu</td></tr>
+<tr><td><strong>Không xác nhận lại</strong></td><td>AI có thông tin nhưng hiểu sai</td><td>Yêu cầu AI tóm tắt understanding trước khi làm</td></tr>
+</table>
+
+<h2 id="prompts">Prompt mẫu theo 3 cấp độ</h2>
+
+<h3>Prompt 1 — Siêu ngắn (gắn cuối bất kỳ prompt nào)</h3>
+<pre><code>Trước khi bắt đầu, hãy hỏi tôi những thông tin cần thiết.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Prompt 2 — Standard (phần lớn công việc)</h3>
+<pre><code>[Mô tả nhiệm vụ của bạn ở đây]
+
+Trước khi thực hiện:
+1. Hỏi tôi 3-5 câu hỏi quan trọng nhất
+2. Chỉ hỏi những thông tin có thể thay đổi đáng kể kết quả
+3. Sau khi tôi trả lời, tóm tắt lại yêu cầu rồi mới bắt đầu</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Prompt 3 — Advanced (AI Interview Mode)</h3>
+<pre><code>[Mô tả nhiệm vụ của bạn ở đây]
+
+Hãy phỏng vấn tôi để làm rõ yêu cầu:
+
+1. CHƯA thực hiện nhiệm vụ ngay
+2. Phân tích mục tiêu và xác định thông tin đã biết
+3. Chỉ hỏi những thông tin có ảnh hưởng đáng kể đến kết quả
+4. Không hỏi lại thông tin tôi đã cung cấp
+5. Ưu tiên 3-7 câu hỏi quan trọng nhất
+6. Có thể hỏi từng câu hoặc nhóm nhỏ 2-3 câu
+7. Nếu câu trả lời phát sinh vấn đề mới, được phép hỏi follow-up
+8. Khi đủ thông tin, chủ động dừng hỏi
+9. Tóm tắt lại understanding và liệt kê assumptions còn lại
+10. Cho tôi cơ hội xác nhận hoặc sửa trước khi bắt đầu
+11. Sau đó mới thực hiện
+12. Cuối cùng tự kiểm tra output với yêu cầu đã thống nhất</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="advanced">Nâng cao: AI Interview Mode</h2>
+
+<p>Thay vì luôn yêu cầu <em>"Hãy hỏi tôi 5-7 câu"</em>, hãy cho AI chủ động hơn:</p>
+
+<div class="compare">
+<div class="compare-box bad">
+<strong>Cố định số câu hỏi</strong>
+<code>Hãy hỏi tôi 5 câu trước khi làm.</code>
+<p style="margin-top:.5rem;font-size:.82rem">Vấn đề: AI hỏi đủ 5 câu dù có thể chỉ cần 2 câu, hoặc cần 8 câu</p>
+</div>
+<div class="compare-box good">
+<strong>AI Interview Mode</strong>
+<code>Phỏng vấn tôi để làm rõ yêu cầu. Chỉ hỏi những thông tin quan trọng. Khi đủ thông tin, dừng hỏi và bắt đầu.</code>
+<p style="margin-top:.5rem;font-size:.82rem">AI tự điều chỉnh: task đơn giản hỏi ít, task phức tạp hỏi nhiều hơn</p>
+</div>
+</div>
+
+<h3>3 Operating Patterns</h3>
+
+<table>
+<tr><th>Pattern</th><th>Khi nào dùng</th><th>Ví dụ</th></tr>
+<tr><td><strong>Ask-Before-Act</strong></td><td>Hành động không thể hoàn tác</td><td>Gửi email, xóa dữ liệu, giao dịch tài chính</td></tr>
+<tr><td><strong>Act-and-Refine</strong></td><td>Low-stakes, dễ sửa</td><td>Brainstorm, outline, bản nháp ngắn</td></tr>
+<tr><td><strong>Ask-One-Question-Max</strong></td><td>Không chắc nhưng hành động có thể sai</td><td>Chọn 1 câu hỏi giá trị cao nhất rồi tiến hành</td></tr>
+</table>
+
+<h2 id="takeaways">5 Takeaways quan trọng</h2>
+
+<div class="callout callout-green">
+<strong>1. Prompt Ngược = AI phỏng vấn trước khi thực hiện</strong>
+Thay vì bạn phải nghĩ ra mọi thông tin cần cung cấp, hãy để AI giúp bạn khám phá những gì còn thiếu.
+</div>
+
+<div class="callout callout-green">
+<strong>2. Không phải lúc nào cũng cần hỏi</strong>
+Chỉ hỏi khi thông tin thiếu có thể làm thay đổi đáng kể kết quả. Task đơn giản, low-stakes → tiến hành và sửa sau.
+</div>
+
+<div class="callout callout-green">
+<strong>3. Chất lượng câu hỏi > Số lượng</strong>
+3 câu hỏi đúng trọng tâm tốt hơn 15 câu hỏi chung chung. Test: nếu trả lời A hay B đều ra cùng kết quả → đừng hỏi.
+</div>
+
+<div class="callout callout-green">
+<strong>4. Xác nhận trước khi làm</strong>
+Sau khi hỏi đủ, yêu cầu AI tóm tắt understanding. Đây là cơ hội cuối để phát hiện hiểu sai trước khi AI bắt đầu.
+</div>
+
+<div class="callout callout-green">
+<strong>5. AI không chỉ là người nhận lệnh</strong>
+Đừng chỉ dùng AI như người nhận lệnh. Hãy để AI đóng vai người nhận brief, người phỏng vấn, và người làm rõ yêu cầu trước khi trở thành người thực hiện.
+</div>
+
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h1[id],h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>
