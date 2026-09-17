@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiro Training Guide - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.workflow-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:1rem;margin:.75rem 0}
+.workflow-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.workflow-badge{padding:.2rem .6rem;border-radius:4px;font-size:.75rem;font-weight:700;color:#fff}
+.workflow-title{font-weight:600;color:#1a1a2e}
+.workflow-desc{font-size:.85rem;color:#64748b}
+.layer-stack{display:flex;flex-direction:column;gap:2px;margin:1rem 0}
+.layer{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:.5rem 1rem;text-align:center;font-size:.82rem;font-weight:600;border-radius:4px}
+.layer:nth-child(2){background:linear-gradient(135deg,#764ba2 0%,#8b5cf6 100%)}
+.layer:nth-child(3){background:linear-gradient(135deg,#8b5cf6 0%,#a855f7 100%)}
+.layer:nth-child(4){background:linear-gradient(135deg,#a855f7 0%,#c084fc 100%)}
+.layer:nth-child(5){background:linear-gradient(135deg,#c084fc 0%,#d8b4fe 100%);color:#1a1a2e}
+.layer:nth-child(6){background:linear-gradient(135deg,#d8b4fe 0%,#e9d5ff 100%);color:#1a1a2e}
+.layer:nth-child(7){background:linear-gradient(135deg,#e9d5ff 0%,#f3e8ff 100%);color:#1a1a2e}
+.occe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:1rem 0}
+.occe-item{background:#f0f4ff;border:1px solid rgba(102,126,234,.2);padding:.6rem;border-radius:6px;text-align:center}
+.occe-item strong{display:block;color:#4c51bf;font-size:.8rem;margin-bottom:.25rem}
+.occe-item span{font-size:.75rem;color:#64748b}
+@media(max-width:900px){.occe-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}.occe-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng quan</div>
+    <div class="nav-items">
+      <a href="#overview">Kiro là gì</a>
+      <a href="#approach">Cách tiếp cận</a>
+      <a href="#capabilities">Khả năng chính</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Workflow</div>
+    <div class="nav-items">
+      <a href="#workflows">3 Workflow Modes</a>
+      <a href="#vibe">Vibe Mode</a>
+      <a href="#spec">Kiro Spec</a>
+      <a href="#aidlc">AI-DLC</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kỹ thuật</div>
+    <div class="nav-items">
+      <a href="#context">Context Engineering</a>
+      <a href="#steering">Steering & Hooks</a>
+      <a href="#mcp">MCP & Permissions</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kiểm soát</div>
+    <div class="nav-items">
+      <a href="#guardrails">7 lớp Guardrails</a>
+      <a href="#checklist">Checklist thực hành</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Kiro Training Guide</h1>
+<p class="subtitle">Tài liệu đào tạo sử dụng Kiro IDE — từ ý tưởng đến phần mềm có kiểm soát</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://kiro.dev/" target="_blank">kiro.dev</a> — AWS, 2025</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+SDLC là luật chơi. Vibe, Spec, AI-DLC là cách làm việc với AI. Mọi cách dùng AI đều phải nằm trong SDLC và chính sách nội bộ — AI không thay thế quy trình, AI hỗ trợ bạn trong quy trình.
+</div>
+
+<p><strong>Kiro</strong> là IDE được hỗ trợ bởi AI, ra mắt bởi AWS giữa năm 2025. Không chỉ gợi ý code như Copilot, Kiro có thể đọc và hiểu toàn bộ project, lên kế hoạch trước khi làm, thực hiện nhiều bước liên tiếp, và dừng lại hỏi bạn khi không chắc chắn.</p>
+
+<h2 id="approach">Cách Tiếp Cận — 4 Bước</h2>
+
+<blockquote>Hãy coi Kiro như một đồng nghiệp kỹ thuật mới — giao việc rõ ràng, đưa tài liệu, giới hạn phạm vi, kiểm tra kết quả.</blockquote>
+
+<div class="flow">
+<span class="flow-step">1. Giao việc</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">2. Đưa tài liệu</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">3. Cho phép</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">4. Kiểm tra</span>
+</div>
+
+<table>
+<tr><th>Bước</th><th>Câu hỏi</th><th>Ví dụ</th></tr>
+<tr><td><strong>Giao việc</strong></td><td>Cần đạt kết quả gì?</td><td>Sửa bug, thêm feature, review code</td></tr>
+<tr><td><strong>Đưa tài liệu</strong></td><td>Xem file/lỗi nào?</td><td>Stack trace, file code, tài liệu yêu cầu</td></tr>
+<tr><td><strong>Cho phép</strong></td><td>Được làm đến đâu?</td><td>Supervised/Autopilot, file được sửa</td></tr>
+<tr><td><strong>Kiểm tra</strong></td><td>Biết đúng bằng cách nào?</td><td>Test pass, diff đúng ý, không side effect</td></tr>
+</table>
+
+<h2 id="capabilities">Ba Khả Năng Chính</h2>
+
+<table>
+<tr><th>Khả năng</th><th>Chi tiết</th></tr>
+<tr><td><strong>Hiểu việc</strong></td><td>Đọc code, xem lỗi, đọc tài liệu, hỏi lại khi chưa rõ</td></tr>
+<tr><td><strong>Thực hiện</strong></td><td>Đề xuất kế hoạch, sửa file, tạo code, chạy lệnh</td></tr>
+<tr><td><strong>Để bạn kiểm soát</strong></td><td>Xem kế hoạch, xem diff, duyệt/từ chối, checkpoint rollback</td></tr>
+</table>
+
+<h2 id="workflows">Ba Workflow Modes</h2>
+
+<table>
+<tr><th>Workflow</th><th>Khi nào</th><th>Đầu ra</th><th>Ví dụ</th></tr>
+<tr><td><strong>Vibe</strong></td><td>Việc nhỏ, thử nhanh</td><td>Diff nhỏ + test</td><td>Giải thích lỗi test, sửa UI</td></tr>
+<tr><td><strong>Spec</strong></td><td>Feature cần thống nhất</td><td>Requirements + Design + Tasks</td><td>API mới, chức năng khóa thẻ</td></tr>
+<tr><td><strong>AI-DLC</strong></td><td>Sáng kiến end-to-end</td><td>Phases + Approval gates + Audit</td><td>Modernize hệ thống, core banking</td></tr>
+</table>
+
+<h3 id="vibe">Vibe Mode — Việc Nhỏ/Cục Bộ</h3>
+
+<div class="workflow-card">
+<div class="workflow-header">
+<span class="workflow-badge" style="background:#10b981">VIBE</span>
+<span class="workflow-title">Prompt → Kiro đề xuất → Review → Accept/Reject → Done</span>
+</div>
+<p class="workflow-desc">Không có approval gates — bạn review trực tiếp trong chat. Dùng khi: một module, ít file, không đổi quy tắc nghiệp vụ, dễ quay lại.</p>
+</div>
+
+<h3 id="spec">Kiro Spec — Feature Vừa</h3>
+
+<div class="workflow-card">
+<div class="workflow-header">
+<span class="workflow-badge" style="background:#2563eb">SPEC</span>
+<span class="workflow-title">Requirements → Design → Tasks → Execute</span>
+</div>
+<p class="workflow-desc">Có approval gates giữa mỗi phase. Dùng khi: có quy tắc/API/data model, cần BA–Dev–QA thống nhất, cần tài liệu để trace.</p>
+</div>
+
+<h3>EARS Format — Viết Requirements Testable</h3>
+
+<pre><code>WHEN [condition/trigger]
+THE SYSTEM SHALL [behavior]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Ví dụ:</p>
+<pre><code>WHEN yêu cầu giao dịch có cùng idempotency key được gửi lại,
+THE SYSTEM SHALL trả về kết quả ban đầu và không ghi nợ lần hai.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<table>
+<tr><th>Tránh</th><th>Thay bằng</th></tr>
+<tr><td>"Nhanh"</td><td>"Trong 2 giây"</td></tr>
+<tr><td>"Thân thiện"</td><td>"Hiển thị message X khi Y"</td></tr>
+<tr><td>"An toàn"</td><td>"Encrypt với AES-256"</td></tr>
+</table>
+
+<h3 id="aidlc">AI-DLC — Sáng Kiến Lớn</h3>
+
+<div class="workflow-card">
+<div class="workflow-header">
+<span class="workflow-badge" style="background:#f97316">AI-DLC</span>
+<span class="workflow-title">5 Phases — 33 Stages — 14 Agents</span>
+</div>
+<p class="workflow-desc">Dùng khi: nhiều hệ thống/đội tham gia, cần Business–Risk–Security–Ops, từ ý tưởng đến vận hành.</p>
+</div>
+
+<div class="flow">
+<span class="flow-step">Initialization</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Ideation</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Inception</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Construction</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Operation</span>
+</div>
+
+<table>
+<tr><th>Phase</th><th>Stages</th><th>Mô tả</th></tr>
+<tr><td><strong>0. Initialization</strong></td><td>0.1–0.3</td><td>Workspace scaffold, detection, state init</td></tr>
+<tr><td><strong>1. Ideation</strong></td><td>1.1–1.7</td><td>Intent capture, research, scope, mockups</td></tr>
+<tr><td><strong>2. Inception</strong></td><td>2.1–2.9</td><td>Requirements, stories, domain design, security</td></tr>
+<tr><td><strong>3. Construction</strong></td><td>3.1–3.7</td><td>Functional/technical design, code gen, CI</td></tr>
+<tr><td><strong>4. Operation</strong></td><td>4.1–4.7</td><td>Deploy, observability, runbooks, feedback</td></tr>
+</table>
+
+<h3>14 Agents</h3>
+
+<p><strong>11 Domain Experts:</strong> Product, Design, Delivery, Architect, AWS Platform, Compliance, DevSecOps, Developer, Quality, Pipeline & Deploy, Operations</p>
+<p><strong>2 Reviewers + 1 Adaptive Composer:</strong> Kiểm tra và tổng hợp kết quả từ domain experts.</p>
+
+<h2 id="context">Context Engineering — Công Thức OCCE</h2>
+
+<blockquote>Prompt tốt chưa đủ. Context đúng mới tạo khác biệt. Hãy giao việc như một hợp đồng kỹ thuật nhỏ, không phải một lời ước.</blockquote>
+
+<div class="occe-grid">
+<div class="occe-item"><strong>O</strong><span>Outcome<br>Kết quả gì?</span></div>
+<div class="occe-item"><strong>C</strong><span>Context<br>Dựa vào đâu?</span></div>
+<div class="occe-item"><strong>C</strong><span>Constraints<br>Không được gì?</span></div>
+<div class="occe-item"><strong>E</strong><span>Evidence<br>Chứng minh sao?</span></div>
+</div>
+
+<h3>Context Providers</h3>
+
+<table>
+<tr><th>Provider</th><th>Cú pháp</th><th>Mục đích</th></tr>
+<tr><td>File</td><td><code>#File:path/to/file.java</code></td><td>Phạm vi code cụ thể</td></tr>
+<tr><td>Folder</td><td><code>#Folder:src/services</code></td><td>Cả thư mục</td></tr>
+<tr><td>Problems</td><td><code>#problems</code></td><td>Diagnostics hiện tại</td></tr>
+<tr><td>Terminal</td><td><code>#terminal</code></td><td>Output và command gần đây</td></tr>
+<tr><td>Git Diff</td><td><code>#git diff</code></td><td>Thay đổi chưa commit</td></tr>
+<tr><td>Spec</td><td><code>#spec:feature-name</code></td><td>Include full spec context</td></tr>
+</table>
+
+<h3>Ví dụ Prompt OCCE</h3>
+
+<pre><code>#terminal #File:PaymentLimitServiceTest.java
+
+[Outcome]
+Phân tích và sửa lỗi để PaymentLimitServiceTest pass.
+
+[Context]
+Dựa trên lỗi trong terminal và file test.
+
+[Constraints]
+Trước khi sửa, tóm tắt nguyên nhân và kế hoạch.
+Chỉ sửa service/file test liên quan.
+Không đổi dependency hoặc config.
+
+[Evidence]
+Chạy test mục tiêu. Báo kết quả, file đã đổi,
+diff chính và rủi ro còn lại.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="steering">Steering & Hooks</h2>
+
+<blockquote>Đừng lặp lại policy trong mọi prompt. Đóng gói nó.</blockquote>
+
+<table>
+<tr><th>Mechanism</th><th>Mục đích</th><th>Ví dụ</th></tr>
+<tr><td><strong>Steering</strong></td><td>Đưa tri thức vào context</td><td>"Team dùng Java 17, test với TestContainers"</td></tr>
+<tr><td><strong>Hooks</strong></td><td>Biến kiểm soát thành hành động tự động</td><td>"Sau khi save file .java, tự động chạy lint"</td></tr>
+</table>
+
+<h3>Steering Files</h3>
+
+<p>Đặt tại <code>.kiro/steering/</code> (workspace) hoặc <code>~/.kiro/steering/</code> (global).</p>
+
+<table>
+<tr><th>File</th><th>Nội dung</th></tr>
+<tr><td><code>product.md</code></td><td>Purpose, target users, key features, business goals</td></tr>
+<tr><td><code>tech.md</code></td><td>Languages, database, security requirements</td></tr>
+<tr><td><code>structure.md</code></td><td>Module layout, naming conventions, import order</td></tr>
+<tr><td><code>testing.md</code></td><td>Test pyramid, fixtures, commands</td></tr>
+</table>
+
+<h3>Hook Triggers</h3>
+
+<table>
+<tr><th>Trigger</th><th>Event</th><th>Blockable</th></tr>
+<tr><td>PromptSubmit</td><td>Message sent to agent</td><td>Yes</td></tr>
+<tr><td>PreToolUse</td><td>Before tool execution</td><td>Yes</td></tr>
+<tr><td>PostToolUse</td><td>After tool executes</td><td>No</td></tr>
+<tr><td>FileSave</td><td>Agent saves/edits file</td><td>No</td></tr>
+</table>
+
+<h2 id="mcp">MCP & Permissions</h2>
+
+<p><strong>MCP (Model Context Protocol)</strong> cho phép Kiro kết nối với external servers để access tools, prompts, và resources.</p>
+
+<div class="callout callout-amber">
+<strong>Mỗi tool mới là một trust boundary mới</strong>
+stdio servers chạy với quyền process, có thể access code, env vars, và gửi data ra ngoài. Chỉ cấp khi thực sự cần.
+</div>
+
+<h3>Permission Model</h3>
+
+<table>
+<tr><th>Effect</th><th>Behavior</th></tr>
+<tr><td><strong>deny</strong></td><td>Block always, không hỏi — deny wins</td></tr>
+<tr><td><strong>ask</strong></td><td>Prompt user mỗi lần</td></tr>
+<tr><td><strong>allow</strong></td><td>Proceed silently</td></tr>
+</table>
+
+<h3>Permission Scopes (từ cao xuống thấp)</h3>
+
+<p>Kiro → Administration → User → Workspace → Agent → Session</p>
+
+<pre><code>rules:
+  # Allow common git commands
+  - capability: shell
+    match: ["git status", "git log *", "git diff *"]
+    effect: allow
+
+  # Block writes to sensitive files
+  - capability: fs_write
+    match: ["*.env", "*.key", "*.pem", "secrets/*"]
+    effect: deny</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="guardrails">7 Lớp Guardrails — Defense in Depth</h2>
+
+<blockquote>AI đề xuất. Người có thẩm quyền quyết định.</blockquote>
+
+<div class="layer-stack">
+<div class="layer">7. AUDIT — Logging, retention, incident path</div>
+<div class="layer">6. VALIDATION — Test, SAST, CI, policy gates</div>
+<div class="layer">5. REVIEW — Diff, owners, four-eyes</div>
+<div class="layer">4. WORKSPACE — Branch/container, không production</div>
+<div class="layer">3. PERMISSIONS — Deny > ask > allow; least privilege</div>
+<div class="layer">2. IDENTITY — Tài khoản riêng; credential ngắn hạn</div>
+<div class="layer">1. DATA — Không PII/secrets; mock; .kiroignore</div>
+</div>
+
+<div class="callout callout-red">
+<strong>Supervised Mode Không Phải Sandbox</strong>
+Supervised là workflow review, KHÔNG PHẢI security boundary. Cần nhiều lớp: Supervised + Permissions + CI + Branch protection.
+</div>
+
+<h3>Red Flags — Dừng Ngay</h3>
+
+<table>
+<tr><th>Signal</th><th>Action</th></tr>
+<tr><td>Real PII xuất hiện</td><td>STOP, remove, report</td></tr>
+<tr><td>Production endpoint</td><td>STOP, verify scope</td></tr>
+<tr><td>Secrets in code</td><td>STOP, rotate immediately</td></tr>
+<tr><td>Permission escalation</td><td>STOP, review with security</td></tr>
+</table>
+
+<h2 id="checklist">Checklist Trước Khi Execute</h2>
+
+<h3>Business & Data</h3>
+<ul>
+<li>Scope/out-of-scope rõ ràng</li>
+<li>PII và data classification xác định</li>
+<li>Audit trail, retention policy</li>
+<li>Owner phê duyệt requirements</li>
+</ul>
+
+<h3>Engineering & Operations</h3>
+<ul>
+<li>Idempotency, timeout, retry defined</li>
+<li>Threat model và permissions</li>
+<li>Rollback/feature flag strategy</li>
+<li>Test strategy và observability</li>
+</ul>
+
+<h3>Minimum Viable Guardrails</h3>
+
+<table>
+<tr><th>Giai đoạn</th><th>Actions</th></tr>
+<tr><td><strong>Week 1-2</strong></td><td>.kiroignore, basic permissions, supervised only, feature branch</td></tr>
+<tr><td><strong>Week 3-4</strong></td><td>Steering files, hooks (lint, test), code review, audit logging</td></tr>
+<tr><td><strong>Month 2+</strong></td><td>Custom agents, MCP servers (vetted), autopilot cho low-risk, security scanning</td></tr>
+</table>
+
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>
