@@ -113,6 +113,7 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
     <div class="nav-items">
       <a href="#guardrails">7 lớp Guardrails</a>
       <a href="#checklist">Checklist thực hành</a>
+      <a href="#exercises">Bài tập thực hành</a>
     </div>
   </div>
   </div>
@@ -173,6 +174,39 @@ SDLC là luật chơi. Vibe, Spec, AI-DLC là cách làm việc với AI. Mọi 
 <tr><td><strong>AI-DLC</strong></td><td>Sáng kiến end-to-end</td><td>Phases + Approval gates + Audit</td><td>Modernize hệ thống, core banking</td></tr>
 </table>
 
+<h3>Supervised vs Autopilot</h3>
+
+<p>Sau khi chọn workflow, cần chọn <strong>mức tự chủ</strong>:</p>
+
+<blockquote>Tự chủ phải tỷ lệ nghịch với rủi ro.</blockquote>
+
+<table>
+<tr><th>Mode</th><th>Mô tả</th><th>Khi nào</th></tr>
+<tr><td><strong>Supervised</strong></td><td>Review từng turn/hunk</td><td>Code nhạy cảm, mới bắt đầu, chưa chắc yêu cầu</td></tr>
+<tr><td><strong>Autopilot</strong></td><td>Agent tự hoàn thành chuỗi</td><td>Task rõ, lặp lại, môi trường cô lập</td></tr>
+</table>
+
+<h3>Ma Trận Quyết Định</h3>
+
+<table>
+<tr><th>Tình huống</th><th>Workflow</th><th>Autonomy</th><th>Lý do</th></tr>
+<tr><td>Giải thích lỗi unit test</td><td>Vibe</td><td>Supervised</td><td>Khám phá, chưa cần sửa</td></tr>
+<tr><td>Đổi tên biến module nội bộ</td><td>Vibe</td><td>Autopilot*</td><td>Phạm vi rõ, dễ validate</td></tr>
+<tr><td>API hạn mức đa kênh</td><td>Spec</td><td>Supervised</td><td>Cần chốt nghiệp vụ</td></tr>
+<tr><td>Hiện đại hóa end-to-end</td><td>AI-DLC</td><td>Approval gates*</td><td>Nhiều vai trò, cần audit</td></tr>
+</table>
+
+<p><em>*Chỉ khi: branch cô lập + quyền tối thiểu + validation tự động</em></p>
+
+<h3>Cùng Domain, Khác Scope</h3>
+
+<table>
+<tr><th>Việc cần làm</th><th>Workflow</th></tr>
+<tr><td>Sửa hiển thị "hạn mức còn lại"</td><td><strong>Vibe</strong></td></tr>
+<tr><td>Thêm API tra cứu hạn mức</td><td><strong>Spec</strong></td></tr>
+<tr><td>Thay nền tảng hạn mức đa kênh</td><td><strong>AI-DLC</strong></td></tr>
+</table>
+
 <h3 id="vibe">Vibe Mode — Việc Nhỏ/Cục Bộ</h3>
 
 <div class="workflow-card">
@@ -180,8 +214,25 @@ SDLC là luật chơi. Vibe, Spec, AI-DLC là cách làm việc với AI. Mọi 
 <span class="workflow-badge" style="background:#10b981">VIBE</span>
 <span class="workflow-title">Prompt → Kiro đề xuất → Review → Accept/Reject → Done</span>
 </div>
-<p class="workflow-desc">Không có approval gates — bạn review trực tiếp trong chat. Dùng khi: một module, ít file, không đổi quy tắc nghiệp vụ, dễ quay lại.</p>
+<p class="workflow-desc">Không có approval gates — bạn review trực tiếp trong chat.</p>
 </div>
+
+<p><strong>Dấu hiệu nhận biết:</strong></p>
+<ul>
+<li>Một module, ít file</li>
+<li>Không đổi quy tắc nghiệp vụ</li>
+<li>Dễ quay lại (reversible)</li>
+<li>Không cần nhiều người thống nhất</li>
+</ul>
+
+<p><strong>Ví dụ trong ngân hàng:</strong></p>
+<table>
+<tr><th>Use case</th><th>Mô tả</th></tr>
+<tr><td>Debug</td><td>Giải thích vì sao OTPServiceTest fail</td></tr>
+<tr><td>Fix UI</td><td>Sửa mapping "hạn mức còn lại" trên màn hình</td></tr>
+<tr><td>Refactor</td><td>Đổi tên biến trong module nội bộ</td></tr>
+<tr><td>Explain</td><td>Giải thích luồng code legacy</td></tr>
+</table>
 
 <h3 id="spec">Kiro Spec — Feature Vừa</h3>
 
@@ -190,8 +241,75 @@ SDLC là luật chơi. Vibe, Spec, AI-DLC là cách làm việc với AI. Mọi 
 <span class="workflow-badge" style="background:#2563eb">SPEC</span>
 <span class="workflow-title">Requirements → Design → Tasks → Execute</span>
 </div>
-<p class="workflow-desc">Có approval gates giữa mỗi phase. Dùng khi: có quy tắc/API/data model, cần BA–Dev–QA thống nhất, cần tài liệu để trace.</p>
+<p class="workflow-desc">Có approval gates giữa mỗi phase.</p>
 </div>
+
+<p><strong>Dấu hiệu nhận biết:</strong></p>
+<ul>
+<li>Có quy tắc/API/data model</li>
+<li>Cần BA–Dev–QA thống nhất</li>
+<li>Cần tài liệu để trace</li>
+</ul>
+
+<p><strong>Ví dụ trong ngân hàng:</strong></p>
+<table>
+<tr><th>Use case</th><th>Mô tả</th></tr>
+<tr><td>API mới</td><td>Thêm API tra cứu hạn mức chuyển tiền</td></tr>
+<tr><td>Feature</td><td>Chức năng khóa/mở khóa thẻ trên app</td></tr>
+<tr><td>Integration</td><td>Kết nối hệ thống third-party</td></tr>
+</table>
+
+<h3>Hai Workflow Variants</h3>
+
+<table>
+<tr><th>Variant</th><th>Flow</th><th>Khi nào dùng</th></tr>
+<tr><td><strong>Requirements-First</strong> (Khuyên dùng)</td><td>Behavior → Requirements → Design → Tasks</td><td>Product-driven, greenfield projects</td></tr>
+<tr><td><strong>Design-First</strong></td><td>Technical Design → Requirements → Tasks</td><td>Technically-constrained, existing architecture cứng</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Lưu ý</strong>
+Không thể switch workflow giữa chừng. Nếu cần đổi approach, tạo spec mới.
+</div>
+
+<h3>Bốn Phases Của Feature Spec</h3>
+
+<table>
+<tr><th>Phase</th><th>Output</th><th>Nội dung</th></tr>
+<tr><td><strong>1. Requirements</strong></td><td>requirements.md</td><td>User stories, system behaviors, functional requirements, edge cases</td></tr>
+<tr><td><strong>2. Design</strong></td><td>design.md</td><td>System architecture, sequence diagrams, data models, testing strategies</td></tr>
+<tr><td><strong>3. Tasks</strong></td><td>tasks.md</td><td>Discrete implementation tasks, dependencies, optional/required markers</td></tr>
+<tr><td><strong>4. Execute</strong></td><td>Code</td><td>Thực hiện từng task hoặc Run all Tasks</td></tr>
+</table>
+
+<h3>Quick Spec vs Standard Spec</h3>
+
+<table>
+<tr><th>Aspect</th><th>Quick Spec</th><th>Standard Spec</th></tr>
+<tr><td>Review gates</td><td>Không</td><td>Có (sau mỗi phase)</td></tr>
+<tr><td>Tốc độ</td><td>Nhanh</td><td>Chậm hơn</td></tr>
+<tr><td>Use case</td><td>Well-understood features</td><td>Complex features, compliance-sensitive</td></tr>
+</table>
+
+<h3>Iterate On Specs</h3>
+
+<p><strong>Requirements-First:</strong></p>
+<ol>
+<li>Modify requirements.md trực tiếp hoặc qua chat</li>
+<li>Click <strong>Refine</strong> trên design.md → cập nhật design và tasks</li>
+<li><strong>Sync Files</strong> trên tasks.md → map new requirements</li>
+</ol>
+
+<p><strong>Design-First:</strong></p>
+<ol>
+<li>Update design.md trực tiếp hoặc request changes</li>
+<li>Ask Kiro regenerate requirements</li>
+<li><strong>Sync Files</strong> → reflect architectural changes</li>
+</ol>
+
+<h3>Reference Specs Trong Chat</h3>
+
+<pre><code>#spec:user-authentication implement task 2.3</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
 
 <h3>EARS Format — Viết Requirements Testable</h3>
 
@@ -216,8 +334,17 @@ THE SYSTEM SHALL trả về kết quả ban đầu và không ghi nợ lần hai
 <span class="workflow-badge" style="background:#f97316">AI-DLC</span>
 <span class="workflow-title">5 Phases — 33 Stages — 14 Agents</span>
 </div>
-<p class="workflow-desc">Dùng khi: nhiều hệ thống/đội tham gia, cần Business–Risk–Security–Ops, từ ý tưởng đến vận hành.</p>
+<p class="workflow-desc">Methodology cấu trúc AI-assisted software development thành các phases có thể lặp lại và trace được.</p>
 </div>
+
+<p><strong>Dấu hiệu nhận biết:</strong></p>
+<ul>
+<li>Nhiều hệ thống/đội tham gia</li>
+<li>Cần Business–Risk–Security–Ops</li>
+<li>Từ ý tưởng đến vận hành</li>
+</ul>
+
+<blockquote>Thay vì dùng hàng chục narrow specialist agents, AI-DLC sử dụng 11 broadly capable domain experts tham gia across multiple stages.</blockquote>
 
 <div class="flow">
 <span class="flow-step">Initialization</span>
@@ -231,19 +358,139 @@ THE SYSTEM SHALL trả về kết quả ban đầu và không ghi nợ lần hai
 <span class="flow-step">Operation</span>
 </div>
 
+<h3>Chi Tiết 33 Stages</h3>
+
+<p><strong>Phase 0: Initialization (Auto)</strong></p>
 <table>
-<tr><th>Phase</th><th>Stages</th><th>Mô tả</th></tr>
-<tr><td><strong>0. Initialization</strong></td><td>0.1–0.3</td><td>Workspace scaffold, detection, state init</td></tr>
-<tr><td><strong>1. Ideation</strong></td><td>1.1–1.7</td><td>Intent capture, research, scope, mockups</td></tr>
-<tr><td><strong>2. Inception</strong></td><td>2.1–2.9</td><td>Requirements, stories, domain design, security</td></tr>
-<tr><td><strong>3. Construction</strong></td><td>3.1–3.7</td><td>Functional/technical design, code gen, CI</td></tr>
-<tr><td><strong>4. Operation</strong></td><td>4.1–4.7</td><td>Deploy, observability, runbooks, feedback</td></tr>
+<tr><th>Stage</th><th>Mô tả</th></tr>
+<tr><td>0.1</td><td>Workspace Scaffold — tạo thư mục intent record</td></tr>
+<tr><td>0.2</td><td>Workspace Detection — classify greenfield/brownfield</td></tr>
+<tr><td>0.3</td><td>State Initialization — viết workflow plan</td></tr>
+</table>
+
+<p><strong>Phase 1: Ideation (Interactive)</strong></p>
+<table>
+<tr><th>Stage</th><th>Mô tả</th></tr>
+<tr><td>1.1</td><td>Intent Capture — problem, users, success criteria</td></tr>
+<tr><td>1.2</td><td>Market Research</td></tr>
+<tr><td>1.3</td><td>Feasibility & Constraints</td></tr>
+<tr><td>1.4</td><td>Scope Definition — in-scope vs out-of-scope</td></tr>
+<tr><td>1.5</td><td>Team Formation</td></tr>
+<tr><td>1.6</td><td>Rough Mockups</td></tr>
+<tr><td>1.7</td><td>Approval & Handoff</td></tr>
+</table>
+
+<p><strong>Phase 2: Inception</strong></p>
+<table>
+<tr><th>Stage</th><th>Mô tả</th></tr>
+<tr><td>2.1</td><td>Reverse Engineering (brownfield only)</td></tr>
+<tr><td>2.2</td><td>Practices Discovery</td></tr>
+<tr><td>2.3</td><td>Requirements Analysis</td></tr>
+<tr><td>2.4</td><td>User Stories</td></tr>
+<tr><td>2.5</td><td>Domain Design</td></tr>
+<tr><td>2.6</td><td>Units Generation</td></tr>
+<tr><td>2.7</td><td>Contract Design</td></tr>
+<tr><td>2.8</td><td>Security & Compliance</td></tr>
+<tr><td>2.9</td><td>Delivery Planning (Bolts)</td></tr>
+</table>
+
+<p><strong>Phase 3: Construction</strong></p>
+<table>
+<tr><th>Stage</th><th>Mô tả</th></tr>
+<tr><td>3.1</td><td>Functional Design</td></tr>
+<tr><td>3.2</td><td>Technical Design</td></tr>
+<tr><td>3.3</td><td>Data Model</td></tr>
+<tr><td>3.4</td><td>API Endpoints</td></tr>
+<tr><td>3.5</td><td>Code Generation</td></tr>
+<tr><td>3.6</td><td>Build & Test</td></tr>
+<tr><td>3.7</td><td>CI Pipeline</td></tr>
+</table>
+
+<p><strong>Phase 4: Operation</strong></p>
+<table>
+<tr><th>Stage</th><th>Mô tả</th></tr>
+<tr><td>4.1</td><td>Deploy Pipeline</td></tr>
+<tr><td>4.2</td><td>Environment Provisioning</td></tr>
+<tr><td>4.3</td><td>Observability</td></tr>
+<tr><td>4.4</td><td>Documentation</td></tr>
+<tr><td>4.5</td><td>Runbooks</td></tr>
+<tr><td>4.6</td><td>Incident Response</td></tr>
+<tr><td>4.7</td><td>Feedback & Optimization</td></tr>
 </table>
 
 <h3>14 Agents</h3>
 
 <p><strong>11 Domain Experts:</strong> Product, Design, Delivery, Architect, AWS Platform, Compliance, DevSecOps, Developer, Quality, Pipeline & Deploy, Operations</p>
 <p><strong>2 Reviewers + 1 Adaptive Composer:</strong> Kiểm tra và tổng hợp kết quả từ domain experts.</p>
+
+<h3>Installation & Configuration</h3>
+
+<pre><code># macOS/Linux/WSL
+curl -fsSL https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.sh | sh
+
+# Windows PowerShell
+irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex
+
+# Configure
+cd /path/to/your-project
+aidlc config --harness kiro-ide
+aidlc doctor</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Supported harnesses:</strong> Claude Code, Kiro CLI/IDE, Codex, Cursor, opencode, GitHub Copilot</p>
+
+<h3>Commands Chính</h3>
+
+<table>
+<tr><th>Command</th><th>Mô tả</th></tr>
+<tr><td><code>/aidlc feature</code></td><td>Bắt đầu feature workflow (33 stages)</td></tr>
+<tr><td><code>/aidlc bugfix</code></td><td>Bắt đầu bugfix workflow (9 stages)</td></tr>
+<tr><td><code>/aidlc --status</code></td><td>Kiểm tra status hiện tại</td></tr>
+</table>
+
+<h3>Interaction Modes</h3>
+
+<table>
+<tr><th>Mode</th><th>Mô tả</th></tr>
+<tr><td><strong>Guide Me</strong></td><td>Structured questions từng câu</td></tr>
+<tr><td><strong>Edit File</strong></td><td>Sửa artifact trực tiếp</td></tr>
+<tr><td><strong>Chat</strong></td><td>Freeform discussion</td></tr>
+</table>
+
+<h3>Approval Gates</h3>
+
+<table>
+<tr><th>Action</th><th>Khi nào</th></tr>
+<tr><td><strong>Approve</strong></td><td>Findings rõ ràng, owner xác định</td></tr>
+<tr><td><strong>Request Changes</strong></td><td>Assumption/owner/evidence chưa rõ</td></tr>
+</table>
+
+<h3>Execution Modes</h3>
+
+<table>
+<tr><th>Mode</th><th>Mô tả</th></tr>
+<tr><td><strong>Inline Execution</strong></td><td>Agent làm việc trực tiếp trong conversation</td></tr>
+<tr><td><strong>Subagent Delegation</strong></td><td>4 stages chạy backgrounded: 2.1 Reverse Engineering, 2.2 Practices Discovery, 2.4 User Stories, 3.5 Code Generation</td></tr>
+</table>
+
+<h3>Artifacts Produced</h3>
+
+<pre><code>aidlc/spaces/default/intents/&lt;YYMMDD&gt;-&lt;label&gt;/
+├── aidlc-state.md          # Final workflow state
+├── audit/                  # Decision audit trail
+├── ideation/               # Intent, research, scope
+├── inception/              # Requirements, stories, design
+├── construction/           # Per-unit code and tests
+├── operation/              # Deployment plans
+└── verification/           # Phase boundary reports</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Failure Handling</h3>
+
+<table>
+<tr><th>Option</th><th>Mô tả</th></tr>
+<tr><td><strong>Retry</strong></td><td>Thử lại stage</td></tr>
+<tr><td><strong>Skip</strong></td><td>Bỏ qua (dependents may fail)</td></tr>
+<tr><td><strong>Abort</strong></td><td>Dừng, resume via --stage</td></tr>
+</table>
 
 <h2 id="context">Context Engineering — Công Thức OCCE</h2>
 
@@ -256,6 +503,14 @@ THE SYSTEM SHALL trả về kết quả ban đầu và không ghi nợ lần hai
 <div class="occe-item"><strong>E</strong><span>Evidence<br>Chứng minh sao?</span></div>
 </div>
 
+<table>
+<tr><th>Thành phần</th><th>Câu hỏi</th><th>Ví dụ</th></tr>
+<tr><td><strong>Outcome</strong></td><td>Kết quả nào?</td><td>Phân tích, sửa, thiết kế, review</td></tr>
+<tr><td><strong>Context</strong></td><td>Dựa vào đâu?</td><td>File, lỗi, terminal, diff, policy</td></tr>
+<tr><td><strong>Constraints</strong></td><td>Không được làm gì?</td><td>Phạm vi, dependency, dữ liệu</td></tr>
+<tr><td><strong>Evidence</strong></td><td>Chứng minh ra sao?</td><td>Test, lint, typecheck, diff summary</td></tr>
+</table>
+
 <h3>Context Providers</h3>
 
 <table>
@@ -266,6 +521,24 @@ THE SYSTEM SHALL trả về kết quả ban đầu và không ghi nợ lần hai
 <tr><td>Terminal</td><td><code>#terminal</code></td><td>Output và command gần đây</td></tr>
 <tr><td>Git Diff</td><td><code>#git diff</code></td><td>Thay đổi chưa commit</td></tr>
 <tr><td>Spec</td><td><code>#spec:feature-name</code></td><td>Include full spec context</td></tr>
+</table>
+
+<h3>Nguyên Tắc Context Tối Thiểu</h3>
+
+<blockquote>Context tối thiểu cần thiết vừa tăng độ chính xác, vừa giảm rủi ro dữ liệu.</blockquote>
+
+<table>
+<tr><th>Nên làm</th><th>Lý do</th></tr>
+<tr><td>Chỉ file liên quan</td><td>Focus vào vấn đề</td></tr>
+<tr><td>Dùng stack trace thay vì cả log</td><td>Giảm noise</td></tr>
+<tr><td>Mock data thay vì real data</td><td>Bảo mật</td></tr>
+</table>
+
+<table>
+<tr><th>Không nên làm</th><th>Rủi ro</th></tr>
+<tr><td>Kéo cả folder lớn</td><td>Token waste, confusion</td></tr>
+<tr><td>Include secrets</td><td>Data leak</td></tr>
+<tr><td>Include PII</td><td>Compliance violation</td></tr>
 </table>
 
 <h3>Ví dụ Prompt OCCE</h3>
@@ -287,6 +560,25 @@ Không đổi dependency hoặc config.
 Chạy test mục tiêu. Báo kết quả, file đã đổi,
 diff chính và rủi ro còn lại.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
 
+<h3>Anti-patterns</h3>
+
+<table>
+<tr><th>Anti-pattern</th><th>Ví dụ</th></tr>
+<tr><td><strong>Prompt quá chung chung</strong></td><td>"Sửa bug", "Cải thiện performance", "Làm cho code tốt hơn"</td></tr>
+<tr><td><strong>Prompt quá dài không có structure</strong></td><td>"Tôi có bug... có thể do race condition hoặc database lock..."</td></tr>
+<tr><td><strong>Thiếu Evidence</strong></td><td>"Sửa bug, không cần test", "Cứ làm đi, tôi sẽ check sau"</td></tr>
+</table>
+
+<h3>Lưu Ý Bảo Mật</h3>
+
+<table>
+<tr><th>Không đưa vào context</th><th>Thay thế bằng</th></tr>
+<tr><td>Secrets (API keys, passwords, tokens)</td><td><code>API_KEY_PLACEHOLDER</code></td></tr>
+<tr><td>PII (Customer names, emails)</td><td><code>test@example.com</code></td></tr>
+<tr><td>Production data</td><td>Mock/fixture data</td></tr>
+<tr><td>Internal URLs</td><td>Placeholder URLs</td></tr>
+</table>
+
 <h2 id="steering">Steering & Hooks</h2>
 
 <blockquote>Đừng lặp lại policy trong mọi prompt. Đóng gói nó.</blockquote>
@@ -297,38 +589,218 @@ diff chính và rủi ro còn lại.</code><button class="copy-btn" onclick="cop
 <tr><td><strong>Hooks</strong></td><td>Biến kiểm soát thành hành động tự động</td><td>"Sau khi save file .java, tự động chạy lint"</td></tr>
 </table>
 
-<h3>Steering Files</h3>
+<h3>Steering — Policy-as-Context</h3>
 
-<p>Đặt tại <code>.kiro/steering/</code> (workspace) hoặc <code>~/.kiro/steering/</code> (global).</p>
+<p>Steering files cho Kiro biết <strong>"đội này làm việc thế nào"</strong> thông qua markdown files.</p>
 
 <table>
-<tr><th>File</th><th>Nội dung</th></tr>
-<tr><td><code>product.md</code></td><td>Purpose, target users, key features, business goals</td></tr>
-<tr><td><code>tech.md</code></td><td>Languages, database, security requirements</td></tr>
-<tr><td><code>structure.md</code></td><td>Module layout, naming conventions, import order</td></tr>
-<tr><td><code>testing.md</code></td><td>Test pyramid, fixtures, commands</td></tr>
+<tr><th>Scope</th><th>Location</th><th>Áp dụng</th></tr>
+<tr><td><strong>Workspace</strong></td><td><code>.kiro/steering/</code></td><td>Project cụ thể</td></tr>
+<tr><td><strong>Global</strong></td><td><code>~/.kiro/steering/</code></td><td>Tất cả projects</td></tr>
+<tr><td><strong>Cloud</strong></td><td>Configuration Sync</td><td>Cloud sessions</td></tr>
 </table>
 
-<h3>Hook Triggers</h3>
+<p><em>Workspace files override conflicting global instructions.</em></p>
+
+<h3>Foundation Steering Files</h3>
+
+<p><strong>1. product.md</strong> — Purpose, target users, key features, business goals</p>
+<pre><code># Product Context
+## Purpose
+Mobile banking app cho khách hàng cá nhân.
+## Target Users
+- Khách hàng retail 18-65 tuổi
+- Smartphone Android/iOS
+## Business Goals
+- 99.9% uptime cho chuyển tiền
+- Response time < 2 giây</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>2. tech.md</strong> — Languages, database, security requirements</p>
+<pre><code># Technical Stack
+## Languages
+- Backend: Java 17, Spring Boot 3.2
+- Frontend: React Native 0.72
+## Database
+- PostgreSQL 15 cho transactional data
+- Redis 7 cho caching
+## Security Requirements
+- All APIs require OAuth 2.0
+- PII must be encrypted at rest
+- No secrets in code or logs</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>3. structure.md</strong> — Module layout, naming conventions, import order</p>
+<pre><code># Project Structure
+## Naming Conventions
+- Controllers: *Controller.java
+- Services: *Service.java
+- Repositories: *Repository.java
+## Import Order
+1. java.* → 2. javax.* → 3. org.* → 4. com.* → 5. Project</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>4. testing.md</strong> — Test pyramid, fixtures, commands</p>
+<pre><code># Testing Standards
+## Test Pyramid
+- Unit tests: 70%
+- Integration tests: 20%
+- E2E tests: 10%
+## Fixtures
+- Use TestContainers cho database tests
+- Mock external APIs với WireMock
+## Commands
+- Unit: mvn test
+- Integration: mvn verify -P integration</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Inclusion Modes</h3>
+
+<table>
+<tr><th>Mode</th><th>Mô tả</th><th>Use case</th></tr>
+<tr><td><strong>always</strong></td><td>Load mọi interaction</td><td>Core standards, security</td></tr>
+<tr><td><strong>fileMatch</strong></td><td>Auto-load cho matching patterns</td><td>Domain-specific</td></tr>
+<tr><td><strong>manual</strong></td><td>Reference qua #filename</td><td>Specialized workflows</td></tr>
+<tr><td><strong>auto</strong></td><td>Match relevance</td><td>Complex reference</td></tr>
+</table>
+
+<h3>Steering Best Practices</h3>
+
+<table>
+<tr><th>Nên làm</th><th>Không nên làm</th></tr>
+<tr><td>Tách theo domain, ngắn và có ví dụ</td><td>Ghi key, password, PII</td></tr>
+<tr><td>Giải thích cả "why"</td><td>Quá dài, không focus</td></tr>
+<tr><td>Review bằng PR như code</td><td>Copy-paste không review</td></tr>
+</table>
+
+<h3>Hooks — Event-Driven Guardrails</h3>
+
+<p>Hooks là shell commands hoặc agent prompts <strong>thực thi tự động</strong> khi specific events xảy ra.</p>
+
+<h3>8 Hook Triggers</h3>
 
 <table>
 <tr><th>Trigger</th><th>Event</th><th>Blockable</th></tr>
-<tr><td>PromptSubmit</td><td>Message sent to agent</td><td>Yes</td></tr>
-<tr><td>PreToolUse</td><td>Before tool execution</td><td>Yes</td></tr>
-<tr><td>PostToolUse</td><td>After tool executes</td><td>No</td></tr>
-<tr><td>FileSave</td><td>Agent saves/edits file</td><td>No</td></tr>
+<tr><td><strong>PromptSubmit</strong></td><td>Message sent to agent</td><td>Yes</td></tr>
+<tr><td><strong>AgentStop</strong></td><td>Agent finishes responding</td><td>No</td></tr>
+<tr><td><strong>SessionStart</strong></td><td>New session begins (IDE only)</td><td>No</td></tr>
+<tr><td><strong>PreToolUse</strong></td><td>Before tool execution</td><td>Yes</td></tr>
+<tr><td><strong>PostToolUse</strong></td><td>After tool executes</td><td>No</td></tr>
+<tr><td><strong>FileCreate</strong></td><td>Agent creates file</td><td>No</td></tr>
+<tr><td><strong>FileSave</strong></td><td>Agent saves/edits file</td><td>No</td></tr>
+<tr><td><strong>FileDelete</strong></td><td>Agent deletes file</td><td>No</td></tr>
+</table>
+
+<p><em>File triggers chỉ respond với agent-initiated changes, không phải manual edits.</em></p>
+
+<h3>Hook Configuration</h3>
+
+<p>Location: <code>.kiro/hooks/</code></p>
+
+<pre><code>{
+  "version": "v1",
+  "hooks": [{
+    "name": "ESLint on TypeScript save",
+    "trigger": "PostFileSave",
+    "matcher": "\\.(ts|tsx)$",
+    "action": {
+      "type": "command",
+      "command": "npx eslint --fix ${file}"
+    },
+    "timeout": 30,
+    "enabled": true
+  }]
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Common Hook Use Cases</h3>
+
+<p><strong>1. Lint sau khi save:</strong></p>
+<pre><code>{ "trigger": "PostFileSave", "matcher": "\\.(ts|tsx)$",
+  "command": "npx eslint --fix ${file}" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>2. Test sau khi sửa service:</strong></p>
+<pre><code>{ "trigger": "PostFileSave", "matcher": "Service\\.java$",
+  "command": "mvn test -Dtest=${fileName}Test" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>3. Block dangerous operations:</strong></p>
+<pre><code>{ "trigger": "PreToolUse", "matcher": "git.*--force",
+  "command": "echo 'Force push blocked by policy' && exit 1" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>4. Security scan:</strong></p>
+<pre><code>{ "trigger": "PostFileSave", "matcher": "\\.(java|ts|js)$",
+  "command": "semgrep --config=auto ${file}" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Hook Quản Trị</h3>
+
+<div class="callout callout-amber">
+<strong>Hook là code thực thi</strong>
+Phải review owner, command, timeout và phạm vi dữ liệu trước khi deploy.
+</div>
+
+<table>
+<tr><th>Aspect</th><th>Steering</th><th>Hooks</th></tr>
+<tr><td>Mục đích</td><td>Nói quy tắc</td><td>Chạy hành động</td></tr>
+<tr><td>Enforcement</td><td>Soft (guidance)</td><td>Hard (execution)</td></tr>
+<tr><td>Review</td><td>Code review</td><td>Code review + security</td></tr>
 </table>
 
 <h2 id="mcp">MCP & Permissions</h2>
 
-<p><strong>MCP (Model Context Protocol)</strong> cho phép Kiro kết nối với external servers để access tools, prompts, và resources.</p>
+<p><strong>MCP (Model Context Protocol)</strong> là protocol cho phép Kiro kết nối với external servers để access tools, prompts, và resources.</p>
+
+<h3>MCP Mang Lại Gì?</h3>
+
+<table>
+<tr><th>Capability</th><th>Ví dụ</th></tr>
+<tr><td><strong>Tools</strong></td><td>JIRA integration, Confluence search</td></tr>
+<tr><td><strong>Prompts</strong></td><td>Template cho specific workflows</td></tr>
+<tr><td><strong>Resources</strong></td><td>Knowledge bases, internal docs</td></tr>
+<tr><td><strong>Context</strong></td><td>Real-time data từ external systems</td></tr>
+</table>
+
+<h3>Loại MCP Servers</h3>
+
+<table>
+<tr><th>Type</th><th>Connection</th><th>Platform Support</th></tr>
+<tr><td><strong>Local (stdio)</strong></td><td>Shell command</td><td>IDE, CLI, Web</td></tr>
+<tr><td><strong>Remote (HTTP/SSE)</strong></td><td>HTTPS endpoint</td><td>IDE, CLI, Web</td></tr>
+</table>
+
+<p><em>Mobile không hỗ trợ MCP.</em></p>
 
 <div class="callout callout-amber">
 <strong>Mỗi tool mới là một trust boundary mới</strong>
 stdio servers chạy với quyền process, có thể access code, env vars, và gửi data ra ngoài. Chỉ cấp khi thực sự cần.
 </div>
 
+<h3>MCP Security Checklist (9 điểm)</h3>
+
+<table>
+<tr><th>#</th><th>Checklist</th><th>Mô tả</th></tr>
+<tr><td>1</td><td>Vet source</td><td>Kiểm tra publisher, repository</td></tr>
+<tr><td>2</td><td>Review code</td><td>Đọc code path của server</td></tr>
+<tr><td>3</td><td>Minimal scope</td><td>Token với quyền tối thiểu</td></tr>
+<tr><td>4</td><td>Secrets via env</td><td>Không hardcode secrets</td></tr>
+<tr><td>5</td><td>Disable unused</td><td>Tắt tools không dùng</td></tr>
+<tr><td>6</td><td>Limit autoApprove</td><td>Hạn chế auto approval</td></tr>
+<tr><td>7</td><td>HTTPS only</td><td>Cho remote servers</td></tr>
+<tr><td>8</td><td>Logging</td><td>Enable audit logs</td></tr>
+<tr><td>9</td><td>Kill switch</td><td>Có cách disable nhanh</td></tr>
+</table>
+
+<h3>MCP Configuration</h3>
+
+<pre><code>{
+  "mcpServers": {
+    "jira": {
+      "command": "npx",
+      "args": ["@company/jira-mcp-server"],
+      "env": {
+        "JIRA_TOKEN": "${JIRA_TOKEN}"
+      }
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
 <h3>Permission Model</h3>
+
+<p>Kiro sử dụng <strong>capability-based permissions model</strong>:</p>
 
 <table>
 <tr><th>Effect</th><th>Behavior</th></tr>
@@ -337,9 +809,32 @@ stdio servers chạy với quyền process, có thể access code, env vars, và
 <tr><td><strong>allow</strong></td><td>Proceed silently</td></tr>
 </table>
 
+<blockquote>"deny wins" — một deny rule ở bất kỳ scope nào sẽ block action, bất kể allow rules khác.</blockquote>
+
+<h3>Capabilities</h3>
+
+<table>
+<tr><th>Capability</th><th>Mô tả</th></tr>
+<tr><td><code>fs_read</code></td><td>Đọc files</td></tr>
+<tr><td><code>fs_write</code></td><td>Ghi/tạo files</td></tr>
+<tr><td><code>shell</code></td><td>Chạy shell commands</td></tr>
+<tr><td><code>web_fetch</code></td><td>HTTP requests</td></tr>
+<tr><td><code>mcp</code></td><td>MCP tool calls</td></tr>
+</table>
+
 <h3>Permission Scopes (từ cao xuống thấp)</h3>
 
-<p>Kiro → Administration → User → Workspace → Agent → Session</p>
+<table>
+<tr><th>Scope</th><th>Mô tả</th><th>Có thể thay đổi?</th></tr>
+<tr><td><strong>Kiro</strong></td><td>Hardcoded security</td><td>❌</td></tr>
+<tr><td><strong>Administration</strong></td><td>Enterprise policies</td><td>Admin only</td></tr>
+<tr><td><strong>User</strong></td><td>~/.kiro/settings/permissions.yaml</td><td>✅</td></tr>
+<tr><td><strong>Workspace</strong></td><td>Per-project rules</td><td>✅</td></tr>
+<tr><td><strong>Agent</strong></td><td>Embedded in agent profiles</td><td>✅</td></tr>
+<tr><td><strong>Session</strong></td><td>In-memory decisions</td><td>✅</td></tr>
+</table>
+
+<h3>Permission Configuration</h3>
 
 <pre><code>rules:
   # Allow common git commands
@@ -350,11 +845,77 @@ stdio servers chạy với quyền process, có thể access code, env vars, và
   # Block writes to sensitive files
   - capability: fs_write
     match: ["*.env", "*.key", "*.pem", "secrets/*"]
-    effect: deny</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+    effect: deny
+
+  # Ask before running npm scripts
+  - capability: shell
+    match: ["npm run *"]
+    effect: ask</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Kiro Scope Luôn Deny</h3>
+
+<table>
+<tr><th>Action</th><th>Lý do</th></tr>
+<tr><td>Writes to Kiro settings</td><td>Protect config</td></tr>
+<tr><td>Modify .git/**</td><td>Protect repo integrity</td></tr>
+<tr><td>Modify .kiro/agents/**</td><td>Protect agent definitions</td></tr>
+<tr><td>Modify .kiro/hooks/**</td><td>Protect automation</td></tr>
+</table>
+
+<h3>Policy Presets</h3>
+
+<table>
+<tr><th>Preset</th><th>Capabilities</th></tr>
+<tr><td><code>read-workspace</code></td><td>Read files only</td></tr>
+<tr><td><code>edit-workspace</code></td><td>Read + write workspace</td></tr>
+<tr><td><code>dev-shell</code></td><td>Workspace + git + build tools</td></tr>
+<tr><td><code>allow-all</code></td><td>Everything except sandbox networking</td></tr>
+</table>
+
+<h3>Interactive Approval</h3>
+
+<table>
+<tr><th>Option</th><th>Effect</th></tr>
+<tr><td><strong>Allow</strong></td><td>Permit once</td></tr>
+<tr><td><strong>Always allow</strong></td><td>Save persistent rule</td></tr>
+<tr><td><strong>Deny</strong></td><td>Block once</td></tr>
+<tr><td><strong>Always deny</strong></td><td>Save deny rule</td></tr>
+</table>
+
+<h3>Best Practices</h3>
+
+<p><strong>Principle of Least Privilege:</strong></p>
+<pre><code># ❌ Bad - quá broad
+- capability: shell
+  match: ["*"]
+  effect: allow
+
+# ✅ Good - specific patterns
+- capability: shell
+  match: ["mvn test", "mvn verify", "npm test"]
+  effect: allow</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Deny Sensitive Patterns:</strong></p>
+<pre><code># Block dangerous commands
+- capability: shell
+  match: ["rm -rf *", "git push --force *", "DROP TABLE *"]
+  effect: deny
+
+# Block sensitive file writes
+- capability: fs_write
+  match: ["*.env*", "*.key", "*.pem", "*credentials*"]
+  effect: deny</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-red">
+<strong>Headless/Unattended Mode</strong>
+Trong headless context, mọi "ask" effect trở thành deny. Không có interactive channel để prompt → safer default.
+</div>
 
 <h2 id="guardrails">7 Lớp Guardrails — Defense in Depth</h2>
 
 <blockquote>AI đề xuất. Người có thẩm quyền quyết định.</blockquote>
+
+<p>Kiro và AI-DLC không thay thế: SDLC, Change approval process, Security review, Compliance requirements.</p>
 
 <div class="layer-stack">
 <div class="layer">7. AUDIT — Logging, retention, incident path</div>
@@ -365,6 +926,48 @@ stdio servers chạy với quyền process, có thể access code, env vars, và
 <div class="layer">2. IDENTITY — Tài khoản riêng; credential ngắn hạn</div>
 <div class="layer">1. DATA — Không PII/secrets; mock; .kiroignore</div>
 </div>
+
+<h3>Chi Tiết Từng Lớp</h3>
+
+<table>
+<tr><th>Lớp</th><th>Control</th><th>Implementation</th></tr>
+<tr><td rowspan="3"><strong>1. Data</strong></td><td>Không PII</td><td>Dùng mock/synthetic data</td></tr>
+<tr><td>Không secrets</td><td>Environment variables</td></tr>
+<tr><td>.kiroignore</td><td>Exclude sensitive files</td></tr>
+<tr><td rowspan="3"><strong>2. Identity</strong></td><td>Tài khoản riêng</td><td>Dedicated service accounts</td></tr>
+<tr><td>Short-lived credentials</td><td>Token rotation</td></tr>
+<tr><td>Audit trail</td><td>Log who did what</td></tr>
+<tr><td rowspan="3"><strong>3. Permissions</strong></td><td>Deny by default</td><td>Explicit allow only</td></tr>
+<tr><td>Least privilege</td><td>Minimum necessary access</td></tr>
+<tr><td>Scope limitation</td><td>Project-specific rules</td></tr>
+<tr><td rowspan="3"><strong>4. Workspace</strong></td><td>Feature branches</td><td>Không commit trực tiếp main</td></tr>
+<tr><td>Container/sandbox</td><td>Isolated environment</td></tr>
+<tr><td>No production</td><td>Dev/staging only</td></tr>
+<tr><td rowspan="3"><strong>5. Review</strong></td><td>Diff review</td><td>Xem mọi thay đổi</td></tr>
+<tr><td>Code owners</td><td>Designated reviewers</td></tr>
+<tr><td>Four-eyes</td><td>Minimum 2 approvers</td></tr>
+<tr><td rowspan="4"><strong>6. Validation</strong></td><td>Automated tests</td><td>Unit, integration, e2e</td></tr>
+<tr><td>SAST/DAST</td><td>Security scanning</td></tr>
+<tr><td>CI gates</td><td>Block merge if failed</td></tr>
+<tr><td>Policy checks</td><td>Compliance validation</td></tr>
+<tr><td rowspan="4"><strong>7. Audit</strong></td><td>Action logging</td><td>All AI actions recorded</td></tr>
+<tr><td>Decision trail</td><td>Approval history</td></tr>
+<tr><td>Retention policy</td><td>Keep logs X days</td></tr>
+<tr><td>Incident path</td><td>Clear escalation</td></tr>
+</table>
+
+<h3>.kiroignore Example</h3>
+
+<pre><code># Secrets
+.env*
+*.key
+*.pem
+secrets/
+credentials/
+
+# PII data
+customer_data/
+exports/*.csv</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
 
 <div class="callout callout-red">
 <strong>Supervised Mode Không Phải Sandbox</strong>
@@ -379,6 +982,33 @@ Supervised là workflow review, KHÔNG PHẢI security boundary. Cần nhiều l
 <tr><td>Production endpoint</td><td>STOP, verify scope</td></tr>
 <tr><td>Secrets in code</td><td>STOP, rotate immediately</td></tr>
 <tr><td>Permission escalation</td><td>STOP, review with security</td></tr>
+<tr><td>Unexpected external calls</td><td>STOP, verify intent</td></tr>
+</table>
+
+<h3>Incident Response Protocol</h3>
+
+<div class="flow">
+<span class="flow-step">1. STOP</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">2. CONTAIN</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">3. ASSESS</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">4. REPORT</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">5. REMEDIATE</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">6. REVIEW</span>
+</div>
+
+<table>
+<tr><th>Step</th><th>Action</th></tr>
+<tr><td><strong>STOP</strong></td><td>Dừng ngay workflow</td></tr>
+<tr><td><strong>CONTAIN</strong></td><td>Isolate affected code/data</td></tr>
+<tr><td><strong>ASSESS</strong></td><td>Xác định scope và impact</td></tr>
+<tr><td><strong>REPORT</strong></td><td>Thông báo theo policy</td></tr>
+<tr><td><strong>REMEDIATE</strong></td><td>Fix và verify</td></tr>
+<tr><td><strong>REVIEW</strong></td><td>Update guardrails</td></tr>
 </table>
 
 <h2 id="checklist">Checklist Trước Khi Execute</h2>
@@ -399,6 +1029,16 @@ Supervised là workflow review, KHÔNG PHẢI security boundary. Cần nhiều l
 <li>Test strategy và observability</li>
 </ul>
 
+<h3>AI-DLC Approval Gates Checklist</h3>
+
+<table>
+<tr><th>Question</th><th>Required</th></tr>
+<tr><td>Assumptions identified?</td><td>✅</td></tr>
+<tr><td>Owners assigned?</td><td>✅</td></tr>
+<tr><td>Evidence provided?</td><td>✅</td></tr>
+<tr><td>Risks documented?</td><td>✅</td></tr>
+</table>
+
 <h3>Minimum Viable Guardrails</h3>
 
 <table>
@@ -407,6 +1047,197 @@ Supervised là workflow review, KHÔNG PHẢI security boundary. Cần nhiều l
 <tr><td><strong>Week 3-4</strong></td><td>Steering files, hooks (lint, test), code review, audit logging</td></tr>
 <tr><td><strong>Month 2+</strong></td><td>Custom agents, MCP servers (vetted), autopilot cho low-risk, security scanning</td></tr>
 </table>
+
+<h2 id="exercises">Bài Tập Thực Hành</h2>
+
+<h3>Bài Tập 1: Vibe Mode — Debug Unit Test</h3>
+
+<p><strong>Mục tiêu:</strong> Làm quen với prompt có context</p>
+
+<pre><code>#terminal #File:src/test/java/UserServiceTest.java
+
+[Outcome]
+Phân tích và sửa lỗi để UserServiceTest.testGetUserById pass.
+
+[Context]
+Dựa trên lỗi trong terminal và file test.
+
+[Constraints]
+Trước khi sửa, tóm tắt nguyên nhân và kế hoạch.
+Chỉ sửa service hoặc test file.
+Không đổi dependency hoặc config.
+
+[Evidence]
+Chạy test mục tiêu. Báo kết quả và diff.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bài Tập 2: Feature Spec — API Mới</h3>
+
+<p><strong>Mục tiêu:</strong> Tạo Feature Spec với EARS requirements</p>
+
+<pre><code>Tạo Feature Spec requirements-first cho
+API tra cứu số dư tài khoản.
+
+Bao gồm:
+- Response time < 1 giây
+- Hỗ trợ multi-currency
+- Audit log không chứa account number
+- Error contract rõ ràng
+
+Dùng mock adapter, không gọi core banking.
+Đánh dấu assumptions cần Business/Security approve.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Checklist đánh giá:</strong></p>
+<ul>
+<li>Requirements dùng EARS format</li>
+<li>Assumptions có owner</li>
+<li>Design nêu trust boundaries</li>
+<li>Tasks có dependency rõ</li>
+</ul>
+
+<h3>Bài Tập 3: Steering File</h3>
+
+<p><strong>Mục tiêu:</strong> Tạo steering file cho team</p>
+
+<pre><code># File: .kiro/steering/testing.md
+---
+inclusion: always
+---
+
+# Testing Standards
+
+## Test Pyramid
+- Unit tests: 70% coverage minimum
+- Integration tests: Critical paths only
+- E2E tests: Happy path only
+
+## Naming Convention
+- Test methods: should_[expected]_when_[condition]
+- Example: should_returnError_when_amountExceedsLimit
+
+## Fixtures
+- Use TestContainers for database
+- Mock external APIs with WireMock
+- Never use production data
+
+## Commands
+- Unit: `mvn test`
+- Integration: `mvn verify -P integration`</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bài Tập 4: Hook Configuration</h3>
+
+<p><strong>Mục tiêu:</strong> Tạo hook để auto-lint</p>
+
+<pre><code>// File: .kiro/hooks/lint.json
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "ESLint on TypeScript save",
+    "trigger": "PostFileSave",
+    "matcher": "\\.(ts|tsx)$",
+    "action": {
+      "type": "command",
+      "command": "npx eslint --fix ${file}"
+    },
+    "timeout": 30,
+    "enabled": true
+  }]
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bài Tập 5: Permission Rules</h3>
+
+<p><strong>Mục tiêu:</strong> Cấu hình permissions cho project</p>
+
+<pre><code># File: .kiro/permissions.yaml
+rules:
+  # Allow common commands
+  - capability: shell
+    match: ["git status", "git log *", "mvn test", "npm test"]
+    effect: allow
+
+  # Block sensitive file writes
+  - capability: fs_write
+    match: ["*.env*", "*.key", "*.pem", "secrets/*"]
+    effect: deny
+
+  # Ask before npm install
+  - capability: shell
+    match: ["npm install *", "mvn dependency:*"]
+    effect: ask</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bài Tập 6: AI-DLC Bugfix</h3>
+
+<p><strong>Mục tiêu:</strong> Chạy AI-DLC workflow cho bugfix</p>
+
+<pre><code>/aidlc bugfix
+
+GET /api/v1/users/:id/profile crashes với NullPointerException
+trong ProfileSerializer.serialize() khi display_name là null.
+Ảnh hưởng ~12% user profiles.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Câu hỏi đánh giá:</strong></p>
+<ul>
+<li>Có bao nhiêu stages được execute?</li>
+<li>Artifacts nào được tạo?</li>
+<li>Tests có pass không?</li>
+</ul>
+
+<h3>Bài Tập 7: AI-DLC Feature</h3>
+
+<p><strong>Mục tiêu:</strong> Chạy full AI-DLC workflow cho feature</p>
+
+<pre><code>/aidlc feature
+
+Xây dựng notification service:
+- In-app notifications khi task được assign
+- Email digest hàng ngày (optional)
+- User preferences cho notification types
+
+Phạm vi: notification-core + preferences + email adapter
+Không dùng production data.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Self-Assessment Checklist</h3>
+
+<table>
+<tr><th>Kiến thức cơ bản</th><th>Check</th></tr>
+<tr><td>Phân biệt Vibe/Spec/AI-DLC</td><td>☐</td></tr>
+<tr><td>Viết prompt OCCE</td><td>☐</td></tr>
+<tr><td>Dùng context providers</td><td>☐</td></tr>
+<tr><td>Hiểu Supervised vs Autopilot</td><td>☐</td></tr>
+</table>
+
+<table>
+<tr><th>Kỹ năng thực hành</th><th>Check</th></tr>
+<tr><td>Tạo Feature Spec</td><td>☐</td></tr>
+<tr><td>Viết EARS requirements</td><td>☐</td></tr>
+<tr><td>Cấu hình Steering</td><td>☐</td></tr>
+<tr><td>Tạo Hooks</td><td>☐</td></tr>
+<tr><td>Setup Permissions</td><td>☐</td></tr>
+</table>
+
+<table>
+<tr><th>Nâng cao</th><th>Check</th></tr>
+<tr><td>Chạy AI-DLC bugfix</td><td>☐</td></tr>
+<tr><td>Chạy AI-DLC feature</td><td>☐</td></tr>
+<tr><td>Review approval gates</td><td>☐</td></tr>
+</table>
+
+<h3>Troubleshooting</h3>
+
+<table>
+<tr><th>Vấn đề</th><th>Giải pháp</th></tr>
+<tr><td>Kiro không response</td><td>Kiểm tra network, verify credentials, restart Kiro</td></tr>
+<tr><td>Hook không chạy</td><td>Kiểm tra JSON syntax, verify matcher regex, check timeout</td></tr>
+<tr><td>Permission denied unexpected</td><td>Review all permission scopes, remember: deny wins</td></tr>
+</table>
+
+<h3>Next Steps</h3>
+
+<ol>
+<li>Chọn 1 use case để thử trong 2 tuần</li>
+<li>Bắt đầu với Supervised mode</li>
+<li>Document learnings cho team</li>
+<li>Share feedback với training team</li>
+</ol>
 
 </main>
 </div>
