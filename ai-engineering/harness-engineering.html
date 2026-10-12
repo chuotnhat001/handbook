@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harness Engineering - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.formula{background:linear-gradient(135deg,#1a1a2e 0%,#2d3748 100%);color:#fff;padding:1.5rem 2rem;border-radius:12px;margin:1.5rem 0;text-align:center;font-size:1.3rem;font-weight:700;letter-spacing:.02em}
+.formula span{color:#667eea}
+.component-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.component-card{background:#f8fafc;border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:1rem 1.25rem}
+.component-card h4{font-size:.9rem;font-weight:700;color:#4c51bf;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.component-card h4 svg{width:18px;height:18px}
+.component-card p{font-size:.85rem;color:#555b6e;margin:0}
+.compare-table{margin:1.5rem 0}
+.compare-table th:first-child{width:30%}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng quan</div>
+    <div class="nav-items">
+      <a href="#overview">Giới thiệu</a>
+      <a href="#three-layers">Ba tầng kỹ thuật</a>
+      <a href="#why-harness">Tại sao Harness quan trọng</a>
+      <a href="#core-loop">Vòng lặp cốt lõi</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Controls</div>
+    <div class="nav-items">
+      <a href="#guides-sensors">Guides vs Sensors</a>
+      <a href="#computational-inferential">Computational vs Inferential</a>
+      <a href="#regulation-categories">3 nhóm Regulation</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kiến trúc</div>
+    <div class="nav-items">
+      <a href="#components">7 thành phần bắt buộc</a>
+      <a href="#three-layer-arch">Kiến trúc 3 tầng</a>
+      <a href="#patterns">Architecture Patterns</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Context Management</div>
+    <div class="nav-items">
+      <a href="#context-rot">Context Rot</a>
+      <a href="#three-tier-memory">Three-Tier Memory</a>
+      <a href="#compaction">Compaction Strategies</a>
+      <a href="#subagent">Subagent Isolation</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Reliability</div>
+    <div class="nav-items">
+      <a href="#failure-patterns">5 Failure Patterns</a>
+      <a href="#anti-patterns">Anti-Patterns</a>
+      <a href="#harnessability">Harnessability</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#practical-patterns">Practical Patterns</a>
+      <a href="#mvh">Minimum Viable Harness</a>
+      <a href="#case-studies">Case Studies</a>
+      <a href="#metrics">Metrics & ROI</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tham khảo</div>
+    <div class="nav-items">
+      <a href="#tooling">Tooling & Frameworks</a>
+      <a href="#sources">Nguồn tham khảo</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Harness Engineering</h1>
+<p class="subtitle">Kỷ luật xây dựng infrastructure để LLM hoạt động như autonomous agent đáng tin cậy</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Tổng hợp từ: <a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank">Martin Fowler</a>, <a href="https://viblo.asia/p/harness-engineering-the-emerging-discipline-of-making-ai-agents-reliable-wd43EZKjLX9" target="_blank">Viblo</a>, <a href="https://arxiv.org/html/2608.21690v1" target="_blank">arXiv</a>, và nhiều nguồn khác</span>
+</div>
+
+<p><strong>Harness Engineering</strong> là kỷ luật thiết kế môi trường, tooling, constraints, và feedback loops xung quanh AI agents — tất cả mọi thứ ngoại trừ bản thân model. Nếu prompt engineering là nghệ thuật "nói chuyện" với model, thì harness engineering là nghệ thuật xây dựng "môi trường sống" cho model.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+"The model provides the intelligence. The harness provides reliability." — Độ tin cậy của AI agent không đến từ model mạnh hơn, mà đến từ hệ thống bao quanh nó. Engineer nên đầu tư vào harness thay vì chờ model cải tiến.
+</div>
+
+<div class="formula">
+Agent = <span>Model</span> + <span>Harness</span>
+</div>
+
+<p>Công thức này được đúc kết bởi Mitchell Hashimoto (2026). Trong đó:</p>
+<ul>
+  <li><strong>Model</strong> = khả năng reasoning (suy luận, sinh text, hiểu ngữ cảnh)</li>
+  <li><strong>Harness</strong> = toàn bộ infrastructure bao quanh: system prompts, tools, retrieval, memory, state, safety, context, orchestration</li>
+</ul>
+
+<h2 id="three-layers">Ba tầng kỹ thuật xây dựng theo tầng</h2>
+
+<p>Harness Engineering là tầng cao nhất trong 3 tầng kỹ thuật AI Engineering:</p>
+
+<table>
+<tr><th>Tầng</th><th>Tập trung vào</th><th>Thời kỳ</th></tr>
+<tr><td><strong>Prompt Engineering</strong></td><td>Định nghĩa vai trò, mục tiêu, hành vi, output format</td><td>2022–2023</td></tr>
+<tr><td><strong>Context Engineering</strong></td><td>Cung cấp thông tin, dữ liệu, tools, retrieval mechanisms</td><td>2024–2025</td></tr>
+<tr><td><strong>Harness Engineering</strong></td><td>Tạo môi trường cho autonomous work: state, execution, permissions, feedback, verification loops</td><td>2025–nay</td></tr>
+</table>
+
+<p>Harness engineering <strong>không thay thế</strong> các tầng trước — nó bao quanh và kết hợp chúng thành một reliable runtime.</p>
+
+<h2 id="why-harness">Tại sao Harness quan trọng hơn Model?</h2>
+
+<p>LLM thuần túy là <strong>stateless</strong> — mỗi session bắt đầu lại từ đầu. Không có harness, agent thất bại theo các pattern lặp đi lặp lại:</p>
+
+<ul>
+  <li><strong>Context overflow</strong> — Cố hoàn thành toàn bộ task trong 1 lượt, hết context ở giữa</li>
+  <li><strong>Victory declaration bias</strong> — Tuyên bố thành công sau khi thấy progress một phần mà không verify</li>
+  <li><strong>Context degradation</strong> — Chất lượng suy giảm khi token window đầy dần</li>
+  <li><strong>Hallucinated tool calls</strong> — Gọi tool với parameters không hợp lệ</li>
+  <li><strong>Lost progress</strong> — Mất toàn bộ progress khi fail, buộc restart từ đầu</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Insight từ thực tế</strong>
+Cùng một model với basic scaffold (23 turns) đạt 23% task completion trên SWE-bench. Với optimized scaffold (250 turns, advanced harness) đạt 45%+. <strong>Delta = 22 điểm</strong> — không phải từ model mới mà từ harness tốt hơn.
+</div>
+
+<h3>Case Study: LangChain Terminal-Bench 2.0</h3>
+<p>Harness changes alone (không thay model) đưa coding agent từ <strong>Top 30 → Top 5</strong>. Minh chứng trực tiếp cho "reliability comes from the system, not the model".</p>
+
+<h3>Case Study: OpenAI Field Report</h3>
+<p>3 engineers ship ~1 triệu dòng code dùng Codex agents. Thành công nhờ tập trung vào harness quality, không chờ model cải tiến.</p>
+
+<h2 id="core-loop">Vòng lặp cốt lõi (The Core Loop)</h2>
+
+<p>Mọi agent đều hoạt động theo vòng lặp cơ bản:</p>
+
+<div class="flow">
+<span class="flow-step">Plan</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Act</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Observe</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Verify</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Repair</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Continue</span>
+</div>
+
+<p>Hay dưới dạng <strong>ReAct pattern</strong>: Reason → Act → Observe → Repeat</p>
+
+<p><strong>Các điều kiện dừng:</strong></p>
+<ul>
+  <li><strong>Goal achieved</strong> — task hoàn thành thành công</li>
+  <li><strong>Turn limit exceeded</strong> — chống infinite loop</li>
+  <li><strong>Budget exhausted</strong> — cost/token/time control</li>
+</ul>
+
+<h2 id="guides-sensors">Hai loại Controls: Guides vs Sensors</h2>
+
+<p>Theo Birgitta Böckeler (Martin Fowler), có hai loại control bổ sung nhau trong harness:</p>
+
+<table>
+<tr><th>Loại</th><th>Khi nào</th><th>Mục đích</th><th>Ví dụ</th></tr>
+<tr>
+  <td><strong>Guides (Feedforward)</strong></td>
+  <td>Trước khi agent hành động</td>
+  <td>Định hướng để tăng chất lượng ngay lần đầu (first-attempt quality)</td>
+  <td>AGENTS.md files, skill activation rules, architecture principles, templates</td>
+</tr>
+<tr>
+  <td><strong>Sensors (Feedback)</strong></td>
+  <td>Sau khi agent hành động</td>
+  <td>Quan sát kết quả, phát hiện vấn đề, kích hoạt self-correction</td>
+  <td>Tests, linters, security scanners, code review agents, runtime signals</td>
+</tr>
+</table>
+
+<p>Kết hợp cả hai tạo thành một <strong>vòng kiểm soát khép kín</strong> (closed control loop).</p>
+
+<h3>Nguyên tắc thiết kế Guides</h3>
+
+<ul>
+  <li><strong>Lean</strong> — Giữ AGENTS.md dưới 60 dòng, đóng vai trò table of contents, không phải encyclopedia</li>
+  <li><strong>Progressive disclosure</strong> — Activate skills và knowledge on-demand thay vì load tất cả upfront</li>
+  <li><strong>Intent-based</strong> — Đặt tên tools theo intent (không theo implementation)</li>
+</ul>
+
+<h3>Nguyên tắc thiết kế Sensors</h3>
+
+<ul>
+  <li><strong>Success is silent</strong> — Chỉ surface lỗi, kết quả pass không cần báo cáo</li>
+  <li><strong>Fail loudly</strong> — Return errors mà agent có thể act upon</li>
+  <li><strong>Structured output</strong> — Return predictable, parseable results</li>
+</ul>
+
+<h2 id="computational-inferential">Computational vs Inferential Controls</h2>
+
+<p>Cả Guides và Sensors đều có thể được implement theo hai chế độ:</p>
+
+<table>
+<tr><th>Chế độ</th><th>Đặc điểm</th><th>Tốc độ</th><th>Ví dụ</th></tr>
+<tr>
+  <td><strong>Computational</strong></td>
+  <td>Deterministic, có thể lặp lại chính xác</td>
+  <td>Nhanh (milliseconds–seconds)</td>
+  <td>Tests, linters, type checkers, static analysis, complexity metrics</td>
+</tr>
+<tr>
+  <td><strong>Inferential</strong></td>
+  <td>Phân tích ngữ nghĩa qua AI, non-deterministic</td>
+  <td>Chậm hơn (seconds–minutes)</td>
+  <td>Code review agents, semantic validation, judgment calls</td>
+</tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Nguyên tắc: Computational trước, Inferential sau</strong>
+Chạy deterministic checks trước (fast, cheap) trên mọi change. Reserve semantic checks (model-based) cho harder scenarios mà computational checks không cover được.
+</div>
+
+<h2 id="regulation-categories">Ba nhóm Regulation Categories</h2>
+
+<p>Theo Martin Fowler, harness cần kiểm soát 3 nhóm chất lượng:</p>
+
+<h3>1. Maintainability Harness</h3>
+
+<p><strong>Mục tiêu:</strong> Kiểm soát chất lượng nội tại của code (internal code quality)</p>
+
+<ul>
+  <li><strong>Computational tools:</strong> Phân tích cấu trúc — complexity metrics, test coverage, style violations, dependency analysis</li>
+  <li><strong>Inferential tools:</strong> Đánh giá semantic (ít tin cậy hơn computational)</li>
+  <li><strong>Điểm mạnh:</strong> Computational sensors rất đáng tin cậy cho structural issues</li>
+</ul>
+
+<h3>2. Architecture Fitness Harness</h3>
+
+<p><strong>Mục tiêu:</strong> Đảm bảo code phù hợp với đặc điểm kiến trúc của ứng dụng</p>
+
+<ul>
+  <li>Kết hợp guides và sensors: performance requirements đi kèm performance tests</li>
+  <li>Logging standards đi kèm debugging guidance</li>
+  <li>Cân bằng giữa định nghĩa đặc tính (guide) và kiểm chứng (sensor)</li>
+</ul>
+
+<h3>3. Behaviour Harness</h3>
+
+<p><strong>Mục tiêu:</strong> Đảm bảo code làm đúng những gì được yêu cầu về mặt hành vi</p>
+
+<ul>
+  <li><strong>Thách thức nhất</strong> trong ba nhóm</li>
+  <li>Cách tiếp cận hiện tại: functional specifications (feedforward) + AI-generated test suites (feedback)</li>
+  <li>Thường phải bổ sung manual testing</li>
+  <li><strong>Gap lớn:</strong> Chưa có cách đáng tin cậy để xây dựng genuine confidence về behavioral correctness</li>
+</ul>
+
+<h2 id="components">Bảy thành phần bắt buộc của một Harness</h2>
+
+<table>
+<tr><th>Component</th><th>Chức năng</th><th>Chi tiết</th></tr>
+<tr>
+  <td><strong>Task Specification</strong></td>
+  <td>Định nghĩa mục tiêu</td>
+  <td>Target, constraints, artifacts, stopping conditions</td>
+</tr>
+<tr>
+  <td><strong>Navigable Context</strong></td>
+  <td>Thông tin tham khảo</td>
+  <td>Documentation, architecture, policies, examples</td>
+</tr>
+<tr>
+  <td><strong>Durable State</strong></td>
+  <td>Persistence</td>
+  <td>Plans, decisions, progress, failures, results — persisted across loop iterations</td>
+</tr>
+<tr>
+  <td><strong>Tools & Execution</strong></td>
+  <td>Khả năng hành động</td>
+  <td>Terminal, files, browser, APIs, databases, sandboxes</td>
+</tr>
+<tr>
+  <td><strong>Permissions</strong></td>
+  <td>Quyền hạn</td>
+  <td>Credentials, read/write scope, production boundaries, approval gates</td>
+</tr>
+<tr>
+  <td><strong>Controls & Verification</strong></td>
+  <td>Kiểm tra chất lượng</td>
+  <td>Tests, linters, security checks, model reviewers</td>
+</tr>
+<tr>
+  <td><strong>Observability</strong></td>
+  <td>Giám sát</td>
+  <td>Traces, tool calls, state changes, errors, cost, latency</td>
+</tr>
+</table>
+
+<h2 id="three-layer-arch">Kiến trúc 3 tầng chi tiết</h2>
+
+<h3>Layer 1 — Information Layer</h3>
+
+<p>Quản lý dữ liệu và tool permissions:</p>
+
+<ul>
+  <li><strong>Vector storage</strong> cho long-term memory</li>
+  <li><strong>Context construction</strong> qua retrieval pipelines</li>
+  <li><strong>Tool registry</strong> định nghĩa callable actions</li>
+  <li><strong>Progressive disclosure</strong> — summary trước, chi tiết chỉ khi cần</li>
+</ul>
+
+<h3>Layer 2 — Control Loop</h3>
+
+<p>Điều khiển luồng thực thi:</p>
+
+<ul>
+  <li>Thực thi model, observe output, check goal conditions</li>
+  <li>Retry logic, timeouts, error routing</li>
+  <li>Escalation to humans khi cần</li>
+  <li>Coordinate multi-agent workflows</li>
+  <li>Loop retry với failure context hoặc thử alternative tools</li>
+</ul>
+
+<h3>Layer 3 — Guardrail Layer</h3>
+
+<p>Đảm bảo an toàn và tuân thủ:</p>
+
+<ul>
+  <li>Validate outputs trước khi deliver cho user/system</li>
+  <li>Enforce content safety, data handling, compliance</li>
+  <li>Block, modify, hoặc escalate non-compliant outputs</li>
+  <li>Audit trail cho regulatory requirements</li>
+</ul>
+
+<h3>Guardrail Placement</h3>
+
+<table>
+<tr><th>Vị trí</th><th>Mục đích</th></tr>
+<tr><td><strong>Pre-prompt</strong></td><td>Injection prevention — ngăn prompt injection</td></tr>
+<tr><td><strong>Post-response</strong></td><td>Compliance validation — baseline cho enterprise</td></tr>
+<tr><td><strong>In-loop</strong></td><td>Essential cho multi-step autonomous sequences</td></tr>
+</table>
+
+<h2 id="patterns">Architecture Patterns</h2>
+
+<h3>Pattern A: Single-Agent Supervisor</h3>
+
+<div class="flow">
+<span class="flow-step">User</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Harness</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Model</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Tools</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Result</span>
+</div>
+
+<p>Một model loop với tools và memory. Phù hợp với <strong>bounded tasks</strong> như customer support agent, single-domain tasks.</p>
+
+<p><strong>Khi nào dùng:</strong> Bắt đầu với pattern này. Chỉ chuyển sang multi-agent khi một agent đơn chứng minh không đủ.</p>
+
+<h3>Pattern B: Initializer-Executor Split</h3>
+
+<div class="flow">
+<span class="flow-step">Initializer</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Executor 1</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Executor 2</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Executor N</span>
+</div>
+
+<ul>
+  <li><strong>Initializer phase:</strong> Tạo scaffolding, progress logs, baseline conditions một lần</li>
+  <li><strong>Executor/Worker phase:</strong> Verify baseline trước khi add incremental work — mỗi session làm một feature, test, commit</li>
+</ul>
+
+<p>Mỗi executor session không cần prior context — progress được <strong>externalize</strong> ra files và commit history.</p>
+
+<h3>Pattern C: Multi-Agent Coordination</h3>
+
+<div class="flow">
+<span class="flow-step">Orchestrator</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Researcher</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Writer</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Reviewer</span>
+</div>
+
+<p>Specialist agents, harness quản lý handoffs giữa các steps. Phù hợp với <strong>complex projects</strong>.</p>
+
+<div class="callout callout-amber">
+<strong>Cảnh báo: Premature Multi-Agent</strong>
+Thêm agents trước khi một agent đơn chứng minh không đủ là anti-pattern. Multi-agent adds tokens, latency, và failure surfaces.
+</div>
+
+<h2 id="context-rot">Context Rot — Vấn đề cốt lõi</h2>
+
+<p>Khi token count vượt ngưỡng model-specific, accuracy của model giảm đáng kể — đặc biệt trong việc áp dụng instructions được đặt ở đầu context.</p>
+
+<blockquote>
+"The goal is not to show the model everything. It is to give it the right working set at the right time and allow it to dynamically make decisions to manage its own context."
+</blockquote>
+
+<div class="callout callout-green">
+<strong>Số liệu thực tế</strong>
+Sau khi chuyển sang semantic retrieval + progressive disclosure, average context giảm từ <strong>480,000 xuống 62,000 tokens</strong> trong khi accuracy cải thiện đáng kể.
+</div>
+
+<h2 id="three-tier-memory">Three-Tier Memory Model</h2>
+
+<table>
+<tr><th>Tầng</th><th>Phạm vi</th><th>Đặc điểm</th><th>Durability</th></tr>
+<tr>
+  <td><strong>Working memory</strong></td>
+  <td>Live context window</td>
+  <td>Những gì model đang thấy ngay lúc này</td>
+  <td>Fast, temporary</td>
+</tr>
+<tr>
+  <td><strong>Session memory</strong></td>
+  <td>Progress files cho current tasks</td>
+  <td>JSON (đáng tin hơn markdown cho multi-session)</td>
+  <td>Moderate durability</td>
+</tr>
+<tr>
+  <td><strong>Long-term memory</strong></td>
+  <td>Reusable knowledge</td>
+  <td>Embedded và searchable, queryable persistent store</td>
+  <td>Durable, requires deliberate retrieval</td>
+</tr>
+</table>
+
+<h3>State Persistence Options</h3>
+
+<table>
+<tr><th>Option</th><th>Đặc điểm</th><th>Use case</th></tr>
+<tr><td><strong>Stateless</strong></td><td>Mỗi session độc lập</td><td>Chỉ phù hợp one-off queries</td></tr>
+<tr><td><strong>Session Summaries</strong></td><td>Compressed prior context inject vào sessions mới</td><td>Multi-turn conversations</td></tr>
+<tr><td><strong>Episodic Memory</strong></td><td>Queryable persistent store of events, decisions, outcomes</td><td>Long-running projects</td></tr>
+</table>
+
+<h2 id="compaction">Compaction Strategies</h2>
+
+<p>Khi context window gần đầy, harness phải compact để giữ model hoạt động hiệu quả.</p>
+
+<h3>Trigger Mechanisms</h3>
+<ul>
+  <li><strong>Token threshold:</strong> <code>85–90%</code> của context window</li>
+  <li><strong>Pre-compaction warning:</strong> <code>75%</code> capacity — bắt đầu proactive compaction ở đây, không đợi 100%</li>
+</ul>
+
+<h3>Các kỹ thuật Compaction</h3>
+
+<p><strong>1. LLM-Powered Summarization:</strong></p>
+<ol>
+  <li>Gửi conversation cho model với structured sections (primary request, concepts, errors, fixes, pending tasks)</li>
+  <li>Model sinh scratchpad phân tích (stripped trước khi lưu) + final summary</li>
+  <li>Summary trở thành synthetic message prepend vào conversation tail còn giữ lại</li>
+</ol>
+
+<p><strong>2. Sliding Window Eviction:</strong></p>
+<ol>
+  <li>Bắt đầu remove oldest messages (10–30% mỗi pass)</li>
+  <li>Tăng % mỗi iteration đến khi usage drop dưới threshold</li>
+  <li>Preserve messages gần nhất là priority cao nhất</li>
+</ol>
+
+<p><strong>3. Tool Result Clamping:</strong></p>
+<ul>
+  <li>Per-result caps: 2KB–50KB mỗi tool output</li>
+  <li>Aggregate caps: 200K chars mỗi message</li>
+  <li>Oversized results: Move to disk + compressed 2KB preview + reference để fetch sau</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Safety Rules khi Compaction</strong>
+Không bao giờ truncate giữa một tool-call/result pair. Preserve tool-call boundaries. Pre-compaction state flush — để agent persist memory trước khi bị xóa.
+</div>
+
+<h2 id="subagent">Subagent Context Isolation</h2>
+
+<p>Subagents hoạt động như <strong>"Context Firewalls"</strong> — ngăn context của main agent bị nhiễm bởi exploratory noise.</p>
+
+<p>Subagents nhận <strong>isolated sessions</strong> — không có parent conversation history:</p>
+
+<ul>
+  <li>Chỉ nhận task string làm user message</li>
+  <li>Filtered workspace context (minimal allowlist approach)</li>
+  <li>Restricted tool set phù hợp với delegated task</li>
+  <li>Results trả về dưới dạng <strong>summary</strong> cho parent</li>
+</ul>
+
+<p><strong>Khi nào dùng:</strong> Delegate research và exploration tasks cho isolated agents với fresh context windows.</p>
+
+<h2 id="failure-patterns">Năm Failure Patterns phổ biến nhất</h2>
+
+<p>Theo nghiên cứu, 5 patterns này chiếm <strong>88% production failures</strong>:</p>
+
+<table>
+<tr><th>#</th><th>Pattern</th><th>Triệu chứng</th><th>Fix</th></tr>
+<tr>
+  <td>1</td>
+  <td><strong>Context Rot</strong></td>
+  <td>Token overflow làm giảm accuracy</td>
+  <td>Progressive disclosure + semantic retrieval</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>State Loss</strong></td>
+  <td>Không có persistence giữa sessions → inconsistent behavior</td>
+  <td>Externalize state vào files và version control</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Absent Guardrails</strong></td>
+  <td>Compliance violations, PII exposure reach users</td>
+  <td>Multi-layer guardrails ở pre-prompt, post-response, in-loop</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Brittle Tool Integration</strong></td>
+  <td>Tool failures do rate limits, timeouts, schema variations</td>
+  <td>Design error handling trước khi viết integration code</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><strong>No Feedback Loop</strong></td>
+  <td>Các lỗi giống nhau lặp lại không có prevention</td>
+  <td>Capture failure patterns → embed vào harness environment</td>
+</tr>
+</table>
+
+<div class="callout callout-blue">
+<strong>Meta-principle</strong>
+"Anytime an agent makes a mistake, engineer a solution so it never makes that mistake again." — Mỗi lỗi là cơ hội cải thiện harness, không phải lý do đổ lỗi cho model.
+</div>
+
+<h2 id="anti-patterns">Anti-Patterns cần tránh</h2>
+
+<h3>1. Model Over-Trust</h3>
+<p>Dùng model capability để bù đắp cho missing tools hoặc bad harness. Intelligence trong model <strong>không thể compensate</strong> cho missing hands (tools). Wrapper thường quyết định production reliability, không phải raw weights.</p>
+
+<h3>2. Excessive Agency / Weak Controls</h3>
+<p>Single weak controls không đủ ngăn harm. Unbounded capabilities cần layered constraints, structured permissions, và human review gates trên irreversible actions.</p>
+
+<h3>3. Context Bloat</h3>
+<p>Cramped context = slow + less accurate. Progressive loading và compaction bảo toàn window capacity cho reasoning thay vì storage.</p>
+
+<h3>4. Graph-first Thinking</h3>
+<p>Predefine states và transitions quá sớm. Câu hỏi không còn là "Which node should the agent move to next?" mà là <strong>"What environment should I create so the model can complete this independently?"</strong></p>
+
+<h3>5. Premature Multi-Agent</h3>
+<p>Thêm agents trước khi một agent đơn chứng minh không đủ. Multi-agent adds tokens, latency, và failure surfaces. Bắt đầu bằng một capable agent.</p>
+
+<h3>6. No Vendor Abstraction</h3>
+<p>Lock vào provider-specific SDK calls. Nên abstract model như pluggable component — keep context assembly, tool dispatch, guardrail logic, state management trong harness layer, độc lập với provider.</p>
+
+<h2 id="harnessability">Harnessability — Không phải codebase nào cũng dễ kiểm soát</h2>
+
+<p>Theo Martin Fowler, "harnessability" là mức độ một codebase cho phép harness hoạt động hiệu quả.</p>
+
+<h3>Yếu tố thuận lợi</h3>
+<ul>
+  <li><strong>Strongly typed languages</strong> — Enable type-checking sensors</li>
+  <li><strong>Clear module boundaries</strong> — Enable architectural rules</li>
+  <li><strong>Consistent frameworks</strong> — Giảm agent uncertainty</li>
+  <li><strong>Topology consistency</strong> — Nhất quán cấu trúc</li>
+  <li><strong>Clear conventions</strong> — Quy ước rõ ràng</li>
+  <li><strong>Defined tech stacks</strong> — Tech stack xác định</li>
+</ul>
+
+<h3>Thách thức</h3>
+<ul>
+  <li><strong>Legacy systems với technical debt</strong> — Thách thức lớn nhất, nhưng lại cần harness nhất</li>
+  <li>Greenfield teams có thể bake harnessability vào từ đầu</li>
+  <li>Legacy teams phải retrofit — khó hơn nhiều</li>
+</ul>
+
+<h3>Ashby's Law áp dụng vào Harness</h3>
+
+<blockquote>
+"A regulator must have at least as much variety as the system it governs."
+</blockquote>
+
+<p>Commit vào specific topologies giúp thu hẹp không gian output của agent → harness toàn diện trở nên khả thi hơn. <strong>Diversity of outputs = difficulty of control:</strong> càng nhiều loại code agent có thể tạo ra, càng khó kiểm soát đầy đủ.</p>
+
+<h2 id="practical-patterns">Practical Patterns</h2>
+
+<h3>1. Context Management Pattern</h3>
+
+<p>Treat context window như <strong>working memory budget</strong> — tài nguyên khan hiếm:</p>
+
+<ul>
+  <li><strong>Progressive disclosure:</strong> Activate skills và knowledge on-demand thay vì load tất cả upfront</li>
+  <li><strong>Ngăn context pollution:</strong> Duy trì agent performance bằng cách chỉ load cần thiết</li>
+  <li><strong>Prompt caching:</strong> Reuse stable prefixes across multiple calls — giảm latency và cost đáng kể</li>
+</ul>
+
+<h3>2. Mechanical Enforcement Pattern</h3>
+
+<p>Enforce architectural invariants qua automated linters và structural tests, không micromanage agent qua prompt:</p>
+
+<ul>
+  <li>Layered dependencies — không cho phép import ngược tầng</li>
+  <li>Structured logging — enforce format nhất quán</li>
+  <li>Naming conventions — tự động kiểm tra naming rules</li>
+</ul>
+
+<h3>3. Feature Lists for Long-Running Work</h3>
+
+<p>Break large tasks thành verifiable milestones, track trong structured files:</p>
+
+<ol>
+  <li><strong>Initializer agent</strong> tạo feature list</li>
+  <li><strong>Coding agents</strong> làm tuần tự từng feature</li>
+  <li><strong>Mark complete</strong> chỉ sau khi verification pass</li>
+</ol>
+
+<h3>4. Repository-Local Knowledge</h3>
+
+<p>Mọi thứ agent cần phải <strong>discoverable</strong> và <strong>version-controlled</strong> trong repo:</p>
+
+<blockquote>
+Undocumented knowledge = không tồn tại với agent
+</blockquote>
+
+<h3>5. Self-Verification Pattern</h3>
+
+<p>Agent chạy tests, inspect outputs, đọc logs để confirm results:</p>
+
+<ul>
+  <li>Không trust claims — verify bằng actual execution</li>
+  <li>Package compilation/test failures → route back to model (self-correction loop)</li>
+</ul>
+
+<h3>6. Keep Quality Left</h3>
+
+<p>Phân phối checks dọc theo timeline phát triển dựa trên cost và speed:</p>
+
+<ul>
+  <li><strong>Fast controls</strong> (linters, basic review) → chạy pre-commit hoặc pre-integration</li>
+  <li><strong>Expensive controls</strong> (mutation testing, detailed review) → chạy post-integration trong pipelines</li>
+</ul>
+
+<p>Mục tiêu: Bắt vấn đề càng sớm càng rẻ.</p>
+
+<h3>7. The Steering Loop</h3>
+
+<p>Con người liên tục cải thiện harness khi phát hiện vấn đề tái diễn:</p>
+
+<ul>
+  <li>Agents có thể hỗ trợ xây dựng custom controls</li>
+  <li>Viết structural tests, scaffold linters, generate rules từ patterns</li>
+  <li>Đây là vòng lặp học hỏi giữa human expertise và agent capabilities</li>
+</ul>
+
+<h2 id="mvh">Minimum Viable Harness</h2>
+
+<p>Để deploy production, cần tối thiểu:</p>
+
+<ol>
+  <li><strong>Clear system prompt</strong> và reliable tools</li>
+  <li><strong>Sandboxed code execution</strong> environment</li>
+  <li><strong>Filesystem</strong> cho state persistence</li>
+  <li><strong>Ít nhất một verification test</strong></li>
+  <li><strong>Basic tracing</strong> từ ngày đầu</li>
+</ol>
+
+<h3>Scale theo thứ tự</h3>
+
+<ol>
+  <li>Memory tiers khi sessions vượt single window</li>
+  <li>Evals và permissions</li>
+  <li>Observability dashboards</li>
+  <li>Orchestration <strong>chỉ khi</strong> một agent đơn chứng minh không đủ</li>
+</ol>
+
+<h2 id="case-studies">Case Studies</h2>
+
+<h3>OpenAI Field Report</h3>
+<p><strong>Kết quả:</strong> 3 engineers ship ~1 triệu dòng code dùng Codex agents.</p>
+<p><strong>Bí quyết:</strong> Thành công nhờ tập trung vào harness quality, không chờ model cải tiến.</p>
+
+<h3>LangChain Terminal-Bench 2.0</h3>
+<p><strong>Kết quả:</strong> Harness changes alone (không thay model) đưa coding agent từ Top 30 → Top 5.</p>
+<p><strong>Bài học:</strong> Minh chứng trực tiếp cho "reliability comes from the system, not the model".</p>
+
+<h3>SWE-bench Improvement</h3>
+<p><strong>Kết quả:</strong> Basic scaffold (23 turns) = 23% completion. Optimized harness (250 turns) = 45%+.</p>
+<p><strong>Bài học:</strong> Delta 22 điểm không đến từ model mới mà từ harness tốt hơn.</p>
+
+<h2 id="metrics">Metrics & ROI</h2>
+
+<h3>Build Timeline</h3>
+
+<table>
+<tr><th>Scope</th><th>Timeline</th></tr>
+<tr><td>Baseline harness (focused use case)</td><td>3–6 tuần</td></tr>
+<tr><td>Full production harness (complex multi-step)</td><td>8–16 tuần</td></tr>
+<tr><td>Ongoing maintenance</td><td>~1 senior engineer day/week</td></tr>
+</table>
+
+<h3>ROI Calculation</h3>
+<ul>
+  <li><strong>Break-even:</strong> 20% success rate improvement justifies ~$40,000 harness investment trên $200,000 project</li>
+  <li><strong>Direct costs khi không có harness:</strong> production incidents, manual review overhead, revenue ceiling từ untrusted agents</li>
+</ul>
+
+<h3>Measurement Framework</h3>
+
+<table>
+<tr><th>Stage</th><th>Metrics</th><th>Requirements</th></tr>
+<tr><td>Stage 1</td><td>Cost per merged PR, time-to-merge, compute spend per developer</td><td>Ngay lập tức</td></tr>
+<tr><td>Stage 2</td><td>First-pass success rate, agent-PR survival rate, defect escape rate</td><td>Cần infrastructure</td></tr>
+<tr><td>Stage 3</td><td>Task complexity distribution, reviewer fatigue signals</td><td>Cần surveys</td></tr>
+</table>
+
+<h3>Observability Requirements</h3>
+
+<p>Capture đủ để debug non-deterministic failures:</p>
+
+<ul>
+  <li>Mọi tool call với inputs và outputs</li>
+  <li>Model decisions tại mỗi turn</li>
+  <li>Correlate events across multi-step runs (OpenTelemetry-style call graphs)</li>
+  <li>Traces enable faithful reproduction của failing runs</li>
+  <li>Trajectory review xác định nơi reasoning diverged đầu tiên</li>
+</ul>
+
+<h2 id="tooling">Tooling & Frameworks (2026)</h2>
+
+<table>
+<tr><th>Category</th><th>Tools</th></tr>
+<tr><td><strong>Orchestration</strong></td><td>LangGraph (stateful workflows), CrewAI (parallel agents), LangChain (integration breadth)</td></tr>
+<tr><td><strong>Context/RAG</strong></td><td>Pinecone, Weaviate, Chroma</td></tr>
+<tr><td><strong>Guardrails</strong></td><td>NeMo Guardrails, Guardrails AI (Python-native), Bifrost (gateway-level)</td></tr>
+<tr><td><strong>Evaluation</strong></td><td>Promptfoo, DeepEval</td></tr>
+<tr><td><strong>Code-Specific</strong></td><td>Claude Code, Cursor (repo context, CI/CD integration)</td></tr>
+<tr><td><strong>Observability</strong></td><td>OpenTelemetry-compatible tracers, Arize, Langfuse</td></tr>
+<tr><td><strong>Tool Protocol</strong></td><td>Model Context Protocol (MCP) — standardizes interfaces, loại bỏ custom glue code</td></tr>
+</table>
+
+<h2 id="sources">Nguồn tham khảo</h2>
+
+<ul>
+  <li><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank">Harness Engineering</a> — Birgitta Böckeler (Martin Fowler)</li>
+  <li><a href="https://viblo.asia/p/harness-engineering-the-emerging-discipline-of-making-ai-agents-reliable-wd43EZKjLX9" target="_blank">Harness Engineering: The Emerging Discipline of Making AI Agents Reliable</a> — Viblo</li>
+  <li><a href="https://arxiv.org/html/2608.21690v1" target="_blank">Programmatic Context Management for Long-Horizon Agents (Scroll Architecture)</a> — arXiv</li>
+  <li><a href="https://www.firecrawl.dev/blog/what-is-an-agent-harness" target="_blank">What Is an Agent Harness?</a> — Firecrawl</li>
+  <li><a href="https://www.faros.ai/blog/harness-engineering" target="_blank">Harness Engineering: A Guide to AI Coding Agents</a> — Faros AI</li>
+  <li><a href="https://arize.com/blog/context-management-in-agent-harnesses/" target="_blank">Context Management in Agent Harnesses</a> — Arize</li>
+  <li><a href="https://tensorops.ai/blog/harness-engineering-the-architecture-around-the-model" target="_blank">Harness Engineering: The Architecture Around the Model</a> — TensorOps</li>
+  <li><a href="https://www.codiste.com/complete-guide-to-harness-engineering-for-ai-agents" target="_blank">The Complete Guide to Harness Engineering for AI Agents</a> — Codiste</li>
+</ul>
+
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>
