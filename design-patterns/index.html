@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Patterns - Giáo trình Design Patterns</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#f8fafc;color:#1a1a2e;min-height:100vh;font-size:17px}
+.top-bar{background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:.75rem 2rem;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:1.5rem}
+.back-btn{display:flex;align-items:center;gap:.5rem;color:#4c51bf;text-decoration:none;font-weight:600;font-size:.88rem;white-space:nowrap}
+.back-btn:hover{color:#667eea}
+.back-btn svg{width:16px;height:16px}
+.logo{font-size:1.1rem;font-weight:800;color:#1a1a2e;white-space:nowrap}
+.logo span{background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.top-meta{font-size:.75rem;color:#94a3b8;white-space:nowrap;margin-left:auto}
+.layout{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:200px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;padding:1.25rem .75rem;border-right:1px solid rgba(0,0,0,.04);background:#fff;flex-shrink:0}
+.sidebar-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;padding:.25rem .5rem;margin-bottom:.5rem}
+.sidebar a{display:flex;align-items:center;gap:.5rem;padding:.45rem .5rem;border-radius:6px;text-decoration:none;color:#64748b;font-size:.82rem;font-weight:500;transition:all .1s;margin-bottom:2px}
+.sidebar a:hover{background:#f0f4ff;color:#4c51bf}
+.sidebar a .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar a .cnt{margin-left:auto;font-size:.68rem;color:#94a3b8}
+.main-content{flex:1;padding:1.5rem 2rem 4rem;max-width:960px}
+.group{margin-bottom:2.5rem}
+.group-header{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;padding:.6rem .85rem;background:linear-gradient(135deg,#f8fafc 0%,#f0f4ff 100%);border-radius:10px;border:1px solid rgba(102,126,234,.1)}
+.group-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.group-icon svg{width:14px;height:14px;color:#fff}
+.group-name{font-size:1.05rem;font-weight:700;color:#1a1a2e}
+.group-count{font-size:.72rem;color:#fff;background:#667eea;padding:2px 8px;border-radius:10px;margin-left:auto;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.card{display:flex;align-items:flex-start;gap:.75rem;padding:.8rem 1rem;background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;text-decoration:none;color:inherit;transition:all .12s;cursor:pointer}
+.card:hover{border-color:rgba(102,126,234,.3);box-shadow:0 2px 8px rgba(102,126,234,.08);transform:translateY(-1px)}
+.card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;background:#f1f3f5;border:1px solid rgba(0,0,0,.06)}
+.card-icon svg{width:16px;height:16px;color:#475569}
+.card-body{flex:1;min-width:0}
+.card-num{font-size:.68rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.card-title{font-size:.92rem;font-weight:600;color:#1a1a2e;line-height:1.3;margin-top:2px}
+.card-desc{font-size:.82rem;color:#64748b;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.source-footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.06)}
+.source-footer a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.source-footer a:hover{text-decoration:underline}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{display:none}.main-content{padding:1rem}.top-bar{padding:.75rem 1rem}.card-title{font-size:1rem}.card-desc{font-size:.88rem}.group-name{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<header class="top-bar">
+  <a href="../index.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    Trang chủ
+  </a>
+  <div class="logo"><span>Design Patterns</span></div>
+  <div class="top-meta">23 patterns · 3 nhóm · Gang of Four</div>
+</header>
+<div class="layout">
+<nav class="sidebar">
+  <div class="sidebar-title">Nhóm Pattern</div>
+  <a href="#creational"><span class="dot" style="background:#10b981"></span>Creational<span class="cnt">5</span></a>
+  <a href="#structural"><span class="dot" style="background:#6366f1"></span>Structural<span class="cnt">7</span></a>
+  <a href="#behavioral"><span class="dot" style="background:#f59e0b"></span>Behavioral<span class="cnt">11</span></a>
+</nav>
+<main class="main-content">
+
+<section class="group" id="creational">
+  <div class="group-header">
+    <div class="group-icon" style="background:#10b981"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div>
+    <span class="group-name">Creational Patterns</span>
+    <span class="group-count">5</span>
+  </div>
+  <div class="cards">
+    <a href="01-singleton.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 01</div><div class="card-title">Singleton</div><div class="card-desc">Đảm bảo một class chỉ có duy nhất một instance và cung cấp điểm truy cập toàn cục</div></div>
+    </a>
+    <a href="02-factory-method.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16"/><path d="M1 21h22"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M14 7h1"/><path d="M14 11h1"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 02</div><div class="card-title">Factory Method</div><div class="card-desc">Định nghĩa interface tạo object, để subclass quyết định class nào được khởi tạo</div></div>
+    </a>
+    <a href="03-abstract-factory.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 03</div><div class="card-title">Abstract Factory</div><div class="card-desc">Tạo ra các họ object liên quan mà không chỉ định class cụ thể của chúng</div></div>
+    </a>
+    <a href="04-builder.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-6h6v6"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 04</div><div class="card-title">Builder</div><div class="card-desc">Tách việc xây dựng object phức tạp khỏi biểu diễn, cùng quy trình tạo nhiều biểu diễn</div></div>
+    </a>
+    <a href="05-prototype.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 05</div><div class="card-title">Prototype</div><div class="card-desc">Tạo object mới bằng cách sao chép một prototype có sẵn thay vì khởi tạo từ đầu</div></div>
+    </a>
+  </div>
+</section>
+
+<section class="group" id="structural">
+  <div class="group-header">
+    <div class="group-icon" style="background:#6366f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/><path d="M4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z"/><path d="M16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg></div>
+    <span class="group-name">Structural Patterns</span>
+    <span class="group-count">7</span>
+  </div>
+  <div class="cards">
+    <a href="06-adapter.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h4v12H4z"/><path d="M16 6h4v12h-4z"/><path d="M8 12h8"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 06</div><div class="card-title">Adapter</div><div class="card-desc">Chuyển đổi interface của class thành interface khác mà client mong đợi</div></div>
+    </a>
+    <a href="07-bridge.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4v16"/><path d="M20 4v16"/><path d="M4 12h16"/><path d="M7 8h4"/><path d="M13 16h4"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 07</div><div class="card-title">Bridge</div><div class="card-desc">Tách abstraction khỏi implementation để cả hai có thể thay đổi độc lập</div></div>
+    </a>
+    <a href="08-composite.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M12 8v4"/><path d="M8.5 14.5L12 12l3.5 2.5"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 08</div><div class="card-title">Composite</div><div class="card-desc">Tổ chức object thành cấu trúc cây, cho phép xử lý đơn lẻ và nhóm như nhau</div></div>
+    </a>
+    <a href="09-decorator.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M3 3l3 3"/><path d="M21 3l-3 3"/><path d="M3 21l3-3"/><path d="M21 21l-3-3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 09</div><div class="card-title">Decorator</div><div class="card-desc">Thêm chức năng mới cho object một cách linh hoạt mà không thay đổi class gốc</div></div>
+    </a>
+    <a href="10-facade.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 10</div><div class="card-title">Facade</div><div class="card-desc">Cung cấp interface đơn giản cho một hệ thống con phức tạp</div></div>
+    </a>
+    <a href="11-flyweight.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><circle cx="8" cy="16" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 11</div><div class="card-title">Flyweight</div><div class="card-desc">Chia sẻ dữ liệu chung giữa nhiều object để tiết kiệm bộ nhớ</div></div>
+    </a>
+    <a href="12-proxy.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><path d="M11 7h2"/><path d="M7 11v2"/><path d="M17 11v2"/><path d="M11 17h2"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 12</div><div class="card-title">Proxy</div><div class="card-desc">Cung cấp đại diện cho object khác để kiểm soát truy cập vào nó</div></div>
+    </a>
+  </div>
+</section>
+
+<section class="group" id="behavioral">
+  <div class="group-header">
+    <div class="group-icon" style="background:#f59e0b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg></div>
+    <span class="group-name">Behavioral Patterns</span>
+    <span class="group-count">11</span>
+  </div>
+  <div class="cards">
+    <a href="13-chain-of-responsibility.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3"/><path d="M14 12h3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 13</div><div class="card-title">Chain of Responsibility</div><div class="card-desc">Chuyển request qua chuỗi handler, mỗi handler quyết định xử lý hoặc chuyển tiếp</div></div>
+    </a>
+    <a href="14-command.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8l5 4-5 4"/><path d="M13 16h4"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 14</div><div class="card-title">Command</div><div class="card-desc">Đóng gói request thành object, cho phép tham số hóa, queue, và undo operations</div></div>
+    </a>
+    <a href="15-interpreter.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h6"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 15</div><div class="card-title">Interpreter</div><div class="card-desc">Định nghĩa biểu diễn ngữ pháp và interpreter để diễn giải các câu trong ngôn ngữ</div></div>
+    </a>
+    <a href="16-iterator.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/><circle cx="8" cy="6" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="18" r="1" fill="currentColor"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 16</div><div class="card-title">Iterator</div><div class="card-desc">Truy cập tuần tự các phần tử của collection mà không cần biết cấu trúc bên trong</div></div>
+    </a>
+    <a href="17-mediator.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><path d="M6 7l4 4"/><path d="M18 7l-4 4"/><path d="M6 17l4-4"/><path d="M18 17l-4-4"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 17</div><div class="card-title">Mediator</div><div class="card-desc">Định nghĩa object trung gian đóng gói cách các object tương tác với nhau</div></div>
+    </a>
+    <a href="18-memento.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 109-9"/><path d="M3 3v6h6"/><path d="M12 7v5l3 3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 18</div><div class="card-title">Memento</div><div class="card-desc">Lưu và khôi phục trạng thái trước đó của object mà không vi phạm encapsulation</div></div>
+    </a>
+    <a href="19-observer.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 19</div><div class="card-title">Observer</div><div class="card-desc">Định nghĩa quan hệ một-nhiều, khi một object thay đổi thì các object phụ thuộc được thông báo</div></div>
+    </a>
+    <a href="20-state.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><path d="M9 12h6"/><path d="M12 9l3 3-3 3"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 20</div><div class="card-title">State</div><div class="card-desc">Cho phép object thay đổi hành vi khi trạng thái nội bộ thay đổi</div></div>
+    </a>
+    <a href="21-strategy.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l7 7"/><path d="M4 4h6"/><path d="M4 4v6"/><path d="M20 20l-7-7"/><path d="M20 20h-6"/><path d="M20 20v-6"/><path d="M4 20l16-16"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 21</div><div class="card-title">Strategy</div><div class="card-desc">Định nghĩa họ các thuật toán, đóng gói mỗi thuật toán và làm chúng hoán đổi được</div></div>
+    </a>
+    <a href="22-template-method.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10"/><path d="M7 12h6"/><path d="M7 17h8"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 22</div><div class="card-title">Template Method</div><div class="card-desc">Định nghĩa khung thuật toán, cho phép subclass override các bước cụ thể</div></div>
+    </a>
+    <a href="23-visitor.html" class="card">
+      <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 11l2 2 4-4"/></svg></div>
+      <div class="card-body"><div class="card-num">Pattern 23</div><div class="card-title">Visitor</div><div class="card-desc">Thêm operations mới cho các class mà không thay đổi chúng, tách thuật toán khỏi cấu trúc</div></div>
+    </a>
+  </div>
+</section>
+
+<div class="source-footer">
+  <a href="https://github.com/nguyenphuc22/Design-Patterns" target="_blank">Nguồn: Design Patterns — nguyenphuc22 (GitHub)</a>
+</div>
+</main>
+</div>
+<script>
+document.querySelectorAll('.sidebar a').forEach(function(a){a.addEventListener('click',function(e){var t=document.querySelector(this.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}})});
+</script>
+</body>
+</html>
