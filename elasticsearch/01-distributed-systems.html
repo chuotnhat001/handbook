@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ Thống Phân Tán — Nền Tảng Lý Thuyết - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Khái niệm cốt lõi</div>
+    <div class="nav-items">
+      <a href="#what-is">Distributed System là gì</a>
+      <a href="#analogy">Ví dụ từ đời sống</a>
+      <a href="#cap">CAP Theorem</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Patterns</div>
+    <div class="nav-items">
+      <a href="#sharding">Sharding</a>
+      <a href="#replication">Replication</a>
+      <a href="#quorum">Quorum</a>
+      <a href="#consensus">Consensus</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Liên hệ ES</div>
+    <div class="nav-items">
+      <a href="#es-mapping">ES áp dụng thế nào</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html" class="current">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Hệ Thống Phân Tán — Nền Tảng Lý Thuyết</h1>
+<p class="subtitle">CAP theorem, sharding, replication, quorum, consensus — kiến thức nền cho mọi hệ thống phân tán bao gồm Elasticsearch</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://dataintensive.net/" target="_blank">Designing Data-Intensive Applications</a> (Martin Kleppmann), <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html" target="_blank">Elastic Docs</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+
+<div class="callout callout-blue">
+<strong>Sau bài học này, bạn sẽ có khả năng:</strong>
+<ul>
+<li>Hiểu tại sao cần hệ thống phân tán (scalability, availability, fault tolerance)</li>
+<li>Giải thích CAP theorem và các trade-offs thực tế khi thiết kế hệ thống</li>
+<li>Phân biệt sharding vs replication — khi nào dùng cái nào, tại sao thường dùng cả hai</li>
+<li>Hiểu quorum-based consistency và vai trò của consensus algorithms</li>
+<li>Liên hệ trực tiếp từng khái niệm với kiến trúc Elasticsearch</li>
+<li>Quan sát hành vi cluster thực tế qua bài lab Docker</li>
+</ul>
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+
+<p>Trước khi bắt đầu, hãy đảm bảo bạn đã nắm vững:</p>
+<ul>
+<li><strong>Networking cơ bản</strong> — TCP/IP, khái niệm latency, bandwidth, packet loss</li>
+<li><strong>Client-server model</strong> — request/response cycle, stateless vs stateful</li>
+<li><strong>Database fundamentals</strong> — ACID properties (Atomicity, Consistency, Isolation, Durability)</li>
+<li><strong>Linux/Docker basics</strong> — biết chạy container, đọc logs (cho phần lab)</li>
+</ul>
+
+<h2 id="what-is">Distributed System Là Gì</h2>
+
+<h3>Định nghĩa</h3>
+
+<p>Một <strong>distributed system</strong> (hệ thống phân tán) là tập hợp các máy tính độc lập, giao tiếp qua mạng, phối hợp cùng nhau để giải quyết một vấn đề. Với người dùng cuối, hệ thống này xuất hiện như <strong>một hệ thống thống nhất duy nhất</strong>.</p>
+
+<blockquote>
+"A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable." — Leslie Lamport
+</blockquote>
+
+<h3>Tại sao cần hệ thống phân tán?</h3>
+
+<p>Ba lý do chính khiến chúng ta không thể chỉ dùng 1 máy duy nhất:</p>
+
+<ol>
+<li><strong>Scalability (Khả năng mở rộng)</strong> — Dữ liệu vượt quá khả năng lưu trữ hoặc xử lý của một máy đơn lẻ. Google xử lý hàng tỷ documents, không máy nào đủ RAM chứa tất cả.</li>
+<li><strong>Availability (Tính sẵn sàng)</strong> — Hệ thống vẫn hoạt động bình thường khi có node bị lỗi. Nếu chỉ có 1 server và nó chết, toàn bộ dịch vụ ngừng.</li>
+<li><strong>Performance (Hiệu năng)</strong> — Xử lý song song trên nhiều máy cho throughput cao hơn và latency thấp hơn so với 1 máy mạnh nhất.</li>
+</ol>
+
+<h3>Thách thức cốt lõi</h3>
+
+<p>Hệ thống phân tán đi kèm những vấn đề mà hệ thống đơn lẻ không gặp phải:</p>
+
+<table>
+<tr><th>Thách thức</th><th>Mô tả</th><th>Ví dụ thực tế</th></tr>
+<tr><td><strong>Network partition</strong></td><td>Mạng giữa các node bị đứt, chia cluster thành các nhóm cô lập</td><td>Switch hỏng khiến rack A không liên lạc được rack B</td></tr>
+<tr><td><strong>Clock skew</strong></td><td>Đồng hồ giữa các máy không đồng bộ hoàn hảo</td><td>Node A nghĩ event X xảy ra trước Y, node B nghĩ ngược lại</td></tr>
+<tr><td><strong>Partial failure</strong></td><td>Một số node lỗi trong khi số khác vẫn hoạt động bình thường</td><td>1 trong 5 node hết disk, 4 node còn lại vẫn nhận request</td></tr>
+<tr><td><strong>Split-brain</strong></td><td>Hai phần của cluster đều nghĩ mình là "chính", dẫn đến xung đột dữ liệu</td><td>Partition khiến 2 node cùng tự bầu mình làm master</td></tr>
+</table>
+
+<h3>Fallacies of Distributed Computing</h3>
+
+<p>Peter Deutsch đã liệt kê 8 giả định sai lầm mà developer thường mắc phải khi lần đầu làm việc với hệ thống phân tán:</p>
+
+<ol>
+<li>Mạng luôn đáng tin cậy (The network is reliable)</li>
+<li>Latency bằng 0 (Latency is zero)</li>
+<li>Bandwidth vô hạn (Bandwidth is infinite)</li>
+<li>Mạng an toàn (The network is secure)</li>
+<li>Topology không thay đổi (Topology doesn't change)</li>
+<li>Có một admin duy nhất (There is one administrator)</li>
+<li>Chi phí vận chuyển bằng 0 (Transport cost is zero)</li>
+<li>Mạng đồng nhất (The network is homogeneous)</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Takeaway</strong>
+Mỗi giả định sai lầm ở trên đều dẫn đến bugs khó tái hiện trong production. Khi thiết kế hệ thống phân tán, hãy luôn giả định rằng mạng SẼ lỗi, latency SẼ tăng đột biến, và nodes SẼ chết bất ngờ.
+</div>
+
+<h2 id="analogy">Ví Dụ Từ Đời Sống — Hệ Thống Thư Viện</h2>
+
+<p>Hãy tưởng tượng một hệ thống thư viện thành phố với nhiều chi nhánh. Mỗi khái niệm phân tán đều có phép ẩn dụ tương ứng:</p>
+
+<table>
+<tr><th>Thư viện</th><th>Distributed System</th><th>Elasticsearch</th></tr>
+<tr><td>Mỗi chi nhánh thư viện</td><td>Một node trong cluster</td><td>Một ES node</td></tr>
+<tr><td>Bản sao sách phổ biến đặt ở nhiều chi nhánh</td><td>Replication — cùng dữ liệu ở nhiều node</td><td>Replica shards</td></tr>
+<tr><td>Chia sách theo thể loại: văn học ở CN1, khoa học ở CN2</td><td>Sharding — mỗi node giữ 1 phần dữ liệu</td><td>Primary shards</td></tr>
+<tr><td>1 chi nhánh đóng cửa bảo trì → bạn đọc sang chi nhánh khác</td><td>Node failure → traffic chuyển sang replica</td><td>Shard failover</td></tr>
+<tr><td>Catalog chung liệt kê sách nằm ở chi nhánh nào</td><td>Cluster state / routing table</td><td>Cluster state trên master node</td></tr>
+<tr><td>Thủ thư trưởng điều phối toàn hệ thống</td><td>Leader / coordinator node</td><td>Master node</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Tư duy trực quan</strong>
+Khi bạn tìm sách ở thư viện: bạn hỏi catalog (routing) → catalog nói "sách ở chi nhánh 3" → bạn đến CN3 lấy sách. Elasticsearch hoạt động y hệt: coordinating node nhận request → route đến đúng shard → trả kết quả về client.
+</div>
+
+<h3>Khi chi nhánh gặp sự cố</h3>
+
+<p>Giả sử chi nhánh 2 bị ngập nước (node failure):</p>
+<ul>
+<li>Sách chỉ có ở CN2 (no replica) → <strong>mất dữ liệu</strong>, độc giả không mượn được</li>
+<li>Sách có bản sao ở CN1 và CN3 (có replica) → độc giả chuyển sang mượn ở đó, <strong>dịch vụ không gián đoạn</strong></li>
+<li>Thủ thư trưởng cập nhật catalog: "tạm thời không có CN2" → hệ thống tự thích ứng</li>
+</ul>
+
+<p>Đây chính xác là cách Elasticsearch xử lý node failure: replica shards được promote thành primary, cluster chuyển trạng thái từ green sang yellow, và tự phục hồi khi node quay lại.</p>
+
+<h2 id="cap">CAP Theorem</h2>
+
+<h3>Ba thuộc tính</h3>
+
+<p>Năm 2000, Eric Brewer đưa ra giả thuyết (sau được chứng minh toán học bởi Gilbert & Lynch, 2002) rằng một hệ thống phân tán chỉ có thể đảm bảo <strong>tối đa 2 trong 3</strong> thuộc tính sau:</p>
+
+<table>
+<tr><th>Thuộc tính</th><th>Ý nghĩa</th><th>Ví dụ vi phạm</th></tr>
+<tr><td><strong>Consistency (C)</strong></td><td>Mọi node trả về cùng một dữ liệu tại cùng thời điểm. Mọi read đều nhận được write gần nhất.</td><td>Node A trả giá sản phẩm 100k, node B trả 120k cho cùng sản phẩm</td></tr>
+<tr><td><strong>Availability (A)</strong></td><td>Mọi request gửi đến node đang hoạt động đều nhận được response (không bị timeout)</td><td>Client gửi request nhưng bị treo chờ vô thời hạn vì node đang chờ sync</td></tr>
+<tr><td><strong>Partition Tolerance (P)</strong></td><td>Hệ thống tiếp tục hoạt động dù mạng bị chia cắt giữa các node</td><td>Cluster ngừng hoàn toàn khi mất kết nối giữa 2 datacenter</td></tr>
+</table>
+
+<h3>Thực tế: P không thể bỏ</h3>
+
+<p>Trong hệ thống phân tán thực tế, <strong>network partition luôn có thể xảy ra</strong> — đây là thực tế vật lý, không phải lựa chọn thiết kế. Cáp quang bị đứt, switch hỏng, datacenter mất điện — tất cả đều gây partition.</p>
+
+<p>Do đó, câu hỏi thực sự không phải "chọn 2 trong 3" mà là:</p>
+
+<div class="callout callout-blue">
+<strong>Câu hỏi thực tế của CAP</strong>
+Khi network partition xảy ra, bạn chọn gì?<br>
+<strong>CP</strong>: Hy sinh availability — từ chối serve request cho đến khi partition được giải quyết (đảm bảo data consistency)<br>
+<strong>AP</strong>: Hy sinh consistency — tiếp tục serve request với data có thể cũ (stale) để giữ availability
+</div>
+
+<h3>Phổ CP — AP</h3>
+
+<table>
+<tr><th>Hệ thống</th><th>Phân loại</th><th>Hành vi khi partition</th></tr>
+<tr><td>MongoDB (default config)</td><td>CP</td><td>Primary không reachable → reject writes cho đến khi bầu primary mới</td></tr>
+<tr><td>HBase</td><td>CP</td><td>Region server mất liên lạc → region offline</td></tr>
+<tr><td>Zookeeper</td><td>CP</td><td>Minority partition không thể serve reads/writes</td></tr>
+<tr><td>Cassandra</td><td>AP</td><td>Mọi node đều nhận writes, reconcile sau bằng timestamps</td></tr>
+<tr><td>DynamoDB</td><td>AP</td><td>Eventually consistent reads mặc định, strongly consistent optional</td></tr>
+<tr><td>Riak</td><td>AP</td><td>Tiếp tục serve với heuristic conflict resolution</td></tr>
+<tr><td><strong>Elasticsearch</strong></td><td><strong>AP-leaning</strong></td><td>Tiếp tục serve reads từ available shards; tunable qua <code>wait_for_active_shards</code></td></tr>
+</table>
+
+<h3>Elasticsearch và CAP</h3>
+
+<p>Elasticsearch nghiêng về phía <strong>AP</strong> theo mặc định:</p>
+<ul>
+<li>Reads luôn được serve từ bất kỳ shard copy nào available (primary hoặc replica)</li>
+<li>Writes mặc định chỉ cần primary shard acknowledge (async replication to replicas)</li>
+<li>Có thể tune về phía CP bằng <code>wait_for_active_shards=all</code> — yêu cầu tất cả shard copies confirm write</li>
+<li>Khi partition xảy ra: phần cluster có quorum master nodes tiếp tục hoạt động, phần còn lại tự tách ra</li>
+</ul>
+
+<h2 id="sharding">Sharding (Phân Mảnh Dữ Liệu)</h2>
+
+<h3>Khái niệm</h3>
+
+<p><strong>Sharding</strong> là kỹ thuật chia một tập dữ liệu lớn thành nhiều phần nhỏ hơn (gọi là <strong>shards</strong>), mỗi shard được lưu trữ trên một node khác nhau. Mỗi shard chứa một subset độc lập của tổng dữ liệu.</p>
+
+<p>Khác với replication (copy cùng dữ liệu), sharding đảm bảo rằng <strong>mỗi document chỉ thuộc về đúng 1 primary shard</strong>.</p>
+
+<h3>Chiến lược Sharding</h3>
+
+<p><strong>Hash-based sharding:</strong></p>
+<pre><code>shard_number = hash(routing_key) % number_of_shards</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<ul>
+<li>Phân bố đều dữ liệu giữa các shards</li>
+<li>Không thể range query hiệu quả (dữ liệu liên tiếp bị phân tán)</li>
+<li>Elasticsearch sử dụng chiến lược này mặc định</li>
+</ul>
+
+<p><strong>Range-based sharding:</strong></p>
+<ul>
+<li>Chia theo phạm vi giá trị: time ranges, alphabetical ranges</li>
+<li>Range queries hiệu quả (dữ liệu liên tiếp nằm cùng shard)</li>
+<li>Dễ bị hotspot: shard chứa "time range hiện tại" nhận mọi writes</li>
+<li>Ví dụ: logs theo ngày — shard hôm nay nhận 100% write traffic</li>
+</ul>
+
+<h3>Lợi ích của Sharding</h3>
+
+<ol>
+<li><strong>Parallel processing</strong> — Search query chạy đồng thời trên tất cả shards, kết quả merge lại</li>
+<li><strong>Horizontal scaling</strong> — Thêm node mới = thêm capacity, không cần máy mạnh hơn</li>
+<li><strong>Smaller index size</strong> — Mỗi shard là một Lucene index nhỏ, search nhanh hơn index khổng lồ</li>
+</ol>
+
+<h3>Thách thức</h3>
+
+<ul>
+<li><strong>Hotspots</strong> — Nếu routing key phân bố không đều, 1 shard nhận nhiều traffic hơn (ví dụ: shard chứa user "celebrity" có hàng triệu followers)</li>
+<li><strong>Resharding cực kỳ khó</strong> — Thay đổi số shards yêu cầu reindex toàn bộ dữ liệu (vì hash formula thay đổi)</li>
+<li><strong>Cross-shard queries đắt</strong> — Aggregation trên toàn bộ data phải scatter-gather qua mọi shard</li>
+<li><strong>Over-sharding</strong> — Quá nhiều shards nhỏ gây overhead: mỗi shard tiêu tốn file handles, memory, CPU cho Lucene segments</li>
+</ul>
+
+<h3>Elasticsearch Sharding</h3>
+
+<p>Trong ES, routing formula mặc định:</p>
+
+<pre><code>shard_num = hash(_routing) % num_primary_shards
+
+// _routing mặc định = _id của document
+// Có thể custom routing để co-locate related documents</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="flow">
+<span class="flow-step">Document đến</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">hash(_routing)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">% num_shards</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Shard N</span>
+</div>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng</strong>
+Số primary shards (<code>number_of_shards</code>) không thể thay đổi sau khi tạo index. Lý do: nếu thay đổi N trong formula <code>hash % N</code>, mọi document sẽ route đến shard sai. Đây là quyết định thiết kế phải cân nhắc kỹ từ đầu.
+</div>
+
+<h2 id="replication">Replication (Sao Chép Dữ Liệu)</h2>
+
+<h3>Mục đích</h3>
+
+<p>Replication giải quyết hai vấn đề:</p>
+<ol>
+<li><strong>Fault tolerance</strong> — Nếu node chứa primary shard chết, replica shard trên node khác được promote thành primary. Không mất dữ liệu, không gián đoạn dịch vụ.</li>
+<li><strong>Read scalability</strong> — Search requests có thể được serve bởi bất kỳ copy nào (primary hoặc replica), phân tải read traffic.</li>
+</ol>
+
+<h3>Leader-Follower Model</h3>
+
+<p>Elasticsearch sử dụng mô hình <strong>primary-replica</strong> (tương đương leader-follower):</p>
+
+<ul>
+<li><strong>Primary shard</strong>: nhận tất cả write operations, là source of truth</li>
+<li><strong>Replica shard</strong>: bản copy của primary, nhận writes được forward từ primary, serve read requests</li>
+<li>Mỗi primary có thể có 0 hoặc nhiều replicas</li>
+<li>Primary và replica của cùng shard KHÔNG BAO GIỜ nằm trên cùng node</li>
+</ul>
+
+<div class="flow">
+<span class="flow-step">Write request</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Primary Shard</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Forward to Replicas</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Acknowledge</span>
+</div>
+
+<h3>Synchronous vs Asynchronous Replication</h3>
+
+<table>
+<tr><th>Tiêu chí</th><th>Synchronous</th><th>Asynchronous</th></tr>
+<tr><td><strong>Cơ chế</strong></td><td>Write acknowledged SAU KHI tất cả replicas confirm</td><td>Write acknowledged SAU KHI primary confirm (replicas sync sau)</td></tr>
+<tr><td><strong>Consistency</strong></td><td>Strong — read từ bất kỳ copy nào đều nhận latest data</td><td>Eventual — replica có thể trả data cũ trong khoảng lag</td></tr>
+<tr><td><strong>Latency</strong></td><td>Cao hơn — phải chờ slowest replica</td><td>Thấp hơn — chỉ chờ primary</td></tr>
+<tr><td><strong>Durability</strong></td><td>Tốt — data tồn tại trên nhiều nodes trước khi acknowledge</td><td>Rủi ro — nếu primary chết trước khi replicate, data mất</td></tr>
+<tr><td><strong>Throughput</strong></td><td>Thấp hơn — bottleneck ở replica chậm nhất</td><td>Cao hơn — writes không bị block</td></tr>
+</table>
+
+<h3>Elasticsearch mặc định</h3>
+
+<p>ES sử dụng <strong>semi-synchronous replication</strong>:</p>
+<ul>
+<li>Mặc định <code>wait_for_active_shards=1</code> — chỉ cần primary acknowledge</li>
+<li>Replicas được sync trong background (gần như immediately, nhưng không guaranteed)</li>
+<li>Có thể set <code>wait_for_active_shards=all</code> cho synchronous behavior</li>
+<li>Hoặc giá trị cụ thể: <code>wait_for_active_shards=2</code> (cần primary + 1 replica confirm)</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Khi nào dùng sync vs async?</strong>
+<ul>
+<li><strong>Async (default)</strong>: Log data, metrics, search indices — chấp nhận mất vài document gần nhất nếu node crash</li>
+<li><strong>Sync (wait_for_active_shards=all)</strong>: Financial transactions, order data — mỗi document đều quan trọng, không chấp nhận mất</li>
+</ul>
+</div>
+
+<h2 id="quorum">Quorum</h2>
+
+<h3>Định nghĩa</h3>
+
+<p><strong>Quorum</strong> là số lượng tối thiểu nodes (hoặc shard copies) phải đồng ý để một operation được coi là thành công. Đây là cơ chế cân bằng giữa consistency và availability.</p>
+
+<h3>Quorum Formula</h3>
+
+<p>Công thức kinh điển:</p>
+
+<pre><code>W + R > N
+
+Trong đó:
+  N = tổng số replicas (copies) của dữ liệu
+  W = Write quorum — số nodes phải confirm write
+  R = Read quorum — số nodes phải respond cho read</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Khi <code>W + R > N</code>, bạn được đảm bảo rằng ít nhất 1 node trong read set đã tham gia write gần nhất → <strong>guaranteed to read latest write</strong>.</p>
+
+<h3>Ví dụ minh họa</h3>
+
+<table>
+<tr><th>Config</th><th>N</th><th>W</th><th>R</th><th>Guarantee</th><th>Trade-off</th></tr>
+<tr><td>Strong consistency</td><td>3</td><td>2</td><td>2</td><td>Luôn đọc được data mới nhất</td><td>Chậm hơn, cần 2 nodes available cho cả read và write</td></tr>
+<tr><td>Fast writes</td><td>3</td><td>1</td><td>3</td><td>Vẫn consistent (1+3>3)</td><td>Write nhanh, read chậm (phải hỏi tất cả)</td></tr>
+<tr><td>Fast reads</td><td>3</td><td>3</td><td>1</td><td>Vẫn consistent (3+1>3)</td><td>Read nhanh, write chậm (phải chờ tất cả)</td></tr>
+<tr><td>Eventual consistency</td><td>3</td><td>1</td><td>1</td><td>Có thể đọc data cũ (1+1=2, không > 3)</td><td>Nhanh nhất, nhưng không đảm bảo consistency</td></tr>
+</table>
+
+<h3>Quorum trong Elasticsearch</h3>
+
+<p>ES áp dụng quorum ở hai cấp độ:</p>
+
+<p><strong>1. Data write quorum:</strong></p>
+<ul>
+<li>Setting <code>wait_for_active_shards</code> trên mỗi index operation</li>
+<li>Mặc định = 1 (chỉ primary, tương đương W=1 trong quorum formula)</li>
+<li>Set <code>"all"</code> để yêu cầu tất cả copies confirm (W=N)</li>
+<li>Hoặc giá trị số cụ thể: <code>wait_for_active_shards: 2</code> nghĩa là cần primary + ít nhất 1 replica</li>
+</ul>
+
+<p><strong>2. Master election quorum:</strong></p>
+<ul>
+<li>Trước ES 7.x: <code>discovery.zen.minimum_master_nodes = (N/2) + 1</code></li>
+<li>Từ ES 7.x: tự động quản lý qua voting configuration — cluster tự tính quorum dựa trên master-eligible nodes hiện tại</li>
+<li>Với 3 master-eligible nodes: cần ít nhất 2 nodes đồng ý → phòng split-brain</li>
+</ul>
+
+<h3>Split-brain và cách phòng tránh</h3>
+
+<p><strong>Split-brain</strong> xảy ra khi network partition chia cluster thành 2+ nhóm, mỗi nhóm tự bầu master riêng → hai "brains" hoạt động độc lập, gây data divergence.</p>
+
+<div class="flow">
+<span class="flow-step">Cluster 5 nodes</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Partition</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Group A (3 nodes)</span>
+<span class="flow-arrow">+</span>
+<span class="flow-step">Group B (2 nodes)</span>
+</div>
+
+<p>Với quorum = 3 (majority of 5):</p>
+<ul>
+<li>Group A (3 nodes) → đủ quorum → bầu master → tiếp tục hoạt động bình thường</li>
+<li>Group B (2 nodes) → không đủ quorum → KHÔNG bầu master → từ chối writes → an toàn</li>
+</ul>
+
+<div class="callout callout-red">
+<strong>Tại sao cần số lẻ master-eligible nodes?</strong>
+Với 2 nodes: quorum = 2, partition thành (1,1) → không bên nào đủ quorum → cluster ngừng hoàn toàn.<br>
+Với 3 nodes: quorum = 2, partition thành (2,1) → bên 2 nodes vẫn hoạt động.<br>
+Với 4 nodes: quorum = 3, partition thành (2,2) → không bên nào đủ → tệ như 2 nodes!<br>
+<strong>Best practice: luôn dùng 3 hoặc 5 master-eligible nodes.</strong>
+</div>
+
+<h2 id="consensus">Consensus Algorithms</h2>
+
+<h3>Vấn đề cần giải quyết</h3>
+
+<p>Trong hệ thống phân tán, nhiều nodes cần <strong>đồng ý về cùng một giá trị</strong> (ví dụ: "ai là leader?", "thứ tự các operations?") ngay cả khi có nodes bị failure hoặc mạng bị partition. Đây là <strong>consensus problem</strong>.</p>
+
+<p>Consensus đảm bảo 3 thuộc tính:</p>
+<ol>
+<li><strong>Agreement</strong> — Tất cả non-faulty nodes chọn cùng giá trị</li>
+<li><strong>Validity</strong> — Giá trị được chọn phải do ít nhất 1 node đề xuất (không phải random)</li>
+<li><strong>Termination</strong> — Thuật toán phải kết thúc (không chạy mãi mãi)</li>
+</ol>
+
+<h3>Raft Algorithm</h3>
+
+<p>Elasticsearch từ phiên bản 7.x sử dụng thuật toán consensus dựa trên <strong>Raft</strong> cho master election và cluster state updates. Raft được thiết kế để dễ hiểu hơn Paxos (thuật toán trước đó).</p>
+
+<p><strong>Ba thành phần chính của Raft:</strong></p>
+
+<p><strong>1. Leader Election:</strong></p>
+<ul>
+<li>Mỗi node có 1 trong 3 trạng thái: <strong>Leader</strong>, <strong>Follower</strong>, <strong>Candidate</strong></li>
+<li>Leader gửi heartbeats định kỳ đến followers</li>
+<li>Nếu follower không nhận heartbeat trong thời gian timeout → chuyển thành candidate → bắt đầu election</li>
+<li>Candidate gửi RequestVote đến tất cả nodes</li>
+<li>Node nhận majority votes → trở thành leader mới</li>
+<li>Mỗi term (nhiệm kỳ) chỉ có tối đa 1 leader</li>
+</ul>
+
+<p><strong>2. Log Replication:</strong></p>
+<ul>
+<li>Leader nhận mọi client requests (trong ES: cluster state changes)</li>
+<li>Leader append entry vào log của mình, gửi AppendEntries cho followers</li>
+<li>Khi majority followers confirm → entry considered committed</li>
+<li>Leader thông báo commit cho followers, tất cả apply entry</li>
+</ul>
+
+<p><strong>3. Safety Guarantees:</strong></p>
+<ul>
+<li><strong>Election Safety</strong>: tối đa 1 leader per term</li>
+<li><strong>Leader Append-Only</strong>: leader không bao giờ overwrite log entries</li>
+<li><strong>Log Matching</strong>: nếu 2 logs có cùng entry tại cùng index → tất cả entries trước đó đều giống nhau</li>
+<li><strong>Leader Completeness</strong>: entry đã committed sẽ xuất hiện trong log của mọi future leaders</li>
+</ul>
+
+<h3>ES sử dụng Raft như thế nào</h3>
+
+<ul>
+<li><strong>Master election</strong>: Khi master node chết hoặc mất kết nối, Raft protocol bầu master mới từ master-eligible nodes</li>
+<li><strong>Cluster state updates</strong>: Mọi thay đổi cluster state (tạo index, thay đổi mapping, shard allocation) đều đi qua master và được replicate theo Raft</li>
+<li><strong>Voting configuration</strong>: Danh sách nodes có quyền vote, tự động cập nhật khi nodes join/leave</li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>So sánh nhanh: Paxos vs Raft</strong>
+<ul>
+<li><strong>Paxos</strong> (Lamport, 1989): thuật toán consensus đầu tiên được chứng minh đúng. Cực kỳ khó hiểu và implement đúng. Google dùng trong Chubby/Spanner.</li>
+<li><strong>Raft</strong> (Ongaro & Ousterhout, 2014): thiết kế với mục tiêu "understandable consensus". Tách rõ leader election, log replication, safety. Elasticsearch, etcd, CockroachDB đều dùng Raft.</li>
+</ul>
+</div>
+
+<h2 id="es-mapping">Elasticsearch Áp Dụng Thế Nào</h2>
+
+<p>Bảng tổng hợp cách Elasticsearch implement từng khái niệm phân tán:</p>
+
+<table>
+<tr><th>Khái niệm phân tán</th><th>ES Implementation</th><th>Config / API</th></tr>
+<tr><td>Sharding</td><td>Primary shards — chia index thành N phần</td><td><code>number_of_shards</code> (khi tạo index)</td></tr>
+<tr><td>Replication</td><td>Replica shards — copy của mỗi primary</td><td><code>number_of_replicas</code> (thay đổi được)</td></tr>
+<tr><td>Consensus</td><td>Raft-based master election (7.x+)</td><td><code>cluster.initial_master_nodes</code></td></tr>
+<tr><td>Quorum (data)</td><td>Write quorum trước khi acknowledge</td><td><code>wait_for_active_shards</code></td></tr>
+<tr><td>Quorum (master)</td><td>Majority master-eligible nodes</td><td>Automatic voting configuration</td></tr>
+<tr><td>Cluster state</td><td>Global metadata trên master, replicate to all</td><td><code>GET _cluster/state</code></td></tr>
+<tr><td>Routing</td><td>Hash-based document routing</td><td><code>hash(_routing) % num_primary_shards</code></td></tr>
+<tr><td>Leader node</td><td>Elected master node</td><td><code>GET _cat/master</code></td></tr>
+<tr><td>Coordinator</td><td>Bất kỳ node nào nhận request đầu tiên</td><td>Coordinating node role</td></tr>
+<tr><td>CAP trade-off</td><td>AP default, tunable consistency</td><td><code>wait_for_active_shards</code>, <code>?preference</code></td></tr>
+</table>
+
+<h3>Flow xử lý write request</h3>
+
+<div class="flow">
+<span class="flow-step">Client</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Coordinating Node</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Route (hash % N)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Primary Shard</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Replica Shards</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Acknowledge</span>
+</div>
+
+<h3>Flow xử lý search request</h3>
+
+<div class="flow">
+<span class="flow-step">Client</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Coordinating Node</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Scatter (tất cả shards)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Gather results</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Merge &amp; Return</span>
+</div>
+
+<p>Coordinating node trong ES đóng vai trò <strong>scatter-gather</strong>: phân phối search request đến mọi relevant shard (primary hoặc replica), thu thập partial results, merge/sort, và trả về cho client.</p>
+
+<h2 id="lab">Bài Lab Thực Hành</h2>
+
+<h3>Lab: Quan sát hành vi cluster khi node failure</h3>
+
+<p>Trong lab này, bạn sẽ tạo một cluster 3 nodes bằng Docker, tạo index có replication, và quan sát hệ thống phản ứng khi 1 node bị tắt.</p>
+
+<p><strong>Prerequisites:</strong> Docker và Docker Compose đã cài đặt.</p>
+
+<h3>Bước 1: Tạo docker-compose.yml</h3>
+
+<pre><code>version: '3.8'
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=lab-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es01-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=lab-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es02-data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=lab-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es03-data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+volumes:
+  es01-data:
+  es02-data:
+  es03-data:
+
+networks:
+  elastic:
+    driver: bridge</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Khởi động cluster</h3>
+
+<pre><code># Khởi động cluster
+docker-compose up -d
+
+# Chờ cluster sẵn sàng (khoảng 30-60 giây)
+# Kiểm tra trạng thái
+curl -s http://localhost:9200/_cluster/health?pretty</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Expected output:</strong></p>
+<pre><code>{
+  "cluster_name": "lab-cluster",
+  "status": "green",
+  "number_of_nodes": 3,
+  "number_of_data_nodes": 3,
+  "active_primary_shards": 0,
+  "active_shards": 0,
+  "relocating_shards": 0,
+  "initializing_shards": 0,
+  "unassigned_shards": 0
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Tạo index với sharding và replication</h3>
+
+<pre><code># Tạo index với 3 primary shards, 1 replica mỗi shard
+curl -X PUT "http://localhost:9200/lab-index" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1
+  }
+}'
+
+# Index vài documents
+curl -X POST "http://localhost:9200/lab-index/_bulk" -H 'Content-Type: application/json' -d'
+{"index":{"_id":"1"}}
+{"title":"Distributed Systems","author":"Kleppmann"}
+{"index":{"_id":"2"}}
+{"title":"Elasticsearch Guide","author":"Elastic"}
+{"index":{"_id":"3"}}
+{"title":"CAP Theorem Paper","author":"Brewer"}
+'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Kiểm tra cluster health và shard allocation</h3>
+
+<pre><code># Cluster health - phải là GREEN
+curl -s http://localhost:9200/_cluster/health?pretty
+
+# Xem phân bố shards trên các nodes
+curl -s "http://localhost:9200/_cat/shards/lab-index?v"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Expected output (_cat/shards):</strong></p>
+<pre><code>index     shard prirep state   docs store node
+lab-index 0     p      STARTED 1    4.5kb es01
+lab-index 0     r      STARTED 1    4.5kb es02
+lab-index 1     p      STARTED 1    4.5kb es02
+lab-index 1     r      STARTED 1    4.5kb es03
+lab-index 2     p      STARTED 1    4.5kb es03
+lab-index 2     r      STARTED 1    4.5kb es01</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Lưu ý: primary (p) và replica (r) của cùng shard luôn nằm trên node khác nhau.</p>
+
+<h3>Bước 5: Tắt 1 node — quan sát phản ứng</h3>
+
+<pre><code># Tắt node es03
+docker stop es03
+
+# Chờ 10 giây cho ES phát hiện node mất
+# Kiểm tra cluster health
+curl -s http://localhost:9200/_cluster/health?pretty</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Expected output:</strong></p>
+<pre><code>{
+  "cluster_name": "lab-cluster",
+  "status": "yellow",
+  "number_of_nodes": 2,
+  "number_of_data_nodes": 2,
+  "active_primary_shards": 3,
+  "active_shards": 5,
+  "unassigned_shards": 1
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-blue">
+<strong>Giải thích kết quả</strong>
+<ul>
+<li><strong>Status: yellow</strong> — Tất cả primary shards active, nhưng có replica chưa được assign (vì chỉ còn 2 nodes, không đủ chỗ cho tất cả replicas)</li>
+<li><strong>unassigned_shards: 1</strong> — 1 replica shard không có node nào để đặt</li>
+<li><strong>Data vẫn intact</strong> — Không mất document nào vì mỗi shard đều có bản copy ở node khác</li>
+</ul>
+</div>
+
+<h3>Bước 6: Kiểm tra shard allocation sau failure</h3>
+
+<pre><code># Xem shards sau khi es03 offline
+curl -s "http://localhost:9200/_cat/shards/lab-index?v"
+
+# Verify data vẫn accessible
+curl -s "http://localhost:9200/lab-index/_search?pretty"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Bạn sẽ thấy: shard mà es03 giữ primary đã được promote từ replica trên node khác. Search vẫn trả đủ 3 documents.</p>
+
+<h3>Bước 7: Khôi phục node — cluster tự healing</h3>
+
+<pre><code># Khởi động lại es03
+docker start es03
+
+# Chờ 30 giây, kiểm tra lại
+curl -s http://localhost:9200/_cluster/health?pretty</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><strong>Expected:</strong> Cluster trở lại <strong>green</strong>. ES tự động allocate replica shards lên es03 để khôi phục full redundancy.</p>
+
+<h3>Dọn dẹp</h3>
+
+<pre><code># Xóa cluster sau khi lab xong
+docker-compose down -v</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+
+<ol>
+<li><strong>Tại sao partition tolerance không thể bỏ trong hệ thống phân tán?</strong><br>Gợi ý: Nghĩ về thực tế vật lý của mạng — cáp quang bị đứt, switch hỏng, datacenter mất điện.</li>
+
+<li><strong>Elasticsearch thuộc CP hay AP? Giải thích.</strong><br>Gợi ý: Xem xét hành vi mặc định khi đọc và ghi, và cách <code>wait_for_active_shards</code> thay đổi hành vi.</li>
+
+<li><strong>Nếu cluster có 5 primary shards và 1 replica, tổng cộng có bao nhiêu shards?</strong><br>Gợi ý: Mỗi primary shard có N replica copies. Tổng = primary × (1 + number_of_replicas).</li>
+
+<li><strong>Giải thích tại sao không thể thay đổi <code>number_of_shards</code> sau khi tạo index.</strong><br>Gợi ý: Nghĩ về routing formula <code>hash(_routing) % N</code> — nếu N thay đổi thì sao?</li>
+
+<li><strong>Quorum write với N=3 cần bao nhiêu nodes acknowledge?</strong><br>Gợi ý: Majority = floor(N/2) + 1. Với N=3, majority = ?</li>
+
+<li><strong>Split-brain là gì và ES phòng tránh bằng cách nào?</strong><br>Gợi ý: Nghĩ về kịch bản partition và cơ chế voting configuration.</li>
+
+<li><strong>So sánh synchronous vs asynchronous replication — khi nào chọn cái nào?</strong><br>Gợi ý: Trade-off giữa latency/throughput và durability/consistency. Loại dữ liệu nào chấp nhận mất?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+
+<p>Đánh dấu những khái niệm bạn đã nắm vững:</p>
+
+<ul>
+<li>☐ Giải thích được 3 lý do cần hệ thống phân tán (scalability, availability, performance)</li>
+<li>☐ Liệt kê được ít nhất 4 thách thức của distributed systems</li>
+<li>☐ Phát biểu đúng CAP theorem và giải thích tại sao luôn phải có P</li>
+<li>☐ Phân biệt được CP và AP systems, cho ví dụ mỗi loại</li>
+<li>☐ Giải thích được hash-based sharding và range-based sharding</li>
+<li>☐ Hiểu tại sao number_of_shards không thay đổi được sau khi tạo index</li>
+<li>☐ Phân biệt được sharding (chia dữ liệu) vs replication (copy dữ liệu)</li>
+<li>☐ So sánh được sync vs async replication với trade-offs cụ thể</li>
+<li>☐ Tính được quorum với W + R > N formula</li>
+<li>☐ Giải thích được split-brain và cách phòng tránh bằng quorum</li>
+<li>☐ Mô tả được Raft consensus: leader election, log replication, safety</li>
+<li>☐ Map được mỗi khái niệm phân tán sang ES implementation tương ứng</li>
+<li>☐ Hoàn thành bài lab Docker và quan sát cluster behavior khi node failure</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+
+<div class="callout callout-amber">
+<strong>Những hiểu lầm phổ biến khi học distributed systems:</strong>
+<ul>
+<li><strong>Nhầm sharding với replication</strong> — Sharding = chia dữ liệu thành N phần (mỗi phần khác nhau). Replication = copy cùng dữ liệu ra nhiều nơi. Hai khái niệm khác nhau hoàn toàn, thường dùng kết hợp.</li>
+<li><strong>Nghĩ CAP cho phép "chọn bất kỳ 2 trong 3"</strong> — Sai. Partition tolerance (P) không phải lựa chọn — nó là thực tế vật lý. Câu hỏi đúng: khi partition xảy ra, chọn C hay A?</li>
+<li><strong>Bỏ qua network partition scenarios</strong> — "Mạng của tôi ổn định" không có nghĩa là partition không xảy ra. Murphy's Law áp dụng đặc biệt mạnh với distributed systems.</li>
+<li><strong>Over-sharding vì nghĩ "nhiều shards = nhanh hơn"</strong> — Mỗi shard là 1 Lucene index riêng, tiêu tốn memory (~500MB heap overhead/shard). 1000 shards trên cluster nhỏ = cluster chết vì OOM.</li>
+<li><strong>Không hiểu rằng replica cũng tốn tài nguyên</strong> — Replica shard tiêu tốn disk space và memory y hệt primary. number_of_replicas=2 nghĩa là dữ liệu tốn gấp 3 lần disk.</li>
+<li><strong>Quên rằng consistency có chi phí</strong> — Strong consistency (wait_for_active_shards=all) đồng nghĩa với latency cao hơn và throughput thấp hơn. Không phải lúc nào cũng cần.</li>
+<li><strong>Chỉ có 2 master-eligible nodes</strong> — Với 2 nodes, partition thành (1,1) = không bên nào đủ quorum = cluster chết hoàn toàn. Luôn dùng 3 hoặc 5.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+
+<h3>Sizing Guidelines</h3>
+
+<ul>
+<li><strong>Shard size</strong>: nhắm 10-50GB per shard cho search use cases, tối đa 200GB cho logging/time-series</li>
+<li><strong>Số shards</strong>: bắt đầu với 1 primary shard per index cho data < 50GB. Scale up khi cần.</li>
+<li><strong>Replicas</strong>: luôn ít nhất 1 replica cho production. 2 replicas cho data quan trọng không chấp nhận mất.</li>
+<li><strong>Master-eligible nodes</strong>: tối thiểu 3 (hoặc 5 cho cluster lớn) để đảm bảo quorum</li>
+<li><strong>Tổng shards per node</strong>: không vượt quá 20 shards per GB heap. Node 32GB heap → tối đa ~600 shards.</li>
+</ul>
+
+<h3>Monitoring cơ bản</h3>
+
+<ul>
+<li>Kiểm tra <code>_cluster/health</code> thường xuyên — green là tốt, yellow cần chú ý, red cần xử lý ngay</li>
+<li>Monitor unassigned shards — nếu > 0 kéo dài, có vấn đề với allocation</li>
+<li>Theo dõi JVM heap usage — nếu > 75% liên tục, cần thêm nodes hoặc giảm shards</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+
+<ul>
+<li><strong>Sách</strong>: <a href="https://dataintensive.net/" target="_blank">Designing Data-Intensive Applications</a> — Martin Kleppmann (chương 5-9 về replication, partitioning, consistency)</li>
+<li><strong>Elastic Docs</strong>: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html" target="_blank">Scalability and Resilience</a></li>
+<li><strong>Raft paper</strong>: <a href="https://raft.github.io/raft.pdf" target="_blank">In Search of an Understandable Consensus Algorithm</a> — Ongaro & Ousterhout</li>
+<li><strong>CAP theorem proof</strong>: <a href="https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf" target="_blank">Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services</a> — Gilbert & Lynch</li>
+<li><strong>Raft visualization</strong>: <a href="https://thesecretlivesofdata.com/raft/" target="_blank">The Secret Lives of Data - Raft</a> — interactive demo</li>
+</ul>
+
+<div class="prev-next">
+<span></span>
+<a href="02-lucene-fundamentals.html">Bài 02: Apache Lucene →</a>
+</div>
+
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=document.querySelectorAll('h2[id],h3[id]');
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+defined.forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphify - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:900px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+h4{font-size:.88rem;font-weight:600;margin:1.2rem 0 .4rem;color:#2d3748}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng quan</div>
+    <div class="nav-items">
+      <a href="#overview">Graphify là gì?</a>
+      <a href="#core-idea">Tư duy cốt lõi</a>
+      <a href="#pipeline">Pipeline tổng thể</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính năng</div>
+    <div class="nav-items">
+      <a href="#features">Tính năng chính</a>
+      <a href="#supported">File types hỗ trợ</a>
+      <a href="#edge-labels">Edge labeling system</a>
+      <a href="#community">Community detection</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Sử dụng</div>
+    <div class="nav-items">
+      <a href="#install">Cài đặt</a>
+      <a href="#commands">CLI commands</a>
+      <a href="#mcp-tools">MCP server tools</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kiến trúc</div>
+    <div class="nav-items">
+      <a href="#modules">Module responsibilities</a>
+      <a href="#extraction-schema">Extraction schema</a>
+      <a href="#outputs">Output artifacts</a>
+      <a href="#llm-backends">LLM backends</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng cao</div>
+    <div class="nav-items">
+      <a href="#performance">Performance</a>
+      <a href="#security">Security</a>
+      <a href="#limitations">Limitations</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">Graphify</h1>
+<p class="subtitle">Biến codebase + tài liệu thành knowledge graph có thể query được</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://github.com/Graphify-Labs/graphify" target="_blank">github.com/Graphify-Labs/graphify</a> — Apache-2.0 License, Python, uv-managed, ~133.7k stars, 12.8k forks (số liệu 23/10/2026)</span>
+</div>
+
+<p>Graphify là tool chuyển đổi codebase (bao gồm code, docs, SQL schemas, configs, PDFs, images, video/audio) thành <strong>knowledge graph</strong> có thể query. Thay vì đọc raw files (tốn token), agent query graph (ít token hơn nhiều lần). Tích hợp với các AI coding assistant như Claude Code, Cursor, Codex, Gemini CLI dưới dạng skill <code>/graphify</code>.</p>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Graph-first, no embeddings — kết quả là traversable graph JSON, không phải vector store. Query hoạt động qua graph traversal, không phải semantic similarity search. Code extraction chạy hoàn toàn offline bằng tree-sitter AST, deterministic và tái lập được.
+</div>
+
+<h2 id="core-idea">Tư duy cốt lõi</h2>
+
+<h3>1. Deterministic over probabilistic</h3>
+<p>Code được parse bằng tree-sitter AST thuần túy — không có LLM, không có gì rời khỏi máy. LLM chỉ được dùng cho docs/media bên ngoài codebase. Kết quả hoàn toàn deterministic và tái lập được.</p>
+
+<h3>2. Graph-first, no embeddings</h3>
+<p>Kết quả là traversable graph JSON, không phải vector store. Query hoạt động qua graph traversal, không phải semantic similarity search. Điều này cho phép truy vấn chính xác theo relationships thay vì dựa vào "similarity".</p>
+
+<h3>3. Offline-first, modular backends</h3>
+<p>Code extraction chạy offline hoàn toàn. LLM backends là optional và pluggable — có thể dùng local Ollama, cloud APIs, hoặc IDE context inheritance từ Claude Code/Cursor/Gemini CLI.</p>
+
+<h3>4. Transparency qua confidence labels</h3>
+<p>Tất cả relationships đều được gán confidence label (EXTRACTED / INFERRED / AMBIGUOUS) — graph không che giấu mức độ chắc chắn. Developer biết chính xác đâu là thông tin tường minh từ source, đâu là suy luận của tool.</p>
+
+<h2 id="pipeline">Pipeline tổng thể</h2>
+
+<div class="flow">
+<span class="flow-step">detect()</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">extract()</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">build_graph()</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">cluster()</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">analyze()</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">report()</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">export()</span>
+</div>
+
+<p>Giao tiếp giữa các module qua plain Python dicts và NetworkX graphs. Không có shared state. Side effects giới hạn trong thư mục <code>graphify-out/</code>.</p>
+
+<h2 id="features">Tính năng chính</h2>
+
+<table>
+<tr><th>Tính năng</th><th>Mô tả</th></tr>
+<tr><td>Local AST parsing</td><td>Phân tích code bằng tree-sitter cho 36 ngôn ngữ, không cần LLM, zero API cost</td></tr>
+<tr><td>Edge labeling</td><td>Mỗi edge có nhãn EXTRACTED/INFERRED/AMBIGUOUS với confidence score</td></tr>
+<tr><td>Community detection</td><td>Thuật toán Leiden tự động phát hiện subsystem/cluster trong codebase</td></tr>
+<tr><td>Path tracing</td><td>Tìm đường ngắn nhất giữa hai khái niệm bất kỳ qua graph traversal</td></tr>
+<tr><td>Multi-format</td><td>Hỗ trợ code, PDF, docs, Office, hình ảnh, video/audio</td></tr>
+<tr><td>Triple output</td><td>HTML graph (interactive), Markdown report, JSON để query programmatically</td></tr>
+<tr><td>MCP server</td><td>7 tools expose qua stdio server cho AI agents</td></tr>
+<tr><td>Incremental update</td><td><code>--update</code> chỉ re-extract changed files, merge vào graph hiện có</td></tr>
+<tr><td>Auto-sync</td><td><code>--watch</code> tự động rebuild graph khi files thay đổi</td></tr>
+</table>
+
+<h2 id="supported">File types hỗ trợ</h2>
+
+<h3>Code (36 ngôn ngữ qua tree-sitter)</h3>
+<table>
+<tr><th>Category</th><th>Languages</th></tr>
+<tr><td>Backend</td><td>Python, Go, Rust, Java, C, C++, C#, Ruby, PHP, Scala, Kotlin, Elixir</td></tr>
+<tr><td>Frontend</td><td>JavaScript, TypeScript, Vue, Svelte, Astro, HTML, CSS</td></tr>
+<tr><td>Mobile</td><td>Swift, Kotlin, Dart</td></tr>
+<tr><td>Data/Scientific</td><td>SQL, R, Julia, Fortran</td></tr>
+<tr><td>Systems</td><td>Zig, Verilog, Pascal, Lua, Bash, PowerShell</td></tr>
+<tr><td>Config</td><td>JSON, YAML, TOML, Groovy</td></tr>
+<tr><td>Other</td><td>DreamMaker, Salesforce Apex (regex fallback), Terraform/HCL (optional parser)</td></tr>
+</table>
+
+<h3>Documents & Media (cần LLM enrichment)</h3>
+<table>
+<tr><th>Category</th><th>Extensions</th><th>Extraction method</th></tr>
+<tr><td>Docs</td><td>.md .txt .rst</td><td>Concepts + relationships via LLM</td></tr>
+<tr><td>Office</td><td>.docx .xlsx</td><td>Requires <code>[office]</code> extras</td></tr>
+<tr><td>Academic</td><td>.pdf</td><td>Citation mining + concept extraction, requires <code>[pdf]</code> extras</td></tr>
+<tr><td>Images</td><td>.png .jpg .webp .gif</td><td>Claude vision</td></tr>
+<tr><td>Video/Audio</td><td>Various</td><td>Transcript extraction, requires <code>[video]</code> extras</td></tr>
+</table>
+
+<h3>Package manifests (auto-detected)</h3>
+<ul>
+<li><code>pyproject.toml</code> — Python dependencies</li>
+<li><code>go.mod</code> — Go modules</li>
+<li><code>pom.xml</code> — Maven dependencies</li>
+<li>Markdown với wikilinks</li>
+<li>MCP configs</li>
+</ul>
+
+<h2 id="edge-labels">Edge labeling system</h2>
+
+<p>Mọi relationship trong graph đều được gán confidence label — đây là điểm khác biệt quan trọng so với các tool khác.</p>
+
+<table>
+<tr><th>Label</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+<tr><td><code>EXTRACTED</code></td><td>Relationship được nêu tường minh trong source</td><td>import statement, direct function call, class inheritance</td></tr>
+<tr><td><code>INFERRED</code></td><td>Suy luận hợp lý từ call-graph second pass, co-occurrence</td><td>Indirect dependencies, shared resource usage</td></tr>
+<tr><td><code>AMBIGUOUS</code></td><td>Không chắc chắn, flag cho human review</td><td>Dynamic dispatch, reflection, metaprogramming</td></tr>
+</table>
+
+<h3>Relationship types được extract</h3>
+<ul>
+<li><code>calls</code> — function/method calls</li>
+<li><code>imports</code> — module/package imports</li>
+<li><code>inherits</code> — class inheritance</li>
+<li><code>mixes_in</code> — mixin patterns</li>
+<li><code>references</code> — symbol references</li>
+</ul>
+
+<p>Với <code>--mode deep</code>: kích hoạt aggressive INFERRED edge extraction, tìm thêm nhiều relationships hơn nhưng có thể có false positives.</p>
+
+<h2 id="community">Community detection</h2>
+
+<p>Graphify sử dụng thuật toán <strong>Leiden</strong> (via <code>graspologic.partition.leiden</code>) để tự động nhóm các concepts liên quan thành communities/subsystems.</p>
+
+<h3>Quy trình clustering</h3>
+<ol>
+<li>Xử lý isolated nodes riêng (Leiden bỏ qua chúng)</li>
+<li>Chạy <code>leiden()</code> trên connected component</li>
+<li>Split các community quá lớn qua recursive pass</li>
+<li>Sắp xếp communities theo size giảm dần (deterministic output)</li>
+</ol>
+
+<h3>Configuration parameters</h3>
+<ul>
+<li><code>_MAX_COMMUNITY_FRACTION = 0.25</code> — Community vượt 25% tổng nodes → trigger splitting</li>
+<li><code>_MIN_SPLIT_SIZE = 10</code> — Số nodes tối thiểu cần có để split</li>
+</ul>
+
+<h3>Cohesion score</h3>
+<p>Mỗi community được tính cohesion score = <code>actual_edges / (n*(n-1)/2)</code> — tỷ lệ cạnh thực tế so với cạnh tối đa có thể. Score cao = community chặt chẽ.</p>
+
+<div class="callout callout-amber">
+<strong>Lưu ý</strong>
+Leiden clustering chỉ hoạt động với Python < 3.13. Dùng <code>--no-label</code> để skip community detection nếu cần.
+</div>
+
+<h2 id="install">Cài đặt</h2>
+
+<h3>Cài đặt cơ bản</h3>
+<pre><code># Cài đặt via uv (Python package manager)
+uv tool install graphifyy
+
+# Đăng ký skill với AI assistant đang dùng
+graphify install</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Lệnh <code>graphify install</code> tự động phát hiện và đăng ký với Claude Code, Cursor, Codex, hoặc Gemini CLI.</p>
+
+<h3>Cài đặt extras</h3>
+<pre><code># PDF support
+uv tool install graphifyy[pdf]
+
+# Office documents
+uv tool install graphifyy[office]
+
+# Video transcripts
+uv tool install graphifyy[video]
+
+# Tất cả extras
+uv tool install graphifyy[pdf,office,video]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Các extras khác</h3>
+<ul>
+<li>Neo4j/FalkorDB push</li>
+<li>MCP server (stdio hoặc HTTP transport)</li>
+<li>Chinese segmentation</li>
+</ul>
+
+<h2 id="commands">CLI commands</h2>
+
+<h3>Build graph</h3>
+<pre><code># Run trên current directory
+/graphify .
+
+# Run trên folder cụ thể
+/graphify ./src
+
+# Deep mode - aggressive INFERRED edge extraction
+/graphify . --mode deep
+
+# Update chỉ changed files
+/graphify . --update
+
+# Auto-sync khi files thay đổi
+/graphify . --watch</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Query graph</h3>
+<pre><code># Query bằng natural language
+graphify query "what connects auth to database?"
+
+# Tìm path giữa 2 nodes
+graphify path UserService DatabasePool
+
+# Giải thích concept
+graphify explain RateLimiter</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Ingest external content</h3>
+<pre><code># Fetch paper/tweet, save, update graph
+graphify add [URL]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Export options</h3>
+<pre><code># Build agent-crawlable wiki
+/graphify . --wiki
+
+# Export graph.svg
+/graphify . --svg
+
+# Export cho Gephi/yEd
+/graphify . --graphml
+
+# Generate cypher.txt cho Neo4j
+/graphify . --neo4j</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Git integration</h3>
+<pre><code># Install post-commit hook tự rebuild graph
+graphify hook install</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>MCP server</h3>
+<pre><code># Start MCP stdio server
+/graphify . --mcp</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="mcp-tools">MCP server tools (7 tools)</h2>
+
+<p>Expose qua MCP stdio server (<code>serve.py</code>). Agents kết nối qua <code>--mcp</code> flag.</p>
+
+<table>
+<tr><th>Tool</th><th>Input</th><th>Output</th></tr>
+<tr><td><code>query_graph</code></td><td>question, mode (bfs|dfs), depth (1-6), token_budget</td><td>Text rendering của subgraph với node/edge details</td></tr>
+<tr><td><code>get_node</code></td><td>label hoặc node ID (case-insensitive)</td><td>Node metadata: source file, location, community, degree</td></tr>
+<tr><td><code>get_neighbors</code></td><td>label, optional relation_filter</td><td>Direct neighbors với relation type và confidence scores</td></tr>
+<tr><td><code>get_community</code></td><td>community_id (integer)</td><td>Tất cả nodes trong community đó</td></tr>
+<tr><td><code>god_nodes</code></td><td>top_n (default 10)</td><td>Highest-degree nodes ranked by edge count</td></tr>
+<tr><td><code>graph_stats</code></td><td>không có</td><td>Node/edge counts, community count, confidence breakdown</td></tr>
+<tr><td><code>shortest_path</code></td><td>source, target, max_hops (default 8)</td><td>Path với relation types và confidence annotations</td></tr>
+</table>
+
+<h3>query_graph scoring formula</h3>
+<pre><code>score = sum(1 for t in terms if t in label) + sum(0.5 for t in terms if t in source)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Start traversal từ top 3 matches. Output truncated tại character budget (~4 chars/token).</p>
+
+<h3>Traversal algorithms</h3>
+<ul>
+<li><strong>BFS</strong> — breadth-first, frontier expansion per depth level</li>
+<li><strong>DFS</strong> — depth-first, stack-based node/depth tracking</li>
+</ul>
+
+<h2 id="modules">Module responsibilities</h2>
+
+<table>
+<tr><th>Module</th><th>Entry point</th><th>Input → Output</th></tr>
+<tr><td>detect.py</td><td><code>collect_files(root)</code></td><td>directory → [Path] filtered</td></tr>
+<tr><td>extract.py</td><td><code>extract(path)</code></td><td>file path → {nodes, edges} dict</td></tr>
+<tr><td>build.py</td><td><code>build_graph(extractions)</code></td><td>list of dicts → nx.Graph</td></tr>
+<tr><td>cluster.py</td><td><code>cluster(G)</code></td><td>graph → graph với community attr</td></tr>
+<tr><td>analyze.py</td><td><code>analyze(G)</code></td><td>graph → {god nodes, surprises, questions}</td></tr>
+<tr><td>report.py</td><td><code>render_report(G, analysis)</code></td><td>graph + analysis → GRAPH_REPORT.md</td></tr>
+<tr><td>export.py</td><td><code>export(G, out_dir, ...)</code></td><td>graph → Obsidian/JSON/HTML/SVG</td></tr>
+<tr><td>ingest.py</td><td><code>ingest(url, ...)</code></td><td>URL → file trong corpus dir</td></tr>
+<tr><td>cache.py</td><td><code>check/save_semantic_cache</code></td><td>files → (cached, uncached) split</td></tr>
+<tr><td>security.py</td><td>validation helpers</td><td>URL/path/label → validated hoặc raise</td></tr>
+<tr><td>validate.py</td><td><code>validate_extraction(data)</code></td><td>extraction dict → raise nếu sai schema</td></tr>
+<tr><td>serve.py</td><td><code>start_server(graph_path)</code></td><td>graph file → MCP stdio server</td></tr>
+<tr><td>watch.py</td><td><code>watch(root, flag_path)</code></td><td>directory → writes flag khi có thay đổi</td></tr>
+<tr><td>benchmark.py</td><td><code>run_benchmark(graph_path)</code></td><td>graph file → token comparison report</td></tr>
+</table>
+
+<h2 id="extraction-schema">Extraction output schema</h2>
+
+<pre><code>{
+  "nodes": [
+    {
+      "id": "unique_string",
+      "label": "human readable name",
+      "source_file": "path/to/file",
+      "source_location": "L42"
+    }
+  ],
+  "edges": [
+    {
+      "source": "id_a",
+      "target": "id_b",
+      "relation": "calls|imports|uses|...",
+      "confidence": "EXTRACTED|INFERRED|AMBIGUOUS"
+    }
+  ]
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p><code>validate.py</code> enforce schema trước khi <code>build_graph()</code> tiêu thụ. Rationale nodes (inline comments <code># NOTE:</code>, <code># WHY:</code>) trở thành first-class nodes liên kết với source code.</p>
+
+<h2 id="outputs">Output artifacts</h2>
+
+<pre><code>graphify-out/
+├── graph.html       — Interactive visualization (vis.js); click, search, filter by community
+├── obsidian/        — Vault format cho Obsidian
+├── wiki/            — Wikipedia-style articles cho agent navigation
+├── GRAPH_REPORT.md  — God nodes, surprising connections, suggested questions
+├── graph.json       — Persistent graph (node_link_graph format) cho future queries
+└── cache/           — SHA256-based cache cho incremental processing</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>GRAPH_REPORT.md nội dung</h3>
+<ul>
+<li><strong>God nodes</strong> — highest-degree concepts (central hubs trong codebase)</li>
+<li><strong>Surprising connections</strong> — ranked by composite score; code-paper edges ưu tiên hơn code-code pairs; kèm plain-language reasoning</li>
+<li><strong>Suggested questions</strong> — 4-5 queries mà graph có thể trả lời</li>
+<li><strong>AMBIGUOUS edges</strong> — flagged cho human review</li>
+</ul>
+
+<h2 id="llm-backends">LLM backends</h2>
+
+<p><strong>Code extraction: hoàn toàn offline, không dùng LLM.</strong></p>
+
+<p>LLM chỉ được dùng cho: docs, PDFs, images, video, audio transcription, và community naming.</p>
+
+<h3>Supported backends</h3>
+<table>
+<tr><th>Backend</th><th>Loại</th><th>Ghi chú</th></tr>
+<tr><td>Claude (Anthropic)</td><td>Cloud</td><td>Vision support cho images</td></tr>
+<tr><td>OpenAI</td><td>Cloud</td><td></td></tr>
+<tr><td>Gemini</td><td>Cloud</td><td></td></tr>
+<tr><td>DeepSeek</td><td>Cloud</td><td></td></tr>
+<tr><td>Kimi</td><td>Cloud</td><td></td></tr>
+<tr><td>AWS Bedrock</td><td>Cloud</td><td></td></tr>
+<tr><td>Azure OpenAI</td><td>Cloud</td><td></td></tr>
+<tr><td>Ollama</td><td>Local</td><td>Configurable context window + keep-alive</td></tr>
+<tr><td>IDE context inheritance</td><td>Local</td><td>Claude Code, Cursor, Gemini CLI</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Temperature handling</strong>
+Tự động omit temperature parameter cho o1/o3/o4 reasoning models (những model này không hỗ trợ temperature).
+</div>
+
+<h2 id="performance">Performance</h2>
+
+<h3>Benchmark results</h3>
+<table>
+<tr><th>Benchmark</th><th>Result</th><th>Ghi chú</th></tr>
+<tr><td>LOCOMO (n=300)</td><td>45.3% QA accuracy</td><td>Zero LLM credits cho code-only corpora</td></tr>
+<tr><td>LongMemEval-S</td><td>76% accuracy</td><td>Dense RAG tasks</td></tr>
+</table>
+
+<h3>Token reduction examples</h3>
+<table>
+<tr><th>Corpus</th><th>Files</th><th>Token reduction</th></tr>
+<tr><td>Karpathy repos + 5 papers + 4 images</td><td>52</td><td>71.5x</td></tr>
+<tr><td>graphify source + Transformer paper</td><td>4</td><td>5.4x</td></tr>
+<tr><td>Synthetic library (httpx)</td><td>6</td><td>~1x</td></tr>
+</table>
+
+<h3>Configuration constraints</h3>
+<ul>
+<li><strong>Graph size cap:</strong> 512 MiB (override: <code>GRAPHIFY_MAX_GRAPH_BYTES</code>)</li>
+<li><strong>Parallel AST parsing:</strong> configurable thread pool (<code>GRAPHIFY_MAX_WORKERS</code>)</li>
+<li><strong>Output token ceiling:</strong> 4096 default, configurable lên 32768 cho dense files</li>
+</ul>
+
+<h2 id="security">Security</h2>
+
+<p>Tất cả external input đi qua <code>graphify/security.py</code>:</p>
+
+<table>
+<tr><th>Function</th><th>Validation</th></tr>
+<tr><td><code>validate_url()</code></td><td>Chỉ http/https; <code>_NoFileRedirectHandler</code> block file:// redirects</td></tr>
+<tr><td><code>safe_fetch()</code> / <code>safe_fetch_text()</code></td><td>Size cap + timeout</td></tr>
+<tr><td><code>validate_graph_path()</code></td><td>Path phải resolve bên trong <code>graphify-out/</code></td></tr>
+<tr><td><code>sanitize_label()</code></td><td>Strip control chars, max 256 chars, HTML-escaped</td></tr>
+</table>
+
+<h3>Privacy & Compliance</h3>
+<ul>
+<li>Không có telemetry, usage tracking, analytics</li>
+<li>Code extraction stays local</li>
+<li>LLM calls chỉ cho docs/media, route qua user-configured backends</li>
+<li>Query logging: <code>~/.cache/graphify-queries.log</code> — disabled by default, opt-in qua <code>GRAPHIFY_QUERY_LOG_ENABLE</code></li>
+</ul>
+
+<h2 id="limitations">Limitations</h2>
+
+<table>
+<tr><th>Limitation</th><th>Chi tiết</th><th>Workaround</th></tr>
+<tr><td>Visualization scale</td><td>HTML graph unwieldy > 5000 nodes</td><td>Dùng JSON queries thay thế</td></tr>
+<tr><td>No semantic similarity</td><td>Không có vector search, chỉ graph traversal</td><td>Query chính xác hơn nhưng cần biết đúng terms</td></tr>
+<tr><td>Community naming</td><td>LLM-dependent, có thể generic</td><td>Dùng <code>--no-label</code> để skip</td></tr>
+<tr><td>Leiden clustering</td><td>Chỉ Python < 3.13</td><td>Dùng Python 3.12 hoặc skip clustering</td></tr>
+<tr><td>Windows PowerShell</td><td>Path syntax khác</td><td><code>graphify .</code> không phải <code>/graphify .</code></td></tr>
+<tr><td>Fallback formats</td><td>Apex và Terraform dùng regex/optional parser</td><td>Chất lượng extraction thấp hơn tree-sitter</td></tr>
+<tr><td>Docs/media dependency</td><td>Nếu không config LLM backend, enrichment không hoạt động</td><td>Config backend hoặc chỉ dùng cho code</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Auto-sync behavior</strong>
+<ul>
+<li>Code files (<code>--watch</code>): trigger instant rebuild (AST only, không dùng LLM)</li>
+<li>Doc/image changes: notify user để chạy <code>--update</code> (cần LLM processing)</li>
+</ul>
+Thiết kế cho multi-agent parallel workflows.
+</div>
+
+<div class="callout callout-red">
+<strong>Structural vs Semantic understanding</strong>
+Graphify tập trung vào <strong>structural understanding</strong> (cấu trúc code, relationships giữa entities). Với câu hỏi về <strong>semantic understanding</strong> (business logic cụ thể, ý nghĩa của code), vẫn cần đọc code trực tiếp.
+</div>
+
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

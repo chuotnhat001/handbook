@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index Lifecycle Management - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Khái niệm</div>
+    <div class="nav-items">
+      <a href="#why-ilm">Vì sao cần ILM</a>
+      <a href="#data-tiers">Data Tiers</a>
+      <a href="#phases">Phases &amp; Actions</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Triển khai</div>
+    <div class="nav-items">
+      <a href="#rollover">Rollover</a>
+      <a href="#policy">Viết Policy</a>
+      <a href="#apply">Áp dụng &amp; Theo dõi</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html" class="current">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Index Lifecycle Management (ILM)</h1>
+<p class="subtitle">Hot → warm → cold → frozen → delete, rollover, data tiers — tự động hóa vòng đời dữ liệu time-series</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management.html" target="_blank">Elastic — ILM</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/data-tiers.html" target="_blank">Elastic — Data Tiers</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu vì sao dữ liệu time-series cần quản lý vòng đời. Nắm kiến trúc data tiers (hot, warm, cold, frozen). Biết các phase và action của ILM. Cấu hình rollover qua alias hoặc data stream. Viết, áp dụng và theo dõi một ILM policy hoàn chỉnh.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 02: Lucene</strong> — Force merge, segment</li>
+<li><strong>Bài 11: Shard Allocation</strong> — Shard sizing, shrink, data tiers</li>
+</ul>
+
+<h2 id="why-ilm">Vì Sao Cần ILM</h2>
+<p>Log, metric, sự kiện bảo mật đều là dữ liệu <strong>time-series</strong>: ghi liên tục, được truy vấn nhiều khi còn mới, ít khi truy vấn khi đã cũ, và cuối cùng bị xóa. Giữ mọi thứ trên SSD đắt tiền là lãng phí. Quản lý thủ công thì dễ quên và dễ sai.</p>
+<p><strong>Index Lifecycle Management (ILM)</strong> tự động hóa vòng đời: tạo index mới khi index hiện tại đủ lớn, chuyển index cũ sang phần cứng rẻ hơn, tối ưu chúng cho chế độ chỉ đọc, và xóa khi hết hạn lưu giữ.</p>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Giá trị truy vấn của dữ liệu giảm theo thời gian, nên chi phí lưu trữ cũng nên giảm theo. ILM biến chính sách lưu giữ (retention policy) thành cấu hình mà cluster tự thực thi.
+</div>
+
+<h2 id="data-tiers">Data Tiers</h2>
+<table>
+<tr><th>Tier</th><th>Role</th><th>Đặc điểm</th><th>Phần cứng điển hình</th></tr>
+<tr><td>Hot</td><td><code>data_hot</code></td><td>Đang ghi, truy vấn nhiều nhất</td><td>SSD/NVMe nhanh, CPU mạnh</td></tr>
+<tr><td>Warm</td><td><code>data_warm</code></td><td>Không còn ghi, vẫn truy vấn thường xuyên</td><td>Disk lớn hơn, chậm hơn</td></tr>
+<tr><td>Cold</td><td><code>data_cold</code></td><td>Hiếm khi truy vấn, chấp nhận chậm</td><td>Disk rẻ. Có thể dùng searchable snapshot</td></tr>
+<tr><td>Frozen</td><td><code>data_frozen</code></td><td>Rất hiếm khi truy vấn</td><td>Dữ liệu nằm ở object storage (S3...), node chỉ giữ cache</td></tr>
+<tr><td>Content</td><td><code>data_content</code></td><td>Dữ liệu không theo thời gian (catalog, user)</td><td>Như hot</td></tr>
+</table>
+<pre><code># elasticsearch.yml
+node.roles: [ data_hot, data_content ]   # node hot
+node.roles: [ data_warm ]                 # node warm
+node.roles: [ data_frozen ]               # node frozen
+
+# Index mới mặc định nằm ở tier ưu tiên sau
+GET /logs-app/_settings?filter_path=**._tier_preference
+# → "index.routing.allocation.include._tier_preference": "data_hot"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Khi index chuyển phase, ILM tự cập nhật <code>_tier_preference</code> (action <code>migrate</code>) và shard được di chuyển sang tier tương ứng.</p>
+
+<h2 id="phases">Phases &amp; Actions</h2>
+<div class="flow">
+<span class="flow-step">Hot</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Warm</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Cold</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Frozen</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Delete</span>
+</div>
+<p>Mỗi phase có <code>min_age</code>: thời gian tối thiểu kể từ khi index được tạo, hoặc kể từ khi rollover nếu index đã rollover. Phase nào không khai báo thì được bỏ qua.</p>
+<table>
+<tr><th>Action</th><th>Phase dùng được</th><th>Tác dụng</th></tr>
+<tr><td><code>rollover</code></td><td>Hot</td><td>Tạo index ghi mới khi đạt ngưỡng kích thước/tuổi/số doc</td></tr>
+<tr><td><code>set_priority</code></td><td>Hot, Warm, Cold</td><td>Ưu tiên recovery cho index quan trọng sau sự cố</td></tr>
+<tr><td><code>forcemerge</code></td><td>Hot (sau rollover), Warm</td><td>Gộp segment, giảm dung lượng và tăng tốc search</td></tr>
+<tr><td><code>shrink</code></td><td>Hot (sau rollover), Warm</td><td>Giảm số primary shard</td></tr>
+<tr><td><code>readonly</code></td><td>Hot, Warm, Cold</td><td>Chặn ghi</td></tr>
+<tr><td><code>allocate</code></td><td>Warm, Cold</td><td>Đổi số replica, đặt allocation rule</td></tr>
+<tr><td><code>migrate</code></td><td>Warm, Cold</td><td>Chuyển sang tier tương ứng (tự động mặc định)</td></tr>
+<tr><td><code>searchable_snapshot</code></td><td>Hot, Cold, Frozen</td><td>Chuyển index thành searchable snapshot trên repository</td></tr>
+<tr><td><code>downsample</code></td><td>Hot, Warm, Cold</td><td>Gộp metric theo khoảng thời gian (TSDS, Bài 23)</td></tr>
+<tr><td><code>delete</code></td><td>Delete</td><td>Xóa index</td></tr>
+</table>
+
+<h2 id="rollover">Rollover</h2>
+<p>Rollover tạo index mới khi index đang ghi đạt ngưỡng. Ứng dụng luôn ghi vào cùng một tên (alias hoặc data stream), không cần biết index thật phía sau.</p>
+<table>
+<tr><th>Điều kiện</th><th>Ý nghĩa</th></tr>
+<tr><td><code>max_primary_shard_size</code></td><td>Một primary shard đạt kích thước (khuyến nghị dùng, ví dụ <code>50gb</code>)</td></tr>
+<tr><td><code>max_age</code></td><td>Index đạt tuổi (ví dụ <code>30d</code>)</td></tr>
+<tr><td><code>max_docs</code> / <code>max_primary_shard_docs</code></td><td>Đạt số document</td></tr>
+</table>
+<p>Rollover xảy ra khi đạt <strong>bất kỳ</strong> điều kiện nào. Từ ES 8.4, index rỗng không bị rollover (tránh sinh index trống). ILM kiểm tra điều kiện theo chu kỳ <code>indices.lifecycle.poll_interval</code> (mặc định 10 phút).</p>
+
+<h3>Cách 1: Data stream (khuyến nghị cho dữ liệu append-only)</h3>
+<pre><code>PUT /_index_template/logs-app-template
+{
+  "index_patterns": ["logs-app-*"],
+  "data_stream": {},
+  "template": {
+    "settings": { "index.lifecycle.name": "logs-policy" }
+  }
+}
+
+# Data stream tự tạo khi ghi document đầu tiên
+POST /logs-app-default/_doc
+{ "@timestamp": "2026-10-28T08:00:00Z", "message": "started" }
+# Index thật phía sau: .ds-logs-app-default-2026.10.28-000001</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Cách 2: Index alias (khi cần update/delete theo ID)</h3>
+<pre><code>PUT /_index_template/orders-template
+{
+  "index_patterns": ["orders-*"],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "orders-policy",
+      "index.lifecycle.rollover_alias": "orders"
+    }
+  }
+}
+
+# Bootstrap index đầu tiên. Tên phải kết thúc bằng số để rollover tăng dần
+PUT /orders-000001
+{ "aliases": { "orders": { "is_write_index": true } } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Data stream hay alias?</strong>
+Data stream chỉ cho phép thêm mới (<code>op_type=create</code>) và bắt buộc có <code>@timestamp</code>. Phù hợp với log, metric, event. Nếu cần cập nhật document theo ID thường xuyên, dùng alias. Chi tiết về data stream ở Bài 23.
+</div>
+
+<h2 id="policy">Viết Policy</h2>
+<pre><code>PUT /_ilm/policy/logs-policy
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "actions": {
+          "rollover": { "max_primary_shard_size": "50gb", "max_age": "1d" },
+          "set_priority": { "priority": 100 }
+        }
+      },
+      "warm": {
+        "min_age": "7d",
+        "actions": {
+          "shrink": { "number_of_shards": 1 },
+          "forcemerge": { "max_num_segments": 1 },
+          "allocate": { "number_of_replicas": 1 },
+          "set_priority": { "priority": 50 }
+        }
+      },
+      "cold": {
+        "min_age": "30d",
+        "actions": {
+          "allocate": { "number_of_replicas": 0 },
+          "set_priority": { "priority": 0 }
+        }
+      },
+      "delete": {
+        "min_age": "90d",
+        "actions": { "delete": {} }
+      }
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Replica 0 ở cold</strong>
+Giảm replica xuống 0 tiết kiệm một nửa dung lượng, nhưng mất node là mất dữ liệu cold của node đó. Chỉ làm vậy khi đã có snapshot (Bài 20), hoặc dùng action <code>searchable_snapshot</code> để snapshot trên object storage đóng vai trò bản sao.
+</div>
+<p><code>min_age</code> tính từ thời điểm rollover. Với policy trên, một index sinh ngày 1/10 và rollover ngày 2/10 sẽ vào warm khoảng ngày 9/10 và bị xóa khoảng ngày 31/12. Như vậy dữ liệu cũ nhất được giữ khoảng 90 ngày cộng thời gian index còn là write index.</p>
+
+<h2 id="apply">Áp Dụng &amp; Theo Dõi</h2>
+<pre><code># Index đang ở phase/action/step nào, có lỗi không
+GET /logs-app-default/_ilm/explain
+GET /orders-*/_ilm/explain?only_errors=true
+
+# Trạng thái ILM toàn cluster
+GET /_ilm/status
+
+# Sau khi sửa nguyên nhân lỗi, cho index chạy lại step bị lỗi
+POST /orders-000003/_ilm/retry
+
+# Gắn policy cho index đã có sẵn
+PUT /old-logs-*/_settings
+{ "index.lifecycle.name": "logs-policy" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Các trường cần đọc trong <code>_ilm/explain</code>: <code>phase</code>, <code>action</code>, <code>step</code>, <code>age</code>, và <code>step_info</code> nếu có lỗi.</p>
+<div class="callout callout-amber">
+<strong>Sửa policy đang dùng</strong>
+Khi cập nhật policy, index đang ở giữa một phase vẫn chạy theo định nghĩa phase đã cache lúc vào phase đó. Thay đổi chỉ áp dụng từ phase kế tiếp. Muốn áp dụng ngay, cần đổi policy cho index và có thể phải chuyển step thủ công.
+</div>
+<h3>Các lỗi ILM hay gặp</h3>
+<table>
+<tr><th>Lỗi</th><th>Nguyên nhân</th></tr>
+<tr><td><code>rollover alias ... can not be found</code></td><td>Thiếu <code>rollover_alias</code> hoặc alias chưa trỏ write index</td></tr>
+<tr><td>Kẹt ở step <code>check-migration</code></td><td>Không có node thuộc tier đích (ví dụ chưa có node <code>data_warm</code>)</td></tr>
+<tr><td>Shrink không tiến triển</td><td>Không có node đủ disk để chứa một bản sao của mọi shard</td></tr>
+<tr><td>Index không bao giờ rollover</td><td>Index rỗng, hoặc chưa đạt điều kiện và chưa qua chu kỳ poll</td></tr>
+</table>
+
+<h2 id="lab">Bài Lab: ILM Cho Logs (30d Hot, 90d Warm, 365d Cold)</h2>
+<h3>Chuẩn bị</h3>
+<p>Dùng cluster lab Bài 10–11 (security tắt, chỉ dùng cục bộ). Lab Docker không chia tier, nên tạm tắt action <code>migrate</code> để ILM không kẹt ở bước chờ node warm/cold.</p>
+
+<h3>Bước 1: Tạo policy theo yêu cầu thật</h3>
+<pre><code>curl -X PUT "http://localhost:9200/_ilm/policy/lab-logs-policy" -H 'Content-Type: application/json' -d '{
+  "policy": { "phases": {
+    "hot":    { "actions": { "rollover": { "max_primary_shard_size": "50gb", "max_age": "30d" } } },
+    "warm":   { "min_age": "30d",  "actions": { "migrate": { "enabled": false }, "forcemerge": { "max_num_segments": 1 } } },
+    "cold":   { "min_age": "120d", "actions": { "migrate": { "enabled": false }, "allocate": { "number_of_replicas": 0 } } },
+    "delete": { "min_age": "485d", "actions": { "delete": {} } }
+  }}}'
+# 30 ngày hot → 90 ngày warm (đến ngày 120) → 365 ngày cold (đến ngày 485) → xóa</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Phiên bản rút gọn để quan sát trong vài phút</h3>
+<pre><code># Kiểm tra ILM mỗi 10 giây thay vì 10 phút (chỉ cho lab)
+curl -X PUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"indices.lifecycle.poll_interval":"10s"}}'
+
+curl -X PUT "http://localhost:9200/_ilm/policy/lab-fast-policy" -H 'Content-Type: application/json' -d '{
+  "policy": { "phases": {
+    "hot":    { "actions": { "rollover": { "max_docs": 5 } } },
+    "warm":   { "min_age": "1m", "actions": { "migrate": { "enabled": false }, "forcemerge": { "max_num_segments": 1 } } },
+    "delete": { "min_age": "3m", "actions": { "delete": {} } }
+  }}}'
+
+curl -X PUT "http://localhost:9200/_index_template/lab-logs" -H 'Content-Type: application/json' -d '{
+  "index_patterns": ["lab-logs-*"],
+  "data_stream": {},
+  "template": { "settings": { "index.lifecycle.name": "lab-fast-policy", "number_of_replicas": 1 } }
+}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Ghi dữ liệu và quan sát</h3>
+<pre><code>for i in $(seq 1 12); do
+  curl -s -o /dev/null -X POST "http://localhost:9200/lab-logs-app/_doc" -H 'Content-Type: application/json' \
+    -d "{\"@timestamp\":\"$(date -u +%FT%TZ)\",\"msg\":\"event $i\"}"
+  sleep 15
+done
+
+# Ở terminal khác, chạy lặp lại
+curl "http://localhost:9200/_data_stream/lab-logs-app?filter_path=**.indices.index_name"
+curl "http://localhost:9200/lab-logs-app/_ilm/explain?filter_path=**.index,**.phase,**.action,**.step"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Dọn dẹp</h3>
+<pre><code>curl -X PUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"indices.lifecycle.poll_interval":null}}'
+curl -X DELETE "http://localhost:9200/_data_stream/lab-logs-app"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Data stream sinh thêm backing index mỗi khi đủ 5 document. Index cũ lần lượt chuyển sang warm (force merge) rồi bị xóa sau khoảng 3 phút kể từ rollover. Bạn đã thấy ILM vận hành toàn bộ vòng đời mà không cần thao tác tay.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Kể tên 5 data tier và loại dữ liệu phù hợp với từng tier.</li>
+<li><code>min_age</code> được tính từ thời điểm nào khi index đã rollover?</li>
+<li>Vì sao <code>max_primary_shard_size</code> thường tốt hơn <code>max_age</code> làm điều kiện rollover chính?</li>
+<li>Khi nào chọn data stream, khi nào chọn index alias để rollover?</li>
+<li>Vì sao index có thể kẹt ở step <code>check-migration</code>?</li>
+<li>Đặt <code>number_of_replicas: 0</code> ở cold phase có rủi ro gì? Giảm rủi ro bằng cách nào?</li>
+<li>Sửa ILM policy có ảnh hưởng ngay tới index đang ở giữa phase không?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Giải thích được hot/warm/cold/frozen/content tier</li>
+<li>☐ Biết các action chính và phase mà chúng dùng được</li>
+<li>☐ Cấu hình rollover qua data stream và qua alias</li>
+<li>☐ Viết ILM policy với min_age đúng yêu cầu retention</li>
+<li>☐ Theo dõi và retry bằng <code>_ilm/explain</code>, <code>_ilm/retry</code></li>
+<li>☐ Chẩn đoán các lỗi ILM phổ biến</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Tính min_age từ ngày tạo thay vì ngày rollover</strong>: dữ liệu bị giữ lâu hơn hoặc xóa sớm hơn dự kiến.</li>
+<li><strong>Có phase warm nhưng không có node warm</strong>: ILM kẹt ở bước migrate.</li>
+<li><strong>Bootstrap index alias không có số ở cuối tên</strong>: rollover thất bại.</li>
+<li><strong>Đặt poll_interval 10s ở production</strong>: master tốn tài nguyên vô ích. Chỉ dùng cho lab.</li>
+<li><strong>Không có snapshot trước khi xóa</strong>: dữ liệu hết hạn retention mất vĩnh viễn. Cân nhắc yêu cầu pháp lý.</li>
+<li><strong>Index template không gắn policy</strong>: index mới sinh ra không có ILM và tích tụ mãi mãi.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Gắn ILM policy qua index template, không gắn tay từng index</li>
+<li>Rollover chủ yếu theo <code>max_primary_shard_size: 50gb</code>, kèm <code>max_age</code> làm giới hạn trên</li>
+<li>Force merge và shrink ở warm, khi index đã thôi ghi</li>
+<li>Kết hợp ILM với SLM (Bài 20) để dữ liệu có snapshot trước phase delete</li>
+<li>Theo dõi <code>_ilm/explain?only_errors=true</code> trong hệ thống monitoring (Bài 18)</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management.html" target="_blank">ES: ILM Overview</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-actions.html" target="_blank">ES: ILM Actions</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/data-tiers.html" target="_blank">ES: Data Tiers</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-rollover.html" target="_blank">ES: Rollover</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/data-streams.html" target="_blank">ES: Data Streams</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="11-shard-allocation.html">&larr; Bài 11: Shard Allocation</a>
+<a href="13-security.html">Bài 13: Bảo Mật &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

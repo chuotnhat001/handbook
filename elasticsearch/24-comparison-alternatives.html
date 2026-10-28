@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>So Sánh - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Search Engine</div>
+    <div class="nav-items">
+      <a href="#opensearch">vs OpenSearch</a>
+      <a href="#solr">vs Solr</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Analytics &amp; Logs</div>
+    <div class="nav-items">
+      <a href="#clickhouse">vs ClickHouse</a>
+      <a href="#loki">vs Loki</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Quyết định</div>
+    <div class="nav-items">
+      <a href="#matrix">Ma trận quyết định</a>
+      <a href="#licensing">License &amp; Chi phí</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html" class="current">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">So Sánh Với Các Nền Tảng Tương Tự</h1>
+<p class="subtitle">Elasticsearch vs OpenSearch, Solr, ClickHouse, Loki — và ma trận quyết định khi chọn công nghệ</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://opensearch.org/docs/latest/" target="_blank">OpenSearch Docs</a>, <a href="https://solr.apache.org/guide/" target="_blank">Solr Guide</a>, <a href="https://clickhouse.com/docs" target="_blank">ClickHouse Docs</a>, <a href="https://grafana.com/docs/loki/latest/" target="_blank">Grafana Loki Docs</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+So sánh Elasticsearch với OpenSearch và Solr ở vai trò search engine. So sánh với ClickHouse ở bài toán analytics và với Loki ở bài toán lưu log. Hiểu khác biệt về license và các yếu tố chi phí. Dùng ma trận quyết định để chọn công nghệ theo yêu cầu thật thay vì theo thói quen.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 02: Lucene</strong> — Inverted index, doc values</li>
+<li><strong>Bài 08, 09</strong> — Full-text search và aggregation</li>
+<li><strong>Bài 12, 23</strong> — ILM, data stream, chi phí lưu trữ theo tier</li>
+</ul>
+<div class="callout callout-amber">
+<strong>Thông tin thay đổi nhanh</strong>
+Tính năng, license và mô hình giá của các sản phẩm trong bài thay đổi theo từng phiên bản. Bài này tập trung vào khác biệt về <strong>kiến trúc</strong>, vốn ổn định hơn. Trước khi ra quyết định thật, đối chiếu tài liệu chính thức cho đúng version bạn định dùng.
+</div>
+
+<h2 id="opensearch">Elasticsearch vs OpenSearch</h2>
+<p>Năm 2021, Elastic chuyển license của Elasticsearch và Kibana từ Apache 2.0 sang SSPL và Elastic License. AWS fork bản 7.10.2 (bản Apache 2.0 cuối cùng) thành <strong>OpenSearch</strong> và <strong>OpenSearch Dashboards</strong>. Từ năm 2024, OpenSearch thuộc OpenSearch Software Foundation dưới Linux Foundation. Cũng trong năm 2024, Elastic bổ sung AGPLv3 làm một lựa chọn license cho phần mã nguồn của Elasticsearch.</p>
+<table>
+<tr><th>Tiêu chí</th><th>Elasticsearch</th><th>OpenSearch</th></tr>
+<tr><td>License</td><td>Elastic License 2.0, SSPL, hoặc AGPLv3. Nhiều tính năng nâng cao thuộc gói trả phí</td><td>Apache 2.0, kể cả các plugin bảo mật, alerting, ML</td></tr>
+<tr><td>Nền tảng</td><td>Lucene, phát triển liên tục từ 7.10 tới 8.x/9.x</td><td>Lucene, phát triển từ 7.10.2 theo hướng riêng</td></tr>
+<tr><td>API</td><td>Query DSL, ES|QL</td><td>Query DSL tương tự, PPL và SQL. API đã phân kỳ dần kể từ khi fork</td></tr>
+<tr><td>Bảo mật</td><td>Tích hợp sẵn (Bài 13), một số realm cần license</td><td>Security plugin miễn phí: TLS, RBAC, FLS/DLS, audit log</td></tr>
+<tr><td>Hệ sinh thái thu thập</td><td>Elastic Agent, Fleet, integrations, Beats</td><td>Data Prepper, Fluent Bit/Logstash OSS. Beats bản mới không chính thức hỗ trợ</td></tr>
+<tr><td>Tính năng nổi bật</td><td>ES|QL, LogsDB, Elastic Security, Observability, searchable snapshot</td><td>Vector search (k-NN plugin), anomaly detection, Security Analytics</td></tr>
+<tr><td>Dịch vụ quản lý</td><td>Elastic Cloud (AWS, Azure, GCP)</td><td>Amazon OpenSearch Service, các nhà cung cấp khác</td></tr>
+</table>
+<div class="callout callout-blue">
+<strong>Chuyển đổi giữa hai hệ</strong>
+Kiến thức trong giáo trình này phần lớn áp dụng cho cả hai: shard, mapping, analyzer, Query DSL, aggregation. Nhưng client, plugin, snapshot và tính năng mới không còn tương thích hoàn toàn. Chuyển đổi thường cần reindex qua remote hoặc tool riêng, và kiểm thử lại query.
+</div>
+
+<h2 id="solr">Elasticsearch vs Solr</h2>
+<p><strong>Apache Solr</strong> cũng xây trên Lucene, ra đời trước Elasticsearch, thuộc Apache Software Foundation.</p>
+<table>
+<tr><th>Tiêu chí</th><th>Elasticsearch</th><th>Solr</th></tr>
+<tr><td>License</td><td>Xem mục trên</td><td>Apache 2.0</td></tr>
+<tr><td>Phân tán</td><td>Tự quản lý cluster (Bài 03)</td><td>SolrCloud dùng ZooKeeper để điều phối</td></tr>
+<tr><td>Cấu hình</td><td>API JSON, mapping động</td><td>Schema và solrconfig.xml, có Schema API và managed schema</td></tr>
+<tr><td>Thế mạnh</td><td>Log/metric/observability, aggregation, hệ sinh thái Stack</td><td>Search tài liệu và thương mại điện tử truyền thống, faceting, cấu hình relevance sâu</td></tr>
+<tr><td>Cộng đồng</td><td>Lớn, nhiều tích hợp</td><td>Ổn định lâu năm, phổ biến trong thư viện số, xuất bản, chính phủ</td></tr>
+</table>
+<p>Với dự án mới, Solr phù hợp khi tổ chức đã có kinh nghiệm vận hành Solr, cần license Apache 2.0 cho toàn bộ hệ thống, hoặc bài toán thuần search tài liệu không cần log/observability.</p>
+
+<h2 id="clickhouse">Elasticsearch vs ClickHouse</h2>
+<p><strong>ClickHouse</strong> là cơ sở dữ liệu cột (columnar) cho phân tích OLAP, truy vấn bằng SQL.</p>
+<table>
+<tr><th>Tiêu chí</th><th>Elasticsearch</th><th>ClickHouse</th></tr>
+<tr><td>Cấu trúc chính</td><td>Inverted index cho mọi field + doc values</td><td>Lưu theo cột, nén mạnh, sắp xếp theo khóa chính</td></tr>
+<tr><td>Full-text search, relevance</td><td>Thế mạnh cốt lõi: analyzer, BM25, highlight, fuzzy</td><td>Hạn chế: so khớp chuỗi, regex, một số loại index phụ</td></tr>
+<tr><td>Aggregation trên tỷ dòng</td><td>Tốt, nhưng tốn tài nguyên hơn với cardinality cao</td><td>Rất nhanh, đây là thế mạnh chính</td></tr>
+<tr><td>JOIN, SQL đầy đủ</td><td>Hạn chế (ES|QL có LOOKUP JOIN ở bản mới)</td><td>SQL đầy đủ, có JOIN</td></tr>
+<tr><td>Chi phí lưu trữ</td><td>Cao hơn do index mọi field</td><td>Thấp, tỷ lệ nén cao</td></tr>
+<tr><td>Cập nhật/xóa từng dòng</td><td>Dễ (theo ID)</td><td>Tốn kém, thiết kế cho ghi theo batch</td></tr>
+<tr><td>Ingest đơn lẻ, tần suất cao</td><td>Tốt</td><td>Nên gom batch lớn</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Elasticsearch tối ưu cho câu hỏi "tìm những thứ khớp với điều này". ClickHouse tối ưu cho câu hỏi "tính tổng/đếm/phân vị trên rất nhiều dòng". Nhiều hệ thống lớn dùng cả hai: Elasticsearch cho search và điều tra, ClickHouse cho báo cáo và phân tích dài hạn.
+</div>
+
+<h2 id="loki">Elasticsearch vs Loki</h2>
+<p><strong>Grafana Loki</strong> là hệ thống lưu log chỉ index <strong>label</strong> (như <code>app</code>, <code>namespace</code>, <code>level</code>), còn nội dung log được nén thành chunk trên object storage và chỉ quét khi truy vấn.</p>
+<table>
+<tr><th>Tiêu chí</th><th>Elasticsearch</th><th>Loki</th></tr>
+<tr><td>Index</td><td>Mọi field, mọi từ</td><td>Chỉ label</td></tr>
+<tr><td>Chi phí lưu trữ và ingest</td><td>Cao hơn</td><td>Thấp, lưu chủ yếu trên object storage</td></tr>
+<tr><td>Tìm theo nội dung bất kỳ</td><td>Nhanh trên khoảng thời gian dài</td><td>Phải quét chunk: nhanh khi label thu hẹp tốt, chậm khi tìm rộng</td></tr>
+<tr><td>Ngôn ngữ truy vấn</td><td>KQL, Query DSL, ES|QL</td><td>LogQL (giống PromQL)</td></tr>
+<tr><td>Phân tích, dashboard</td><td>Aggregation phong phú, Kibana</td><td>Metric từ log qua LogQL, Grafana</td></tr>
+<tr><td>Bảo mật (SIEM)</td><td>Elastic Security, detection rule</td><td>Không phải trọng tâm</td></tr>
+<tr><td>Hệ sinh thái</td><td>Elastic Stack</td><td>Grafana, Prometheus, Tempo, Mimir</td></tr>
+<tr><td>License</td><td>Xem mục OpenSearch</td><td>AGPLv3</td></tr>
+</table>
+<div class="callout callout-amber">
+<strong>Label cardinality trong Loki</strong>
+Loki giống TSDS (Bài 23) ở một điểm: label có cardinality cao (user id, request id) làm hệ thống chậm và tốn kém. Nếu thường xuyên cần tìm theo trường có cardinality cao, Elasticsearch phù hợp hơn.
+</div>
+
+<h2 id="matrix">Ma Trận Quyết Định</h2>
+<table>
+<tr><th>Yêu cầu chính</th><th>Lựa chọn hợp lý</th><th>Lý do</th></tr>
+<tr><td>Search sản phẩm, tài liệu có relevance, gợi ý, typo</td><td>Elasticsearch, OpenSearch, Solr</td><td>Analyzer và scoring của Lucene</td></tr>
+<tr><td>Semantic/vector search kết hợp keyword (hybrid)</td><td>Elasticsearch, OpenSearch</td><td>Có cả BM25 và kNN trong cùng query</td></tr>
+<tr><td>Log tập trung, điều tra sự cố, tìm nội dung tự do</td><td>Elasticsearch, OpenSearch</td><td>Index toàn văn, search nhanh trên khối lượng lớn</td></tr>
+<tr><td>Log khối lượng rất lớn, ngân sách hạn chế, truy vấn chủ yếu theo service</td><td>Loki</td><td>Chi phí lưu trữ thấp</td></tr>
+<tr><td>SIEM, phát hiện tấn công, threat hunting</td><td>Elastic Security, OpenSearch Security Analytics</td><td>Detection rule, tương quan sự kiện</td></tr>
+<tr><td>Báo cáo, dashboard BI trên tỷ dòng, SQL có JOIN</td><td>ClickHouse</td><td>OLAP cột</td></tr>
+<tr><td>Metric thời gian thực của hạ tầng</td><td>Prometheus/Mimir, hoặc Elasticsearch TSDS</td><td>Tùy hệ sinh thái đang dùng</td></tr>
+<tr><td>License Apache 2.0 bắt buộc cho toàn bộ hệ thống</td><td>OpenSearch, Solr</td><td>Ràng buộc pháp lý</td></tr>
+<tr><td>Nguồn dữ liệu chính (system of record)</td><td>Cơ sở dữ liệu giao dịch (PostgreSQL...)</td><td>Search engine không thay thế database có transaction</td></tr>
+</table>
+<p>Câu hỏi nên trả lời trước khi chọn:</p>
+<ol>
+<li>Truy vấn chủ yếu là tìm kiếm, lọc, hay tổng hợp?</li>
+<li>Khối lượng ghi mỗi ngày và thời gian lưu trữ là bao nhiêu?</li>
+<li>Đội vận hành đã quen với hệ nào? Có muốn dùng dịch vụ quản lý không?</li>
+<li>Ràng buộc license và ngân sách là gì?</li>
+<li>Hệ thống cần tích hợp với những công cụ nào sẵn có (Grafana, Kibana, SIEM...)?</li>
+</ol>
+
+<h2 id="licensing">License &amp; Chi Phí</h2>
+<table>
+<tr><th>Yếu tố chi phí</th><th>Ghi chú</th></tr>
+<tr><td>License phần mềm</td><td>Bản miễn phí hay trả phí, tính theo node, tài nguyên hay dung lượng</td></tr>
+<tr><td>Hạ tầng</td><td>Lưu trữ thường chiếm phần lớn: số replica, thời gian giữ dữ liệu, data tiers, tỷ lệ nén</td></tr>
+<tr><td>Ingest</td><td>CPU cho parse, enrich và index</td></tr>
+<tr><td>Vận hành</td><td>Nhân sự nâng cấp, tuning, trực sự cố. Dịch vụ quản lý đổi chi phí này lấy phí dịch vụ</td></tr>
+<tr><td>Truyền dữ liệu</td><td>Phí băng thông giữa region/cloud (CCS, CCR, gửi log từ nơi khác về)</td></tr>
+</table>
+<div class="callout callout-blue">
+<strong>Đọc license kỹ khi cung cấp dịch vụ</strong>
+Elastic License 2.0 cấm cung cấp Elasticsearch dưới dạng dịch vụ managed cho bên thứ ba. SSPL và AGPLv3 có nghĩa vụ công bố mã nguồn khi cung cấp phần mềm qua mạng. Dùng nội bộ trong doanh nghiệp thường không bị ảnh hưởng, nhưng nếu bạn bán sản phẩm có nhúng search engine, hãy hỏi bộ phận pháp chế.
+</div>
+
+<h2 id="lab">Bài Lab: Đánh Giá Lựa Chọn Cho Một Hệ Thống Thật</h2>
+<p>Lab này là bài tập phân tích, không cần chạy cluster.</p>
+<h3>Đề bài</h3>
+<p>Một công ty thương mại điện tử có:</p>
+<ul>
+<li>2 triệu sản phẩm, cần search tiếng Việt có dấu/không dấu, gợi ý, lọc theo thuộc tính</li>
+<li>800 GB log ứng dụng mỗi ngày từ 300 microservice, cần giữ 30 ngày để điều tra, 1 năm để kiểm toán</li>
+<li>Đội Data cần báo cáo doanh thu theo giờ, theo vùng, trên 3 năm dữ liệu đơn hàng</li>
+<li>Đội bảo mật cần phát hiện đăng nhập bất thường</li>
+<li>Đội SRE đang dùng Prometheus và Grafana</li>
+</ul>
+<h3>Yêu cầu</h3>
+<ol>
+<li>Với từng nhu cầu, chọn công nghệ và giải thích bằng ma trận ở trên</li>
+<li>Với log: tính sơ bộ dung lượng 30 ngày hot và 1 năm cold, có tính replica. So sánh hướng "Elasticsearch + ILM + searchable snapshot" với hướng "Loki + object storage"</li>
+<li>Xác định chỗ nào dùng chung được một hệ thống để giảm số công nghệ phải vận hành</li>
+<li>Liệt kê các ràng buộc license cần kiểm tra</li>
+</ol>
+<h3>Gợi ý một lời giải</h3>
+<table>
+<tr><th>Nhu cầu</th><th>Hướng đi</th></tr>
+<tr><td>Search sản phẩm</td><td>Elasticsearch: analyzer tiếng Việt (Bài 07), completion suggester, bool query + aggregation cho facet</td></tr>
+<tr><td>Log 30 ngày</td><td>Elasticsearch hot/warm với ILM, data stream theo naming scheme</td></tr>
+<tr><td>Log 1 năm</td><td>Searchable snapshot ở frozen tier (Bài 20), hoặc lưu thô trên object storage nếu chỉ cần khi kiểm toán</td></tr>
+<tr><td>Báo cáo doanh thu</td><td>ClickHouse đồng bộ từ database đơn hàng</td></tr>
+<tr><td>Đăng nhập bất thường</td><td>Elastic Security trên cùng cluster log</td></tr>
+<tr><td>Metric hạ tầng</td><td>Giữ Prometheus/Grafana. Grafana đọc được Elasticsearch làm data source khi cần ghép log và metric</td></tr>
+</table>
+<pre><code>Ước tính dung lượng log (tham khảo, cần đo thực tế):
+  800 GB/ngày thô, sau index giả sử ~1:1 với log dạng text  → 800 GB/ngày
+  Hot/warm 30 ngày × 800 GB × 2 (1 replica)               ≈ 48 TB
+  Frozen 335 ngày × 800 GB × ~0,5 (sau force merge, nén)  ≈ 134 TB trên object storage, không replica
+Tỷ lệ thực tế phụ thuộc mapping, synthetic _source, LogsDB. Đo bằng 1 ngày dữ liệu thật trước khi chốt.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Lời giải tốt nêu được lý do cho từng lựa chọn, có con số ước tính dung lượng kèm giả định rõ ràng, chỉ ra chỗ dùng chung để giảm vận hành, và liệt kê việc cần đo thực tế. Không có đáp án duy nhất đúng: hướng Loki cho log cũng hợp lý nếu điều tra chủ yếu theo service và ngân sách là ưu tiên.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>OpenSearch ra đời trong hoàn cảnh nào? Hai hệ khác nhau ở những điểm chính nào hiện nay?</li>
+<li>Solr và Elasticsearch giống và khác nhau thế nào về kiến trúc phân tán?</li>
+<li>Vì sao ClickHouse aggregate nhanh hơn và rẻ hơn, nhưng không thay được Elasticsearch cho search?</li>
+<li>Loki giảm chi phí bằng cách nào? Đánh đổi là gì?</li>
+<li>Khi nào kết hợp nhiều công nghệ hợp lý hơn dùng một công nghệ cho mọi việc?</li>
+<li>Yếu tố nào thường chiếm phần lớn chi phí của một hệ thống log?</li>
+<li>Vì sao search engine không nên là nguồn dữ liệu chính?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ So sánh được Elasticsearch với OpenSearch và Solr</li>
+<li>☐ Phân biệt bài toán phù hợp với Elasticsearch và với ClickHouse</li>
+<li>☐ Giải thích mô hình chỉ index label của Loki</li>
+<li>☐ Dùng ma trận quyết định cho một yêu cầu cụ thể</li>
+<li>☐ Ước tính dung lượng lưu trữ có giả định rõ ràng</li>
+<li>☐ Nhận diện ràng buộc license cần kiểm tra</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Chọn theo thói quen</strong>: dùng Elasticsearch cho báo cáo SQL có JOIN, hoặc dùng database cột cho full-text search.</li>
+<li><strong>So sánh bằng benchmark của nhà cung cấp</strong>: tự đo bằng dữ liệu và query thật (Bài 19).</li>
+<li><strong>Bỏ qua chi phí vận hành</strong>: phần mềm miễn phí vẫn tốn người vận hành.</li>
+<li><strong>Không đọc license</strong>: phát hiện ràng buộc khi sản phẩm đã ra thị trường.</li>
+<li><strong>Dùng search engine làm database chính</strong>: không có transaction, mapping không đổi được, rủi ro mất dữ liệu.</li>
+<li><strong>Thêm công nghệ mới cho mỗi nhu cầu nhỏ</strong>: số hệ thống cần vận hành tăng nhanh hơn lợi ích.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Bắt đầu từ loại truy vấn và khối lượng dữ liệu, không bắt đầu từ công nghệ</li>
+<li>Chạy proof of concept với dữ liệu thật trong ít nhất một tuần</li>
+<li>Tính tổng chi phí sở hữu: license, hạ tầng, vận hành, đào tạo</li>
+<li>Ưu tiên ít công nghệ, mỗi công nghệ dùng đúng thế mạnh</li>
+<li>Ghi lại quyết định kiến trúc kèm lý do để xem lại khi yêu cầu thay đổi</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/pricing/faq/licensing" target="_blank">Elastic: Licensing FAQ</a></li>
+<li><a href="https://opensearch.org/docs/latest/" target="_blank">OpenSearch Documentation</a></li>
+<li><a href="https://solr.apache.org/guide/" target="_blank">Apache Solr Reference Guide</a></li>
+<li><a href="https://clickhouse.com/docs" target="_blank">ClickHouse Documentation</a></li>
+<li><a href="https://grafana.com/docs/loki/latest/" target="_blank">Grafana Loki Documentation</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="23-data-streams-tsds.html">&larr; Bài 23: Data Streams</a>
+<a href="25-case-studies.html">Bài 25: Case Studies &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

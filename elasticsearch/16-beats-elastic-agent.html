@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beats &amp; Elastic Agent - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Beats</div>
+    <div class="nav-items">
+      <a href="#family">Họ Beats</a>
+      <a href="#filebeat">Filebeat</a>
+      <a href="#metricbeat">Metricbeat</a>
+      <a href="#modules">Modules &amp; Setup</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Container</div>
+    <div class="nav-items">
+      <a href="#autodiscover">Autodiscover</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Agent</div>
+    <div class="nav-items">
+      <a href="#agent">Elastic Agent</a>
+      <a href="#beats-vs-agent">Beats hay Agent</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html" class="current">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Beats &amp; Elastic Agent</h1>
+<p class="subtitle">Filebeat, Metricbeat, Heartbeat, modules, autodiscover — và vì sao Elastic Agent là hướng đi mới</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/beats/libbeat/current/beats-reference.html" target="_blank">Elastic — Beats Platform</a>, <a href="https://www.elastic.co/guide/en/fleet/current/fleet-overview.html" target="_blank">Elastic — Elastic Agent</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Biết vai trò của từng Beat trong họ Beats. Cấu hình Filebeat đọc log file và container, Metricbeat thu thập metric hệ thống và dịch vụ. Dùng modules và lệnh <code>setup</code> để có sẵn ingest pipeline và dashboard. Bật autodiscover cho môi trường Docker/Kubernetes. Hiểu Elastic Agent khác Beats ở đâu và khi nào chọn cái nào.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 12: ILM</strong> và <strong>Bài 23</strong> (xem trước) — Data stream</li>
+<li><strong>Bài 13: Bảo Mật</strong> — API key, CA certificate</li>
+<li><strong>Bài 14: Kibana</strong> — Dashboard, data view</li>
+</ul>
+
+<h2 id="family">Họ Beats</h2>
+<p><strong>Beats</strong> là các agent nhẹ viết bằng Go, mỗi Beat chuyên thu thập một loại dữ liệu và gửi tới Elasticsearch hoặc Logstash.</p>
+<table>
+<tr><th>Beat</th><th>Thu thập</th><th>Ví dụ</th></tr>
+<tr><td>Filebeat</td><td>Log từ file, container, syslog, Kafka, cloud</td><td>Nginx access log, log ứng dụng, log container</td></tr>
+<tr><td>Metricbeat</td><td>Metric hệ thống và dịch vụ</td><td>CPU, RAM, disk; metric của MySQL, Redis, Kafka, Elasticsearch</td></tr>
+<tr><td>Heartbeat</td><td>Kiểm tra uptime chủ động</td><td>Ping HTTP/TCP/ICMP, đo thời gian phản hồi</td></tr>
+<tr><td>Packetbeat</td><td>Lưu lượng mạng</td><td>Giao dịch HTTP, DNS, MySQL trên đường truyền</td></tr>
+<tr><td>Auditbeat</td><td>Sự kiện bảo mật trên host</td><td>Thay đổi file quan trọng, process, auditd</td></tr>
+<tr><td>Winlogbeat</td><td>Windows Event Log</td><td>Đăng nhập, lỗi hệ thống trên Windows</td></tr>
+</table>
+<div class="flow">
+<span class="flow-step">Input / Module</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Processors</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Internal queue</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Output (ES / Logstash / Kafka)</span>
+</div>
+<p>Beats xử lý nhẹ tại chỗ bằng <strong>processors</strong> (thêm metadata, bỏ field, lọc event). Việc bóc tách nặng thường giao cho ingest pipeline trong Elasticsearch.</p>
+
+<h2 id="filebeat">Filebeat</h2>
+<pre><code># filebeat.yml
+filebeat.inputs:
+  - type: filestream
+    id: orders-app-logs              # id bắt buộc, duy nhất cho mỗi filestream input
+    paths:
+      - /var/log/orders/*.log
+    parsers:
+      - multiline:                   # gộp stack trace Java thành một event
+          type: pattern
+          pattern: '^\d{4}-\d{2}-\d{2}'
+          negate: true
+          match: after
+    fields:
+      service.name: orders
+    fields_under_root: true
+
+processors:
+  - add_host_metadata: ~
+  - drop_event:
+      when:
+        contains:
+          message: "healthcheck"
+
+output.elasticsearch:
+  hosts: ["https://es01:9200"]
+  api_key: "${ES_API_KEY}"           # id:api_key
+  ssl.certificate_authorities: ["/certs/ca/ca.crt"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<h3>Filebeat đảm bảo không mất log thế nào</h3>
+<ul>
+<li><strong>Registry</strong>: Filebeat ghi lại offset đã đọc của từng file. Restart xong đọc tiếp đúng chỗ cũ</li>
+<li><strong>At-least-once</strong>: event chỉ được đánh dấu đã gửi khi output xác nhận. Kết nối lỗi thì gửi lại, nên có thể sinh trùng nhưng không mất</li>
+<li><strong>Backpressure</strong>: khi Elasticsearch chậm, Filebeat đọc chậm lại thay vì dồn bộ nhớ. Log vẫn nằm an toàn trên disk của máy nguồn</li>
+<li>Log bị xóa hoặc rotate quá nhanh trước khi Filebeat kịp đọc thì vẫn mất. Đây là giới hạn thật cần tính đến khi cấu hình logrotate</li>
+</ul>
+<div class="callout callout-amber">
+<strong>filestream thay cho log input</strong>
+Input <code>log</code> cũ đã deprecated. Dùng <code>filestream</code> với <code>id</code> duy nhất. Đổi <code>id</code> của một input đang chạy khiến Filebeat coi đó là input mới và đọc lại file từ đầu.
+</div>
+
+<h2 id="metricbeat">Metricbeat</h2>
+<pre><code># metricbeat.yml
+metricbeat.modules:
+  - module: system
+    metricsets: [cpu, memory, network, filesystem, process]
+    period: 10s
+    processes: ['.*']
+
+  - module: redis
+    metricsets: [info, keyspace]
+    hosts: ["redis:6379"]
+    period: 10s
+
+  - module: elasticsearch
+    xpack.enabled: true               # dùng cho Stack Monitoring (Bài 18)
+    hosts: ["https://es01:9200"]
+    username: "remote_monitoring_user"
+    password: "${MONITORING_PASSWORD}"
+    ssl.certificate_authorities: ["/certs/ca/ca.crt"]
+    period: 10s
+
+output.elasticsearch:
+  hosts: ["https://es01:9200"]
+  api_key: "${ES_API_KEY}"
+  ssl.certificate_authorities: ["/certs/ca/ca.crt"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p><code>period</code> quyết định độ phân giải và khối lượng dữ liệu. 10 giây cho 100 host với 5 metricset sinh khoảng 4,3 triệu document mỗi ngày. Chọn period theo nhu cầu thật, kết hợp downsampling (Bài 23) cho dữ liệu cũ.</p>
+
+<h2 id="modules">Modules &amp; Setup</h2>
+<p><strong>Module</strong> đóng gói sẵn cách thu thập một nguồn phổ biến: đường dẫn log mặc định, ingest pipeline bóc tách, mapping theo ECS và dashboard Kibana.</p>
+<pre><code># Liệt kê và bật module
+filebeat modules list
+filebeat modules enable nginx system
+
+# modules.d/nginx.yml
+- module: nginx
+  access:
+    enabled: true
+    var.paths: ["/var/log/nginx/access.log*"]
+  error:
+    enabled: true</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code># Nạp index template, ILM, ingest pipeline và dashboard vào Elasticsearch/Kibana
+filebeat setup -e \
+  -E setup.kibana.host=http://kibana:5601 \
+  -E output.elasticsearch.username=elastic \
+  -E output.elasticsearch.password="${ELASTIC_PASSWORD}"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Quyền cho setup và quyền cho chạy</strong>
+Lệnh <code>setup</code> cần quyền quản trị (tạo template, pipeline, dashboard), nên chạy một lần bằng tài khoản quản trị. Beat chạy thường xuyên chỉ cần API key có quyền ghi dữ liệu. Tách hai loại quyền này để máy nguồn bị xâm nhập không lấy được quyền quản trị cluster.
+</div>
+
+<h2 id="autodiscover">Autodiscover</h2>
+<p>Trong Docker và Kubernetes, container sinh ra và mất đi liên tục. <strong>Autodiscover</strong> theo dõi container runtime và tự bật cấu hình thu thập cho container mới.</p>
+<pre><code># filebeat.yml cho Docker
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true              # đọc cấu hình từ label của container
+      hints.default_config:
+        type: container
+        paths:
+          - /var/lib/docker/containers/${data.container.id}/*.log
+
+processors:
+  - add_docker_metadata: ~</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code># Container tự khai báo cách thu thập log của mình bằng label (hints)
+docker run -d \
+  --label co.elastic.logs/module=nginx \
+  --label co.elastic.logs/fileset.stdout=access \
+  --label co.elastic.logs/fileset.stderr=error \
+  nginx:1.27</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Trên Kubernetes, Filebeat chạy dạng <strong>DaemonSet</strong> (mỗi node một pod), dùng provider <code>kubernetes</code> và đọc hints từ annotation của pod. Metadata như namespace, pod name, label được gắn tự động vào mỗi log.</p>
+
+<h2 id="agent">Elastic Agent</h2>
+<p><strong>Elastic Agent</strong> là một agent duy nhất thay cho việc cài nhiều Beat riêng lẻ. Một agent thu thập log, metric, uptime, và với Elastic Security còn làm nhiệm vụ endpoint protection.</p>
+<ul>
+<li>Cấu hình bằng <strong>integration</strong> (Bài 17) thay vì module, mỗi integration đóng gói input, pipeline, mapping, dashboard</li>
+<li>Quản lý tập trung qua <strong>Fleet</strong>: đổi policy trên Kibana, mọi agent nhận cấu hình mới mà không cần đăng nhập từng máy</li>
+<li>Chạy <strong>standalone</strong> được nếu không muốn dùng Fleet, với file <code>elastic-agent.yml</code></li>
+<li>Gửi dữ liệu vào data stream theo naming scheme <code>type-dataset-namespace</code> (Bài 23)</li>
+</ul>
+
+<h2 id="beats-vs-agent">Beats Hay Agent</h2>
+<table>
+<tr><th>Tiêu chí</th><th>Beats</th><th>Elastic Agent</th></tr>
+<tr><td>Số agent trên mỗi máy</td><td>Một Beat cho mỗi loại dữ liệu</td><td>Một agent</td></tr>
+<tr><td>Quản lý cấu hình</td><td>File YAML, tự đẩy bằng Ansible/Puppet</td><td>Fleet trên Kibana, hoặc YAML standalone</td></tr>
+<tr><td>Đóng gói nguồn dữ liệu</td><td>Modules</td><td>Integrations (nhiều hơn, cập nhật độc lập với version Stack)</td></tr>
+<tr><td>Output</td><td>ES, Logstash, Kafka, Redis, file</td><td>ES, Logstash, Kafka (tùy version)</td></tr>
+<tr><td>Endpoint security</td><td>Không</td><td>Có (Elastic Defend)</td></tr>
+<tr><td>Mức độ trưởng thành</td><td>Ổn định lâu năm, nhiều tài liệu</td><td>Hướng phát triển chính của Elastic</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Triển khai mới nên bắt đầu với Elastic Agent và Fleet: ít thành phần cần cài, cấu hình tập trung, integrations phong phú. Beats vẫn phù hợp khi bạn đã có hệ thống quản lý cấu hình bằng Ansible/GitOps hoạt động tốt, cần output Elastic Agent chưa hỗ trợ, hoặc cần một thành phần thật nhẹ cho đúng một việc.
+</div>
+
+<h2 id="lab">Bài Lab: Filebeat + Metricbeat Trên Docker</h2>
+<h3>Bước 1: API key cho shipper</h3>
+<pre><code>source .env
+curl $AUTH -X POST "$ES/_security/api_key" -H 'Content-Type: application/json' -d '{
+  "name": "beats-lab", "expiration": "7d",
+  "role_descriptors": { "beats_writer": {
+    "cluster": ["monitor", "read_ilm", "read_pipeline"],
+    "indices": [{ "names": ["filebeat-*", "metricbeat-*"], "privileges": ["create_doc", "view_index_metadata", "auto_configure"] }]
+  } }
+}'
+echo "BEATS_API_KEY=&lt;id&gt;:&lt;api_key&gt;" &gt;&gt; .env</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Cấu hình</h3>
+<pre><code>mkdir -p beats
+cat &gt; beats/filebeat.yml &lt;&lt;'EOF'
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      hints.default_config:
+        type: container
+        paths: ["/var/lib/docker/containers/${data.container.id}/*.log"]
+processors:
+  - add_docker_metadata: ~
+output.elasticsearch:
+  hosts: ["https://es01:9200"]
+  api_key: "${BEATS_API_KEY}"
+  ssl.certificate_authorities: ["/certs/ca/ca.crt"]
+EOF
+
+cat &gt; beats/metricbeat.yml &lt;&lt;'EOF'
+metricbeat.modules:
+  - module: system
+    metricsets: [cpu, memory, network, process]
+    period: 10s
+    processes: ['.*']
+  - module: docker
+    metricsets: [container, cpu, memory]
+    hosts: ["unix:///var/run/docker.sock"]
+    period: 10s
+output.elasticsearch:
+  hosts: ["https://es01:9200"]
+  api_key: "${BEATS_API_KEY}"
+  ssl.certificate_authorities: ["/certs/ca/ca.crt"]
+EOF</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Thêm vào docker-compose.yml</h3>
+<pre><code>  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.15.0
+    user: root
+    command: ["--strict.perms=false"]
+    environment: [ "BEATS_API_KEY=${BEATS_API_KEY}" ]
+    volumes:
+      - ./beats/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./certs:/certs:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.15.0
+    user: root
+    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+    environment: [ "BEATS_API_KEY=${BEATS_API_KEY}" ]
+    volumes:
+      - ./beats/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - ./certs:/certs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Docker Desktop trên Windows/macOS</strong>
+Đường dẫn <code>/var/lib/docker/containers</code> và <code>/proc</code> nằm trong máy ảo Linux của Docker Desktop, không phải trên máy bạn. Các mount trên vẫn hoạt động vì Docker Desktop ánh xạ chúng vào máy ảo, nhưng metric "system" sẽ là của máy ảo đó. Trên WSL2 hoặc Linux thật, metric phản ánh đúng host.
+</div>
+
+<h3>Bước 4: Nạp dashboard và khởi động</h3>
+<pre><code># setup chạy một lần bằng tài khoản quản trị
+docker compose run --rm filebeat setup -e --strict.perms=false \
+  -E setup.kibana.host=http://kibana:5601 \
+  -E output.elasticsearch.api_key= \
+  -E output.elasticsearch.username=elastic -E output.elasticsearch.password="$ELASTIC_PASSWORD"
+docker compose run --rm metricbeat setup -e --strict.perms=false \
+  -E setup.kibana.host=http://kibana:5601 \
+  -E output.elasticsearch.api_key= \
+  -E output.elasticsearch.username=elastic -E output.elasticsearch.password="$ELASTIC_PASSWORD"
+
+docker compose up -d filebeat metricbeat
+# Sinh log có nhãn nginx
+docker run -d --name lab-nginx -p 8080:80 \
+  --label co.elastic.logs/module=nginx \
+  --label co.elastic.logs/fileset.stdout=access \
+  --label co.elastic.logs/fileset.stderr=error nginx:1.27
+for i in $(seq 1 20); do curl -s -o /dev/null localhost:8080/; curl -s -o /dev/null localhost:8080/missing; done</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 5: Kiểm tra</h3>
+<pre><code>curl $AUTH "$ES/_data_stream/filebeat-*,metricbeat-*?filter_path=**.name"
+curl $AUTH "$ES/filebeat-*/_count?q=container.name:lab-nginx"
+curl $AUTH "$ES/filebeat-*/_search?size=1&amp;q=http.response.status_code:404&amp;filter_path=**._source.url,**._source.http&amp;pretty"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Trong Kibana, mở dashboard "[Filebeat Nginx] Overview ECS" và "[Metricbeat Docker] Overview ECS".</p>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Log nginx đã được module bóc tách thành field ECS (<code>http.response.status_code</code>, <code>url.original</code>), mỗi document mang metadata container. Metric CPU/RAM của từng container hiện trên dashboard Metricbeat. Bạn chưa phải viết một dòng grok nào.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Kể tên 4 Beat và loại dữ liệu mỗi Beat thu thập.</li>
+<li>Filebeat dùng registry để làm gì? Vì sao nó cho bảo đảm at-least-once?</li>
+<li>Module gồm những thành phần nào? Lệnh <code>setup</code> nạp gì vào cluster?</li>
+<li>Vì sao nên tách quyền chạy <code>setup</code> và quyền của Beat chạy thường xuyên?</li>
+<li>Autodiscover dùng hints như thế nào trên Docker và Kubernetes?</li>
+<li>Khác biệt chính giữa Beats và Elastic Agent?</li>
+<li>Với một hệ thống mới gồm 200 máy chủ, bạn chọn Beats hay Elastic Agent? Vì sao?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Biết vai trò của Filebeat, Metricbeat, Heartbeat, Packetbeat, Auditbeat</li>
+<li>☐ Cấu hình filestream input có multiline</li>
+<li>☐ Cấu hình Metricbeat module system và một dịch vụ</li>
+<li>☐ Bật module và chạy <code>setup</code></li>
+<li>☐ Dùng autodiscover với hints</li>
+<li>☐ Gửi dữ liệu qua TLS bằng API key quyền tối thiểu</li>
+<li>☐ Giải thích được khi nào chọn Beats, khi nào chọn Elastic Agent</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Không cấu hình multiline</strong>: mỗi dòng của stack trace thành một event riêng, không đọc được.</li>
+<li><strong>Đổi id của filestream input</strong>: Filebeat đọc lại toàn bộ file, dữ liệu bị trùng.</li>
+<li><strong>Beat chạy với user elastic</strong>: mỗi máy nguồn giữ một mật khẩu superuser.</li>
+<li><strong>Bỏ qua lệnh setup</strong>: thiếu template và pipeline, log nằm nguyên trong field <code>message</code>.</li>
+<li><strong>Period quá ngắn cho Metricbeat</strong>: khối lượng dữ liệu tăng vọt, chi phí lưu trữ lớn.</li>
+<li><strong>Beats khác version với Elasticsearch</strong>: Beats mới hơn cluster có thể bị từ chối. Giữ Beats &le; version của Elasticsearch.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Triển khai mới ưu tiên Elastic Agent + Fleet (Bài 17)</li>
+<li>Dùng module/integration trước khi tự viết parser</li>
+<li>Mỗi nhóm máy một API key với quyền <code>create_doc</code> trên đúng pattern index</li>
+<li>Xử lý nặng đặt ở ingest pipeline, processor của Beat chỉ làm việc nhẹ</li>
+<li>Kiểm tra cấu hình bằng <code>filebeat test config</code> và <code>filebeat test output</code></li>
+<li>Theo dõi chính các Beat qua Stack Monitoring (Bài 18)</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/beats/libbeat/current/beats-reference.html" target="_blank">Beats Platform Reference</a></li>
+<li><a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-filestream.html" target="_blank">Filebeat: filestream input</a></li>
+<li><a href="https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html" target="_blank">Filebeat: Autodiscover hints</a></li>
+<li><a href="https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-modules.html" target="_blank">Metricbeat: Modules</a></li>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/beats-agent-comparison.html" target="_blank">Beats and Elastic Agent capabilities</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="15-logstash.html">&larr; Bài 15: Logstash</a>
+<a href="17-fleet-integrations.html">Bài 17: Fleet &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cluster Management - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cluster Health</div>
+    <div class="nav-items">
+      <a href="#health">Green / Yellow / Red</a>
+      <a href="#allocation-explain">Allocation Explain</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Scaling</div>
+    <div class="nav-items">
+      <a href="#add-node">Thêm node</a>
+      <a href="#remove-node">Gỡ node</a>
+      <a href="#rolling-restart">Rolling Restart</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Awareness</div>
+    <div class="nav-items">
+      <a href="#awareness">Allocation Awareness</a>
+      <a href="#forced-awareness">Forced Awareness</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html" class="current">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Cluster Management &amp; Scaling</h1>
+<p class="subtitle">Thêm/bớt node, rolling restart, cluster health, allocation awareness — vận hành cluster không downtime</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/add-elasticsearch-nodes.html" target="_blank">Elastic — Add and Remove Nodes</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/restart-cluster.html" target="_blank">Elastic — Full and Rolling Restart</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Đọc đúng cluster health và chẩn đoán shard chưa được cấp phát bằng allocation explain. Thêm và gỡ node (kể cả master-eligible node) mà không mất dữ liệu. Thực hiện rolling restart để nâng cấp hoặc đổi cấu hình không downtime. Cấu hình allocation awareness để cluster chịu được mất cả một zone.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 03: Kiến Trúc ES</strong> — Node roles, quorum, primary/replica</li>
+<li><strong>Bài 04: Cài Đặt</strong> — Cluster lab 3 node bằng Docker Compose</li>
+</ul>
+
+<h2 id="health">Cluster Health: Green / Yellow / Red</h2>
+<pre><code>GET /_cluster/health
+GET /_cluster/health?level=indices      # chi tiết từng index
+GET /_cat/indices?v&amp;health=yellow        # chỉ index đang yellow
+GET /_cat/shards?v&amp;h=index,shard,prirep,state,unassigned.reason</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Trạng thái</th><th>Ý nghĩa</th><th>Hành động</th></tr>
+<tr><td><span style="color:#16a34a;font-weight:600">green</span></td><td>Mọi primary và replica đã cấp phát</td><td>Bình thường</td></tr>
+<tr><td><span style="color:#d97706;font-weight:600">yellow</span></td><td>Primary đủ, thiếu replica. Dữ liệu vẫn đọc/ghi được nhưng giảm khả năng chịu lỗi</td><td>Tìm lý do replica không cấp phát được</td></tr>
+<tr><td><span style="color:#dc2626;font-weight:600">red</span></td><td>Có primary chưa cấp phát. Một phần dữ liệu không truy cập được, ghi vào shard đó thất bại</td><td>Xử lý ngay</td></tr>
+</table>
+<div class="callout callout-amber">
+<strong>Yellow trong lúc bảo trì là bình thường</strong>
+Khi restart một node, các replica trên node đó tạm thời unassigned nên cluster chuyển yellow. Điều cần theo dõi là cluster có quay về green sau khi node quay lại hay không.
+</div>
+
+<h2 id="allocation-explain">Allocation Explain</h2>
+<p>Đây là công cụ quan trọng nhất khi cluster không green. API trả lời câu hỏi: "Vì sao shard này chưa được cấp phát, hoặc vì sao nó nằm ở node này?"</p>
+<pre><code># Không truyền body → giải thích shard unassigned đầu tiên tìm thấy
+GET /_cluster/allocation/explain
+
+# Hỏi về một shard cụ thể
+GET /_cluster/allocation/explain
+{ "index": "orders", "shard": 0, "primary": false }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Trong response, xem <code>unassigned_info.reason</code> và danh sách <code>node_allocation_decisions</code>. Mỗi node có một loạt <code>deciders</code> với kết quả <code>NO</code> kèm lý do. Các lý do hay gặp:</p>
+<table>
+<tr><th>Decider</th><th>Ý nghĩa</th></tr>
+<tr><td><code>same_shard</code></td><td>Không đặt replica cùng node với primary (thường gặp ở cluster 1 node)</td></tr>
+<tr><td><code>disk_threshold</code></td><td>Node vượt disk watermark (Bài 11)</td></tr>
+<tr><td><code>filter</code></td><td>Allocation filtering loại trừ node này</td></tr>
+<tr><td><code>awareness</code></td><td>Vi phạm quy tắc phân bổ theo zone</td></tr>
+<tr><td><code>max_retry</code></td><td>Cấp phát đã thất bại quá số lần cho phép (mặc định 5)</td></tr>
+</table>
+<pre><code># Sau khi sửa nguyên nhân gốc, thử cấp phát lại các shard đã hết lượt retry
+POST /_cluster/reroute?retry_failed=true</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="add-node">Thêm Node</h2>
+<p>Node mới chỉ cần cùng <code>cluster.name</code> và trỏ <code>discovery.seed_hosts</code> tới các node hiện có. Master tự động rebalance shard sang node mới.</p>
+<pre><code># elasticsearch.yml của node mới
+cluster.name: my-production-cluster
+node.name: node-4
+node.roles: [ data ]
+discovery.seed_hosts: ["10.0.0.1", "10.0.0.2", "10.0.0.3"]
+# KHÔNG đặt cluster.initial_master_nodes cho node join cluster đã có</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-red">
+<strong>initial_master_nodes trên node mới</strong>
+Đặt <code>cluster.initial_master_nodes</code> trên node join cluster có sẵn có thể khiến nó tự bootstrap một cluster riêng, tách khỏi cluster chính. Tham số này chỉ dùng một lần khi khởi tạo cluster lần đầu.
+</div>
+<p>Kiểm soát tốc độ di chuyển shard để không làm nghẽn cluster đang phục vụ:</p>
+<pre><code>PUT /_cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.node_concurrent_recoveries": 2,
+    "indices.recovery.max_bytes_per_sec": "100mb"
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="remove-node">Gỡ Node</h2>
+<h3>Gỡ data node</h3>
+<p>Không tắt node đột ngột. Trước hết, di chuyển hết shard ra khỏi node bằng allocation filtering:</p>
+<pre><code># 1. Đẩy shard ra khỏi node-4
+PUT /_cluster/settings
+{ "persistent": { "cluster.routing.allocation.exclude._name": "node-4" } }
+
+# 2. Chờ đến khi node-4 không còn shard nào
+GET /_cat/allocation?v
+GET /_cat/shards?v&amp;h=index,shard,prirep,state,node | grep node-4
+
+# 3. Dừng node-4, rồi xóa setting exclude
+PUT /_cluster/settings
+{ "persistent": { "cluster.routing.allocation.exclude._name": null } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Gỡ master-eligible node</h3>
+<p>Với master-eligible node, cần đưa node ra khỏi <strong>voting configuration</strong> trước để quorum không bị ảnh hưởng:</p>
+<pre><code># 1. Loại node khỏi voting configuration
+POST /_cluster/voting_config_exclusions?node_names=node-3
+
+# 2. Dừng node-3
+
+# 3. Sau khi node-3 đã rời cluster hẳn, xóa danh sách exclusion
+DELETE /_cluster/voting_config_exclusions</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Gỡ từng node một</strong>
+Đừng tắt cùng lúc một nửa số master-eligible node. ES tự điều chỉnh voting configuration khi node rời đi từ từ, nhưng nếu mất đa số cùng lúc thì cluster mất quorum và không bầu được master.
+</div>
+
+<h2 id="rolling-restart">Rolling Restart</h2>
+<p>Rolling restart nghĩa là khởi động lại từng node một trong khi cluster vẫn phục vụ. Dùng khi nâng cấp minor version, đổi cấu hình tĩnh, hoặc bảo trì OS.</p>
+<div class="flow">
+<span class="flow-step">Tắt cấp phát replica</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Flush</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Restart 1 node</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Chờ join</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Bật lại cấp phát</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Chờ green</span>
+</div>
+<pre><code># 1. Chỉ cho phép cấp phát primary, tránh ES copy replica khi node tạm vắng
+PUT /_cluster/settings
+{ "persistent": { "cluster.routing.allocation.enable": "primaries" } }
+
+# 2. Flush để giảm lượng dữ liệu cần recovery từ translog
+POST /_flush
+
+# 3. Dừng node, nâng cấp hoặc đổi cấu hình, khởi động lại
+
+# 4. Kiểm tra node đã join
+GET /_cat/nodes?v
+
+# 5. Bật lại cấp phát đầy đủ
+PUT /_cluster/settings
+{ "persistent": { "cluster.routing.allocation.enable": null } }
+
+# 6. Chờ green rồi mới chuyển sang node tiếp theo
+GET /_cluster/health?wait_for_status=green&amp;timeout=10m</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Mặc định, khi một node rời cluster, ES chờ <code>index.unassigned.node_left.delayed_timeout</code> (1 phút) rồi mới copy replica sang node khác. Bước 1 khiến ES không di chuyển dữ liệu dù node vắng lâu hơn thế. Khi node quay lại, shard cũ trên disk được dùng lại, chỉ cần đồng bộ phần thay đổi.
+</div>
+<p>Thứ tự khuyến nghị khi nâng cấp version: restart các node <strong>không phải master</strong> trước, master-eligible node sau cùng. Node đã nâng cấp có thể nhận shard từ node cũ, nhưng không theo chiều ngược lại.</p>
+
+<h2 id="awareness">Allocation Awareness</h2>
+<p>Nếu primary và replica của một shard cùng nằm trong một rack hoặc availability zone, mất zone đó là mất cả hai bản. <strong>Allocation awareness</strong> dạy ES biết vị trí vật lý của node để tách các bản sao ra.</p>
+<pre><code># elasticsearch.yml trên từng node: gắn attribute vị trí
+node.attr.zone: zone-a        # node ở zone-b đặt zone-b
+
+# Cấu hình cluster (động)
+PUT /_cluster/settings
+{ "persistent": { "cluster.routing.allocation.awareness.attributes": "zone" } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Với 2 zone và <code>number_of_replicas: 1</code>, ES đặt primary ở một zone và replica ở zone kia.</p>
+
+<h2 id="forced-awareness">Forced Awareness</h2>
+<p>Awareness thường có một hệ quả bất ngờ: khi zone-b sập, ES cố dồn toàn bộ replica sang zone-a. Zone-a có thể không đủ disk/RAM gánh gấp đôi dữ liệu và bị quá tải theo. <strong>Forced awareness</strong> khai báo trước danh sách zone, nên ES không cấp phát replica của zone đã mất vào zone còn lại:</p>
+<pre><code>PUT /_cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.awareness.attributes": "zone",
+    "cluster.routing.allocation.awareness.force.zone.values": "zone-a,zone-b"
+  }
+}
+# Mất zone-b → cluster yellow (thiếu replica) nhưng zone-a không bị quá tải</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Master node cũng cần trải zone</strong>
+Với 3 master-eligible node, đặt mỗi node ở một zone khác nhau. Nếu đặt 2 master ở zone-a, mất zone-a đồng nghĩa mất quorum và cả cluster dừng hoạt động.
+</div>
+
+<h2 id="lab">Bài Lab: Scale Cluster Từ 3 Lên 5 Node, Không Downtime</h2>
+<h3>Chuẩn bị</h3>
+<p>Dùng cluster lab 3 node từ Bài 04 (security tắt, chỉ dùng cục bộ). Tạo index và chạy vòng lặp ghi liên tục để chứng minh không downtime:</p>
+<pre><code>curl -X PUT "http://localhost:9200/lab-scale" -H 'Content-Type: application/json' \
+  -d '{"settings":{"number_of_shards":6,"number_of_replicas":1}}'
+
+# Terminal riêng: ghi 1 document mỗi giây, in ra lỗi nếu có
+while true; do
+  curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:9200/lab-scale/_doc" \
+    -H 'Content-Type: application/json' -d "{\"ts\":\"$(date -u +%FT%TZ)\"}"
+  sleep 1
+done</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 1: Thêm es04 và es05 vào docker-compose.yml</h3>
+<pre><code>  es04:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - node.name=es04
+      - cluster.name=es-docker-cluster
+      - node.roles=data
+      - discovery.seed_hosts=es01,es02,es03
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    volumes: [ "data04:/usr/share/elasticsearch/data" ]
+  # es05: tương tự, đổi node.name=es05 và volume data05
+# Thêm data04, data05 vào mục volumes. Không đặt cluster.initial_master_nodes.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Khởi động node mới và quan sát rebalance</h3>
+<pre><code>docker compose up -d es04 es05
+curl "http://localhost:9200/_cat/nodes?v&amp;h=name,node.role,master"
+# Lặp lại vài lần để thấy shard chuyển sang es04, es05
+curl "http://localhost:9200/_cat/shards/lab-scale?v&amp;h=shard,prirep,state,node"
+curl "http://localhost:9200/_cat/recovery?v&amp;active_only=true"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Rolling restart es02</h3>
+<pre><code>curl -X PUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"cluster.routing.allocation.enable":"primaries"}}'
+curl -X POST "http://localhost:9200/_flush"
+docker compose restart es02
+curl -X PUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"cluster.routing.allocation.enable":null}}'
+curl "http://localhost:9200/_cluster/health?wait_for_status=green&amp;timeout=5m&amp;pretty"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Cluster có 5 node, health green, shard của <code>lab-scale</code> trải đều trên 5 node. Vòng lặp ghi chỉ in <code>201</code> trong suốt quá trình. Nếu có lỗi, đó thường là do request rơi đúng lúc es01 (node nhận request qua cổng 9200) restart. Production dùng load balancer hoặc client trỏ tới nhiều node để tránh trường hợp này.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Cluster yellow và red khác nhau thế nào về khả năng đọc/ghi dữ liệu?</li>
+<li>Bạn dùng API nào để biết vì sao một replica không được cấp phát? Đọc kết quả ở field nào?</li>
+<li>Vì sao không đặt <code>cluster.initial_master_nodes</code> trên node mới join cluster?</li>
+<li>Các bước gỡ một data node an toàn là gì? Với master-eligible node thì cần thêm bước nào?</li>
+<li>Vì sao rolling restart cần đặt <code>allocation.enable: primaries</code> trước khi dừng node?</li>
+<li>Allocation awareness giải quyết rủi ro gì? Forced awareness bổ sung điều gì?</li>
+<li>Vì sao 3 master-eligible node nên nằm ở 3 zone khác nhau?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Đọc cluster health và <code>_cat/shards</code> để tìm shard có vấn đề</li>
+<li>☐ Dùng <code>_cluster/allocation/explain</code> và <code>reroute?retry_failed</code></li>
+<li>☐ Thêm node mới đúng cấu hình discovery</li>
+<li>☐ Gỡ data node bằng allocation exclude</li>
+<li>☐ Gỡ master-eligible node bằng voting config exclusions</li>
+<li>☐ Thực hiện rolling restart đủ 6 bước</li>
+<li>☐ Cấu hình allocation awareness và forced awareness theo zone</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Tắt node khi chưa chuyển shard đi</strong>: nếu replica còn thiếu, mất node có thể làm cluster red.</li>
+<li><strong>Quên bật lại allocation sau rolling restart</strong>: cluster kẹt ở yellow vì replica không bao giờ được cấp phát lại.</li>
+<li><strong>Restart node tiếp theo khi cluster chưa green</strong>: có thể mất cả primary lẫn replica của cùng một shard.</li>
+<li><strong>Quên xóa allocation exclude</strong>: node mới cùng tên về sau sẽ không nhận được shard.</li>
+<li><strong>Awareness không forced</strong>: mất một zone kéo theo zone còn lại quá tải disk.</li>
+<li><strong>Dồn master vào một zone</strong>: mất zone đó là mất quorum toàn cluster.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Viết runbook rolling restart và luôn chờ green giữa các node</li>
+<li>Dùng <code>persistent</code> cho cấu hình cluster cần giữ qua restart, tránh <code>transient</code> (đã bị đánh dấu deprecated)</li>
+<li>Giới hạn tốc độ recovery khi cluster đang phục vụ traffic cao</li>
+<li>Bật forced awareness khi chạy multi-zone, trải 3 master qua 3 zone</li>
+<li>Client kết nối tới nhiều node hoặc qua load balancer, không trỏ cứng vào một node</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html" target="_blank">ES: Cluster Health API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-allocation-explain.html" target="_blank">ES: Cluster Allocation Explain API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/add-elasticsearch-nodes.html" target="_blank">ES: Add and Remove Nodes</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/restart-cluster.html" target="_blank">ES: Full-cluster and Rolling Restart</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-cluster.html" target="_blank">ES: Shard Allocation Awareness</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="09-aggregations.html">&larr; Bài 09: Aggregations</a>
+<a href="11-shard-allocation.html">Bài 11: Shard Allocation &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agile Mindset - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.comparison-table{margin:1.5rem 0}
+.comparison-table th{background:#667eea;color:#fff;font-size:.8rem}
+.comparison-table td{vertical-align:top;font-size:.85rem}
+.pyramid{background:#f8fafc;border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.pyramid-level{display:flex;align-items:center;gap:1rem;margin-bottom:.75rem;padding:.75rem 1rem;border-radius:8px}
+.pyramid-level:nth-child(1){background:linear-gradient(135deg,#fee2e2,#fecaca);margin-left:0}
+.pyramid-level:nth-child(2){background:linear-gradient(135deg,#fef3c7,#fde68a);margin-left:1rem}
+.pyramid-level:nth-child(3){background:linear-gradient(135deg,#d1fae5,#a7f3d0);margin-left:2rem}
+.pyramid-level:nth-child(4){background:linear-gradient(135deg,#dbeafe,#bfdbfe);margin-left:3rem}
+.pyramid-level:nth-child(5){background:linear-gradient(135deg,#e0e7ff,#c7d2fe);margin-left:4rem}
+.pyramid-label{font-weight:600;font-size:.85rem;min-width:120px}
+.pyramid-desc{font-size:.82rem;color:#64748b}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#layers">Các tầng của Agile</a>
+<a href="#person">Chân dung con người Agile</a>
+<a href="#leader">Chân dung Leader Agile</a>
+<a href="#benefits">Lợi ích từ Agile</a>
+<a href="#transformation">Agile thay đổi tổ chức</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="01-business-agility.html">← Trước</a>
+<a href="03-agile-manifesto.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html" class="current">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Agile Mindset</h1>
+<p class="subtitle">Tư duy, chân dung con người Agile và Leader Agile</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: TPBank Workshop - Leading With Business Agility — Bài 02/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Agile không chỉ là "Doing Agile" (làm theo các phương pháp) mà quan trọng hơn là "Being Agile" (trở thành Agile) — một sự thay đổi từ tư duy và giá trị cốt lõi.
+</div>
+
+<h2 id="layers">Các tầng của Agile</h2>
+
+<p>Agile có thể được hiểu qua nhiều tầng, từ bề mặt đến sâu xa. Càng đi sâu vào các tầng dưới, hiệu quả càng cao nhưng cũng khó thay đổi hơn.</p>
+
+<div class="pyramid">
+<div class="pyramid-level">
+<span class="pyramid-label">Agile Mindset</span>
+<span class="pyramid-desc">Khó thấy, khó thay đổi — Rất mạnh mẽ, hiệu quả cao</span>
+</div>
+<div class="pyramid-level">
+<span class="pyramid-label">Agile Values</span>
+<span class="pyramid-desc">Agile Manifesto — 4 giá trị cốt lõi</span>
+</div>
+<div class="pyramid-level">
+<span class="pyramid-label">Agile Principles</span>
+<span class="pyramid-desc">12 nguyên tắc hướng dẫn hành động</span>
+</div>
+<div class="pyramid-level">
+<span class="pyramid-label">Agile Practices</span>
+<span class="pyramid-desc">Daily Standup, Retrospective, Sprint Planning...</span>
+</div>
+<div class="pyramid-level">
+<span class="pyramid-label">Agile Methods</span>
+<span class="pyramid-desc">Scrum, Kanban... — Dễ thấy, dễ thay đổi — Ít mạnh mẽ</span>
+</div>
+</div>
+
+<p>Nhiều tổ chức chỉ tập trung vào các tầng trên (Methods, Practices) mà bỏ qua nền tảng (Values, Mindset). Điều này dẫn đến việc "Doing Agile" mà không "Being Agile" — áp dụng hình thức mà thiếu tinh thần.</p>
+
+<h2 id="person">Chân dung con người Agile</h2>
+
+<p>Một người thực sự "Being Agile" thể hiện những đặc điểm sau:</p>
+
+<table class="comparison-table">
+<thead>
+<tr><th>#</th><th>Đặc điểm</th><th>Mô tả chi tiết</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><strong>Hướng về giá trị</strong></td><td>Lấy khách hàng và giá trị tạo ra làm trọng tâm. Tập trung vào kết quả chung thay vì chỉ hoàn thành đầu việc cá nhân.</td></tr>
+<tr><td>2</td><td><strong>Cam kết & Trách nhiệm</strong></td><td>Cam kết với mục tiêu chung, chủ động làm chủ và chịu trách nhiệm. Giữ lời hứa, đồng thời minh bạch khi cam kết có nguy cơ không đạt.</td></tr>
+<tr><td>3</td><td><strong>Tập trung</strong></td><td>Tập trung vào công việc ưu tiên và hoàn thành giá trị đến cùng. Hạn chế đa nhiệm và sẵn sàng hỗ trợ đồng đội.</td></tr>
+<tr><td>4</td><td><strong>Cởi mở & Minh bạch</strong></td><td>Cởi mở chia sẻ tiến độ, vấn đề, sai sót và phản hồi. Chủ động tìm kiếm và tiếp nhận các góc nhìn khác biệt.</td></tr>
+<tr><td>5</td><td><strong>Tôn trọng & Hợp tác</strong></td><td>Tôn trọng sự khác biệt về chuyên môn và quan điểm. Hợp tác, chia sẻ kiến thức và cùng chịu trách nhiệm về kết quả.</td></tr>
+<tr><td>6</td><td><strong>Can đảm</strong></td><td>Có can đảm nêu vấn đề, phản biện xây dựng và thử cách làm mới. Thích nghi với thay đổi thay vì bám cứng vào kế hoạch.</td></tr>
+<tr><td>7</td><td><strong>Tư duy phát triển</strong></td><td>Có tư duy phát triển, tin rằng năng lực có thể được rèn luyện. Xem thách thức và điều chưa biết là cơ hội trưởng thành.</td></tr>
+<tr><td>8</td><td><strong>Học tập liên tục</strong></td><td>Học tập liên tục và chủ động tìm kiếm phản hồi. Xem sai sót, thất bại và dữ liệu thực tế là đầu vào để tiến bộ.</td></tr>
+<tr><td>9</td><td><strong>Đa kỹ năng</strong></td><td>Phát triển theo hướng đa kỹ năng (T-shape), đồng thời giữ chuyên môn cốt lõi. Linh hoạt hỗ trợ ngoài vai trò chính khi đội ngũ cần.</td></tr>
+<tr><td>10</td><td><strong>Cải tiến liên tục</strong></td><td>Thường xuyên nhìn lại, cải tiến và kiên trì trước khó khăn. Đo lường sự tiến bộ bằng giá trị và kết quả thực tế.</td></tr>
+</tbody>
+</table>
+
+<h2 id="leader">Chân dung Leader Agile</h2>
+
+<p>Leader Agile không chỉ là người quản lý mà còn là người truyền cảm hứng, phục vụ và phát triển đội ngũ:</p>
+
+<table class="comparison-table">
+<thead>
+<tr><th>#</th><th>Đặc điểm</th><th>Mô tả chi tiết</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><strong>Kiến tạo tầm nhìn</strong></td><td>Kiến tạo tầm nhìn và định hướng rõ ràng theo giá trị. Giúp đội ngũ hiểu mục đích và tập trung vào ưu tiên quan trọng.</td></tr>
+<tr><td>2</td><td><strong>Trao quyền có trách nhiệm</strong></td><td>Tạo sự cam kết thông qua mục tiêu có ý nghĩa và quyền tự chủ. Trao quyền đi kèm guardrails và trách nhiệm giải trình.</td></tr>
+<tr><td>3</td><td><strong>Bảo vệ sự tập trung</strong></td><td>Bảo vệ sự tập trung của đội ngũ trước các yêu cầu phân tán. Chủ động tháo gỡ rào cản và tối ưu dòng chảy giá trị.</td></tr>
+<tr><td>4</td><td><strong>Lắng nghe chủ động</strong></td><td>Đặt câu hỏi gợi mở và lắng nghe chủ động. Khuyến khích minh bạch, đối thoại thẳng thắn và không đổ lỗi.</td></tr>
+<tr><td>5</td><td><strong>Trí tuệ cảm xúc</strong></td><td>Có trí tuệ cảm xúc, thấu cảm và tôn trọng con người. Xây dựng niềm tin và môi trường an toàn tâm lý.</td></tr>
+<tr><td>6</td><td><strong>Ra quyết định & Trao quyền</strong></td><td>Dám ra quyết định và trao quyền thực chất. Bảo vệ đội ngũ khi thực hiện các thử nghiệm hợp lý, có kiểm soát.</td></tr>
+<tr><td>7</td><td><strong>Làm gương học hỏi</strong></td><td>Làm gương về tinh thần học hỏi và sẵn sàng thừa nhận điều chưa biết. Khuyến khích đội ngũ vượt khỏi vùng an toàn.</td></tr>
+<tr><td>8</td><td><strong>Coaching & Phản hồi</strong></td><td>Coaching và đưa phản hồi mang tính phát triển. Biến sai sót thành cơ hội học tập thay vì tìm người chịu lỗi.</td></tr>
+<tr><td>9</td><td><strong>Phát triển năng lực</strong></td><td>Phát triển năng lực đội ngũ và thúc đẩy học hỏi chéo. Nuôi dưỡng khả năng tự tổ chức và lãnh đạo ở mọi cấp.</td></tr>
+<tr><td>10</td><td><strong>Tạo ảnh hưởng</strong></td><td>Tạo ảnh hưởng bằng uy tín, đối thoại và làm gương. Loại bỏ rào cản hệ thống và duy trì văn hóa cải tiến liên tục.</td></tr>
+</tbody>
+</table>
+
+<h2 id="benefits">Lợi ích từ Agile</h2>
+
+<p>Theo các khảo sát toàn cầu, các tổ chức áp dụng Agile thường đạt được:</p>
+
+<ul>
+<li><strong>Khả năng quản lý thay đổi ưu tiên</strong> — Linh hoạt điều chỉnh khi yêu cầu thay đổi</li>
+<li><strong>Tăng tốc độ ra thị trường</strong> — Chuyển giao giá trị nhanh hơn cho khách hàng</li>
+<li><strong>Tăng năng suất đội ngũ</strong> — Giảm lãng phí, tập trung vào giá trị</li>
+<li><strong>Cải thiện sự liên kết giữa IT và kinh doanh</strong> — Hợp tác chặt chẽ hơn</li>
+<li><strong>Nâng cao chất lượng sản phẩm</strong> — Phản hồi sớm và thường xuyên</li>
+<li><strong>Tăng tinh thần đội ngũ</strong> — Tự chủ, mục đích rõ ràng, phát triển liên tục</li>
+<li><strong>Giảm rủi ro dự án</strong> — Phát hiện vấn đề sớm, điều chỉnh kịp thời</li>
+</ul>
+
+<h2 id="transformation">Agile thay đổi tổ chức như thế nào?</h2>
+
+<p>Agile không chỉ thay đổi cách làm việc mà còn thay đổi toàn bộ cách tổ chức vận hành:</p>
+
+<table>
+<thead>
+<tr><th>Khía cạnh</th><th>Truyền thống</th><th>Agile</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Cấu trúc</strong></td><td>Phân cấp, nhiều tầng lớp</td><td>Phẳng hơn, team liên chức năng</td></tr>
+<tr><td><strong>Lập kế hoạch</strong></td><td>Dài hạn, chi tiết từ đầu</td><td>Lặp lại, thích ứng theo phản hồi</td></tr>
+<tr><td><strong>Ra quyết định</strong></td><td>Tập trung ở cấp cao</td><td>Phân tán, gần với công việc</td></tr>
+<tr><td><strong>Giao tiếp</strong></td><td>Theo cấp bậc, qua tài liệu</td><td>Trực tiếp, thường xuyên</td></tr>
+<tr><td><strong>Đo lường</strong></td><td>Theo kế hoạch, milestone</td><td>Theo giá trị chuyển giao</td></tr>
+<tr><td><strong>Văn hóa</strong></td><td>Tuân thủ, tránh lỗi</td><td>Thử nghiệm, học từ thất bại</td></tr>
+<tr><td><strong>Lãnh đạo</strong></td><td>Chỉ đạo, kiểm soát</td><td>Phục vụ, trao quyền</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Chuyển đổi Agile thành công đòi hỏi sự thay đổi từ cả con người (mindset), quy trình (process) và công cụ (tools). Trong đó, thay đổi mindset là nền tảng và khó khăn nhất, nhưng cũng mang lại hiệu quả bền vững nhất.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

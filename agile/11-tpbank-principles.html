@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 Nguyên tắc lãnh đạo TPBank - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.principle-card{background:#f8fafc;border:1px solid rgba(102,126,234,.15);border-radius:10px;padding:1.25rem;margin:1rem 0}
+.principle-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem}
+.principle-num{width:36px;height:36px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.principle-title{font-size:1rem;font-weight:700;color:#1a1a2e}
+.principle-subtitle{font-size:.82rem;color:#64748b;margin-top:.25rem}
+.principle-content{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.principle-col h4{font-size:.8rem;font-weight:600;color:#4c51bf;text-transform:uppercase;letter-spacing:.03em;margin-bottom:.5rem}
+.principle-col ul{margin:0;padding-left:1.1rem;font-size:.85rem}
+.principle-col li{margin-bottom:.25rem;color:#4a5568}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}.principle-content{grid-template-columns:1fr}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#principles">10 Nguyên tắc</a>
+<a href="#agile-mapping">Liên kết với Agile</a>
+<a href="#practices">Thực hành hỗ trợ</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="10-transformation.html">← Trước</a>
+<a href="index.html">Về trang chủ</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html" class="current">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">10 Nguyên tắc lãnh đạo TPBank</h1>
+<p class="subtitle">Liên kết Agile với các nguyên tắc lãnh đạo của TPBank</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: TPBank Leadership Principles — Bài 11/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+10 nguyên tắc lãnh đạo TPBank và các giá trị Agile không mâu thuẫn — ngược lại, chúng bổ sung và củng cố lẫn nhau. Agile cung cấp phương pháp, cách thức và hành vi cụ thể để hiện thực hóa các nguyên tắc lãnh đạo này.
+</div>
+
+<h2 id="principles">10 Nguyên tắc lãnh đạo TPBank</h2>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">1</div>
+<div>
+<div class="principle-title">Tập trung vào khách hàng</div>
+<div class="principle-subtitle">Luôn bắt đầu từ khách hàng khi xây dựng giải pháp</div>
+</div>
+</div>
+<p>Luôn bắt đầu từ khách hàng (bao gồm cả người dùng nội bộ) khi xây dựng giải pháp. Giữ vững chất lượng với tiêu chuẩn khắt khe, đồng thời không ngừng nâng cao.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">2</div>
+<div>
+<div class="principle-title">Hãy hành động, đừng quá cầu toàn</div>
+<div class="principle-subtitle">Tốc độ trong công việc rất quan trọng</div>
+</div>
+</div>
+<p>Tốc độ trong công việc rất quan trọng. Hãy lựa chọn vừa làm vừa nghiên cứu khi chi phí/rủi ro còn trong tầm kiểm soát. Ta gọi là "vừa chạy vừa xếp hàng".</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">3</div>
+<div>
+<div class="principle-title">Sáng tạo, học hỏi không ngừng và luôn đơn giản hóa</div>
+<div class="principle-subtitle">Khuyến khích đổi mới, sáng tạo từ đội ngũ</div>
+</div>
+</div>
+<p>Khuyến khích đổi mới, sáng tạo từ đội ngũ; đồng thời làm mọi thứ trở nên đơn giản, dễ áp dụng. Luôn học hỏi cái mới từ mọi nguồn, tò mò và chủ động khám phá để cải thiện.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">4</div>
+<div>
+<div class="principle-title">Thẳng thắn phản biện và cam kết thực thi</div>
+<div class="principle-subtitle">Sẵn sàng thẳng thắn phản biện khi chưa đồng ý</div>
+</div>
+</div>
+<p>Sẵn sàng thẳng thắn phản biện khi chưa đồng ý. Kiên định, không thỏa hiệp chỉ để "dĩ hòa vi quý". Khi quyết định cuối cùng đã có, hãy hết lòng thực thi.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">5</div>
+<div>
+<div class="principle-title">Đạt bằng được kết quả, với nguồn lực ít nhất</div>
+<div class="principle-subtitle">Xác định yếu tố cốt lõi và kiên quyết đạt kết quả</div>
+</div>
+</div>
+<p>Xác định yếu tố cốt lõi và kiên quyết đạt kết quả, với chất lượng cao nhất, đúng hạn, bất chấp trở ngại. Luôn làm nhiều hơn với ít nguồn lực hơn, vì sự hạn chế buộc chúng ta phải sáng tạo và đổi mới.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">6</div>
+<div>
+<div class="principle-title">Nắm sâu công việc</div>
+<div class="principle-subtitle">Nắm chắc công việc của các cấp phía dưới</div>
+</div>
+</div>
+<p>Nắm chắc công việc của các cấp phía dưới, quan tâm đến chi tiết, thường xuyên kiểm tra và đối chiếu khi số liệu và thực tế không khớp. Không có công việc nào là thấp tầm với bạn.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">7</div>
+<div>
+<div class="principle-title">Tinh thần làm chủ, dấn thân vì tổ chức</div>
+<div class="principle-subtitle">Suy nghĩ và hành động như một người chủ</div>
+</div>
+</div>
+<p>Suy nghĩ và hành động như một người chủ. Đặt lợi ích chung của Ngân hàng lên trên hết, dấn thân vì việc chung; không bao giờ nghĩ "đây không phải việc của tôi"; không hy sinh giá trị lâu dài cho lợi ích ngắn hạn hay cục bộ.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">8</div>
+<div>
+<div class="principle-title">Phát triển và đào tạo đội ngũ</div>
+<div class="principle-subtitle">Luôn nâng chuẩn khi tuyển dụng và đề bạt</div>
+</div>
+</div>
+<p>Luôn nâng chuẩn khi tuyển dụng và đề bạt. Tìm người tài, đặt vào đúng vị trí để phát huy năng lực. Lãnh đạo phải làm tốt vai trò huấn luyện và phát triển thế hệ tiếp theo.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">9</div>
+<div>
+<div class="principle-title">Xây dựng niềm tin với đồng đội</div>
+<div class="principle-subtitle">Lắng nghe, thẳng thắn, tôn trọng người khác</div>
+</div>
+</div>
+<p>Lắng nghe, thẳng thắn, tôn trọng người khác. Sẵn sàng tự phê bình. So sánh bản thân và đội ngũ với những tiêu chuẩn tốt nhất, thay vì tự bằng lòng. Luôn hợp lực cùng đồng đội vì mục đích chung.</p>
+</div>
+
+<div class="principle-card">
+<div class="principle-header">
+<div class="principle-num">10</div>
+<div>
+<div class="principle-title">Lãnh đạo với phán đoán đúng đắn</div>
+<div class="principle-subtitle">Dựa vào trực giác và phán đoán sắc bén</div>
+</div>
+</div>
+<p>Nhà lãnh đạo giỏi dựa vào trực giác và phán đoán sắc bén, đồng thời lắng nghe, nhìn đa chiều để kiểm chứng chính mình. Đừng nghĩ nhỏ, hãy có tầm nhìn táo bạo, truyền cảm hứng và tìm cách khác biệt để tốt hơn.</p>
+</div>
+
+<h2 id="agile-mapping">Liên kết với Agile</h2>
+
+<p>Bảng dưới đây cho thấy mối liên hệ giữa các nguyên tắc lãnh đạo TPBank và các giá trị/nguyên tắc Agile:</p>
+
+<table>
+<thead>
+<tr><th>Nguyên tắc TPBank</th><th>Giá trị/Nguyên tắc Agile tương ứng</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Tập trung vào khách hàng</strong></td>
+<td>Hợp tác với khách hàng; tạo giá trị sớm và liên tục; lấy phản hồi khách hàng làm cơ sở điều chỉnh. SAFe: Customer Centricity, Design Thinking.</td>
+</tr>
+<tr>
+<td><strong>2. Hãy hành động, đừng quá cầu toàn</strong></td>
+<td>Ưu tiên sản phẩm hoạt động hơn tài liệu đầy đủ; chuyển giao sớm và thường xuyên; đơn giản hóa. SAFe: Build incrementally with fast learning cycles.</td>
+</tr>
+<tr>
+<td><strong>3. Sáng tạo, học hỏi không ngừng</strong></td>
+<td>Đáp ứng thay đổi; thường xuyên nhìn lại và cải tiến; đơn giản hóa, tối đa hóa công việc không cần làm. SAFe: Relentless Improvement.</td>
+</tr>
+<tr>
+<td><strong>4. Thẳng thắn phản biện và cam kết</strong></td>
+<td>Scrum Values: Cởi mở, can đảm, cam kết. SAFe: Transparency, Alignment.</td>
+</tr>
+<tr>
+<td><strong>5. Đạt kết quả với nguồn lực ít nhất</strong></td>
+<td>Lean: Loại bỏ lãng phí. Agile: Đơn giản hóa là nghệ thuật. SAFe: Take an economic view.</td>
+</tr>
+<tr>
+<td><strong>6. Nắm sâu công việc</strong></td>
+<td>Minh bạch tiến độ và vấn đề; Gemba walks; trực quan hóa công việc. SAFe: Transparency.</td>
+</tr>
+<tr>
+<td><strong>7. Tinh thần làm chủ</strong></td>
+<td>Team tự tổ chức, cam kết với mục tiêu chung. SAFe: Unlock intrinsic motivation, Purpose.</td>
+</tr>
+<tr>
+<td><strong>8. Phát triển đội ngũ</strong></td>
+<td>Coaching culture; T-shaped skills; phát triển năng lực liên tục. SAFe: Respect for People.</td>
+</tr>
+<tr>
+<td><strong>9. Xây dựng niềm tin</strong></td>
+<td>Cá nhân và tương tác hơn quy trình; xây dựng đội ngũ tự tổ chức; an toàn tâm lý. Scrum Values: Tôn trọng, cởi mở.</td>
+</tr>
+<tr>
+<td><strong>10. Phán đoán đúng đắn</strong></td>
+<td>Ra quyết định dựa trên dữ liệu; kiểm tra giả thuyết qua MVP; lắng nghe đa chiều. SAFe: Systems thinking.</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="practices">Thực hành Agile hỗ trợ</h2>
+
+<p>Các thực hành Agile cụ thể giúp hiện thực hóa các nguyên tắc lãnh đạo:</p>
+
+<table>
+<thead>
+<tr><th>Nguyên tắc</th><th>Thực hành và phương pháp hỗ trợ</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tập trung vào khách hàng</strong></td>
+<td>Design Thinking, Jobs To Be Done, Customer Journey Mapping, Persona, Product Discovery, Voice of Customer, Sprint Review</td>
+</tr>
+<tr>
+<td><strong>Hành động nhanh</strong></td>
+<td>Sprint/Iteration, MVP, Prototype, Time-boxing, Definition of Done</td>
+</tr>
+<tr>
+<td><strong>Sáng tạo & Học hỏi</strong></td>
+<td>Lean Startup, Build-Measure-Learn, Retrospective, Inspect & Adapt, Kaizen, A/B Testing, Hackathon</td>
+</tr>
+<tr>
+<td><strong>Xây dựng niềm tin</strong></td>
+<td>Psychological Safety, Active Listening, Team Working Agreement, Delegation Board, Feedback Culture, Coaching</td>
+</tr>
+</tbody>
+</table>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Agile không phải là thứ "mới" mâu thuẫn với văn hóa TPBank — ngược lại, Agile cung cấp phương pháp, cách thức và hành vi cụ thể để hiện thực hóa những nguyên tắc mà TPBank đã cam kết. Chuyển đổi Agile là hành trình làm cho các nguyên tắc này sống động hơn trong thực tế hàng ngày.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

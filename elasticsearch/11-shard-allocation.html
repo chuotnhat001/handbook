@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shard Allocation - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Sizing</div>
+    <div class="nav-items">
+      <a href="#sizing">Shard Sizing</a>
+      <a href="#over-sharding">Over-sharding</a>
+      <a href="#shrink-split">Shrink &amp; Split</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Allocation</div>
+    <div class="nav-items">
+      <a href="#filtering">Allocation Filtering</a>
+      <a href="#watermark">Disk Watermark</a>
+      <a href="#rebalancing">Rebalancing &amp; Recovery</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html" class="current">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Shard Allocation &amp; Strategy</h1>
+<p class="subtitle">Shard sizing, over-sharding, allocation filtering, disk watermark, rebalancing — đặt shard đúng chỗ, đúng cỡ</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/size-your-shards.html" target="_blank">Elastic — Size Your Shards</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-cluster.html" target="_blank">Elastic — Cluster-level Shard Allocation</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Chọn kích thước và số lượng shard hợp lý cho một index. Nhận biết và xử lý over-sharding. Dùng shrink/split để đổi số primary shard. Điều khiển shard nằm ở node nào bằng allocation filtering. Hiểu ba ngưỡng disk watermark và cách cluster phản ứng khi disk đầy. Kiểm soát rebalancing và recovery.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 03: Kiến Trúc ES</strong> — Shard = Lucene index, cluster state</li>
+<li><strong>Bài 10: Cluster Management</strong> — Allocation explain, allocation exclude</li>
+</ul>
+
+<h2 id="sizing">Shard Sizing</h2>
+<p>Không có con số đúng cho mọi trường hợp, nhưng Elastic đưa ra các mốc khởi điểm:</p>
+<table>
+<tr><th>Tiêu chí</th><th>Khuyến nghị</th></tr>
+<tr><td>Kích thước một shard</td><td>Khoảng <strong>10–50 GB</strong></td></tr>
+<tr><td>Số document một shard</td><td>Dưới <strong>200 triệu</strong></td></tr>
+<tr><td>Dữ liệu time-series</td><td>Dùng rollover theo kích thước (Bài 12) để mỗi shard tự đạt cỡ mục tiêu</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Shard là đơn vị phân tán và đơn vị phục hồi. Shard quá nhỏ: tốn overhead và làm cluster state phình. Shard quá lớn: recovery và rebalance chậm, mất node lâu hồi phục. Mục tiêu là đủ lớn để overhead không đáng kể, đủ nhỏ để di chuyển nhanh.
+</div>
+<h3>Ước tính số primary shard</h3>
+<pre><code>Dữ liệu dự kiến sau 1 năm: 600 GB (chưa tính replica)
+Kích thước shard mục tiêu:  30 GB
+→ Số primary ≈ 600 / 30 = 20
+
+Với dữ liệu time-series: không cần đoán trước.
+Đặt 1-2 primary cho mỗi index nền, rollover khi đạt max_primary_shard_size: 50gb.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Search song song theo shard: một query trên index 20 shard chạy trên 20 shard (mỗi shard một thread). Nhiều shard hơn không phải lúc nào cũng nhanh hơn, vì các shard cạnh tranh cùng CPU của node.</p>
+
+<h2 id="over-sharding">Over-sharding</h2>
+<p><strong>Over-sharding</strong> là có quá nhiều shard nhỏ so với lượng dữ liệu. Đây là nguyên nhân phổ biến nhất khiến cluster chậm hoặc không ổn định.</p>
+<ul>
+<li>Mỗi index, shard và field tốn heap trên master (cluster state) và data node (metadata)</li>
+<li>Cluster state lớn làm việc publish chậm, master dễ quá tải (Bài 03)</li>
+<li>Search phải gom kết quả từ nhiều shard nhỏ, tốn overhead điều phối</li>
+<li>Recovery sau sự cố phải xử lý hàng nghìn shard</li>
+</ul>
+<pre><code># Đếm shard theo node
+GET /_cat/allocation?v
+
+# Tìm index nhỏ có nhiều shard
+GET /_cat/indices?v&amp;h=index,pri,rep,docs.count,store.size&amp;s=store.size:asc
+
+# Giới hạn an toàn mặc định
+GET /_cluster/settings?include_defaults=true&amp;filter_path=**.max_shards_per_node</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>cluster.max_shards_per_node</strong>
+Mặc định 1000 shard (không tính frozen tier) cho mỗi data node. Khi chạm giới hạn, ES từ chối tạo index mới. Nâng giới hạn chỉ là chữa triệu chứng. Cách xử lý gốc: gộp index nhỏ, giảm số primary, xóa index không dùng, hoặc dùng ILM để rollover theo kích thước.
+</div>
+<h3>Các mẫu gây over-sharding</h3>
+<ul>
+<li>Tạo index theo ngày cho dữ liệu chỉ vài MB/ngày, kèm 5 primary shard mặc định của template cũ</li>
+<li>Một index cho mỗi khách hàng (tenant) với hàng nghìn tenant nhỏ. Cân nhắc gộp chung và dùng routing theo <code>tenant_id</code></li>
+<li>Giữ lại vô thời hạn index cũ không còn truy vấn</li>
+</ul>
+
+<h2 id="shrink-split">Shrink &amp; Split</h2>
+<p>Số primary shard cố định khi tạo index (Bài 03). Có hai API tạo index mới với số shard khác, nhanh hơn reindex vì dùng hard-link segment khi có thể.</p>
+<h3>Shrink: giảm số shard</h3>
+<pre><code># 1. Dồn một bản sao của mọi shard về cùng node, chặn ghi
+PUT /logs-2026.09/_settings
+{
+  "index.routing.allocation.require._name": "es01",
+  "index.blocks.write": true
+}
+
+# 2. Chờ relocation xong (green)
+GET /_cluster/health/logs-2026.09?wait_for_status=green&amp;wait_for_no_relocating_shards=true
+
+# 3. Shrink 6 → 1 shard. Số shard đích phải là ước số của số shard gốc
+POST /logs-2026.09/_shrink/logs-2026.09-shrunk
+{
+  "settings": {
+    "index.number_of_shards": 1,
+    "index.number_of_replicas": 1,
+    "index.routing.allocation.require._name": null,
+    "index.blocks.write": null
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<h3>Split: tăng số shard</h3>
+<pre><code>PUT /orders/_settings
+{ "index.blocks.write": true }
+
+# Số shard đích phải là bội số của số shard gốc (2 → 4, 6, 8...)
+POST /orders/_split/orders-v2
+{ "settings": { "index.number_of_shards": 4 } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Sau shrink/split</strong>
+Index mới có tên khác. Chuyển ứng dụng sang index mới bằng alias để không phải đổi code, rồi xóa index cũ khi đã xác minh. ILM (Bài 12) có action <code>shrink</code> tự làm việc này ở warm phase.
+</div>
+
+<h2 id="filtering">Allocation Filtering</h2>
+<p>Allocation filtering quyết định shard của một index được phép nằm trên node nào, dựa vào thuộc tính có sẵn (<code>_name</code>, <code>_ip</code>, <code>_host</code>) hoặc thuộc tính tự định nghĩa (<code>node.attr.*</code>).</p>
+<table>
+<tr><th>Rule</th><th>Ý nghĩa</th></tr>
+<tr><td><code>require</code></td><td>Node phải có <strong>tất cả</strong> giá trị liệt kê</td></tr>
+<tr><td><code>include</code></td><td>Node phải có <strong>ít nhất một</strong> giá trị liệt kê</td></tr>
+<tr><td><code>exclude</code></td><td>Node <strong>không được</strong> có giá trị nào trong danh sách</td></tr>
+</table>
+<pre><code># elasticsearch.yml: gắn nhãn phần cứng
+node.attr.disk_type: ssd
+
+# Index tìm kiếm nóng chỉ nằm trên node SSD
+PUT /products/_settings
+{ "index.routing.allocation.require.disk_type": "ssd" }
+
+# Không cho index nằm trên 2 node đang bảo trì
+PUT /products/_settings
+{ "index.routing.allocation.exclude._name": "es04,es05" }
+
+# Giới hạn số shard của index trên mỗi node, tránh dồn nhiều shard nóng vào một node
+PUT /products/_settings
+{ "index.routing.allocation.total_shards_per_node": 2 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>total_shards_per_node quá chặt</strong>
+Nếu tổng shard (primary + replica) lớn hơn <code>số node × total_shards_per_node</code>, một số shard sẽ không bao giờ được cấp phát. Khi mất một node, giới hạn này cũng có thể chặn phục hồi. Chừa dư ít nhất một node.
+</div>
+<p>Cho dữ liệu hot/warm/cold, ưu tiên dùng <strong>data tiers</strong> (role <code>data_hot</code>, <code>data_warm</code>...) thay vì tự định nghĩa attribute. ILM tự di chuyển shard giữa các tier (Bài 12).</p>
+
+<h2 id="watermark">Disk Watermark</h2>
+<p>ES theo dõi dung lượng disk của từng node và phản ứng theo ba ngưỡng:</p>
+<table>
+<tr><th>Ngưỡng</th><th>Mặc định</th><th>Phản ứng</th></tr>
+<tr><td><code>low</code></td><td>85% đã dùng</td><td>Không cấp phát <strong>shard mới</strong> (replica, index mới) lên node này. Primary của index mới tạo vẫn được cấp phát</td></tr>
+<tr><td><code>high</code></td><td>90%</td><td>Chủ động <strong>di chuyển shard ra khỏi</strong> node</td></tr>
+<tr><td><code>flood_stage</code></td><td>95%</td><td>Đặt <code>index.blocks.read_only_allow_delete</code> cho mọi index có shard trên node: <strong>chặn ghi</strong></td></tr>
+</table>
+<pre><code># Xem dung lượng disk theo node
+GET /_cat/allocation?v&amp;h=node,shards,disk.percent,disk.used,disk.avail
+
+# Điều chỉnh ngưỡng (có thể dùng giá trị tuyệt đối dạng dung lượng còn trống)
+PUT /_cluster/settings
+{
+  "persistent": {
+    "cluster.routing.allocation.disk.watermark.low": "85%",
+    "cluster.routing.allocation.disk.watermark.high": "90%",
+    "cluster.routing.allocation.disk.watermark.flood_stage": "95%"
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-red">
+<strong>Khi chạm flood_stage</strong>
+Ứng dụng nhận lỗi HTTP 429 <code>cluster_block_exception</code> với thông điệp kiểu <code>TOO_MANY_REQUESTS/12/disk usage exceeded flood-stage watermark, index has read-only-allow-delete block</code>. Từ ES 7.4, block tự gỡ khi disk xuống dưới high watermark. Hướng xử lý: xóa index cũ, giảm replica tạm thời, hoặc thêm node/disk. Không xử lý bằng cách nâng watermark lên 99%: khi disk đầy hẳn, Lucene không ghi được segment và node có thể hỏng dữ liệu.
+</div>
+
+<h2 id="rebalancing">Rebalancing &amp; Recovery</h2>
+<p>Master liên tục cân bằng shard giữa các node, dựa trên số shard, dung lượng disk và tải ghi ước tính. Từ ES 8.6, thuật toán <strong>desired balance</strong> tính trước trạng thái đích rồi di chuyển dần, giảm việc chuyển qua chuyển lại.</p>
+<pre><code>PUT /_cluster/settings
+{
+  "persistent": {
+    "cluster.routing.rebalance.enable": "all",
+    "cluster.routing.allocation.cluster_concurrent_rebalance": 2,
+    "indices.recovery.max_bytes_per_sec": "100mb"
+  }
+}
+
+# Theo dõi shard đang di chuyển
+GET /_cat/recovery?v&amp;active_only=true&amp;h=index,shard,stage,source_node,target_node,bytes_percent</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th><code>rebalance.enable</code></th><th>Ý nghĩa</th></tr>
+<tr><td><code>all</code> (mặc định)</td><td>Rebalance mọi shard</td></tr>
+<tr><td><code>primaries</code> / <code>replicas</code></td><td>Chỉ rebalance một loại</td></tr>
+<tr><td><code>none</code></td><td>Tắt rebalance (dùng tạm khi bảo trì)</td></tr>
+</table>
+<p>Khác biệt giữa <strong>allocation</strong> và <strong>rebalance</strong>: allocation là cấp phát shard chưa có chỗ (unassigned), rebalance là di chuyển shard đã có chỗ để cân bằng. <code>allocation.enable</code> (Bài 10) và <code>rebalance.enable</code> là hai setting riêng.</p>
+
+<h2 id="lab">Bài Lab: Rebalance, Filtering &amp; Watermark</h2>
+<h3>Chuẩn bị</h3>
+<p>Dùng cluster 5 node từ Bài 10 (security tắt, chỉ dùng cục bộ).</p>
+
+<h3>Bước 1: Quan sát phân bổ hiện tại</h3>
+<pre><code>curl -X PUT "http://localhost:9200/lab-alloc" -H 'Content-Type: application/json' \
+  -d '{"settings":{"number_of_shards":5,"number_of_replicas":1}}'
+curl "http://localhost:9200/_cat/allocation?v"
+curl "http://localhost:9200/_cat/shards/lab-alloc?v&amp;h=shard,prirep,node"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Đẩy index ra khỏi es04, es05</h3>
+<pre><code>curl -X PUT "http://localhost:9200/lab-alloc/_settings" -H 'Content-Type: application/json' \
+  -d '{"index.routing.allocation.exclude._name":"es04,es05"}'
+# Quan sát shard chuyển về es01-es03
+curl "http://localhost:9200/_cat/shards/lab-alloc?v&amp;h=shard,prirep,node"
+
+# Gỡ rule, shard rebalance trở lại 5 node
+curl -X PUT "http://localhost:9200/lab-alloc/_settings" -H 'Content-Type: application/json' \
+  -d '{"index.routing.allocation.exclude._name":null}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Mô phỏng flood_stage</h3>
+<p>Trong lab Docker, mọi node dùng chung disk của máy host. Hạ ngưỡng xuống rất thấp để mọi node "vượt" ngưỡng:</p>
+<pre><code>curl -X PUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '{
+  "persistent": {
+    "cluster.routing.allocation.disk.watermark.low": "1%",
+    "cluster.routing.allocation.disk.watermark.high": "2%",
+    "cluster.routing.allocation.disk.watermark.flood_stage": "3%"
+  }}'
+
+# Chờ khoảng 30 giây (chu kỳ kiểm tra disk), thử ghi
+curl -X POST "http://localhost:9200/lab-alloc/_doc" -H 'Content-Type: application/json' -d '{"x":1}'
+# Mong đợi lỗi 429 cluster_block_exception: index read-only / allow delete
+
+curl "http://localhost:9200/lab-alloc/_settings?filter_path=**.blocks"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Khôi phục</h3>
+<pre><code>curl -X PUT "http://localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '{
+  "persistent": {
+    "cluster.routing.allocation.disk.watermark.low": null,
+    "cluster.routing.allocation.disk.watermark.high": null,
+    "cluster.routing.allocation.disk.watermark.flood_stage": null
+  }}'
+# Block tự gỡ khi disk dưới high watermark. Nếu không, gỡ tay:
+curl -X PUT "http://localhost:9200/lab-alloc/_settings" -H 'Content-Type: application/json' \
+  -d '{"index.blocks.read_only_allow_delete":null}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bạn đã thấy: allocation filtering di chuyển shard theo rule, rebalance tự trả shard về khi gỡ rule, và flood_stage chặn ghi bằng index block. Ghi nhớ thông báo lỗi ở bước 3 để nhận ra ngay khi gặp ở production.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Kích thước shard khuyến nghị là bao nhiêu? Vì sao shard quá nhỏ và quá lớn đều có hại?</li>
+<li>Over-sharding gây hại cho master node như thế nào?</li>
+<li>Điều kiện để shrink một index là gì? Số shard đích phải thỏa mãn điều gì?</li>
+<li>Phân biệt <code>require</code>, <code>include</code>, <code>exclude</code> trong allocation filtering.</li>
+<li>Nêu phản ứng của cluster ở từng ngưỡng low, high, flood_stage.</li>
+<li>Vì sao không nên xử lý disk đầy bằng cách nâng watermark lên 99%?</li>
+<li>Allocation và rebalance khác nhau thế nào?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Ước tính được số primary shard từ dung lượng dữ liệu</li>
+<li>☐ Nhận diện over-sharding qua <code>_cat/allocation</code> và <code>_cat/indices</code></li>
+<li>☐ Thực hiện shrink và split</li>
+<li>☐ Dùng allocation filtering với attribute tự định nghĩa</li>
+<li>☐ Hiểu và cấu hình ba ngưỡng disk watermark</li>
+<li>☐ Gỡ <code>read_only_allow_delete</code> sau khi giải phóng disk</li>
+<li>☐ Kiểm soát tốc độ rebalance và recovery</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Index theo ngày cho dữ liệu nhỏ</strong>: hàng nghìn shard vài MB. Dùng rollover theo kích thước.</li>
+<li><strong>Nâng max_shards_per_node thay vì giảm shard</strong>: trì hoãn sự cố, không giải quyết nó.</li>
+<li><strong>Nâng watermark để cluster ghi tiếp</strong>: có nguy cơ disk đầy hẳn và hỏng dữ liệu.</li>
+<li><strong>Quên gỡ <code>index.blocks.write</code> sau shrink</strong>: index mới không ghi được.</li>
+<li><strong>total_shards_per_node vừa khít số node</strong>: mất một node là có shard unassigned vĩnh viễn.</li>
+<li><strong>Tắt rebalance rồi quên bật lại</strong>: shard dồn lệch về vài node theo thời gian.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Nhắm 10–50 GB mỗi shard, dữ liệu time-series dùng rollover theo <code>max_primary_shard_size</code></li>
+<li>Theo dõi tổng số shard và số shard mỗi node như một metric vận hành</li>
+<li>Cảnh báo khi disk vượt 80%, trước khi chạm low watermark</li>
+<li>Dùng data tiers cho hot/warm/cold thay vì attribute tự đặt</li>
+<li>Dùng alias để chuyển ứng dụng sang index sau khi shrink, split hoặc reindex</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/size-your-shards.html" target="_blank">ES: Size Your Shards</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-cluster.html" target="_blank">ES: Cluster-level Shard Allocation and Routing</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/shard-allocation-filtering.html" target="_blank">ES: Index-level Shard Allocation Filtering</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-shrink-index.html" target="_blank">ES: Shrink Index API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/fix-watermark-errors.html" target="_blank">ES: Fix Watermark Errors</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="10-cluster-management.html">&larr; Bài 10: Cluster Management</a>
+<a href="12-index-lifecycle.html">Bài 12: Index Lifecycle &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

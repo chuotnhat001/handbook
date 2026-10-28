@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Tuning - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nền tảng</div>
+    <div class="nav-items">
+      <a href="#hardware">Phần cứng</a>
+      <a href="#jvm">JVM Heap &amp; OS</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Indexing</div>
+    <div class="nav-items">
+      <a href="#indexing">Tối ưu Indexing</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Search</div>
+    <div class="nav-items">
+      <a href="#search">Tối ưu Search</a>
+      <a href="#caching">Caching</a>
+      <a href="#profile">Profile API &amp; Slow Log</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Benchmark</div>
+    <div class="nav-items">
+      <a href="#rally">Rally</a>
+      <a href="#method">Phương pháp tuning</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html" class="current">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Performance Tuning</h1>
+<p class="subtitle">Sizing phần cứng, JVM heap, tối ưu indexing và search, profile, benchmark với Rally</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tune-for-indexing-speed.html" target="_blank">Elastic — Tune for Indexing Speed</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tune-for-search-speed.html" target="_blank">Elastic — Tune for Search Speed</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Chọn phần cứng phù hợp với từng loại node. Cấu hình JVM heap và hệ điều hành đúng khuyến nghị. Tăng throughput indexing bằng bulk, refresh interval, replica và mapping. Giảm latency search bằng thiết kế query, mapping và cache. Tìm query chậm bằng Profile API và slow log. Đo trước và sau khi tuning bằng Rally theo một phương pháp có kiểm soát.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 02: Lucene</strong> — Segment, refresh, merge</li>
+<li><strong>Bài 05, 08, 09</strong> — Bulk API, Query DSL, aggregation</li>
+<li><strong>Bài 11</strong> — Shard sizing</li>
+<li><strong>Bài 18</strong> — Metric quan trọng</li>
+</ul>
+
+<h2 id="hardware">Phần Cứng</h2>
+<table>
+<tr><th>Thành phần</th><th>Khuyến nghị</th><th>Lý do</th></tr>
+<tr><td>Disk</td><td>SSD/NVMe local cho hot tier. Tránh network storage có latency cao</td><td>Refresh, merge, search đều phụ thuộc I/O ngẫu nhiên</td></tr>
+<tr><td>RAM</td><td>64 GB là cỡ phổ biến cho data node hot</td><td>Khoảng một nửa cho heap, nửa còn lại cho filesystem cache</td></tr>
+<tr><td>CPU</td><td>Nhiều core hơn là xung nhịp cao hơn</td><td>Thread pool search và write chạy song song theo số core</td></tr>
+<tr><td>Mạng</td><td>Latency thấp, ổn định giữa các node trong cùng cluster</td><td>Replication và cluster state đi qua transport layer</td></tr>
+</table>
+<ul>
+<li><strong>Master node</strong> dedicated cần ít tài nguyên (ví dụ 2–4 CPU, 8–16 GB RAM) nhưng cần ổn định</li>
+<li><strong>Coordinating node</strong> cần CPU và heap cho việc gom kết quả, aggregation lớn</li>
+<li><strong>Warm/cold</strong> dùng disk lớn và rẻ hơn, tỷ lệ dữ liệu trên RAM cao hơn hot nhiều lần</li>
+</ul>
+<div class="callout callout-amber">
+<strong>Không chia cluster qua nhiều datacenter xa nhau</strong>
+Một cluster trải qua hai region có latency cao sẽ chậm mọi thao tác ghi và dễ mất ổn định khi mạng chập chờn. Dùng cluster riêng ở mỗi region và kết nối bằng CCS/CCR (Bài 22). Trải qua nhiều availability zone trong cùng region thì phù hợp (Bài 10).
+</div>
+
+<h2 id="jvm">JVM Heap &amp; Hệ Điều Hành</h2>
+<h3>Heap</h3>
+<ul>
+<li>Đặt <code>-Xms</code> bằng <code>-Xmx</code>, tránh JVM co giãn heap lúc chạy</li>
+<li>Không quá khoảng <strong>50% RAM</strong>: phần còn lại cho filesystem cache, nơi Lucene đọc segment</li>
+<li>Không quá ngưỡng compressed oops (thường khoảng <strong>26–31 GB</strong>). Vượt ngưỡng này, con trỏ 64-bit làm heap lớn hơn nhưng chứa được ít đối tượng hơn</li>
+<li>Từ ES 7.11, nếu không đặt heap, Elasticsearch tự tính theo role và RAM. Mặc định này phù hợp với đa số trường hợp</li>
+</ul>
+<pre><code># Kiểm tra compressed oops đang bật
+GET /_nodes/jvm?filter_path=nodes.*.name,nodes.*.jvm.using_compressed_ordinary_object_pointers,nodes.*.jvm.mem.heap_max</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Heap lớn hơn không làm Elasticsearch nhanh hơn. Search nhanh nhờ <strong>filesystem cache</strong> giữ segment trong RAM. Heap 64 GB trên máy 64 GB RAM khiến OS không còn chỗ cache, mọi search phải đọc disk.
+</div>
+<h3>Hệ điều hành</h3>
+<table>
+<tr><th>Cấu hình</th><th>Giá trị</th></tr>
+<tr><td>Swap</td><td>Tắt (<code>swapoff -a</code>) hoặc <code>bootstrap.memory_lock: true</code>. Heap bị swap ra disk làm GC mất hàng chục giây</td></tr>
+<tr><td><code>vm.max_map_count</code></td><td>&ge; 262144 (Bài 04)</td></tr>
+<tr><td>File descriptors</td><td>&ge; 65535</td></tr>
+<tr><td>Số thread tối đa</td><td>&ge; 4096 cho user chạy Elasticsearch</td></tr>
+<tr><td>Readahead của disk</td><td>Thấp (ví dụ 128 KiB). Readahead lớn lãng phí I/O với kiểu truy cập ngẫu nhiên của Lucene</td></tr>
+</table>
+
+<h2 id="indexing">Tối Ưu Indexing</h2>
+<table>
+<tr><th>Kỹ thuật</th><th>Tác dụng</th><th>Đánh đổi</th></tr>
+<tr><td>Bulk request 5–15 MB, nhiều client song song</td><td>Giảm overhead mỗi request</td><td>Batch quá lớn gây áp lực heap</td></tr>
+<tr><td><code>refresh_interval: 30s</code> (hoặc <code>-1</code> khi load ban đầu)</td><td>Ít segment nhỏ hơn, ít merge hơn</td><td>Dữ liệu mới xuất hiện trong search chậm hơn</td></tr>
+<tr><td><code>number_of_replicas: 0</code> khi load ban đầu</td><td>Mỗi document chỉ index một lần</td><td>Không có bản sao trong lúc load. Bật lại sau khi xong</td></tr>
+<tr><td>Để ES tự sinh <code>_id</code></td><td>Bỏ bước kiểm tra document đã tồn tại</td><td>Không cập nhật theo ID tự chọn được</td></tr>
+<tr><td>Mapping gọn: <code>index: false</code>, tắt <code>norms</code>, tránh multi-field thừa</td><td>Ít cấu trúc cần xây hơn</td><td>Không search/score được field đó</td></tr>
+<tr><td>Tránh dynamic mapping tạo field liên tục</td><td>Không cập nhật cluster state mỗi lần có field mới</td><td>Cần thiết kế mapping trước</td></tr>
+<tr><td>Ingest pipeline nhẹ</td><td>Ít CPU trên ingest node</td><td>Đẩy xử lý nặng về Logstash hoặc nguồn</td></tr>
+<tr><td>Translog async (<code>index.translog.durability: async</code>)</td><td>Ít fsync hơn</td><td>Có thể mất vài giây dữ liệu khi node crash. Chỉ dùng khi chấp nhận được</td></tr>
+</table>
+<pre><code># Chuẩn bị index cho load ban đầu
+PUT /bulk-load/_settings
+{ "index": { "refresh_interval": "-1", "number_of_replicas": 0 } }
+
+# ... bulk load ...
+
+# Trả lại cấu hình bình thường
+PUT /bulk-load/_settings
+{ "index": { "refresh_interval": "30s", "number_of_replicas": 1 } }
+POST /bulk-load/_refresh</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Dấu hiệu indexing đã chạm trần</strong>
+Thread pool <code>write</code> có <code>rejected</code> tăng, client nhận 429, hoặc indexing latency tăng mà rate đứng yên. Khi đó thêm client không giúp gì: cần thêm node, giảm tải trên mỗi document, hoặc giảm số shard ghi đồng thời trên mỗi node.
+</div>
+
+<h2 id="search">Tối Ưu Search</h2>
+<h3>Thiết kế query</h3>
+<ul>
+<li>Điều kiện không ảnh hưởng thứ hạng đặt vào <code>filter</code> (Bài 08): bỏ qua scoring và được cache</li>
+<li>Chỉ lấy field cần: <code>_source</code> filtering, hoặc <code>"_source": false</code> kèm <code>fields</code></li>
+<li><code>size: 0</code> khi chỉ cần aggregation (Bài 09)</li>
+<li>Tránh wildcard đầu chuỗi, regex, script query trên tập dữ liệu lớn</li>
+<li>Tránh deep pagination bằng from/size, dùng search_after + PIT</li>
+<li>Dùng <code>track_total_hits: false</code> (hoặc giới hạn số) khi UI không cần tổng chính xác</li>
+</ul>
+<h3>Thiết kế dữ liệu</h3>
+<ul>
+<li><strong>Denormalize</strong> thay vì nested và join khi có thể</li>
+<li>Tính sẵn lúc index thay vì tính lúc search: ví dụ lưu field <code>price_range: "200-500"</code> thay vì range aggregation mỗi lần</li>
+<li>Range query trên số thường dùng như ID, mã: map thành <code>keyword</code> nếu chỉ cần exact match</li>
+<li><strong>Index sorting</strong> (<code>index.sort.field</code>) khi luôn sort theo một field cố định: search có thể dừng sớm</li>
+<li><strong>Custom routing</strong> theo tenant hoặc user (Bài 03): query chỉ chạm một shard</li>
+<li>Force merge index chỉ đọc xuống ít segment (Bài 12)</li>
+</ul>
+<pre><code># Index sắp sẵn theo thời gian giảm dần, phù hợp với "log mới nhất"
+PUT /events-sorted
+{
+  "settings": { "index": { "sort.field": "@timestamp", "sort.order": "desc" } },
+  "mappings": { "properties": { "@timestamp": { "type": "date" } } }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="caching">Caching</h2>
+<table>
+<tr><th>Cache</th><th>Lưu gì</th><th>Phạm vi</th><th>Ghi chú</th></tr>
+<tr><td>Filesystem cache (OS)</td><td>Segment file</td><td>Node</td><td>Quan trọng nhất. Cần RAM ngoài heap</td></tr>
+<tr><td>Node query cache</td><td>Kết quả của clause trong filter context</td><td>Node, theo segment</td><td>Mặc định 10% heap. Chỉ cache filter được dùng lặp lại</td></tr>
+<tr><td>Shard request cache</td><td>Toàn bộ response của request <code>size: 0</code></td><td>Shard</td><td>Bị xóa khi shard refresh có dữ liệu mới. Hiệu quả nhất với index không đổi</td></tr>
+<tr><td>Fielddata cache</td><td>Dữ liệu cho sort/aggregation trên field text</td><td>Node</td><td>Tránh dùng. Dùng keyword + doc_values</td></tr>
+</table>
+<pre><code># Hiệu quả cache theo node
+GET /_nodes/stats/indices/query_cache,request_cache,fielddata?human&amp;filter_path=nodes.*.name,nodes.*.indices
+
+# Xóa cache khi đo benchmark (không làm ở production đang chạy)
+POST /my-index/_cache/clear</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Làm request cache hoạt động</strong>
+Request cache dùng chính nội dung JSON của request làm khóa. Hai request giống nhau nhưng khác thứ tự field hoặc dùng <code>now</code> trong range sẽ không trúng cache. Làm tròn thời gian (<code>now-1d/d</code>) giúp các request trong cùng một khoảng thời gian dùng chung cache.
+</div>
+
+<h2 id="profile">Profile API &amp; Slow Log</h2>
+<h3>Profile API</h3>
+<pre><code>GET /products/_search
+{
+  "profile": true,
+  "query": {
+    "bool": {
+      "must":   [ { "match": { "name": "laptop" } } ],
+      "filter": [ { "wildcard": { "sku": "*-PRO" } } ]
+    }
+  }
+}
+# Response: profile.shards[].searches[].query[] cho từng clause:
+#   type, description, time_in_nanos, breakdown (build_scorer, next_doc, score...)
+# Clause tốn nhiều thời gian nhất là nơi cần sửa đầu tiên</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Kibana Dev Tools có <strong>Search Profiler</strong> hiển thị kết quả profile dạng cây trực quan. Profile thêm overhead, chỉ dùng khi điều tra.</p>
+<h3>Slow log</h3>
+<pre><code>PUT /products/_settings
+{
+  "index.search.slowlog.threshold.query.warn": "2s",
+  "index.search.slowlog.threshold.query.info": "500ms",
+  "index.search.slowlog.threshold.fetch.warn": "1s",
+  "index.indexing.slowlog.threshold.index.warn": "5s",
+  "index.search.slowlog.include.user": true
+}
+# Ghi vào &lt;cluster&gt;_index_search_slowlog.json trên node xử lý shard
+# Thu thập bằng Filebeat/Elastic Agent integration Elasticsearch</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="rally">Rally</h2>
+<p><strong>Rally</strong> là công cụ benchmark chính thức của Elastic. Rally chạy một <strong>track</strong> (bộ dữ liệu + chuỗi thao tác) lên cluster và báo cáo throughput, latency theo percentile, lỗi.</p>
+<pre><code># Cài Rally (Python 3.8+)
+pip install esrally
+
+# Chạy track có sẵn lên cluster đã có (không để Rally tự dựng cluster)
+esrally race --track=http_logs --target-hosts=es01:9200 \
+  --pipeline=benchmark-only \
+  --client-options="use_ssl:true,verify_certs:true,ca_certs:'./certs/ca/ca.crt',basic_auth_user:'elastic',basic_auth_password:'${ELASTIC_PASSWORD}'" \
+  --test-mode   # chạy với tập dữ liệu nhỏ để thử; bỏ đi khi benchmark thật
+
+# So sánh hai lần chạy
+esrally list races
+esrally compare --baseline=&lt;race-id-1&gt; --contender=&lt;race-id-2&gt;</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Track</th><th>Mô phỏng</th></tr>
+<tr><td><code>http_logs</code></td><td>Web server log, nặng về indexing và aggregation</td></tr>
+<tr><td><code>geonames</code></td><td>Dữ liệu địa lý, đa dạng loại query</td></tr>
+<tr><td><code>nyc_taxis</code></td><td>Dữ liệu số lớn, aggregation</td></tr>
+<tr><td><code>pmc</code></td><td>Full-text search trên văn bản dài</td></tr>
+</table>
+<p>Với workload riêng, tạo track tùy chỉnh từ index có sẵn: <code>esrally create-track --track=my-track --target-hosts=... --indices="orders-*"</code>, rồi thêm các query thật của ứng dụng vào phần challenge.</p>
+<div class="callout callout-red">
+<strong>Không benchmark trên production đang phục vụ</strong>
+Rally được thiết kế để tạo tải tối đa. Chạy trên cluster đang phục vụ người dùng sẽ gây sự cố thật. Dùng cluster riêng có cấu hình giống production.
+</div>
+
+<h2 id="method">Phương Pháp Tuning</h2>
+<div class="flow">
+<span class="flow-step">Đo baseline</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Tìm điểm nghẽn</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Đổi MỘT thứ</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Đo lại</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Giữ hoặc hoàn tác</span>
+</div>
+<ol>
+<li><strong>Xác định mục tiêu</strong> bằng con số: "p95 search &lt; 200 ms ở 500 req/s", "index 50.000 doc/s"</li>
+<li><strong>Đo baseline</strong> với workload giống thật, chạy đủ lâu để vượt qua giai đoạn warm-up</li>
+<li><strong>Tìm điểm nghẽn</strong>: CPU, disk I/O, heap/GC, mạng, hay thread pool. Tối ưu thứ không phải điểm nghẽn không có tác dụng</li>
+<li><strong>Đổi một biến mỗi lần</strong> để biết chính xác thay đổi nào có hiệu quả</li>
+<li><strong>Ghi lại</strong> mỗi lần thử: cấu hình, kết quả, kết luận</li>
+</ol>
+
+<h2 id="lab">Bài Lab: Benchmark Với Rally, Tối Ưu Từ Baseline</h2>
+<h3>Bước 1: Baseline</h3>
+<pre><code>pip install esrally
+source .env
+RALLY_OPTS="use_ssl:true,verify_certs:true,ca_certs:'$PWD/certs/ca/ca.crt',basic_auth_user:'elastic',basic_auth_password:'$ELASTIC_PASSWORD'"
+
+esrally race --track=http_logs --test-mode --pipeline=benchmark-only \
+  --target-hosts=localhost:9200 --client-options="$RALLY_OPTS" \
+  --user-tags="run:baseline"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Ghi lại từ báo cáo: <strong>Median Throughput</strong> của task <code>index-append</code>, <strong>90th percentile latency</strong> của các task query, và <strong>error rate</strong>.</p>
+
+<h3>Bước 2: Thử một thay đổi về indexing</h3>
+<p>Track <code>http_logs</code> hỗ trợ tham số để đổi cấu hình index mà không cần sửa track:</p>
+<pre><code>esrally list tracks   # xem các track-param được hỗ trợ của http_logs
+
+esrally race --track=http_logs --test-mode --pipeline=benchmark-only \
+  --target-hosts=localhost:9200 --client-options="$RALLY_OPTS" \
+  --track-params="number_of_replicas:0,refresh_interval:'30s',bulk_size:5000" \
+  --user-tags="run:tuned-indexing"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: So sánh</h3>
+<pre><code>esrally list races
+esrally compare --baseline=&lt;id-baseline&gt; --contender=&lt;id-tuned-indexing&gt;</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Profile một query chậm</h3>
+<pre><code>curl $AUTH "$ES/logs-*/_search?pretty" -H 'Content-Type: application/json' -d '{
+  "profile": true, "size": 0,
+  "query": { "bool": { "filter": [ { "wildcard": { "request": "*images*" } } ] } }
+}' | python -c "import sys,json; r=json.load(sys.stdin); [print(q['type'], q['time_in_nanos']//1000000, 'ms') for s in r['profile']['shards'] for q in s['searches'][0]['query']]"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Tên index và field phụ thuộc track</strong>
+Track <code>http_logs</code> tạo các index <code>logs-*</code> với field <code>request</code>. Nếu version track của bạn khác, xem <code>GET /_cat/indices?v</code> và mapping để đổi tên tương ứng. Kết quả <code>--test-mode</code> chỉ dùng để học cách đọc báo cáo, không dùng để kết luận về performance thật.
+</div>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bảng <code>esrally compare</code> cho thấy throughput indexing thay đổi bao nhiêu phần trăm so với baseline khi tắt replica và giãn refresh interval. Profile chỉ ra clause wildcard chiếm phần lớn thời gian query. Bạn đã có quy trình đo, đổi, đo lại thay cho việc đổi cấu hình theo cảm tính.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Vì sao heap không nên vượt 50% RAM và ngưỡng compressed oops?</li>
+<li>Vì sao phải tắt swap?</li>
+<li>Kể 5 kỹ thuật tăng throughput indexing và đánh đổi của từng kỹ thuật.</li>
+<li>Vì sao <code>refresh_interval</code> ảnh hưởng tới cả indexing lẫn số segment?</li>
+<li>Phân biệt node query cache và shard request cache.</li>
+<li>Bạn dùng công cụ nào để biết clause nào trong query chậm nhất?</li>
+<li>Vì sao mỗi lần tuning chỉ nên đổi một biến?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Chọn phần cứng theo role của node</li>
+<li>☐ Cấu hình heap, tắt swap, kiểm tra compressed oops</li>
+<li>☐ Áp dụng bulk, refresh interval, replica 0 cho load ban đầu</li>
+<li>☐ Viết query dùng filter, _source filtering, size: 0 đúng chỗ</li>
+<li>☐ Hiểu 4 loại cache và cách làm request cache hiệu quả</li>
+<li>☐ Dùng Profile API và slow log</li>
+<li>☐ Chạy Rally và so sánh hai lần chạy</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Heap = RAM</strong>: không còn filesystem cache, search phải đọc disk liên tục.</li>
+<li><strong>Tuning khi chưa đo</strong>: không biết thay đổi có tác dụng hay làm tệ đi.</li>
+<li><strong>Quên bật lại replica và refresh sau bulk load</strong>: index không có bản sao, dữ liệu mới không hiện trong search.</li>
+<li><strong>Network storage chậm cho hot tier</strong>: mọi thao tác bị giới hạn bởi latency của disk.</li>
+<li><strong>Benchmark bằng một query lặp lại</strong>: kết quả chỉ đo hiệu quả của cache, không phản ánh tải thật.</li>
+<li><strong>Bật fielddata để sort trên text</strong>: tốn heap, dễ chạm circuit breaker.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Để Elasticsearch tự tính heap trừ khi có lý do và số liệu cụ thể</li>
+<li>SSD local cho hot tier, đủ RAM ngoài heap cho filesystem cache</li>
+<li>Bật slow log với ngưỡng hợp lý trên mọi index quan trọng</li>
+<li>Tạo track Rally từ dữ liệu và query thật của ứng dụng</li>
+<li>Benchmark lại sau mỗi lần nâng cấp version hoặc đổi phần cứng</li>
+<li>Ghi lại mọi thay đổi cấu hình cùng số liệu trước và sau</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tune-for-indexing-speed.html" target="_blank">ES: Tune for Indexing Speed</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tune-for-search-speed.html" target="_blank">ES: Tune for Search Speed</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/advanced-configuration.html" target="_blank">ES: Set the JVM Heap Size</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-profile.html" target="_blank">ES: Profile API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-slowlog.html" target="_blank">ES: Slow Log</a></li>
+<li><a href="https://esrally.readthedocs.io/" target="_blank">Rally Documentation</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="18-monitoring-alerting.html">&larr; Bài 18: Monitoring</a>
+<a href="20-snapshot-restore.html">Bài 20: Snapshot &amp; Restore &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

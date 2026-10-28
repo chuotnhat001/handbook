@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Cluster - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Remote Cluster</div>
+    <div class="nav-items">
+      <a href="#remote">Kết nối Remote Cluster</a>
+      <a href="#security-models">Mô hình bảo mật</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">CCS</div>
+    <div class="nav-items">
+      <a href="#ccs">Cross-Cluster Search</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">CCR</div>
+    <div class="nav-items">
+      <a href="#ccr">Cross-Cluster Replication</a>
+      <a href="#auto-follow">Auto-follow</a>
+      <a href="#failover">Failover</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kiến trúc</div>
+    <div class="nav-items">
+      <a href="#architectures">Multi-datacenter</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html" class="current">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Cross-Cluster Search &amp; Replication</h1>
+<p class="subtitle">CCS truy vấn nhiều cluster, CCR leader/follower, kiến trúc multi-datacenter và failover</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-cross-cluster-search.html" target="_blank">Elastic — Cross-Cluster Search</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-ccr.html" target="_blank">Elastic — Cross-Cluster Replication</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Kết nối cluster với remote cluster theo chế độ sniff hoặc proxy. Hiểu hai mô hình bảo mật cho kết nối giữa các cluster. Truy vấn dữ liệu trên nhiều cluster bằng Cross-Cluster Search (CCS). Sao chép index giữa các cluster bằng Cross-Cluster Replication (CCR), cấu hình auto-follow cho dữ liệu time-series. Thực hiện failover khi cluster chính gặp sự cố. Chọn kiến trúc multi-datacenter phù hợp.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 03: Kiến Trúc ES</strong> — Node role <code>remote_cluster_client</code></li>
+<li><strong>Bài 13: Bảo Mật</strong> — TLS, role, API key</li>
+<li><strong>Bài 20: Snapshot &amp; Restore</strong> — RPO, RTO</li>
+</ul>
+
+<h2 id="remote">Kết Nối Remote Cluster</h2>
+<p>Một cluster (local) khai báo cluster khác là <strong>remote cluster</strong> bằng một alias. Node gửi request ra ngoài cần role <code>remote_cluster_client</code> (có sẵn mặc định khi không cấu hình <code>node.roles</code>).</p>
+<table>
+<tr><th>Chế độ</th><th>Cách kết nối</th><th>Khi nào dùng</th></tr>
+<tr><td><code>sniff</code> (mặc định)</td><td>Kết nối tới seed node, lấy danh sách node rồi nối thẳng tới các gateway node</td><td>Hai cluster cùng mạng, local nhìn thấy trực tiếp mọi node của remote</td></tr>
+<tr><td><code>proxy</code></td><td>Mọi kết nối đi qua một địa chỉ duy nhất (load balancer, proxy)</td><td>Remote nằm sau NAT, Kubernetes, cloud, chỉ mở một endpoint</td></tr>
+</table>
+<pre><code># Trên cluster local: đặt alias "dc2" cho cluster ở datacenter thứ hai
+PUT /_cluster/settings
+{
+  "persistent": {
+    "cluster.remote.dc2.mode": "sniff",
+    "cluster.remote.dc2.seeds": ["10.1.0.1:9300", "10.1.0.2:9300"],
+    "cluster.remote.dc2.skip_unavailable": true
+  }
+}
+
+# Hoặc chế độ proxy
+PUT /_cluster/settings
+{ "persistent": { "cluster.remote.dc2.mode": "proxy",
+                  "cluster.remote.dc2.proxy_address": "es-dc2.example.com:9300" } }
+
+# Kiểm tra trạng thái kết nối
+GET /_remote/info</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>skip_unavailable</strong>
+Từ ES 8.15, mặc định là <code>true</code>: remote không khả dụng thì CCS bỏ qua cluster đó và trả kết quả từ các cluster còn lại (response ghi rõ cluster nào bị bỏ qua). Đặt <code>false</code> khi kết quả thiếu một cluster là không chấp nhận được. Ở các version trước, mặc định là <code>false</code>.
+</div>
+
+<h2 id="security-models">Mô Hình Bảo Mật</h2>
+<table>
+<tr><th></th><th>Certificate-based (truyền thống)</th><th>API key-based</th></tr>
+<tr><td>Cổng</td><td>Transport 9300</td><td>Cổng riêng cho remote cluster, mặc định 9443</td></tr>
+<tr><td>Tin tưởng giữa cluster</td><td>Hai cluster tin CA của nhau (TLS hai chiều)</td><td>Remote cấp một cross-cluster API key, local lưu key trong keystore</td></tr>
+<tr><td>Quyền</td><td>User phải có role cùng tên trên <strong>cả hai</strong> cluster</td><td>Quyền tối đa do API key ở remote quyết định, local giới hạn thêm bằng role</td></tr>
+<tr><td>Phù hợp</td><td>Hai cluster do cùng một đội quản trị</td><td>Remote thuộc đội hoặc tổ chức khác, cần kiểm soát chặt từ phía remote</td></tr>
+<tr><td>Version</td><td>Mọi version</td><td>GA từ ES 8.14, cần license trả phí</td></tr>
+</table>
+<pre><code># Mô hình API key: trên cluster REMOTE, tạo cross-cluster API key
+POST /_security/cross_cluster/api_key
+{
+  "name": "dc1-reads-logs",
+  "access": {
+    "search":      [ { "names": ["logs-*"] } ],
+    "replication": [ { "names": ["orders-*"] } ]
+  }
+}
+
+# Trên cluster LOCAL: lưu key rồi khai báo remote
+bin/elasticsearch-keystore add cluster.remote.dc2.credentials
+POST /_nodes/reload_secure_settings
+PUT /_cluster/settings
+{ "persistent": { "cluster.remote.dc2.mode": "proxy",
+                  "cluster.remote.dc2.proxy_address": "es-dc2.example.com:9443" } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Mô hình API key cần bật <code>remote_cluster_server.enabled: true</code> và cấu hình TLS cho cổng remote cluster trên cluster remote (<code>xpack.security.remote_cluster_server.ssl.*</code>).</p>
+
+<h2 id="ccs">Cross-Cluster Search</h2>
+<p><strong>CCS</strong> cho phép một request search chạy trên index của nhiều cluster cùng lúc. Cú pháp: <code>&lt;alias&gt;:&lt;index&gt;</code>.</p>
+<pre><code># Tìm trên cluster local và hai remote
+GET /logs-*,dc2:logs-*,dc3:logs-*/_search
+{
+  "query": { "match": { "message": "payment timeout" } },
+  "aggs": { "by_cluster": { "terms": { "field": "_index" } } }
+}
+
+# Mọi remote cluster
+GET /*:logs-*/_search
+
+# Async search cho truy vấn dài trên nhiều cluster
+POST /logs-*,dc2:logs-*/_async_search?wait_for_completion_timeout=2s&amp;keep_alive=5m
+{ "query": { ... } }
+GET /_async_search/&lt;id&gt;</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th><code>ccs_minimize_roundtrips</code></th><th>Hành vi</th></tr>
+<tr><td><code>true</code> (mặc định)</td><td>Mỗi cluster tự thực hiện search và trả về kết quả đã gom. Ít round-trip qua mạng WAN, phù hợp khi latency giữa cluster cao</td></tr>
+<tr><td><code>false</code></td><td>Local điều phối trực tiếp từng shard của remote như shard của chính nó</td></tr>
+</table>
+<ul>
+<li>Kibana data view có thể dùng pattern <code>dc2:logs-*</code> để dashboard hiển thị dữ liệu của nhiều cluster</li>
+<li>Response có mục <code>_clusters</code> cho biết bao nhiêu cluster thành công, bị bỏ qua, hoặc lỗi</li>
+<li>Version tương thích: CCS hỗ trợ remote cluster khác version trong một phạm vi giới hạn. Xem bảng tương thích trong tài liệu trước khi nâng cấp lệch</li>
+</ul>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+CCS để dữ liệu ở nguyên chỗ và đưa query tới dữ liệu. Phù hợp khi dữ liệu phải nằm ở nơi phát sinh (yêu cầu pháp lý theo quốc gia, chi phí truyền dữ liệu), hoặc khi mỗi đội tự vận hành cluster riêng nhưng cần một nơi tìm kiếm chung.
+</div>
+
+<h2 id="ccr">Cross-Cluster Replication</h2>
+<p><strong>CCR</strong> sao chép liên tục một index từ cluster này (leader) sang cluster khác (follower). Cần license trả phí.</p>
+<div class="flow">
+<span class="flow-step">Ứng dụng ghi</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Leader index (dc1)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Follower kéo thay đổi</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Follower index (dc2, chỉ đọc)</span>
+</div>
+<ul>
+<li><strong>Follower kéo (pull)</strong> thay đổi từ leader theo từng shard, dựa trên lịch sử thao tác (history retention leases)</li>
+<li>Follower index <strong>chỉ đọc</strong>: không ghi trực tiếp được</li>
+<li>Replication là <strong>active-passive</strong> theo từng index: một index chỉ có một leader</li>
+<li>Follower tụt lại không quá xa sẽ tự bắt kịp. Tụt quá lâu (leader đã giải phóng lịch sử) thì phải tạo lại follower</li>
+</ul>
+<pre><code># Trên cluster FOLLOWER (dc2), kết nối tới leader với alias "dc1"
+PUT /orders-follower/_ccr/follow?wait_for_active_shards=1
+{
+  "remote_cluster": "dc1",
+  "leader_index": "orders"
+}
+
+# Theo dõi độ trễ: so sánh leader_global_checkpoint và follower_global_checkpoint
+GET /orders-follower/_ccr/stats
+GET /_ccr/stats
+
+# Tạm dừng / tiếp tục
+POST /orders-follower/_ccr/pause_follow
+POST /orders-follower/_ccr/resume_follow</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Điều kiện của leader index</strong>
+Leader cần soft deletes (mặc định bật cho index tạo từ ES 7.0). Mapping và settings được sao chép tự động. Quyền cần thiết: user trên follower có <code>manage_ccr</code> và quyền <code>manage_follow_index</code> trên index follower; phía leader cần <code>read_ccr</code> (mô hình certificate) hoặc quyền <code>replication</code> trong cross-cluster API key.
+</div>
+
+<h2 id="auto-follow">Auto-follow</h2>
+<p>Với dữ liệu time-series, index mới sinh ra liên tục (rollover). <strong>Auto-follow pattern</strong> tự tạo follower cho mọi index mới khớp pattern trên leader.</p>
+<pre><code>PUT /_ccr/auto_follow/logs-from-dc1
+{
+  "remote_cluster": "dc1",
+  "leader_index_patterns": [ "logs-*" ],
+  "leader_index_exclusion_patterns": [ "logs-debug-*" ],
+  "follow_index_pattern": "{{leader_index}}"
+}
+
+GET /_ccr/auto_follow/logs-from-dc1
+GET /_ccr/stats?filter_path=auto_follow_stats</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Auto-follow chỉ áp cho index tạo <strong>sau</strong> khi pattern tồn tại. Index đã có phải follow thủ công</li>
+<li>Data stream được sao chép theo backing index: follower nhận đầy đủ data stream nhưng chỉ đọc</li>
+<li>ILM chạy độc lập trên mỗi cluster. Follower index chưa được coi là "đã rollover" cho tới khi tách khỏi leader, nên cấu hình ILM của cluster follower cần tính đến điều này</li>
+</ul>
+
+<h2 id="failover">Failover</h2>
+<p>Khi cluster leader sập lâu, chuyển follower thành index ghi được:</p>
+<pre><code># Trên cluster follower (dc2)
+POST /orders-follower/_ccr/pause_follow
+POST /orders-follower/_close
+POST /orders-follower/_ccr/unfollow
+POST /orders-follower/_open
+# orders-follower giờ là index thường, ghi được. Trỏ ứng dụng sang dc2 (alias, DNS, cấu hình client)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Bước</th><th>Lưu ý</th></tr>
+<tr><td>Quyết định failover</td><td>Thao tác <code>unfollow</code> không đảo ngược được. Chỉ làm khi xác định leader không quay lại kịp theo RTO</td></tr>
+<tr><td>Dữ liệu mất</td><td>Những thao tác ghi leader chưa kịp sao chép (RPO thường vài giây, tùy độ trễ CCR)</td></tr>
+<tr><td>Chuyển hướng ghi</td><td>Ứng dụng phải ghi vào cluster mới. Chuẩn bị sẵn cơ chế (DNS, cấu hình, feature flag)</td></tr>
+<tr><td>Failback</td><td>Khi dc1 hồi phục, index cũ trên dc1 đã lệch. Thường phải xóa nó và cho dc1 follow ngược lại từ dc2, sau đó chuyển vai trò về theo lịch bảo trì</td></tr>
+</table>
+
+<h2 id="architectures">Kiến Trúc Multi-datacenter</h2>
+<table>
+<tr><th>Kiến trúc</th><th>Mô tả</th><th>Ưu</th><th>Nhược</th></tr>
+<tr><td>Active-passive (DR)</td><td>dc1 nhận mọi ghi, dc2 follow toàn bộ</td><td>Đơn giản, RPO thấp</td><td>dc2 chỉ để chờ, failover thủ công</td></tr>
+<tr><td>Active-active theo dữ liệu</td><td>Mỗi DC là leader cho dữ liệu của mình và follow dữ liệu của DC kia. Ví dụ <code>orders-hn-*</code> ghi ở Hà Nội, <code>orders-hcm-*</code> ghi ở TP.HCM, cả hai được đọc ở cả hai nơi</td><td>Cả hai DC đều làm việc, đọc gần người dùng</td><td>Ứng dụng phải định tuyến ghi đúng DC, quản lý phức tạp hơn</td></tr>
+<tr><td>Hub-and-spoke (CCS)</td><td>Mỗi chi nhánh hoặc region giữ cluster riêng, một cluster trung tâm tìm kiếm qua CCS</td><td>Dữ liệu ở nguyên chỗ, tuân thủ quy định địa phương</td><td>Search phụ thuộc mạng WAN</td></tr>
+<tr><td>Aggregation (CCR)</td><td>Các cluster nguồn được sao chép về một cluster trung tâm cho báo cáo</td><td>Search tập trung nhanh, không phụ thuộc WAN lúc truy vấn</td><td>Tốn lưu trữ và băng thông</td></tr>
+</table>
+<div class="callout callout-red">
+<strong>Không có active-active ghi cùng một index</strong>
+Elasticsearch không hỗ trợ hai cluster cùng ghi vào một index rồi tự hòa giải xung đột. Mô hình "active-active" phải chia rõ dữ liệu nào do DC nào làm leader.
+</div>
+
+<h2 id="lab">Bài Lab: Hai Cluster Với CCS và CCR</h2>
+<p>Lab cần hai cluster trên cùng máy. Để nhẹ, cluster thứ hai (<code>dc2</code>) chỉ có một node, cả hai dùng chung CA từ Bài 13 và mô hình bảo mật certificate-based. CCR cần license trả phí: lab dùng trial 30 ngày.</p>
+
+<h3>Bước 1: Certificate cho node của cluster thứ hai</h3>
+<pre><code>cat &gt; certs/instances-dc2.yml &lt;&lt;'EOF'
+instances:
+  - name: dc2-es01
+    dns: [ dc2-es01, localhost ]
+    ip:  [ 127.0.0.1 ]
+EOF
+docker run --rm -u 0 -v "$PWD/certs:/certs" docker.elastic.co/elasticsearch/elasticsearch:8.15.0 bash -c '
+  bin/elasticsearch-certutil cert --silent --pem --ca-cert /certs/ca/ca.crt --ca-key /certs/ca/ca.key \
+    --in /certs/instances-dc2.yml --out /certs/dc2.zip &amp;&amp; unzip -o -q /certs/dc2.zip -d /certs &amp;&amp; chown -R 1000:0 /certs'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Thêm cluster dc2 vào docker-compose.yml</h3>
+<pre><code>  dc2-es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    ports: [ "9201:9200" ]
+    environment:
+      - node.name=dc2-es01
+      - cluster.name=es-dc2
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=certs/dc2-es01/dc2-es01.key
+      - xpack.security.http.ssl.certificate=certs/dc2-es01/dc2-es01.crt
+      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.key=certs/dc2-es01/dc2-es01.key
+      - xpack.security.transport.ssl.certificate=certs/dc2-es01/dc2-es01.crt
+      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    volumes:
+      - dc2data01:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certs
+# Thêm dc2data01: {} vào mục volumes</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>docker compose up -d dc2-es01
+source .env
+ES2=https://localhost:9201
+curl $AUTH "$ES2/_cluster/health?filter_path=cluster_name,status"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Bật trial và khai báo remote hai chiều</h3>
+<pre><code>curl $AUTH -X POST "$ES/_license/start_trial?acknowledge=true"
+curl $AUTH -X POST "$ES2/_license/start_trial?acknowledge=true"
+
+# dc1 (cluster chính) thấy dc2, và ngược lại
+curl $AUTH -X PUT "$ES/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"cluster.remote.dc2.seeds":["dc2-es01:9300"]}}'
+curl $AUTH -X PUT "$ES2/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"cluster.remote.dc1.seeds":["es01:9300"]}}'
+
+curl $AUTH "$ES/_remote/info?pretty"     # "connected": true</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Cross-Cluster Search</h3>
+<pre><code>curl $AUTH -X POST "$ES2/logs-branch/_doc?refresh=true" -H 'Content-Type: application/json' \
+  -d '{"@timestamp":"2026-10-28T09:00:00Z","branch":"hcm","message":"payment timeout"}'
+curl $AUTH -X POST "$ES/logs-branch/_doc?refresh=true" -H 'Content-Type: application/json' \
+  -d '{"@timestamp":"2026-10-28T09:01:00Z","branch":"hn","message":"payment timeout"}'
+
+curl $AUTH "$ES/logs-branch,dc2:logs-branch/_search?pretty" -H 'Content-Type: application/json' -d '{
+  "query": { "match": { "message": "payment" } }, "_source": ["branch"] }'
+# 2 hits: một từ cluster local, một có _index "dc2:logs-branch"; _clusters.successful = 2</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 5: Cross-Cluster Replication</h3>
+<pre><code># Leader trên dc1
+curl $AUTH -X PUT "$ES/orders-dc1" -H 'Content-Type: application/json' -d '{"settings":{"number_of_replicas":0}}'
+curl $AUTH -X POST "$ES/orders-dc1/_doc/1?refresh=true" -H 'Content-Type: application/json' -d '{"total":100}'
+
+# Follower trên dc2
+curl $AUTH -X PUT "$ES2/orders-dc1-follower/_ccr/follow?wait_for_active_shards=1" \
+  -H 'Content-Type: application/json' -d '{"remote_cluster":"dc1","leader_index":"orders-dc1"}'
+
+# Ghi thêm trên leader, đọc ở follower
+curl $AUTH -X POST "$ES/orders-dc1/_doc/2?refresh=true" -H 'Content-Type: application/json' -d '{"total":250}'
+curl $AUTH "$ES2/orders-dc1-follower/_count"          # 2 (có thể cần vài giây)
+
+# Follower không ghi được
+curl $AUTH -X POST "$ES2/orders-dc1-follower/_doc" -H 'Content-Type: application/json' -d '{"total":1}'
+# → lỗi: không ghi trực tiếp vào follower index
+
+curl $AUTH "$ES2/orders-dc1-follower/_ccr/stats?pretty" | grep -E "leader_global_checkpoint|follower_global_checkpoint"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 6: Mô phỏng failover</h3>
+<pre><code>docker compose stop es01 es02 es03        # "dc1 sập" (cả es04, es05 nếu có)
+
+curl $AUTH -X POST "$ES2/orders-dc1-follower/_ccr/pause_follow"
+curl $AUTH -X POST "$ES2/orders-dc1-follower/_close"
+curl $AUTH -X POST "$ES2/orders-dc1-follower/_ccr/unfollow"
+curl $AUTH -X POST "$ES2/orders-dc1-follower/_open"
+curl $AUTH -X POST "$ES2/orders-dc1-follower/_doc/3?refresh=true" -H 'Content-Type: application/json' -d '{"total":75}'
+curl $AUTH "$ES2/orders-dc1-follower/_count"          # 3: dc2 đã nhận ghi
+
+docker compose start es01 es02 es03</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Một request CCS trả kết quả từ cả hai cluster. Document ghi vào leader xuất hiện trên follower sau vài giây, và follower từ chối ghi trực tiếp. Sau failover, index trên dc2 nhận ghi bình thường. Bạn đã tự tay đi qua toàn bộ vòng đời của một kế hoạch DR dùng CCR.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Chế độ sniff và proxy khác nhau thế nào? Khi nào bắt buộc dùng proxy?</li>
+<li>So sánh mô hình bảo mật certificate-based và API key-based cho remote cluster.</li>
+<li><code>ccs_minimize_roundtrips</code> ảnh hưởng thế nào tới hiệu năng khi các cluster cách xa nhau?</li>
+<li>Vì sao follower index chỉ đọc? Replication theo chiều nào (push hay pull)?</li>
+<li>Auto-follow giải quyết bài toán gì với dữ liệu rollover?</li>
+<li>Liệt kê các bước failover. Vì sao bước <code>unfollow</code> cần cân nhắc kỹ?</li>
+<li>Thiết kế kiến trúc cho ngân hàng có hai DC, mỗi DC phục vụ một miền, cả hai cần đọc dữ liệu của nhau.</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Khai báo remote cluster ở chế độ sniff và proxy</li>
+<li>☐ Hiểu hai mô hình bảo mật cho kết nối giữa cluster</li>
+<li>☐ Viết query CCS và đọc mục <code>_clusters</code> trong response</li>
+<li>☐ Tạo follower index và theo dõi độ trễ CCR</li>
+<li>☐ Cấu hình auto-follow pattern</li>
+<li>☐ Thực hiện failover và hiểu yêu cầu của failback</li>
+<li>☐ Chọn kiến trúc multi-datacenter phù hợp yêu cầu</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Kéo dài một cluster qua hai DC xa nhau</strong>: dùng hai cluster và CCR/CCS thay vì một cluster trải rộng.</li>
+<li><strong>Coi CCR là backup</strong>: xóa nhầm document trên leader được sao chép sang follower. Vẫn cần snapshot.</li>
+<li><strong>Không theo dõi độ trễ CCR</strong>: follower tụt quá xa và phải tạo lại từ đầu.</li>
+<li><strong>Quên index cũ khi bật auto-follow</strong>: chỉ index mới được sao chép.</li>
+<li><strong>Failover chưa diễn tập</strong>: ứng dụng không biết chuyển hướng ghi, RTO thực tế dài gấp nhiều lần dự kiến.</li>
+<li><strong>Chặn cổng 9300/9443 giữa hai DC</strong>: CCS và CCR đi qua transport hoặc cổng remote cluster, không qua cổng HTTP 9200.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Mỗi DC hoặc region một cluster, kết nối bằng CCS cho đọc chung và CCR cho DR</li>
+<li>Dùng API key-based security khi remote thuộc đội hoặc tổ chức khác</li>
+<li>Auto-follow cho dữ liệu time-series, follow thủ công cho index đã tồn tại</li>
+<li>Cảnh báo khi độ trễ CCR vượt RPO cho phép (Bài 18)</li>
+<li>Viết runbook failover và failback, diễn tập định kỳ cùng đội ứng dụng</li>
+<li>Giữ các cluster trong phạm vi version tương thích, nâng cấp theo kế hoạch chung</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/remote-clusters.html" target="_blank">ES: Remote Clusters</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/remote-clusters-api-key.html" target="_blank">ES: Remote Cluster Security with API Keys</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-cross-cluster-search.html" target="_blank">ES: Cross-Cluster Search</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-ccr.html" target="_blank">ES: Cross-Cluster Replication</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-disaster-recovery-uni-directional-tutorial.html" target="_blank">ES: Disaster Recovery with CCR</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="21-troubleshooting.html">&larr; Bài 21: Troubleshooting</a>
+<a href="23-data-streams-tsds.html">Bài 23: Data Streams &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảo Mật - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Mã hóa</div>
+    <div class="nav-items">
+      <a href="#tls">TLS HTTP &amp; Transport</a>
+      <a href="#certs">Sinh Certificate</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Xác thực</div>
+    <div class="nav-items">
+      <a href="#users">Built-in Users</a>
+      <a href="#realms">Realms</a>
+      <a href="#api-keys">API Keys &amp; Service Accounts</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Phân quyền</div>
+    <div class="nav-items">
+      <a href="#rbac">RBAC</a>
+      <a href="#fls-dls">Field &amp; Document Level</a>
+      <a href="#audit">Audit Logging</a>
+      <a href="#licensing">Tính năng theo License</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html" class="current">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Bảo Mật Elasticsearch</h1>
+<p class="subtitle">TLS, xác thực, realms, RBAC, field/document level security, API key, audit log — bảo vệ cluster production</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/secure-cluster.html" target="_blank">Elastic — Secure the Elastic Stack</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/authorization.html" target="_blank">Elastic — User Authorization</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Bật TLS cho cả transport layer (giữa các node) và HTTP layer (client tới cluster). Hiểu built-in users, realm chain và các phương thức xác thực. Tạo API key và service token cho ứng dụng. Thiết kế role theo nguyên tắc least privilege, giới hạn tới mức field và document. Bật audit log. Biết tính năng nào cần license trả phí.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 04: Cài Đặt</strong> — Security mặc định ở ES 8.x, cluster lab Docker Compose</li>
+<li><strong>Bài 10: Cluster Management</strong> — Rolling restart</li>
+<li><strong>TLS cơ bản</strong> — CA, certificate, private key</li>
+</ul>
+
+<h2 id="tls">TLS: HTTP &amp; Transport</h2>
+<p>Elasticsearch có hai lớp mạng, mỗi lớp cấu hình TLS riêng:</p>
+<table>
+<tr><th>Lớp</th><th>Cổng mặc định</th><th>Ai dùng</th><th>TLS</th></tr>
+<tr><td>Transport</td><td>9300</td><td>Node với node (replication, cluster state)</td><td><strong>Bắt buộc</strong> khi bật security trên cluster nhiều node</td></tr>
+<tr><td>HTTP</td><td>9200</td><td>Client, Kibana, Beats, ứng dụng</td><td>Không bắt buộc về kỹ thuật, nhưng thiếu TLS thì mật khẩu và API key đi dạng rõ</td></tr>
+</table>
+<pre><code># elasticsearch.yml
+xpack.security.enabled: true
+
+# Transport: node xác thực lẫn nhau bằng certificate cùng CA
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.key: certs/node-1/node-1.key
+xpack.security.transport.ssl.certificate: certs/node-1/node-1.crt
+xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+
+# HTTP
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.key: certs/node-1/node-1.key
+xpack.security.http.ssl.certificate: certs/node-1/node-1.crt
+xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th><code>verification_mode</code></th><th>Kiểm tra</th></tr>
+<tr><td><code>full</code></td><td>Certificate hợp lệ, do CA tin cậy cấp, và hostname/IP khớp</td></tr>
+<tr><td><code>certificate</code></td><td>Certificate hợp lệ và do CA tin cậy cấp, không kiểm tra hostname</td></tr>
+<tr><td><code>none</code></td><td>Không kiểm tra gì. Chỉ để debug, không bao giờ dùng ở production</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Transport TLS chứng minh "node này thuộc cluster của tôi": chỉ node có certificate do CA của bạn cấp mới join được. HTTP TLS bảo vệ thông tin xác thực trên đường truyền. Thiếu một trong hai là để hở một mặt tấn công.
+</div>
+
+<h2 id="certs">Sinh Certificate</h2>
+<p>Công cụ <code>elasticsearch-certutil</code> đi kèm Elasticsearch:</p>
+<pre><code># 1. Tạo CA (giữ ca.key thật cẩn thận, ai có nó là cấp được certificate hợp lệ)
+bin/elasticsearch-certutil ca --pem --out ca.zip
+
+# 2. Khai báo các node
+cat &gt; instances.yml &lt;&lt;'EOF'
+instances:
+  - name: node-1
+    dns: [ node-1.internal, localhost ]
+    ip:  [ 10.0.0.1, 127.0.0.1 ]
+  - name: node-2
+    dns: [ node-2.internal ]
+    ip:  [ 10.0.0.2 ]
+EOF
+
+# 3. Cấp certificate cho từng node, ký bởi CA
+bin/elasticsearch-certutil cert --pem \
+  --ca-cert ca/ca.crt --ca-key ca/ca.key \
+  --in instances.yml --out certs.zip</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Certificate cho HTTP</strong>
+Với HTTP layer phục vụ trình duyệt hoặc client bên ngoài, nên dùng certificate do CA nội bộ của tổ chức (hoặc CA công khai) cấp, để client không phải tin một CA tự tạo. Lệnh <code>bin/elasticsearch-certutil http</code> hướng dẫn từng bước tạo CSR cho trường hợp này. Đặt lịch gia hạn certificate trước khi hết hạn, vì certificate hết hạn làm node không nói chuyện được với nhau.
+</div>
+
+<h2 id="users">Built-in Users</h2>
+<table>
+<tr><th>User</th><th>Dùng cho</th></tr>
+<tr><td><code>elastic</code></td><td>Superuser. Chỉ dùng để thiết lập ban đầu và xử lý khẩn cấp</td></tr>
+<tr><td><code>kibana_system</code></td><td>Kibana kết nối tới Elasticsearch</td></tr>
+<tr><td><code>logstash_system</code></td><td>Logstash gửi dữ liệu monitoring</td></tr>
+<tr><td><code>beats_system</code></td><td>Beats gửi dữ liệu monitoring</td></tr>
+<tr><td><code>remote_monitoring_user</code></td><td>Metricbeat thu thập metric của Stack</td></tr>
+</table>
+<pre><code># Đặt mật khẩu tương tác hoặc tự sinh
+bin/elasticsearch-reset-password -u kibana_system -i
+bin/elasticsearch-reset-password -u elastic --auto
+
+# Đổi mật khẩu qua API
+POST /_security/user/kibana_system/_password
+{ "password": "a-long-random-password" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-red">
+<strong>Không dùng elastic cho ứng dụng</strong>
+Ứng dụng dùng user <code>elastic</code> nghĩa là một lỗ hổng ở ứng dụng trao toàn quyền cluster cho kẻ tấn công. Tạo user hoặc API key riêng cho từng ứng dụng, chỉ cấp đúng quyền cần.
+</div>
+
+<h2 id="realms">Realms</h2>
+<p><strong>Realm</strong> là nguồn xác thực danh tính. Elasticsearch thử các realm theo thứ tự <code>order</code> (realm chain) cho đến khi một realm xác thực thành công.</p>
+<table>
+<tr><th>Realm</th><th>Nguồn danh tính</th><th>License</th></tr>
+<tr><td><code>native</code></td><td>User lưu trong index nội bộ của ES</td><td>Basic (miễn phí)</td></tr>
+<tr><td><code>file</code></td><td>User trong file trên từng node. Dùng làm tài khoản khẩn cấp khi native không khả dụng</td><td>Basic</td></tr>
+<tr><td><code>ldap</code>, <code>active_directory</code></td><td>Thư mục doanh nghiệp</td><td>Trả phí</td></tr>
+<tr><td><code>saml</code>, <code>oidc</code></td><td>SSO qua Identity Provider (Okta, Keycloak, Azure AD...)</td><td>Trả phí</td></tr>
+<tr><td><code>pki</code>, <code>kerberos</code>, <code>jwt</code></td><td>Client certificate, Kerberos ticket, JWT</td><td>Trả phí</td></tr>
+</table>
+<pre><code># elasticsearch.yml: native trước, LDAP sau
+xpack.security.authc.realms:
+  native.native1:
+    order: 0
+  ldap.corp_ldap:
+    order: 1
+    url: "ldaps://ldap.corp.example:636"
+    bind_dn: "cn=es-bind,ou=services,dc=corp,dc=example"
+    user_search.base_dn: "ou=people,dc=corp,dc=example"
+    group_search.base_dn: "ou=groups,dc=corp,dc=example"
+    ssl.certificate_authorities: [ "certs/corp-ca.crt" ]
+# Mật khẩu bind lưu trong keystore, không để trong file cấu hình:
+# bin/elasticsearch-keystore add xpack.security.authc.realms.ldap.corp_ldap.secure_bind_password</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>User từ realm bên ngoài nhận role qua <strong>role mapping</strong>, thường dựa trên group:</p>
+<pre><code>PUT /_security/role_mapping/ldap-log-readers
+{
+  "roles": [ "logs_reader" ],
+  "enabled": true,
+  "rules": { "field": { "groups": "cn=sre,ou=groups,dc=corp,dc=example" } }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="api-keys">API Keys &amp; Service Accounts</h2>
+<p><strong>API key</strong> phù hợp cho ứng dụng và script: có thể đặt thời hạn, giới hạn quyền và thu hồi riêng lẻ mà không đổi mật khẩu của ai.</p>
+<pre><code>POST /_security/api_key
+{
+  "name": "order-service",
+  "expiration": "90d",
+  "role_descriptors": {
+    "orders_writer": {
+      "indices": [ { "names": [ "orders-*" ], "privileges": [ "create_doc", "read" ] } ]
+    }
+  },
+  "metadata": { "owner": "team-orders" }
+}
+# Response có "encoded" = base64(id:api_key). Gửi kèm request:
+# Authorization: ApiKey &lt;encoded&gt;
+
+# Liệt kê và thu hồi
+GET /_security/api_key?name=order-service
+DELETE /_security/api_key
+{ "name": "order-service" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Quyền của API key</strong>
+Quyền thực tế của API key là giao của <code>role_descriptors</code> với quyền của user tạo ra nó. API key không bao giờ có nhiều quyền hơn người tạo.
+</div>
+<p><strong>Service account</strong> là danh tính cố định cho thành phần của Stack, như <code>elastic/kibana</code> và <code>elastic/fleet-server</code>. Chúng xác thực bằng service token:</p>
+<pre><code>POST /_security/service/elastic/fleet-server/credential/token/fleet-token-1
+# hoặc tạo token dạng file trên node:
+bin/elasticsearch-service-tokens create elastic/fleet-server fleet-token-1</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="rbac">RBAC</h2>
+<p>Quyền được gom thành <strong>role</strong>, role gán cho user (hoặc API key, role mapping). Một role gồm:</p>
+<ul>
+<li><strong>Cluster privileges</strong>: <code>monitor</code>, <code>manage_ilm</code>, <code>manage_index_templates</code>, <code>manage</code>, <code>all</code>...</li>
+<li><strong>Index privileges</strong> trên pattern index: <code>read</code>, <code>view_index_metadata</code>, <code>create_doc</code>, <code>write</code>, <code>create_index</code>, <code>manage</code>, <code>all</code>...</li>
+<li><strong>Application privileges</strong>: quyền trong Kibana (cấu hình qua Kibana, Bài 14)</li>
+</ul>
+<pre><code>PUT /_security/role/logs_reader
+{
+  "cluster": [ "monitor" ],
+  "indices": [
+    { "names": [ "logs-*" ], "privileges": [ "read", "view_index_metadata" ] }
+  ]
+}
+
+PUT /_security/user/an
+{
+  "password": "a-long-random-password",
+  "roles": [ "logs_reader" ],
+  "full_name": "Nguyen Van An"
+}
+
+# Kiểm tra user hiện tại có quyền gì
+GET /_security/_authenticate
+GET /_security/user/_has_privileges
+{ "index": [ { "names": [ "logs-app" ], "privileges": [ "read", "write" ] } ] }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Least privilege</strong>
+Ứng dụng chỉ ghi log cần <code>create_doc</code> trên đúng pattern index, không cần <code>write</code> (bao gồm cả update và delete), càng không cần <code>all</code>. Ứng dụng đọc cho dashboard cần <code>read</code>, không cần quyền cluster nào ngoài <code>monitor</code>.
+</div>
+
+<h2 id="fls-dls">Field &amp; Document Level Security</h2>
+<p>Hai cơ chế này giới hạn quyền bên trong một index. Cả hai đều cần license trả phí.</p>
+<pre><code>PUT /_security/role/support_vn
+{
+  "indices": [
+    {
+      "names": [ "customers" ],
+      "privileges": [ "read" ],
+      "field_security": {
+        "grant": [ "*" ],
+        "except": [ "national_id", "card_number" ]
+      },
+      "query": { "term": { "country": "VN" } }
+    }
+  ]
+}
+# Nhân viên support Việt Nam chỉ thấy khách hàng VN,
+# và không bao giờ thấy CCCD hay số thẻ</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Template query</strong>
+Document level security có thể dùng template để lọc theo thuộc tính của chính user đang truy vấn, ví dụ <code>{"term": {"owner": "{{_user.username}}"}}</code>. Một role dùng chung được cho mọi người mà mỗi người chỉ thấy dữ liệu của mình.
+</div>
+
+<h2 id="audit">Audit Logging</h2>
+<p>Audit log ghi lại ai làm gì: đăng nhập thất bại, truy cập bị từ chối, thay đổi user/role. Đây thường là yêu cầu bắt buộc của kiểm toán và quy định (ví dụ trong ngân hàng). Tính năng cần license trả phí.</p>
+<pre><code># elasticsearch.yml
+xpack.security.audit.enabled: true
+xpack.security.audit.logfile.events.include:
+  - authentication_failed
+  - access_denied
+  - security_config_change
+  - run_as_denied
+# Log ghi ra &lt;cluster_name&gt;_audit.json trong thư mục logs, dạng JSON
+# Thu thập bằng Filebeat/Elastic Agent (Bài 16) về một cluster riêng</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Ghi quá nhiều</strong>
+Bật các event như <code>access_granted</code> trên cluster bận sẽ sinh lượng log khổng lồ và ảnh hưởng performance. Bắt đầu với các event thất bại và thay đổi cấu hình, chỉ mở rộng khi có yêu cầu cụ thể.
+</div>
+
+<h2 id="licensing">Tính Năng Theo License</h2>
+<table>
+<tr><th>Tính năng</th><th>Basic (miễn phí)</th><th>Trả phí</th></tr>
+<tr><td>TLS transport và HTTP</td><td>Có</td><td>Có</td></tr>
+<tr><td>Native và file realm, RBAC, API key</td><td>Có</td><td>Có</td></tr>
+<tr><td>LDAP, AD, SAML, OIDC, PKI, Kerberos, JWT</td><td>Không</td><td>Có</td></tr>
+<tr><td>Field và document level security</td><td>Không</td><td>Có</td></tr>
+<tr><td>Audit logging</td><td>Không</td><td>Có</td></tr>
+</table>
+<pre><code>GET /_license
+# Dùng thử đầy đủ tính năng 30 ngày (một lần cho mỗi cluster)
+POST /_license/start_trial?acknowledge=true</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Kiểm tra lại trước khi ra quyết định</strong>
+Phân bổ tính năng theo license có thể thay đổi giữa các phiên bản. Bảng trên phản ánh cách phân bổ phổ biến của dòng 8.x. Trước khi lập kế hoạch, đối chiếu trang Elastic Subscriptions cho đúng version bạn dùng.
+</div>
+
+<h2 id="lab">Bài Lab: Bật TLS + RBAC Cho Cluster Lab</h2>
+<p>Lab này chuyển cluster 3 node của Bài 04 từ không có security sang có TLS và xác thực. Từ bài này trở đi, các lab dùng cluster đã bảo mật.</p>
+
+<h3>Bước 1: Sinh CA và certificate</h3>
+<pre><code>mkdir -p certs
+cat &gt; certs/instances.yml &lt;&lt;'EOF'
+instances:
+  - name: es01
+    dns: [ es01, localhost ]
+    ip:  [ 127.0.0.1 ]
+  - name: es02
+    dns: [ es02 ]
+  - name: es03
+    dns: [ es03 ]
+EOF
+
+docker run --rm -u 0 -v "$PWD/certs:/certs" \
+  docker.elastic.co/elasticsearch/elasticsearch:8.15.0 bash -c '
+  bin/elasticsearch-certutil ca --silent --pem --out /certs/ca.zip &amp;&amp;
+  unzip -o -q /certs/ca.zip -d /certs &amp;&amp;
+  bin/elasticsearch-certutil cert --silent --pem \
+    --ca-cert /certs/ca/ca.crt --ca-key /certs/ca/ca.key \
+    --in /certs/instances.yml --out /certs/certs.zip &amp;&amp;
+  unzip -o -q /certs/certs.zip -d /certs &amp;&amp;
+  chown -R 1000:0 /certs'
+ls certs/es01   # es01.crt  es01.key</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Cập nhật docker-compose.yml</h3>
+<p>Tạo file <code>.env</code> chứa mật khẩu (không commit file này):</p>
+<pre><code>ELASTIC_PASSWORD=change-me-long-random</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Với mỗi node, thay dòng <code>xpack.security.enabled=false</code> bằng khối dưới đây (đổi <code>es01</code> thành tên node tương ứng) và mount thư mục certs:</p>
+<pre><code>    environment:
+      # ... giữ nguyên node.name, cluster.name, discovery ...
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=certs/es01/es01.key
+      - xpack.security.http.ssl.certificate=certs/es01/es01.crt
+      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.key=certs/es01/es01.key
+      - xpack.security.transport.ssl.certificate=certs/es01/es01.crt
+      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.verification_mode=certificate
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certs</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Bật security cần restart toàn cluster</strong>
+Không thể bật transport TLS bằng rolling restart từ trạng thái không TLS, vì node cũ và node mới không nói chuyện được với nhau. Dừng cả cluster rồi khởi động lại: <code>docker compose down &amp;&amp; docker compose up -d</code>. Dữ liệu trong volume vẫn giữ nguyên. Nếu bạn đã thêm es04, es05 ở Bài 10, sinh certificate và cấu hình cho cả hai node đó.
+</div>
+
+<h3>Bước 3: Kiểm tra kết nối bảo mật</h3>
+<pre><code>source .env
+ES=https://localhost:9200
+AUTH="--cacert certs/ca/ca.crt -u elastic:$ELASTIC_PASSWORD"
+
+curl $AUTH "$ES/_cluster/health?pretty"     # thành công
+curl --cacert certs/ca/ca.crt "$ES"          # 401: thiếu thông tin xác thực
+curl "http://localhost:9200"                 # thất bại: cổng chỉ nhận HTTPS</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Hai biến <code>ES</code> và <code>AUTH</code> được dùng lại trong các lab từ Bài 14 trở đi.</p>
+
+<h3>Bước 4: Tạo role, user và API key</h3>
+<pre><code>curl $AUTH -X PUT "$ES/_security/role/logs_reader" -H 'Content-Type: application/json' -d '{
+  "cluster": ["monitor"],
+  "indices": [{ "names": ["logs-*"], "privileges": ["read","view_index_metadata"] }]
+}'
+curl $AUTH -X PUT "$ES/_security/user/an" -H 'Content-Type: application/json' -d '{
+  "password": "an-lab-password-123", "roles": ["logs_reader"]
+}'
+
+# User "an" đọc được logs-*, nhưng không ghi được
+curl --cacert certs/ca/ca.crt -u an:an-lab-password-123 "$ES/logs-*/_search?size=0"
+curl --cacert certs/ca/ca.crt -u an:an-lab-password-123 -X POST "$ES/logs-app/_doc" \
+  -H 'Content-Type: application/json' -d '{"@timestamp":"2026-10-28T08:00:00Z"}'
+# → 403 security_exception: action [indices:data/write/...] is unauthorized
+
+# API key chỉ được thêm document vào logs-*
+curl $AUTH -X POST "$ES/_security/api_key" -H 'Content-Type: application/json' -d '{
+  "name": "lab-shipper", "expiration": "1d",
+  "role_descriptors": { "shipper": { "indices": [{ "names": ["logs-*"], "privileges": ["create_doc","auto_configure"] }] } }
+}'
+# Dùng giá trị "encoded" trong response:
+curl --cacert certs/ca/ca.crt -H "Authorization: ApiKey &lt;encoded&gt;" -X POST "$ES/logs-app/_doc" \
+  -H 'Content-Type: application/json' -d '{"@timestamp":"2026-10-28T08:00:00Z","msg":"hello"}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 5 (tùy chọn): Thử FLS/DLS với trial license</h3>
+<pre><code>curl $AUTH -X POST "$ES/_license/start_trial?acknowledge=true"
+curl $AUTH -X PUT "$ES/_security/role/logs_no_ip" -H 'Content-Type: application/json' -d '{
+  "indices": [{ "names": ["logs-*"], "privileges": ["read"],
+    "field_security": { "grant": ["*"], "except": ["client_ip"] } }]
+}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Tích hợp LDAP cần một LDAP server và license trả phí (hoặc trial). Cấu hình realm theo mẫu ở mục Realms, rồi kiểm tra bằng <code>GET /_security/_authenticate</code> với user LDAP.</p>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Cluster chỉ nhận HTTPS, request không có thông tin xác thực bị từ chối, user <code>an</code> đọc được nhưng không ghi được, và API key chỉ thêm được document vào <code>logs-*</code>. Đây là cấu hình tối thiểu cho bất kỳ cluster nào có dữ liệu thật.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Transport TLS và HTTP TLS bảo vệ điều gì? Vì sao transport TLS là bắt buộc trên cluster nhiều node có security?</li>
+<li>Khác biệt giữa <code>verification_mode: full</code> và <code>certificate</code>?</li>
+<li>Realm chain hoạt động thế nào? Vì sao nên giữ một file realm làm tài khoản khẩn cấp?</li>
+<li>Vì sao API key phù hợp cho ứng dụng hơn username/password?</li>
+<li>Thiết kế role cho một service chỉ ghi log vào <code>logs-orders-*</code>.</li>
+<li>Field level và document level security giải quyết bài toán gì? Cho ví dụ.</li>
+<li>Vì sao không bật security bằng rolling restart được?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Sinh CA và certificate bằng elasticsearch-certutil</li>
+<li>☐ Cấu hình TLS cho transport và HTTP</li>
+<li>☐ Quản lý mật khẩu built-in user</li>
+<li>☐ Hiểu realm chain và role mapping</li>
+<li>☐ Tạo, giới hạn quyền và thu hồi API key</li>
+<li>☐ Viết role theo least privilege</li>
+<li>☐ Biết FLS, DLS, audit log và yêu cầu license của chúng</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Ứng dụng dùng user elastic</strong>: một lỗ hổng ứng dụng thành lỗ hổng toàn cluster.</li>
+<li><strong>Mật khẩu trong elasticsearch.yml hoặc code</strong>: dùng keystore cho cấu hình, secret manager cho ứng dụng.</li>
+<li><strong>verification_mode: none ở production</strong>: bất kỳ ai cũng có thể giả làm node.</li>
+<li><strong>Để certificate hết hạn</strong>: các node mất kết nối với nhau, cluster dừng hoạt động.</li>
+<li><strong>Mở cổng 9200 ra internet</strong>: ngay cả khi có xác thực, hãy đặt cluster sau firewall hoặc VPN.</li>
+<li><strong>API key không có thời hạn</strong>: key bị lộ sẽ hợp lệ mãi mãi. Đặt <code>expiration</code> và xoay vòng định kỳ.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Bật TLS cho cả hai lớp, <code>verification_mode: full</code> khi hạ tầng DNS cho phép</li>
+<li>Mỗi ứng dụng một API key với quyền tối thiểu và thời hạn rõ ràng</li>
+<li>Con người đăng nhập qua SSO (SAML/OIDC) hoặc LDAP, quyền cấp qua role mapping theo group</li>
+<li>Lưu secret trong keystore, không trong file cấu hình hay biến môi trường bị log</li>
+<li>Bật audit log cho event thất bại và thay đổi cấu hình bảo mật, gửi về cluster riêng</li>
+<li>Giám sát ngày hết hạn certificate</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/secure-cluster.html" target="_blank">ES: Secure the Elastic Stack</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/security-basic-setup.html" target="_blank">ES: Set up Basic Security</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/realms.html" target="_blank">ES: Realms</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/security-privileges.html" target="_blank">ES: Security Privileges</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/enable-audit-logging.html" target="_blank">ES: Enable Audit Logging</a></li>
+<li><a href="https://www.elastic.co/subscriptions" target="_blank">Elastic Subscriptions</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="12-index-lifecycle.html">&larr; Bài 12: Index Lifecycle</a>
+<a href="14-kibana.html">Bài 14: Kibana &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

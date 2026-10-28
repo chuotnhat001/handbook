@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search DSL - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nền tảng</div>
+    <div class="nav-items">
+      <a href="#context">Query vs Filter Context</a>
+      <a href="#full-text">Full-text Queries</a>
+      <a href="#term-level">Term-level Queries</a>
+      <a href="#bool">Bool Query</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng cao</div>
+    <div class="nav-items">
+      <a href="#nested-join">Nested &amp; Join</a>
+      <a href="#highlight">Highlighting</a>
+      <a href="#suggest">Suggesters</a>
+      <a href="#pagination">Pagination</a>
+      <a href="#sorting">Sorting &amp; Boosting</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html" class="current">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Search DSL</h1>
+<p class="subtitle">Query vs filter context, match, term, bool, nested, highlight, pagination — ngôn ngữ truy vấn của Elasticsearch</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html" target="_blank">Elastic — Query DSL</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html" target="_blank">Elastic — Paginate Search Results</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Phân biệt query context (có scoring) và filter context (không scoring, cache được). Dùng full-text query (match, multi_match, match_phrase) và term-level query (term, terms, range, exists). Kết hợp điều kiện bằng bool query. Truy vấn nested/join, highlight kết quả, gợi ý từ khóa, và phân trang đúng cách với search_after.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 02: Lucene</strong> — BM25 scoring</li>
+<li><strong>Bài 06: Mapping</strong> — text vs keyword, nested</li>
+<li><strong>Bài 07: Text Analysis</strong> — Query cũng được analyze</li>
+</ul>
+
+<h2 id="context">Query Context vs Filter Context</h2>
+<table>
+<tr><th></th><th>Query context</th><th>Filter context</th></tr>
+<tr><td>Câu hỏi</td><td>"Document khớp <em>tốt đến đâu</em>?"</td><td>"Document <em>có khớp</em> không?" (yes/no)</td></tr>
+<tr><td>Tính <code>_score</code></td><td>Có (BM25)</td><td>Không</td></tr>
+<tr><td>Cache</td><td>Không</td><td>Có (node query cache)</td></tr>
+<tr><td>Dùng cho</td><td>Full-text, relevance</td><td>Lọc chính xác: status, category, date range</td></tr>
+<tr><td>Vị trí</td><td><code>bool.must</code>, <code>bool.should</code></td><td><code>bool.filter</code>, <code>bool.must_not</code></td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Điều kiện nào không ảnh hưởng đến thứ hạng (giá trong khoảng, đang còn hàng, thuộc tenant X) thì đặt vào <code>filter</code>. Nhanh hơn vì bỏ qua scoring, và được cache cho các query lặp lại.
+</div>
+
+<h2 id="full-text">Full-text Queries</h2>
+<p>Query text được <strong>analyze bằng cùng analyzer</strong> với field (hoặc search_analyzer) trước khi tìm.</p>
+<pre><code># match — query phổ biến nhất
+GET /products/_search
+{ "query": { "match": { "name": "laptop gaming" } } }
+# Mặc định OR: khớp "laptop" HOẶC "gaming"
+
+# Yêu cầu tất cả terms
+{ "query": { "match": { "name": { "query": "laptop gaming", "operator": "and" } } } }
+
+# Ít nhất 75% terms phải khớp
+{ "query": { "match": { "name": { "query": "laptop gaming rgb", "minimum_should_match": "75%" } } } }
+
+# Chịu lỗi chính tả
+{ "query": { "match": { "name": { "query": "labtop", "fuzziness": "AUTO" } } } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<pre><code># match_phrase — các term phải đúng thứ tự, liền nhau
+{ "query": { "match_phrase": { "description": "pin dùng cả ngày" } } }
+# slop cho phép cách nhau tối đa N vị trí
+{ "query": { "match_phrase": { "description": { "query": "pin cả ngày", "slop": 1 } } } }
+
+# multi_match — tìm trên nhiều field, có boost
+{ "query": { "multi_match": {
+    "query": "macbook pro",
+    "fields": ["name^3", "brand^2", "description"],
+    "type": "best_fields"
+} } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>multi_match type</th><th>Hành vi</th></tr>
+<tr><td><code>best_fields</code> (mặc định)</td><td>Lấy score của field khớp tốt nhất</td></tr>
+<tr><td><code>most_fields</code></td><td>Cộng score của mọi field khớp (hợp với multi-field cùng dữ liệu)</td></tr>
+<tr><td><code>cross_fields</code></td><td>Coi nhiều field như một field lớn (vd first_name + last_name)</td></tr>
+<tr><td><code>phrase</code> / <code>phrase_prefix</code></td><td>match_phrase trên từng field</td></tr>
+</table>
+
+<h2 id="term-level">Term-level Queries</h2>
+<p>Term-level query <strong>không analyze</strong> input — so khớp chính xác với term trong index. Dùng cho field <code>keyword</code>, số, ngày, boolean.</p>
+<pre><code># term — exact match
+{ "query": { "term": { "status": "published" } } }
+
+# terms — khớp một trong nhiều giá trị (như SQL IN)
+{ "query": { "terms": { "category": ["laptop", "tablet"] } } }
+
+# range
+{ "query": { "range": { "price": { "gte": 500, "lte": 1500 } } } }
+{ "query": { "range": { "created_at": { "gte": "now-7d/d", "lt": "now/d" } } } }
+
+# exists — field có giá trị
+{ "query": { "exists": { "field": "discount" } } }
+
+# prefix / wildcard (dùng thận trọng)
+{ "query": { "prefix": { "sku": "LAP-" } } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>term trên field text</strong>
+<code>{"term": {"name": "Laptop Gaming"}}</code> trên field <code>text</code> gần như luôn trả rỗng: index lưu "laptop", "gaming" (đã lowercase, tách từ), còn term tìm nguyên chuỗi "Laptop Gaming". Dùng <code>match</code> cho text, hoặc <code>term</code> trên <code>name.keyword</code>.
+</div>
+<div class="callout callout-red">
+<strong>Wildcard có ký tự đầu</strong>
+<code>"wildcard": {"name": "*phone"}</code> buộc ES quét toàn bộ term dictionary — rất chậm trên index lớn. Thay bằng edge_ngram, field <code>wildcard</code>, hoặc thiết kế lại. Có thể chặn hẳn bằng <code>search.allow_expensive_queries: false</code>.
+</div>
+
+<h2 id="bool">Bool Query</h2>
+<p>Kết hợp nhiều điều kiện:</p>
+<table>
+<tr><th>Clause</th><th>Ý nghĩa</th><th>Scoring</th></tr>
+<tr><td><code>must</code></td><td>Bắt buộc khớp (AND)</td><td>Có</td></tr>
+<tr><td><code>filter</code></td><td>Bắt buộc khớp</td><td>Không, cache được</td></tr>
+<tr><td><code>should</code></td><td>Nên khớp — khớp thì cộng điểm</td><td>Có</td></tr>
+<tr><td><code>must_not</code></td><td>Không được khớp (NOT)</td><td>Không</td></tr>
+</table>
+<pre><code>GET /products/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "name": "laptop" } }
+      ],
+      "filter": [
+        { "term":  { "in_stock": true } },
+        { "terms": { "category": ["laptop", "ultrabook"] } },
+        { "range": { "price": { "lte": 2000 } } }
+      ],
+      "should": [
+        { "term": { "brand": { "value": "dell", "boost": 2 } } },
+        { "match": { "description": "pin lâu" } }
+      ],
+      "must_not": [
+        { "term": { "status": "discontinued" } }
+      ]
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>should và minimum_should_match</strong>
+Khi bool có <code>must</code> hoặc <code>filter</code>, các <code>should</code> chỉ cộng điểm (không bắt buộc). Khi bool <em>chỉ</em> có <code>should</code>, ít nhất 1 should phải khớp. Đặt <code>minimum_should_match</code> để kiểm soát rõ ràng.
+</div>
+
+<h2 id="nested-join">Nested &amp; Join Queries</h2>
+<h3>nested query</h3>
+<p>Field kiểu <code>nested</code> (Bài 06) phải truy vấn qua <code>nested</code> query để giữ quan hệ trong từng phần tử:</p>
+<pre><code>GET /ecommerce-products/_search
+{
+  "query": {
+    "nested": {
+      "path": "variants",
+      "query": { "bool": { "filter": [
+        { "term":  { "variants.color": "black" } },
+        { "range": { "variants.stock": { "gt": 0 } } }
+      ]}},
+      "inner_hits": {}
+    }
+  }
+}
+# inner_hits trả về biến thể nào đã khớp</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>has_child / has_parent (join field)</h3>
+<p>Field <code>join</code> mô hình quan hệ cha–con trong cùng index (vd question–answer). Cha và con phải cùng shard (dùng routing).</p>
+<pre><code>PUT /qa
+{ "mappings": { "properties": {
+  "relation": { "type": "join", "relations": { "question": "answer" } }
+}}}
+
+PUT /qa/_doc/1
+{ "title": "Cách tối ưu bulk?", "relation": "question" }
+PUT /qa/_doc/2?routing=1
+{ "body": "Dùng batch 5-15MB", "relation": { "name": "answer", "parent": "1" } }
+
+# Câu hỏi có câu trả lời chứa "batch"
+GET /qa/_search
+{ "query": { "has_child": { "type": "answer", "query": { "match": { "body": "batch" } } } } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Join đắt</strong>
+has_child/has_parent chậm hơn nhiều so với query thường. Elasticsearch khuyến nghị <strong>denormalize</strong> (nhân bản dữ liệu vào document) khi có thể; chỉ dùng join khi con cập nhật rất thường xuyên độc lập với cha.
+</div>
+
+<h2 id="highlight">Highlighting</h2>
+<pre><code>GET /articles/_search
+{
+  "query": { "match": { "body": "elasticsearch cluster" } },
+  "highlight": {
+    "pre_tags": ["&lt;mark&gt;"],
+    "post_tags": ["&lt;/mark&gt;"],
+    "fields": {
+      "body": { "fragment_size": 150, "number_of_fragments": 3 }
+    }
+  }
+}
+# Response: hits[].highlight.body = ["... &lt;mark&gt;Elasticsearch&lt;/mark&gt; ..."]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-red">
+<strong>XSS khi hiển thị highlight</strong>
+Fragment highlight chứa nội dung gốc của document. Nếu nội dung đến từ người dùng, phải escape HTML trước khi render, hoặc đặt <code>"encoder": "html"</code> để ES escape nội dung và chỉ giữ thẻ highlight.
+</div>
+
+<h2 id="suggest">Suggesters</h2>
+<table>
+<tr><th>Suggester</th><th>Dùng cho</th></tr>
+<tr><td><code>term</code></td><td>Gợi ý sửa chính tả từng từ ("labtop" → "laptop")</td></tr>
+<tr><td><code>phrase</code></td><td>Gợi ý sửa cả cụm từ</td></tr>
+<tr><td><code>completion</code></td><td>Autocomplete rất nhanh (cấu trúc FST trong bộ nhớ), cần field type <code>completion</code></td></tr>
+</table>
+<pre><code># "Ý bạn là..."
+GET /products/_search
+{ "suggest": { "fix": { "text": "labtop gamng", "term": { "field": "name" } } } }
+
+# Autocomplete (field "suggest" kiểu completion)
+GET /products/_search
+{ "suggest": { "auto": {
+  "prefix": "mac",
+  "completion": { "field": "suggest", "size": 5, "skip_duplicates": true }
+} } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="pagination">Pagination</h2>
+<h3>from + size — trang nông</h3>
+<pre><code>GET /products/_search
+{ "from": 20, "size": 10, "query": { "match_all": {} } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Deep pagination</strong>
+Với <code>from: 10000, size: 10</code>, <em>mỗi shard</em> phải lấy và sort 10.010 kết quả rồi coordinating node gom lại. Chi phí tăng theo độ sâu. ES chặn mặc định ở <code>index.max_result_window: 10000</code>.
+</div>
+
+<h3>search_after + PIT — trang sâu</h3>
+<p>Dùng sort values của kết quả cuối trang trước làm "con trỏ". Kết hợp <strong>Point in Time (PIT)</strong> để giữ snapshot nhất quán khi dữ liệu đang thay đổi.</p>
+<pre><code># 1. Mở PIT
+POST /products/_pit?keep_alive=1m
+# → { "id": "46ToAwMDaWR..." }
+
+# 2. Trang đầu
+GET /_search
+{
+  "size": 100,
+  "pit": { "id": "46ToAwMDaWR...", "keep_alive": "1m" },
+  "sort": [ { "created_at": "desc" }, { "_shard_doc": "asc" } ]
+}
+
+# 3. Trang tiếp: truyền sort values của hit cuối cùng
+GET /_search
+{
+  "size": 100,
+  "pit": { "id": "46ToAwMDaWR...", "keep_alive": "1m" },
+  "sort": [ { "created_at": "desc" }, { "_shard_doc": "asc" } ],
+  "search_after": [ 1761600000000, 4294967298 ]
+}
+
+# 4. Đóng PIT khi xong
+DELETE /_pit
+{ "id": "46ToAwMDaWR..." }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Cách</th><th>Khi nào dùng</th></tr>
+<tr><td><code>from/size</code></td><td>UI phân trang vài trang đầu</td></tr>
+<tr><td><code>search_after</code> + PIT</td><td>Infinite scroll, duyệt sâu, export lớn</td></tr>
+<tr><td><code>scroll</code> API</td><td>Cách cũ — ES khuyến nghị chuyển sang search_after + PIT</td></tr>
+</table>
+
+<h2 id="sorting">Sorting &amp; Boosting</h2>
+<pre><code># Sort theo field (dùng keyword/numeric/date — có doc_values)
+GET /products/_search
+{
+  "query": { "match": { "name": "laptop" } },
+  "sort": [
+    { "price": "asc" },
+    { "_score": "desc" }
+  ]
+}
+
+# function_score — kết hợp relevance với độ phổ biến
+GET /products/_search
+{
+  "query": {
+    "function_score": {
+      "query": { "match": { "name": "laptop" } },
+      "functions": [
+        { "field_value_factor": { "field": "sold_count", "modifier": "log1p", "factor": 0.5 } }
+      ],
+      "boost_mode": "sum"
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Dùng <code>"explain": true</code> (Bài 02) hoặc <code>_validate/query?explain</code> để xem vì sao một document có score như vậy.</p>
+
+<h2 id="lab">Bài Lab: Full-text Search Cho Blog Platform</h2>
+<h3>Bước 1: Tạo index và dữ liệu mẫu</h3>
+<pre><code>PUT /blog-posts
+{
+  "mappings": { "properties": {
+    "title":        { "type": "text", "fields": { "keyword": { "type": "keyword" } } },
+    "body":         { "type": "text" },
+    "author":       { "type": "keyword" },
+    "tags":         { "type": "keyword" },
+    "status":       { "type": "keyword" },
+    "views":        { "type": "integer" },
+    "published_at": { "type": "date" }
+  }}
+}
+
+POST /blog-posts/_bulk?refresh=wait_for
+{"index":{"_id":"1"}}
+{"title":"Tối ưu Elasticsearch cho production","body":"Hướng dẫn tuning heap, shard và refresh interval cho cluster lớn","author":"an","tags":["elasticsearch","performance"],"status":"published","views":1520,"published_at":"2026-09-01"}
+{"index":{"_id":"2"}}
+{"title":"Bắt đầu với Kibana","body":"Tạo dashboard đầu tiên và khám phá dữ liệu với Discover","author":"binh","tags":["kibana"],"status":"published","views":830,"published_at":"2026-09-15"}
+{"index":{"_id":"3"}}
+{"title":"Elasticsearch shard sizing","body":"Chọn số shard hợp lý, tránh over-sharding trong cluster","author":"an","tags":["elasticsearch","cluster"],"status":"draft","views":40,"published_at":"2026-10-01"}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Query tìm kiếm hoàn chỉnh</h3>
+<pre><code>GET /blog-posts/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "multi_match": { "query": "elasticsearch cluster", "fields": ["title^3", "body"] } }
+      ],
+      "filter": [
+        { "term": { "status": "published" } },
+        { "range": { "published_at": { "gte": "2026-01-01" } } }
+      ],
+      "should": [
+        { "terms": { "tags": ["performance"] } }
+      ]
+    }
+  },
+  "highlight": { "encoder": "html", "fields": { "body": {}, "title": {} } },
+  "_source": ["title", "author", "published_at"],
+  "size": 10
+}
+# Kết quả: chỉ bài 1 (bài 3 là draft, bị filter loại)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Phân trang với search_after</h3>
+<pre><code>GET /blog-posts/_search
+{
+  "size": 1,
+  "query": { "term": { "status": "published" } },
+  "sort": [ { "published_at": "desc" }, { "title.keyword": "asc" } ]
+}
+# Lấy giá trị "sort" của hit cuối, truyền vào search_after cho trang sau</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Query kết hợp đủ 4 thành phần: full-text có boost (must), lọc chính xác không tính điểm (filter), tăng hạng tùy chọn (should), highlight an toàn. Đây là khung chuẩn cho hầu hết search UI.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Khác biệt giữa query context và filter context? Vì sao filter nhanh hơn?</li>
+<li>Vì sao <code>term</code> query trên field text thường trả rỗng?</li>
+<li>So sánh <code>match</code>, <code>match_phrase</code>, <code>multi_match</code>.</li>
+<li>Giải thích 4 clause của bool query và clause nào tính điểm.</li>
+<li>Khi nào dùng nested query? Khi nào dùng has_child, và vì sao nên tránh nếu có thể?</li>
+<li>Vì sao deep pagination với from/size tốn kém? search_after + PIT giải quyết thế nào?</li>
+<li>Rủi ro bảo mật khi hiển thị highlight là gì?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Phân biệt query context và filter context</li>
+<li>☐ Dùng match, match_phrase, multi_match với operator/fuzziness/boost</li>
+<li>☐ Dùng term, terms, range, exists trên keyword/numeric/date</li>
+<li>☐ Viết bool query với must/filter/should/must_not</li>
+<li>☐ Truy vấn nested và join field</li>
+<li>☐ Cấu hình highlight an toàn</li>
+<li>☐ Dùng term và completion suggester</li>
+<li>☐ Phân trang sâu bằng search_after + PIT</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Đặt điều kiện lọc vào must</strong> — Tính điểm vô ích và mất cache. Lọc chính xác → <code>filter</code>.</li>
+<li><strong>term trên text, match trên keyword</strong> — Sai loại query cho loại field. Kiểm tra mapping trước.</li>
+<li><strong>Deep pagination bằng from/size</strong> — Chậm và chạm max_result_window. Dùng search_after.</li>
+<li><strong>Wildcard/regex có ký tự đầu</strong> — Quét toàn bộ term dictionary, có thể làm nghẽn cluster.</li>
+<li><strong>Render highlight không escape</strong> — Lỗ hổng XSS nếu nội dung do người dùng nhập.</li>
+<li><strong>Sort trên field text</strong> — Lỗi fielddata. Sort trên sub-field keyword.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Mặc định đặt mọi điều kiện không ảnh hưởng thứ hạng vào <code>filter</code></li>
+<li>Giới hạn <code>_source</code> chỉ lấy field cần hiển thị để giảm payload</li>
+<li>Dùng search_after + PIT cho mọi trường hợp duyệt quá vài trang</li>
+<li>Bật <code>search.allow_expensive_queries: false</code> ở cluster dùng chung để chặn query nguy hiểm</li>
+<li>Denormalize thay vì join khi có thể</li>
+<li>Kiểm tra relevance bằng <code>explain</code> và tập query mẫu trước khi tinh chỉnh boost</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html" target="_blank">ES: Query DSL</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html" target="_blank">ES: Query and Filter Context</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html" target="_blank">ES: Boolean Query</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html" target="_blank">ES: Paginate Search Results</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html" target="_blank">ES: Highlighting</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="07-text-analysis.html">&larr; Bài 07: Text Analysis</a>
+<a href="09-aggregations.html">Bài 09: Aggregations &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orca ADE - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.badge-free{background:#dcfce7;color:#166534}
+.badge-mit{background:#e0e7ff;color:#3730a3}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang chủ
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Tổng quan</div>
+    <div class="nav-items">
+      <a href="#overview">Orca là gì</a>
+      <a href="#why-ade">Tại sao ADE</a>
+      <a href="#supported-agents">Agents hỗ trợ</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Bắt đầu</div>
+    <div class="nav-items">
+      <a href="#requirements">Yêu cầu hệ thống</a>
+      <a href="#install">Cài đặt</a>
+      <a href="#interface">Giao diện</a>
+      <a href="#first-project">Dự án đầu tiên</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tính năng</div>
+    <div class="nav-items">
+      <a href="#worktrees">Parallel Worktrees</a>
+      <a href="#design-mode">Design Mode</a>
+      <a href="#diff-annotation">Diff Annotation</a>
+      <a href="#remote-ssh">Remote SSH</a>
+      <a href="#integrations">GitHub & Linear</a>
+      <a href="#mobile-app">Mobile App</a>
+      <a href="#orca-cli">Orca CLI</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Workflow</div>
+    <div class="nav-items">
+      <a href="#single-workflow">Single Agent</a>
+      <a href="#parallel-workflow">Parallel Agents</a>
+      <a href="#fanout-strategy">Khi nào fan-out</a>
+      <a href="#real-examples">Ví dụ thực tế</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng cao</div>
+    <div class="nav-items">
+      <a href="#verification">Verification</a>
+      <a href="#cost-optimization">Tối ưu chi phí</a>
+      <a href="#best-practices">Best Practices</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+      <a href="#alternatives">Alternatives</a>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<main class="main">
+<h1 id="overview">Orca — Agent Development Environment</h1>
+<p class="subtitle">Môi trường phát triển để chạy nhiều AI coding agents song song trong các worktrees cách ly (isolated)</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="https://orca.build" target="_blank">orca.build</a> — <span class="badge badge-free">Free</span> <span class="badge badge-mit">MIT License</span> — backed by Y Combinator (số sao GitHub chưa xác minh được tại 23/10/2026)</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Orca là ADE (Agent Development Environment — Môi trường Phát triển Agent), không phải IDE. Triết lý: <strong>con người giám sát (supervise), agents thực thi (execute)</strong>. Mỗi task chạy trong git worktree cách ly (isolated) riêng — nhiều agents làm việc song song trên cùng repo mà không xung đột (conflict) với nhau.
+</div>
+
+<p>Orca cho phép bạn khởi tạo (spawn) nhiều coding agents đồng thời, mỗi agent hoạt động trong môi trường cách ly (isolated environment). Tập trung terminals, diffs (so sánh thay đổi), browser windows và CLI tooling vào một môi trường duy nhất. Bạn mang API keys và gói đăng ký (subscriptions) của mình — Orca không bán lại (resell) tokens.</p>
+
+<h3>Orca giải quyết vấn đề gì?</h3>
+
+<p>Khi dùng AI coding agents (Claude Code, Codex...) trong terminal hoặc IDE thông thường:</p>
+<ul>
+<li><strong>Xung đột files (Conflict)</strong> — Chạy 2 agents cùng lúc trên 1 repo = chúng ghi đè (overwrite) files của nhau</li>
+<li><strong>Chuyển đổi ngữ cảnh (Context switching)</strong> — Phải mở nhiều terminal tabs, browser tabs, theo dõi thủ công</li>
+<li><strong>Không so sánh được</strong> — Muốn thử 3 cách giải quyết khác nhau? Phải làm tuần tự</li>
+<li><strong>Vòng phản hồi frontend chậm (Feedback loop)</strong> — Copy-paste screenshots, mô tả UI bằng text</li>
+</ul>
+
+<p>Orca giải quyết bằng cách cho mỗi agent một <strong>git worktree cách ly (isolated)</strong> — như có 5 bản sao của repo chạy song song, nhưng chia sẻ chung (share) git history.</p>
+
+<h2 id="why-ade">Tại sao cần ADE thay vì IDE</h2>
+
+<table>
+<tr><th>Orca ADE</th><th>IDE truyền thống</th></tr>
+<tr><td>Worktrees song song (Parallel) — nhiều agents cùng lúc</td><td>Chỉnh sửa đơn ngữ cảnh (Single-context)</td></tr>
+<tr><td>Terminal render bằng GPU với chia vô hạn (infinite splits)</td><td>Terminal tích hợp thông thường</td></tr>
+<tr><td>Chromium tích hợp + Chế độ Thiết kế (Design Mode) cho mỗi worktree</td><td>Cần extension/plugin</td></tr>
+<tr><td>Ghi chú trực tiếp trên diff (Inline annotation) gửi lại agent</td><td>Không có tích hợp sẵn (native)</td></tr>
+<tr><td>Tích hợp GitHub/Linear sẵn có (Native)</td><td>Dùng browser tabs riêng</td></tr>
+<tr><td>SSH từ xa với tự động kết nối lại (auto-reconnect)</td><td>Cần cấu hình thêm</td></tr>
+<tr><td>Ứng dụng di động theo dõi (monitor) agents từ xa</td><td>Không có</td></tr>
+</table>
+
+<h2 id="supported-agents">Agents được hỗ trợ</h2>
+
+<p>Orca hỗ trợ <strong>30+ CLI agents</strong>. Khi mở Orca lần đầu, nó tự động phát hiện (detect) các agents đã cài trên máy. Bạn dùng gói đăng ký (subscription) và API keys của mình — Orca không bán lại (resell) tokens.</p>
+
+<table>
+<tr><th>Agent</th><th>Provider</th><th>Ghi chú</th></tr>
+<tr><td><strong>Claude Code</strong></td><td>Anthropic</td><td>Cần Anthropic API key hoặc Claude Pro subscription</td></tr>
+<tr><td><strong>Codex</strong></td><td>OpenAI</td><td>Cần OpenAI API key</td></tr>
+<tr><td><strong>Gemini CLI</strong></td><td>Google</td><td>Cần Google AI API key</td></tr>
+<tr><td><strong>GitHub Copilot CLI</strong></td><td>GitHub</td><td>Cần Copilot subscription</td></tr>
+<tr><td><strong>Cursor CLI</strong></td><td>Cursor</td><td>Cần Cursor Pro subscription</td></tr>
+<tr><td><strong>Grok</strong></td><td>xAI</td><td>Cần xAI API key</td></tr>
+<tr><td><strong>Hermes</strong></td><td>Open-source</td><td>Miễn phí, có thể kết hợp với free API</td></tr>
+<tr><td><strong>OpenCode, Amp, Cline, Continue, Kiro, Mistral Vibe, Qwen Code</strong></td><td>Various</td><td>20+ agents khác</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Tip cho người mới</strong>
+Bắt đầu với 1 agent bạn đã có gói đăng ký (subscription) — Claude Code hoặc Codex. Sau khi quen giao diện, thử chạy song song 2-3 agents để so sánh kết quả đầu ra (outputs).
+</div>
+
+<h2 id="requirements">Yêu cầu hệ thống</h2>
+
+<h3>Phần cứng tối thiểu</h3>
+<table>
+<tr><th>Số agents chạy song song</th><th>RAM cần thiết</th><th>Disk space</th></tr>
+<tr><td>1 agent</td><td>~2 GB</td><td>Project size × 1</td></tr>
+<tr><td>3 agents</td><td>~6 GB</td><td>Project size × 3</td></tr>
+<tr><td>5 agents</td><td>~10 GB</td><td>Project size × 5</td></tr>
+</table>
+
+<p>Mỗi worktree cần dung lượng đĩa (disk space) riêng cho các thư viện phụ thuộc (dependencies) như node_modules, venv, v.v. Nếu project của bạn có 500MB dependencies, chạy 5 agents = 2.5GB disk.</p>
+
+<div class="callout callout-amber">
+<strong>Khuyến nghị</strong>
+Với 8GB RAM, chạy thoải mái 2-3 agents. Nếu muốn chạy 5 agents, nên dùng SSH worktrees để chuyển tải (offload) sang máy chủ từ xa (remote server) hoặc có ít nhất 16GB RAM.
+</div>
+
+<h3>Phần mềm yêu cầu</h3>
+<ul>
+<li><strong>Git</strong> — Orca dựa trên git worktrees, cần Git 2.20+</li>
+<li><strong>CLI agents</strong> — Cài sẵn agents bạn muốn dùng (Claude Code, Codex, etc.)</li>
+<li><strong>API keys</strong> — Chuẩn bị sẵn API keys hoặc subscriptions</li>
+</ul>
+
+<h2 id="install">Cài đặt</h2>
+
+<h3>macOS</h3>
+<pre><code># Cài qua Homebrew (recommended)
+brew install --cask stablyai/orca/orca
+
+# Hoặc tải .dmg từ GitHub releases</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Hỗ trợ cả Apple Silicon (M1/M2/M3) và Intel.</p>
+
+<h3>Windows</h3>
+<ol>
+<li>Tải installer từ <a href="https://orca.build/download" target="_blank">orca.build/download</a> hoặc GitHub releases</li>
+<li>Chạy installer, follow wizard</li>
+<li>Orca sẽ xuất hiện trong Start Menu</li>
+</ol>
+
+<h3>Linux</h3>
+<pre><code># Arch Linux
+yay -S stably-orca-bin
+
+# Ubuntu/Debian — tải AppImage từ GitHub releases
+chmod +x Orca-*.AppImage
+./Orca-*.AppImage
+
+# Fedora — tải RPM từ GitHub releases
+sudo rpm -i orca-*.rpm</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Headless Server</h3>
+<p>Chạy Orca trên server không có GUI:</p>
+<pre><code>orca serve</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Mobile Companion Apps</h3>
+<ul>
+<li><strong>iOS</strong> — Tải từ App Store, tìm "Orca ADE"</li>
+<li><strong>Android</strong> — Tải APK từ GitHub releases</li>
+</ul>
+
+<p>Ứng dụng di động cho phép theo dõi (monitor) trạng thái agent, nhận thông báo (notifications) khi tasks hoàn thành, và gửi chỉ dẫn bổ sung (follow-up instructions) từ xa.</p>
+
+<h2 id="interface">Giao diện Orca</h2>
+
+<p>Khi mở Orca lần đầu, bạn sẽ thấy giao diện chia làm 3 phần chính:</p>
+
+<h3>1. Thanh bên trái (Left Sidebar) — Danh sách Worktree</h3>
+<p>Hiển thị tất cả worktrees đang hoạt động (active) với chỉ báo trạng thái (status indicators):</p>
+<ul>
+<li><strong>Màu xanh</strong> — Agent đang chạy (running)</li>
+<li><strong>Màu vàng</strong> — Có thay đổi (changes) chưa xem xét (review)</li>
+<li><strong>Màu xám</strong> — Rảnh (Idle), chờ nhập liệu (input)</li>
+</ul>
+<p>Click vào worktree để tập trung (focus), double-click để đổi tên (rename).</p>
+
+<h3>2. Khung giữa (Center Pane) — Trình soạn thảo mã (Code Editor)</h3>
+<p>Monaco editor (cùng engine với VS Code) với:</p>
+<ul>
+<li>Tô màu cú pháp (Syntax highlighting) cho 100+ ngôn ngữ</li>
+<li>Tự động lưu (Autosave)</li>
+<li>Hỗ trợ kéo thả file (Drag-drop)</li>
+<li>Xem trước Markdown và PDF (Preview)</li>
+<li>Chế độ xem khác biệt (Diff view) cho các thay đổi</li>
+</ul>
+
+<h3>3. Khung bên phải (Right Panel) — Terminals</h3>
+<p>Terminal render bằng GPU (Ghostty-class WebGL) với:</p>
+<ul>
+<li><strong>Chia vô hạn (Infinite splits)</strong> — Chia terminal theo chiều ngang/dọc tùy ý</li>
+<li><strong>Lịch sử cuộn lưu trữ (Persistent scrollback)</strong> — Cuộn lại xem output cũ, giữ qua khởi động lại (survive restarts)</li>
+<li><strong>Tìm kiếm (Search)</strong> — Tìm text trong lịch sử cuộn (scrollback)</li>
+</ul>
+
+<h3>4. Thanh dưới (Bottom Bar) — Hành động (Actions)</h3>
+<ul>
+<li><strong>New Worktree</strong> — Tạo worktree mới</li>
+<li><strong>Design Mode</strong> — Bật browser cho frontend work</li>
+<li><strong>Diff View</strong> — Xem changes của worktree hiện tại</li>
+</ul>
+
+<h2 id="first-project">Dự án đầu tiên — Hướng dẫn từng bước</h2>
+
+<p>Tutorial này sẽ hướng dẫn bạn setup Orca với một project có sẵn và chạy agent đầu tiên.</p>
+
+<h3>Bước 1: Chuẩn bị project</h3>
+<p>Đảm bảo bạn có một git repository trên máy. Nếu chưa có:</p>
+<pre><code># Clone một project để thử
+git clone https://github.com/your-username/your-project.git
+cd your-project</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Mở Orca và Add Repository</h3>
+<ol>
+<li>Mở Orca</li>
+<li>Click <strong>"Add Repository"</strong> hoặc drag folder vào cửa sổ</li>
+<li>Chọn folder chứa git repository</li>
+<li>Orca sẽ detect default branch (thường là <code>main</code> hoặc <code>master</code>)</li>
+</ol>
+
+<h3>Bước 3: Configure Agent</h3>
+<ol>
+<li>Click <strong>Settings</strong> (gear icon)</li>
+<li>Vào tab <strong>Agents</strong></li>
+<li>Orca tự động detect agents đã cài. Nếu thấy agent bạn muốn dùng, click để configure</li>
+<li>Nhập API key hoặc authenticate (tùy agent)</li>
+<li>Click <strong>Test Connection</strong> để verify</li>
+</ol>
+
+<div class="callout callout-blue">
+<strong>Ví dụ: Configure Claude Code</strong>
+Nếu bạn đã cài Claude Code CLI (<code>claude</code> command), Orca sẽ tự detect. Click vào Claude Code, nhập Anthropic API key hoặc login với Claude Pro account.
+</div>
+
+<h3>Bước 4: Tạo Worktree đầu tiên</h3>
+<ol>
+<li>Click <strong>"New Worktree"</strong></li>
+<li>Đặt tên mô tả task: <code>fix-login-bug</code></li>
+<li>Chọn agent: Claude Code (hoặc agent bạn đã configure)</li>
+<li>Click <strong>Create</strong></li>
+</ol>
+
+<p>Orca sẽ tạo một git worktree mới trong <code>.orca/worktrees/fix-login-bug/</code>. Đây là bản copy isolated của repo — agent có thể edit files mà không ảnh hưởng main branch.</p>
+
+<h3>Bước 5: Chạy Agent</h3>
+<ol>
+<li>Trong terminal của worktree, bạn sẽ thấy agent prompt</li>
+<li>Gõ task description:</li>
+</ol>
+<pre><code>Fix the login bug where users get "Invalid credentials" even with correct password.
+The issue is in src/auth/login.ts</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ol start="3">
+<li>Nhấn Enter và để agent làm việc</li>
+<li>Agent sẽ read files, analyze, và propose changes</li>
+</ol>
+
+<h3>Bước 6: Review và Merge</h3>
+<ol>
+<li>Khi agent hoàn thành, click <strong>Diff View</strong> để xem changes</li>
+<li>Review từng file. Nếu cần feedback, dùng <strong>Diff Annotation</strong> (click vào line và comment)</li>
+<li>Nếu satisfied, click <strong>Commit</strong></li>
+<li>Click <strong>Merge to main</strong> để merge changes vào main branch</li>
+<li>Hoặc click <strong>Delete Worktree</strong> nếu không muốn giữ changes</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Xong!</strong>
+Bạn vừa hoàn thành workflow cơ bản: Create worktree → Run agent → Review → Merge. Giờ bạn có thể thử tạo nhiều worktrees với cùng prompt và so sánh outputs.
+</div>
+
+<h2 id="worktrees">Parallel Worktrees — Core Primitive</h2>
+
+<p><strong>Git worktrees</strong> là tính năng cho phép một repo có nhiều branches được checkout (lấy ra) đồng thời trong các folders riêng biệt, nhưng vẫn chia sẻ chung (share) git history. Orca dùng cơ chế này làm nền tảng (foundation).</p>
+
+<h3>Worktree là gì?</h3>
+<p>Bình thường khi bạn có một git repo, bạn chỉ có thể checkout 1 branch tại 1 thời điểm. Nếu muốn làm việc trên branch khác, phải lưu tạm thay đổi (stash changes), chuyển branch (switch), rồi chuyển lại.</p>
+
+<p>Với worktrees, bạn có thể có:</p>
+<pre><code>my-project/              ← main branch (original)
+my-project-worktree-1/   ← feature-a branch
+my-project-worktree-2/   ← feature-b branch
+my-project-worktree-3/   ← bugfix branch</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<p>Tất cả share cùng <code>.git</code> history, nhưng mỗi cái là một folder riêng với branch riêng. Changes trong worktree-1 không ảnh hưởng worktree-2.</p>
+
+<div class="callout callout-green">
+<strong>Lợi ích cho AI agents</strong>
+Mỗi agent có "hộp cát (sandbox)" riêng. Claude Code sửa files trong worktree-1, Codex sửa files trong worktree-2 — không xung đột (conflict), không ghi đè (overwrite) nhau. Bạn có thể chạy song song rồi so sánh kết quả.
+</div>
+
+<h3>Tạo và quản lý worktrees trong Orca</h3>
+
+<h4>Tạo worktree mới</h4>
+<pre><code># Cách 1: Trong Orca UI
+Click "New Worktree" → Đặt tên → Chọn agent → Create
+
+# Cách 2: Dùng CLI
+orca worktree create --name "feature-auth"
+orca worktree create --name "bugfix-login" --agent "claude-code"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>List worktrees</h4>
+<pre><code>orca worktree list
+
+# Output:
+# NAME              BRANCH                    AGENT        STATUS
+# feature-auth      feature-auth-2024-03-15   claude-code  running
+# bugfix-login      bugfix-login-2024-03-15   codex        idle</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>Delete worktree</h4>
+<pre><code># Sau khi merge hoặc discard
+orca worktree delete feature-auth
+
+# Xóa tất cả worktrees đã merge
+orca worktree prune</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Workflow hoàn chỉnh với worktrees</h3>
+<div class="flow">
+<span class="flow-step">Create worktree</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Run agent</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Review diff</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Annotate/Iterate</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Merge/Discard</span>
+</div>
+
+<h2 id="design-mode">Design Mode</h2>
+
+<p>Mỗi worktree có một <strong>embedded Chromium window</strong> riêng. Design Mode biến nó thành công cụ để giao tiếp với agent về frontend.</p>
+
+<h3>Vấn đề Design Mode giải quyết</h3>
+<p>Khi mô tả UI cho AI agent:</p>
+<ul>
+<li><strong>Không có Design Mode:</strong> "Fix the button in the header, the one on the right side, it's blue, the hover state is wrong..."</li>
+<li><strong>Có Design Mode:</strong> Click vào button → Agent nhận được HTML, CSS, và screenshot chính xác</li>
+</ul>
+
+<h3>Cách sử dụng Design Mode</h3>
+
+<h4>Bước 1: Bật Design Mode</h4>
+<ol>
+<li>Trong worktree, click <strong>Design Mode</strong> button (hoặc phím tắt)</li>
+<li>Chromium window sẽ mở với app của bạn</li>
+<li>Navigate đến page cần edit</li>
+</ol>
+
+<h4>Bước 2: Chọn element</h4>
+<ol>
+<li>Click vào UI element cần sửa (button, card, form...)</li>
+<li>Orca highlights element và hiển thị selector</li>
+<li>Bạn có thể chọn parent element bằng cách click lại hoặc dùng keyboard navigation</li>
+</ol>
+
+<h4>Bước 3: Gửi đến agent</h4>
+<ol>
+<li>Click <strong>Send to Agent</strong></li>
+<li>Orca package và gửi cho agent:
+  <ul>
+    <li>HTML của element (và parent context)</li>
+    <li>Computed CSS styles</li>
+    <li>Cropped screenshot của element</li>
+    <li>Full page screenshot (optional)</li>
+  </ul>
+</li>
+<li>Viết instruction: "Make this button larger and change hover color to blue"</li>
+</ol>
+
+<h4>Bước 4: Xem kết quả</h4>
+<ol>
+<li>Agent sửa code trong worktree</li>
+<li>Browser auto-refresh (nếu có HMR/hot reload)</li>
+<li>Nếu chưa ưng, click element → annotate → gửi lại</li>
+</ol>
+
+<div class="callout callout-amber">
+<strong>Tip: Kết hợp với Diff Annotation</strong>
+Sau khi agent sửa CSS, review diff. Nếu có line không đúng, annotate trực tiếp trên diff thay vì mô tả lại. Tiết kiệm tokens và chính xác hơn.
+</div>
+
+<h2 id="diff-annotation">Diff Annotation</h2>
+
+<p>Thay vì nhắc lại toàn bộ (re-prompt) khi agent sửa không đúng, bạn có thể <strong>bình luận trực tiếp trên dòng code (comment inline)</strong> trên các diffs (bản so sánh thay đổi).</p>
+
+<h3>Tại sao Diff Annotation hiệu quả?</h3>
+<ul>
+<li><strong>Chính xác</strong> — Chỉ đến đúng dòng (exact line), không cần mô tả "the line where you added X"</li>
+<li><strong>Tiết kiệm tokens</strong> — Không cần lặp lại ngữ cảnh (repeat context), chỉ gửi phần thay đổi (delta)</li>
+<li><strong>Gộp phản hồi (Batch feedback)</strong> — Ghi chú 10 dòng rồi gửi 1 lần, thay vì 10 lần nhắc lại</li>
+</ul>
+
+<h3>Cách dùng</h3>
+
+<h4>Bước 1: Mở Diff View</h4>
+<p>Sau khi agent hoàn thành, click <strong>Diff View</strong> để xem changes.</p>
+
+<h4>Bước 2: Annotate lines</h4>
+<ol>
+<li>Click vào line number cần feedback</li>
+<li>Popup xuất hiện — viết comment bằng markdown</li>
+<li>Ví dụ comments:
+<pre><code>Use async/await instead of .then() chain
+
+---
+
+This will cause a memory leak - need to cleanup in useEffect return
+
+---
+
+Rename to `handleUserLogin` to match our naming convention</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+</li>
+<li>Click <strong>Add Comment</strong></li>
+</ol>
+
+<h4>Bước 3: Review và gửi</h4>
+<ol>
+<li>Tiếp tục annotate các lines khác</li>
+<li>Review tất cả annotations trong sidebar</li>
+<li>Click <strong>Send Feedback</strong></li>
+<li>Agent sẽ nhận annotations và refine code</li>
+</ol>
+
+<h3>Thực hành tốt khi ghi chú (Annotation best practices)</h3>
+<ul>
+<li><strong>Cụ thể (Be specific)</strong> — "Use map instead of forEach" thay vì "This is wrong"</li>
+<li><strong>Giải thích lý do (Explain why)</strong> — "This mutates state directly, React won't re-render" giúp agent học được mẫu (pattern)</li>
+<li><strong>Gộp các ghi chú liên quan (Batch related)</strong> — Đừng gửi từng annotation một</li>
+</ul>
+
+<h2 id="remote-ssh">Remote SSH Worktrees — Worktree trên máy chủ từ xa</h2>
+
+<p>Chạy agents trên máy từ xa (remote machines) khi:</p>
+<ul>
+<li>Máy cục bộ (local machine) không đủ RAM cho nhiều agents</li>
+<li>Cần môi trường phát triển khác (Linux server, thư viện phụ thuộc cụ thể)</li>
+<li>Muốn chạy tác vụ dài (long-running tasks) không bị ảnh hưởng bởi laptop ngủ (sleep)</li>
+</ul>
+
+<h3>Setup SSH Worktree</h3>
+
+<h4>Bước 1: Configure SSH trong Orca</h4>
+<ol>
+<li>Settings → SSH → Add Remote</li>
+<li>Nhập connection details:
+<pre><code>Host: dev-server.company.com
+User: your-username
+Port: 22 (default)
+Identity File: ~/.ssh/id_rsa (hoặc chọn key)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+</li>
+<li>Click <strong>Test Connection</strong></li>
+</ol>
+
+<h4>Bước 2: Clone repo trên remote</h4>
+<p>Đảm bảo repo đã được clone trên remote server:</p>
+<pre><code>ssh dev-server
+cd /home/your-username/projects
+git clone git@github.com:your-org/your-project.git</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>Bước 3: Tạo Remote Worktree trong Orca</h4>
+<ol>
+<li>New Worktree → Toggle <strong>Remote</strong></li>
+<li>Chọn SSH remote đã configure</li>
+<li>Chọn repo path trên remote</li>
+<li>Đặt tên và chọn agent</li>
+<li>Create</li>
+</ol>
+
+<h3>Tính năng của Remote Worktrees</h3>
+<ul>
+<li><strong>Chỉnh sửa file đầy đủ (Full file editing)</strong> — Sửa files như trên máy cục bộ, Orca đồng bộ qua SSH</li>
+<li><strong>Thao tác Git (Git operations)</strong> — Commit, push, merge từ Orca UI</li>
+<li><strong>Truy cập Terminal</strong> — Terminal chạy trên máy từ xa</li>
+<li><strong>Tự động kết nối lại (Auto-reconnect)</strong> — Nếu kết nối bị ngắt (connection drop), Orca tự kết nối lại</li>
+<li><strong>Chuyển tiếp cổng (Port forwarding)</strong> — Chuyển tiếp ports để test trên máy cục bộ (e.g., localhost:3000 → remote:3000)</li>
+<li><strong>Lưu mật khẩu (Passphrase caching)</strong> — Không cần nhập passphrase mỗi lần</li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>Recommendation</strong>
+Với 8GB RAM local, chạy 1-2 agents local và 2-3 agents remote. Orca handles coordination seamlessly.
+</div>
+
+<h2 id="integrations">Tích hợp GitHub & Linear (Integration)</h2>
+
+<p>Làm việc với issues và PRs trực tiếp trong Orca — không cần chuyển sang browser.</p>
+
+<h3>Tích hợp GitHub</h3>
+
+<h4>Thiết lập (Setup)</h4>
+<ol>
+<li>Settings → Integrations → GitHub</li>
+<li>Authorize với GitHub account</li>
+<li>Select repositories to access</li>
+</ol>
+
+<h4>Tính năng (Features)</h4>
+<ul>
+<li><strong>Duyệt PRs</strong> — Xem PRs đang mở, diffs, comments</li>
+<li><strong>Review code</strong> — Phê duyệt (Approve), yêu cầu thay đổi (request changes), để lại bình luận</li>
+<li><strong>Tạo PRs</strong> — Từ worktree → New PR với mô tả tự động điền (auto-filled description)</li>
+<li><strong>Xem issues</strong> — Duyệt issues, nhãn (labels), người được giao (assignees)</li>
+<li><strong>Tạo worktree từ issue</strong> — Click issue → Create Worktree, Orca tự thiết lập ngữ cảnh (context)</li>
+</ul>
+
+<h4>Quy trình (Workflow): Issue → Worktree → PR</h4>
+<div class="flow">
+<span class="flow-step">Browse Issues</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Create Worktree</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Agent fixes</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Create PR</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Merge</span>
+</div>
+
+<h3>Tích hợp Linear</h3>
+<ul>
+<li>Duyệt issues và bảng dự án (project boards)</li>
+<li>Cập nhật trạng thái issue khi hoàn thành</li>
+<li>Liên kết commits với issues</li>
+<li>Tạo worktree từ Linear issue</li>
+</ul>
+
+<h3>Tích hợp Jira</h3>
+<ul>
+<li>Tích hợp danh sách công việc (Backlog integration)</li>
+<li>Xem và cập nhật tickets</li>
+<li>Liên kết worktrees với Jira issues</li>
+</ul>
+
+<h2 id="mobile-app">Ứng dụng di động (Mobile App)</h2>
+
+<p>Ứng dụng đi kèm iOS và Android cho phép theo dõi (monitor) và điều khiển Orca từ xa.</p>
+
+<h3>Thiết lập (Setup)</h3>
+<ol>
+<li>Trong Orca desktop, click <strong>Mobile</strong> icon</li>
+<li>Scan QR code bằng mobile app</li>
+<li>Devices sẽ pair automatically</li>
+</ol>
+
+<h3>Tính năng (Features)</h3>
+<ul>
+<li><strong>Trạng thái agent</strong> — Xem agents nào đang chạy (running), rảnh (idle), hoặc đã hoàn thành (completed)</li>
+<li><strong>Thông báo (Notifications)</strong> — Thông báo đẩy (push notification) khi agent hoàn thành tác vụ</li>
+<li><strong>Lệnh nhanh (Quick commands)</strong> — Gửi chỉ dẫn bổ sung (follow-up instructions) từ điện thoại</li>
+<li><strong>Xem trước (Preview)</strong> — Xem ảnh chụp màn hình (screenshots) của trình duyệt Design Mode</li>
+<li><strong>Phê duyệt/Từ chối (Approve/Reject)</strong> — Xem xét và phê duyệt thay đổi từ điện thoại</li>
+</ul>
+
+<div class="callout callout-green">
+<strong>Use case</strong>
+Bạn đang ở meeting, agent vừa fix xong bug. Notification đến phone → review diff → approve → merge. Không cần quay lại bàn làm việc.
+</div>
+
+<h2 id="orca-cli">Orca CLI</h2>
+
+<p>Full CLI để control Orca từ terminal, enabling scripting và automation.</p>
+
+<h3>Worktree Commands</h3>
+<pre><code># Tạo worktree
+orca worktree create --name "task-name" --agent "claude-code"
+
+# List worktrees
+orca worktree list
+
+# Delete worktree
+orca worktree delete "task-name"
+
+# Prune merged worktrees
+orca worktree prune</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Agent Commands</h3>
+<pre><code># Send prompt to agent in worktree
+orca agent send "task-name" "Fix the login bug in auth.ts"
+
+# Check agent status
+orca agent status "task-name"
+
+# Stop running agent
+orca agent stop "task-name"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Utility Commands</h3>
+<pre><code># Snapshot current state (for debugging)
+orca snapshot
+
+# Trigger UI interaction programmatically
+orca click
+
+# Open Orca UI focused on worktree
+orca open "task-name"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Scripting Example</h3>
+<p>Tạo 5 worktrees với cùng prompt để so sánh outputs:</p>
+<pre><code>#!/bin/bash
+PROMPT="Refactor the authentication middleware to use async/await"
+AGENTS=("claude-code" "codex" "gemini" "copilot" "opencode")
+
+for i in "${!AGENTS[@]}"; do
+  orca worktree create --name "refactor-$i" --agent "${AGENTS[$i]}"
+  orca agent send "refactor-$i" "$PROMPT"
+done
+
+echo "All agents started. Use 'orca worktree list' to monitor."</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="single-workflow">Quy trình Single Agent — Một agent</h2>
+
+<p>Quy trình cơ bản nhất — 1 agent, 1 tác vụ (task), 1 worktree.</p>
+
+<h3>Khi nào dùng Single Agent</h3>
+<ul>
+<li><strong>Tác vụ rõ ràng (Well-specified tasks)</strong> — Yêu cầu rõ ràng, chỉ có 1 cách đúng</li>
+<li><strong>Thay đổi máy móc (Mechanical changes)</strong> — Đổi tên, định dạng, thêm field, kết nối handler</li>
+<li><strong>Nhạy cảm chi phí (Cost-sensitive)</strong> — Tiết kiệm tokens</li>
+<li><strong>Giai đoạn học (Learning phase)</strong> — Bạn đang làm quen với Orca</li>
+</ul>
+
+<h3>Workflow chi tiết</h3>
+
+<h4>1. Chuẩn bị prompt</h4>
+<p>Viết prompt rõ ràng với context đủ:</p>
+<pre><code># BAD - vague
+Fix the login bug
+
+# GOOD - specific
+Fix the login bug where users get "Invalid credentials" error even with
+correct password.
+
+Context:
+- Issue affects users with email containing "+" character
+- Auth logic is in src/auth/login.ts
+- Test case to verify: user+test@example.com with password "Test123!"
+
+Expected: Login succeeds
+Actual: Always returns "Invalid credentials"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>2. Create worktree và run</h4>
+<ol>
+<li>New Worktree → Name: <code>fix-plus-sign-login</code></li>
+<li>Agent: Claude Code (hoặc agent bạn prefer)</li>
+<li>Paste prompt và Enter</li>
+</ol>
+
+<h4>3. Monitor progress</h4>
+<p>Agent sẽ:</p>
+<ul>
+<li>Read relevant files (<code>src/auth/login.ts</code>, related tests)</li>
+<li>Analyze issue</li>
+<li>Propose fix</li>
+<li>Apply changes</li>
+<li>Run tests (nếu configured)</li>
+</ul>
+
+<h4>4. Review và iterate</h4>
+<ul>
+<li>Diff View → Review changes</li>
+<li>Nếu cần sửa: Annotate trên diff hoặc send follow-up prompt</li>
+<li>Repeat cho đến khi satisfied</li>
+</ul>
+
+<h4>5. Merge</h4>
+<ul>
+<li>Commit changes trong worktree</li>
+<li>Merge to main (hoặc create PR)</li>
+<li>Delete worktree</li>
+</ul>
+
+<h2 id="parallel-workflow">Quy trình Parallel Agents — Nhiều agents song song</h2>
+
+<p>Phân tán (Fan-out) cùng một prompt cho nhiều agents, so sánh kết quả đầu ra (outputs), gộp (merge) bản thắng cuộc (winner).</p>
+
+<h3>Khi nào dùng Parallel</h3>
+<ul>
+<li><strong>Vấn đề mơ hồ (Ambiguous problems)</strong> — Nhiều giải pháp (solutions) đều có thể đúng</li>
+<li><strong>Khám phá (Exploration)</strong> — Muốn xem nhiều cách tiếp cận (approaches) trước khi chọn</li>
+<li><strong>So sánh giữa các model (Cross-model comparison)</strong> — So sánh Claude vs Codex vs Gemini</li>
+<li><strong>Thay đổi quan trọng (High-stakes changes)</strong> — Muốn độ tin cậy cao (confidence) trước khi merge</li>
+</ul>
+
+<h3>Workflow chi tiết</h3>
+
+<h4>1. Viết tiêu chí chấp nhận (acceptance criteria) TRƯỚC</h4>
+<p>Đây là bước quan trọng nhất. Không có tiêu chí, bạn sẽ không biết diff nào "đúng".</p>
+<pre><code>## Acceptance Criteria for Auth Refactor
+
+1. All existing tests pass
+2. New async/await syntax throughout (no .then() chains)
+3. Error handling preserved - same error messages for same conditions
+4. No new dependencies added
+5. Performance: login time <= 200ms (current baseline: 180ms)
+6. Type safety: no `any` types introduced</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>2. Create multiple worktrees</h4>
+<pre><code># Option A: Cùng một agent, nhiều runs
+orca worktree create --name "refactor-a" --agent "claude-code"
+orca worktree create --name "refactor-b" --agent "claude-code"
+orca worktree create --name "refactor-c" --agent "claude-code"
+
+# Option B: Nhiều agents khác nhau
+orca worktree create --name "refactor-claude" --agent "claude-code"
+orca worktree create --name "refactor-codex" --agent "codex"
+orca worktree create --name "refactor-gemini" --agent "gemini"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>3. Fan-out prompt</h4>
+<p>Gửi cùng prompt cho tất cả worktrees:</p>
+<pre><code>Refactor the authentication middleware to use async/await instead of
+promise chains.
+
+Requirements:
+- Convert all .then()/.catch() to async/await
+- Maintain existing error handling behavior
+- Keep same function signatures for backward compatibility
+- Add proper TypeScript types where missing
+
+Start with src/middleware/auth.ts</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>4. Wait và monitor</h4>
+<ul>
+<li>Split terminal view để xem tất cả agents cùng lúc</li>
+<li>Agents work independently trong isolated worktrees</li>
+<li>Token consumption = N × single agent cost</li>
+</ul>
+
+<h4>5. Compare outputs</h4>
+<p>Khi tất cả agents hoàn thành:</p>
+<ol>
+<li>Mở Diff View cho từng worktree</li>
+<li>Check against acceptance criteria</li>
+<li>Run tests trong mỗi worktree: <code>npm test</code></li>
+<li>Note: Không pick "cleanest-looking" diff — pick diff passes all criteria</li>
+</ol>
+
+<h4>6. Merge winner, delete losers</h4>
+<pre><code># Worktree refactor-claude passes all criteria
+orca worktree merge refactor-claude
+
+# Delete others
+orca worktree delete refactor-codex
+orca worktree delete refactor-gemini</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Cost consideration</h3>
+<table>
+<tr><th>Agents</th><th>Token multiplier</th><th>When worth it</th></tr>
+<tr><td>1</td><td>1×</td><td>Clear requirements, low risk</td></tr>
+<tr><td>3</td><td>3×</td><td>Medium ambiguity, want to compare</td></tr>
+<tr><td>5</td><td>5×</td><td>High stakes, need confidence</td></tr>
+</table>
+
+<div class="callout callout-amber">
+<strong>Rule: Viết criteria trước khi fan-out</strong>
+Nếu bạn không thể viết acceptance criteria, task chưa đủ rõ ràng để fan-out. Clarify requirements trước, fan-out sau.
+</div>
+
+<h2 id="fanout-strategy">Khi nào nên Phân tán (Fan-out)</h2>
+
+<h3>Phân tán (Fan-out) hiệu quả khi:</h3>
+
+<table>
+<tr><th>Tình huống (Scenario)</th><th>Tại sao fan-out giúp ích</th></tr>
+<tr><td><strong>Tái cấu trúc mơ hồ (Ambiguous refactors)</strong></td><td>Nhiều cách tiếp cận (approaches) hợp lệ — so sánh tìm phù hợp nhất</td></tr>
+<tr><td><strong>Di chuyển dữ liệu (Data migrations)</strong></td><td>Nhiều trường hợp biên (edge cases) phức tạp — nhiều chiến lược có thể bắt được các vấn đề khác nhau</td></tr>
+<tr><td><strong>Tối ưu hiệu năng (Performance optimization)</strong></td><td>Chưa rõ điểm nghẽn (bottleneck) — các agents khác nhau có thể tìm cải tiến khác nhau</td></tr>
+<tr><td><strong>Thư viện lạ (Unfamiliar library)</strong></td><td>Tích hợp lần đầu — so sánh các mẫu sử dụng khác nhau</td></tr>
+<tr><td><strong>Quyết định kiến trúc (Architecture decisions)</strong></td><td>Đánh đổi (Trade-offs) chưa rõ — xem các triển khai cụ thể trước khi quyết định</td></tr>
+</table>
+
+<h3>Chạy single agent khi:</h3>
+
+<table>
+<tr><th>Tình huống (Scenario)</th><th>Tại sao single tốt hơn</th></tr>
+<tr><td><strong>Thêm field vào model</strong></td><td>Máy móc (Mechanical), chỉ có 1 cách đúng</td></tr>
+<tr><td><strong>Kết nối handler</strong></td><td>Mã khung (Boilerplate), không cần sáng tạo</td></tr>
+<tr><td><strong>Sửa lỗi chính tả/định dạng</strong></td><td>Nhỏ nhặt (Trivial), không cần ý kiến thứ hai</td></tr>
+<tr><td><strong>Tác vụ có tài liệu rõ ràng</strong></td><td>Yêu cầu rõ = giải pháp hội tụ (convergent solutions)</td></tr>
+<tr><td><strong>Hạn chế ngân sách (Budget constraints)</strong></td><td>Phân tán tốn N× tokens hơn</td></tr>
+</table>
+
+<h3>Decision flowchart</h3>
+<pre><code>Task received
+    │
+    ├─ Can I write clear acceptance criteria?
+    │   │
+    │   ├─ NO → Clarify requirements first, don't code yet
+    │   │
+    │   └─ YES → Is there only one obviously correct approach?
+    │            │
+    │            ├─ YES → Single agent
+    │            │
+    │            └─ NO → Is this high-stakes (production, security, data)?
+    │                    │
+    │                    ├─ YES → Fan-out 3-5 agents
+    │                    │
+    │                    └─ NO → Is budget a concern?
+    │                            │
+    │                            ├─ YES → Single agent
+    │                            │
+    │                            └─ NO → Fan-out 2-3 agents</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="real-examples">Ví dụ thực tế</h2>
+
+<h3>Ví dụ 1: Memory Leak Fix (Parallel approach)</h3>
+
+<p><strong>Situation:</strong> React component có memory leak trong useEffect, không rõ nguyên nhân.</p>
+
+<p><strong>Setup:</strong></p>
+<ul>
+<li>2 worktrees: Claude Code và Codex</li>
+<li>Cùng prompt: "Fix memory leak in UserDashboard component"</li>
+</ul>
+
+<p><strong>Results:</strong></p>
+<ul>
+<li><strong>Claude Code:</strong> Found timer leak, added cleanup handler for setInterval</li>
+<li><strong>Codex:</strong> Found setTimeout issues + suggested useRef optimization</li>
+</ul>
+
+<p><strong>Action:</strong> Merged both approaches — Claude's cleanup + Codex's useRef optimization. Result better than either alone.</p>
+
+<h3>Ví dụ 2: API Endpoint (Single agent)</h3>
+
+<p><strong>Situation:</strong> Add new REST endpoint để get user preferences.</p>
+
+<p><strong>Why single:</strong></p>
+<ul>
+<li>Well-defined: GET /api/users/:id/preferences</li>
+<li>Pattern exists: Other endpoints in codebase follow same structure</li>
+<li>Low risk: Read-only operation</li>
+</ul>
+
+<p><strong>Result:</strong> Claude Code completed in 1 iteration, following existing patterns.</p>
+
+<h3>Ví dụ 3: Design Mode for Frontend (Single agent + Design Mode)</h3>
+
+<p><strong>Situation:</strong> Button hover state looks wrong, need to match design specs.</p>
+
+<p><strong>Workflow:</strong></p>
+<ol>
+<li>Open Design Mode → Navigate to page with button</li>
+<li>Click button → Send to agent với instruction: "Hover state should be #2563eb with 0.1s transition"</li>
+<li>Agent updates CSS</li>
+<li>Browser auto-refreshes → Verify change</li>
+<li>One small annotation: "Also add focus state for accessibility"</li>
+<li>Done in 2 iterations</li>
+</ol>
+
+<h2 id="verification">Xác minh (Verification) — Khoảng trống quan trọng</h2>
+
+<p>Phân tán (Fan-out) nhân lên kết quả đầu ra nhưng <strong>không nhân lên khả năng ra quyết định</strong>. 5 agents tạo ra 5 diffs — đọc kỹ tất cả tốn nhiều thời gian hơn tự viết code.</p>
+
+<div class="callout callout-red">
+<strong>Lỗi phổ biến (Common failure)</strong>
+Chọn diff "trông sạch nhất (cleanest-looking)" thay vì diff đúng nhất. Chạy song song (Parallelism) không giúp bạn đưa ra quyết định tốt hơn — nó chỉ cho bạn nhiều lựa chọn (options) hơn.
+</div>
+
+<h3>Chiến lược xác minh (Verification strategies)</h3>
+
+<h4>1. Automated tests làm referee</h4>
+<pre><code># Chạy tests trong mỗi worktree
+for wt in refactor-{a,b,c}; do
+  cd .orca/worktrees/$wt
+  npm test && echo "$wt: PASS" || echo "$wt: FAIL"
+done</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h4>2. OpenAPI specs làm shared truth</h4>
+<p>Nếu có API specs, agents đọc cùng contract thay vì mỗi agent guess khác nhau.</p>
+
+<h4>3. Contract tests xác định winner</h4>
+<p>Chạy contract tests against tất cả worktrees — winner là worktree passes all contracts.</p>
+
+<h4>4. Metrics-based comparison</h4>
+<pre><code># So sánh bundle size
+for wt in refactor-{a,b,c}; do
+  cd .orca/worktrees/$wt
+  npm run build
+  du -sh dist/
+done</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="cost-optimization">Tối ưu chi phí (Cost Optimization)</h2>
+
+<h3>Thực tế tiêu thụ token (Token consumption reality)</h3>
+<table>
+<tr><th>Scenario</th><th>Tokens (approx)</th><th>Cost</th></tr>
+<tr><td>1 agent, simple task</td><td>~10K</td><td>$0.03-0.10</td></tr>
+<tr><td>1 agent, complex task</td><td>~50K</td><td>$0.15-0.50</td></tr>
+<tr><td>5 agents parallel, complex</td><td>~250K</td><td>$0.75-2.50</td></tr>
+</table>
+
+<h3>Chiến lược tối ưu hóa (Optimization strategies)</h3>
+
+<ol>
+<li><strong>Tối ưu single agent trước khi mở rộng (scale)</strong> — Nếu prompt của bạn lãng phí tokens với 1 agent, nó lãng phí 5× với 5 agents</li>
+<li><strong>Dùng ghi chú trên diff (diff annotations)</strong> — Phản hồi trên dòng cụ thể (specific lines) tiết kiệm hơn nhắc lại toàn bộ (re-prompting)</li>
+<li><strong>Phân tán (Fan-out) chỉ khi cần thiết</strong> — Tác vụ máy móc (Mechanical tasks) không cần 5 ý kiến</li>
+<li><strong>Dùng agents miễn phí/rẻ hơn cho khám phá (exploration)</strong> — Hermes (miễn phí) cho khám phá ban đầu, Claude cho triển khai cuối (final implementation)</li>
+</ol>
+
+<h2 id="best-practices">Thực hành tốt (Best Practices)</h2>
+
+<h3>Lộ trình áp dụng cho người mới (Adoption path)</h3>
+<table>
+<tr><th>Tuần</th><th>Tập trung</th><th>Mục tiêu</th></tr>
+<tr><td>1</td><td>Quy trình single agent</td><td>Làm quen giao diện (UI), khái niệm worktree</td></tr>
+<tr><td>2</td><td>Design Mode + Ghi chú Diff (Diff Annotation)</td><td>Thành thạo vòng phản hồi (feedback loop)</td></tr>
+<tr><td>3</td><td>2 agents song song</td><td>Học quy trình so sánh (comparison workflow)</td></tr>
+<tr><td>4+</td><td>3-5 agents + SSH</td><td>Mở rộng (Scale) khi cần</td></tr>
+</table>
+
+<h3>Nên và Không nên (Do's and Don'ts)</h3>
+<table>
+<tr><th>Nên làm (Do)</th><th>Không nên (Don't)</th></tr>
+<tr><td>Viết tiêu chí chấp nhận (acceptance criteria) trước</td><td>Phân tán (Fan-out) không có tiêu chí</td></tr>
+<tr><td>Dùng ghi chú (annotations) cho phản hồi</td><td>Nhắc lại toàn bộ ngữ cảnh (Re-prompt entire context)</td></tr>
+<tr><td>Chạy tests để chọn người thắng (winner)</td><td>Chọn diff "trông sạch nhất (cleanest-looking)"</td></tr>
+<tr><td>Bắt đầu với 1 agent, mở rộng sau</td><td>Nhảy ngay vào 5 agents</td></tr>
+<tr><td>Dùng SSH cho 3+ agents</td><td>Quá tải máy cục bộ (local machine)</td></tr>
+</table>
+
+<h2 id="troubleshooting">Xử lý sự cố (Troubleshooting)</h2>
+
+<h3>Orca không phát hiện (detect) agent</h3>
+<p><strong>Triệu chứng:</strong> Agent không xuất hiện trong danh sách</p>
+<p><strong>Cách sửa:</strong></p>
+<ol>
+<li>Xác minh agent CLI hoạt động: <code>claude --version</code>, <code>codex --version</code></li>
+<li>Khởi động lại (Restart) Orca để phát hiện lại</li>
+<li>Kiểm tra biến môi trường PATH (PATH environment variable)</li>
+</ol>
+
+<h3>Tạo worktree thất bại</h3>
+<p><strong>Triệu chứng:</strong> "Failed to create worktree"</p>
+<p><strong>Cách sửa:</strong></p>
+<ol>
+<li>Kiểm tra dung lượng đĩa (disk space): mỗi worktree cần không gian cho dependencies</li>
+<li>Kiểm tra phiên bản git: cần Git 2.20+</li>
+<li>Xác minh không có thay đổi chưa commit (uncommitted changes) trong worktree chính</li>
+</ol>
+
+<h3>Agent chậm hoặc treo (hang)</h3>
+<p><strong>Triệu chứng:</strong> Agent không phản hồi (respond)</p>
+<p><strong>Cách sửa:</strong></p>
+<ol>
+<li>Kiểm tra sử dụng RAM — đóng các worktrees không dùng</li>
+<li>Kiểm tra mạng (network) — các lệnh gọi API cần internet</li>
+<li>Kiểm tra hạn mức API (API quota) — có thể bị giới hạn tốc độ (rate limited)</li>
+</ol>
+
+<h3>Trình duyệt Design Mode không tải</h3>
+<p><strong>Triệu chứng:</strong> Màn hình trắng trong Design Mode</p>
+<p><strong>Cách sửa:</strong></p>
+<ol>
+<li>Xác minh dev server đang chạy trong worktree</li>
+<li>Kiểm tra cổng (port) — Orca mặc định localhost:3000</li>
+<li>Thử nhập URL thủ công trong Design Mode</li>
+</ol>
+
+<h2 id="alternatives">Các lựa chọn thay thế (Alternatives)</h2>
+
+<h3>Orca vs tmux + git worktree</h3>
+<p>Nếu bạn thích dùng thuần CLI (giao diện dòng lệnh):</p>
+<pre><code># Cách thủ công với tmux + git worktree
+git worktree add ../feature-a feature-a
+git worktree add ../feature-b feature-b
+tmux new-session -d -s agents
+tmux split-window -h
+# ... quản lý thủ công</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p><strong>Đánh đổi (Trade-off):</strong> Không có giao diện đồ họa (GUI), Design Mode, ghi chú diff (diff annotation), ứng dụng di động. Nhưng không tốn tài nguyên (zero overhead).</p>
+
+<h3>Orca vs Sharkly</h3>
+<table>
+<tr><th>Orca</th><th>Sharkly</th></tr>
+<tr><td>Buồng lái đơn (Solo cockpit), điều khiển thời gian thực</td><td>Hướng tác vụ (Task-oriented), lưu hồ sơ lâu dài (persistent records)</td></tr>
+<tr><td>Miễn phí, mã nguồn mở (open-source)</td><td>Tính năng nhóm (Team features), gói trả phí</td></tr>
+<tr><td>Tốt nhất cho cá nhân</td><td>Tốt nhất cho nhóm cần theo dõi lịch sử (audit trail)</td></tr>
+</table>
+
+<blockquote>
+"Dùng một agent trong một tuần để làm quen giao diện. Thiết lập specs và tests trước. Chỉ phân tán (fan-out) cho các vấn đề khó. Giảm lãng phí token trên mỗi agent trước khi mở rộng lên năm agents."
+</blockquote>
+
+</main>
+</div>
+
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

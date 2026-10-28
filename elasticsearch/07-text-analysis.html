@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Analysis - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Analyzer</div>
+    <div class="nav-items">
+      <a href="#pipeline">Pipeline phân tích</a>
+      <a href="#char-filters">Character Filters</a>
+      <a href="#tokenizers">Tokenizers</a>
+      <a href="#token-filters">Token Filters</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Sử dụng</div>
+    <div class="nav-items">
+      <a href="#built-in">Built-in Analyzers</a>
+      <a href="#custom">Custom Analyzer</a>
+      <a href="#index-search">Index vs Search Analyzer</a>
+      <a href="#vietnamese">Tiếng Việt</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html" class="current">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Text Analysis &amp; Tokenization</h1>
+<p class="subtitle">Character filter, tokenizer, token filter — cách Elasticsearch biến text thành terms có thể tìm kiếm</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html" target="_blank">Elastic — Text Analysis</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-icu.html" target="_blank">Elastic — ICU Analysis Plugin</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu analyzer gồm 3 thành phần: character filter, tokenizer, token filter. Dùng được các built-in analyzer và tự xây custom analyzer. Phân biệt index-time và search-time analyzer. Biết các lựa chọn xử lý tiếng Việt (ICU, asciifolding, plugin cộng đồng). Debug tokenization bằng <code>_analyze</code> API.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 02: Lucene</strong> — Inverted index lưu terms</li>
+<li><strong>Bài 06: Mapping</strong> — Field <code>text</code> được analyze, <code>keyword</code> thì không</li>
+</ul>
+
+<h2 id="pipeline">Pipeline Phân Tích</h2>
+<p><strong>Analysis</strong> (phân tích) là quá trình biến text thô thành danh sách <strong>terms</strong> lưu vào inverted index. Một <strong>analyzer</strong> chạy 3 bước theo thứ tự:</p>
+<div class="flow">
+<span class="flow-step">Text thô</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Character Filters (0..n)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Tokenizer (đúng 1)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Token Filters (0..n)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Terms</span>
+</div>
+<pre><code>Input:  "&lt;p&gt;Elasticsearch là Search Engine!&lt;/p&gt;"
+Char filter (html_strip):  "Elasticsearch là Search Engine!"
+Tokenizer (standard):      ["Elasticsearch", "là", "Search", "Engine"]
+Token filter (lowercase):  ["elasticsearch", "là", "search", "engine"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Search chỉ khớp khi <strong>terms lúc query trùng với terms lúc index</strong>. Hầu hết lỗi "tìm không ra" đều do analyzer lúc index và lúc search xử lý text khác nhau. Luôn kiểm tra bằng <code>_analyze</code>.
+</div>
+
+<h2 id="char-filters">Character Filters</h2>
+<p>Xử lý chuỗi ký tự <strong>trước khi tách token</strong>:</p>
+<table>
+<tr><th>Filter</th><th>Tác dụng</th></tr>
+<tr><td><code>html_strip</code></td><td>Bỏ thẻ HTML, decode entity (<code>&amp;amp;</code> → <code>&amp;</code>)</td></tr>
+<tr><td><code>mapping</code></td><td>Thay thế ký tự theo bảng (vd <code>:)</code> → <code>_happy_</code>)</td></tr>
+<tr><td><code>pattern_replace</code></td><td>Thay thế theo regex</td></tr>
+</table>
+
+<h2 id="tokenizers">Tokenizers</h2>
+<p>Tách chuỗi thành các token. Mỗi analyzer có <strong>đúng một</strong> tokenizer.</p>
+<table>
+<tr><th>Tokenizer</th><th>Cách tách</th><th>Ví dụ "Wi-Fi 6E router"</th></tr>
+<tr><td><code>standard</code></td><td>Theo Unicode Text Segmentation (UAX #29)</td><td>[Wi, Fi, 6E, router]</td></tr>
+<tr><td><code>whitespace</code></td><td>Chỉ theo khoảng trắng</td><td>[Wi-Fi, 6E, router]</td></tr>
+<tr><td><code>keyword</code></td><td>Không tách — giữ nguyên chuỗi</td><td>[Wi-Fi 6E router]</td></tr>
+<tr><td><code>pattern</code></td><td>Theo regex</td><td>tùy pattern</td></tr>
+<tr><td><code>ngram</code> / <code>edge_ngram</code></td><td>Cắt thành các mảnh n ký tự</td><td>edge_ngram: [r, ro, rou...]</td></tr>
+<tr><td><code>icu_tokenizer</code></td><td>Từ ICU plugin — xử lý tốt ngôn ngữ châu Á</td><td>—</td></tr>
+</table>
+
+<h2 id="token-filters">Token Filters</h2>
+<p>Biến đổi, thêm hoặc bỏ token sau khi tách:</p>
+<table>
+<tr><th>Filter</th><th>Tác dụng</th></tr>
+<tr><td><code>lowercase</code></td><td>Chuyển chữ thường</td></tr>
+<tr><td><code>stop</code></td><td>Bỏ stop words ("the", "a", "là", "của"...)</td></tr>
+<tr><td><code>stemmer</code></td><td>Đưa về gốc từ ("running" → "run") — chủ yếu ngôn ngữ biến hình như tiếng Anh</td></tr>
+<tr><td><code>synonym</code> / <code>synonym_graph</code></td><td>Thêm từ đồng nghĩa ("laptop" ↔ "máy tính xách tay")</td></tr>
+<tr><td><code>asciifolding</code></td><td>Bỏ dấu ("điện thoại" → "dien thoai")</td></tr>
+<tr><td><code>edge_ngram</code></td><td>Sinh prefix cho autocomplete</td></tr>
+</table>
+
+<h2 id="built-in">Built-in Analyzers</h2>
+<table>
+<tr><th>Analyzer</th><th>Thành phần</th></tr>
+<tr><td><code>standard</code> (mặc định)</td><td>standard tokenizer + lowercase</td></tr>
+<tr><td><code>simple</code></td><td>Tách ở ký tự không phải chữ + lowercase</td></tr>
+<tr><td><code>whitespace</code></td><td>Tách theo khoảng trắng, không lowercase</td></tr>
+<tr><td><code>keyword</code></td><td>Không phân tích (giống field keyword)</td></tr>
+<tr><td><code>english</code>, <code>french</code>...</td><td>Language analyzer: stop words + stemming theo ngôn ngữ</td></tr>
+</table>
+<pre><code>POST _analyze
+{ "analyzer": "english", "text": "The foxes are running quickly" }
+# → ["fox", "run", "quickli"]  (stop words bị bỏ, stemming)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="custom">Custom Analyzer</h2>
+<pre><code>PUT /articles
+{
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "emoticons": { "type": "mapping", "mappings": [":) =&gt; _happy_", ":( =&gt; _sad_"] }
+      },
+      "filter": {
+        "my_synonyms": { "type": "synonym_graph", "synonyms": ["laptop, notebook, máy tính xách tay"] }
+      },
+      "analyzer": {
+        "my_analyzer": {
+          "type": "custom",
+          "char_filter": ["html_strip", "emoticons"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        },
+        "my_search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding", "my_synonyms"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "body": { "type": "text", "analyzer": "my_analyzer", "search_analyzer": "my_search_analyzer" }
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Analyzer gắn với index</strong>
+Analyzer định nghĩa trong <code>settings.analysis</code> của index. Đổi analyzer của field đã có dữ liệu cần <strong>reindex</strong> (terms cũ đã nằm trong inverted index). Riêng synonym dùng ở search-time có thể cập nhật linh hoạt hơn (reload search analyzer).
+</div>
+
+<h2 id="index-search">Index-time vs Search-time Analyzer</h2>
+<ul>
+<li><code>analyzer</code> — dùng khi index (và khi search nếu không khai báo gì khác)</li>
+<li><code>search_analyzer</code> — dùng riêng lúc query</li>
+</ul>
+<p>Trường hợp điển hình: <strong>autocomplete</strong>. Lúc index dùng <code>edge_ngram</code> để sinh prefix ("lap" → [l, la, lap]), nhưng lúc search <strong>không</strong> ngram query (nếu không, gõ "lap" sẽ khớp mọi thứ bắt đầu bằng "l").</p>
+<pre><code>"analysis": {
+  "filter": { "autocomplete_filter": { "type": "edge_ngram", "min_gram": 2, "max_gram": 15 } },
+  "analyzer": {
+    "autocomplete": { "tokenizer": "standard", "filter": ["lowercase", "autocomplete_filter"] }
+  }
+}
+# mapping:
+"name": { "type": "text", "analyzer": "autocomplete", "search_analyzer": "standard" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="vietnamese">Xử Lý Tiếng Việt</h2>
+<p>Elasticsearch <strong>không có language analyzer tiếng Việt chính thức</strong>. Thách thức: tiếng Việt là ngôn ngữ đơn lập, một từ có thể gồm nhiều âm tiết cách nhau bởi khoảng trắng ("máy tính", "điện thoại") nên tách theo khoảng trắng sẽ cắt rời từ ghép.</p>
+<table>
+<tr><th>Cách tiếp cận</th><th>Ưu</th><th>Nhược</th></tr>
+<tr><td><code>standard</code> + <code>lowercase</code></td><td>Có sẵn, đơn giản</td><td>Tách theo âm tiết, mất nghĩa từ ghép</td></tr>
+<tr><td>+ <code>asciifolding</code> (preserve_original)</td><td>Người dùng gõ không dấu vẫn tìm được</td><td>Tăng nhập nhằng ("ban" = bàn/bán/bạn)</td></tr>
+<tr><td><code>icu_tokenizer</code> + <code>icu_folding</code> (ICU plugin)</td><td>Chuẩn hóa Unicode tốt (NFC/NFD), plugin chính thức</td><td>Vẫn chủ yếu tách theo âm tiết</td></tr>
+<tr><td>Plugin cộng đồng (word segmentation)</td><td>Tách từ ghép theo từ điển</td><td>Phụ thuộc bên thứ ba, phải khớp version ES</td></tr>
+<tr><td>Kết hợp <code>shingle</code> (bigram)</td><td>Ghép âm tiết liền kề → xấp xỉ từ ghép, tăng độ chính xác phrase</td><td>Index lớn hơn</td></tr>
+</table>
+<pre><code># Cài ICU plugin (mỗi node, rồi restart)
+bin/elasticsearch-plugin install analysis-icu
+
+PUT /vn-products
+{
+  "settings": { "analysis": {
+    "filter": {
+      "vn_folding": { "type": "asciifolding", "preserve_original": true },
+      "vn_shingle": { "type": "shingle", "min_shingle_size": 2, "max_shingle_size": 2 }
+    },
+    "analyzer": {
+      "vietnamese": {
+        "tokenizer": "icu_tokenizer",
+        "filter": ["icu_normalizer", "lowercase", "vn_folding"]
+      },
+      "vietnamese_shingle": {
+        "tokenizer": "icu_tokenizer",
+        "filter": ["icu_normalizer", "lowercase", "vn_shingle"]
+      }
+    }
+  }},
+  "mappings": { "properties": {
+    "name": { "type": "text", "analyzer": "vietnamese",
+              "fields": { "phrase": { "type": "text", "analyzer": "vietnamese_shingle" } } }
+  }}
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Chuẩn hóa Unicode quan trọng</strong>
+Cùng chữ "ệ" có thể được mã hóa dạng dựng sẵn (NFC) hoặc tổ hợp (NFD) tùy nguồn nhập. Không chuẩn hóa → hai chuỗi trông giống hệt nhau nhưng không khớp. <code>icu_normalizer</code> giải quyết việc này.
+</div>
+<div class="callout callout-amber">
+<strong>Plugin cộng đồng</strong>
+Có các plugin tách từ tiếng Việt do cộng đồng phát triển. Trước khi dùng ở production, kiểm tra plugin còn được bảo trì và có bản build khớp đúng version Elasticsearch của bạn — plugin phải khớp version chính xác mới cài được.
+</div>
+
+<h2 id="lab">Bài Lab: Analyzer Cho Tiếng Việt</h2>
+<h3>Bước 1: So sánh tokenizer có sẵn</h3>
+<pre><code>POST _analyze
+{ "analyzer": "standard", "text": "Điện thoại thông minh giá rẻ" }
+
+POST _analyze
+{ "tokenizer": "standard", "filter": ["lowercase", "asciifolding"],
+  "text": "Điện thoại thông minh giá rẻ" }
+# → ["dien", "thoai", "thong", "minh", "gia", "re"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Tạo index với analyzer tiếng Việt</h3>
+<p>Dùng định nghĩa <code>vn-products</code> ở trên (cần ICU plugin). Nếu chưa cài plugin, thay <code>icu_tokenizer</code> bằng <code>standard</code> và bỏ <code>icu_normalizer</code>.</p>
+
+<h3>Bước 3: Test analyzer trên index</h3>
+<pre><code>POST /vn-products/_analyze
+{ "analyzer": "vietnamese", "text": "Máy tính xách tay" }
+# preserve_original → giữ cả "máy" và "may"
+
+POST /vn-products/_analyze
+{ "analyzer": "vietnamese_shingle", "text": "Máy tính xách tay" }
+# → ["máy tính", "tính xách", "xách tay"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Index và search có dấu / không dấu</h3>
+<pre><code>POST /vn-products/_doc
+{ "name": "Điện thoại Samsung Galaxy" }
+POST /vn-products/_refresh
+
+GET /vn-products/_search
+{ "query": { "match": { "name": "dien thoai" } } }
+# Tìm thấy dù gõ không dấu
+
+GET /vn-products/_search
+{ "query": { "match": { "name.phrase": "điện thoại" } } }
+# Khớp chính xác cụm từ ghép</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Người dùng gõ có dấu hoặc không dấu đều tìm được sản phẩm, và sub-field shingle giúp ưu tiên khớp từ ghép. Đây là cấu hình nền tảng cho search tiếng Việt.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Analyzer gồm những thành phần nào và chạy theo thứ tự nào? Mỗi analyzer có bao nhiêu tokenizer?</li>
+<li>Vì sao "tìm không ra" thường do analyzer? Dùng công cụ gì để debug?</li>
+<li>Khác biệt giữa <code>standard</code>, <code>whitespace</code>, <code>keyword</code> tokenizer?</li>
+<li>Khi nào cần <code>search_analyzer</code> khác <code>analyzer</code>? Cho ví dụ autocomplete.</li>
+<li>Vì sao tiếng Việt khó cho tokenizer mặc định? Nêu 3 cách tiếp cận.</li>
+<li><code>asciifolding</code> với <code>preserve_original</code> giúp gì và đánh đổi gì?</li>
+<li>Vì sao đổi analyzer của field đã có dữ liệu phải reindex?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Mô tả pipeline char filter → tokenizer → token filter</li>
+<li>☐ Biết các tokenizer và token filter phổ biến</li>
+<li>☐ Dùng built-in và language analyzer</li>
+<li>☐ Viết được custom analyzer trong index settings</li>
+<li>☐ Phân biệt analyzer và search_analyzer</li>
+<li>☐ Cấu hình search tiếng Việt có dấu / không dấu</li>
+<li>☐ Debug bằng <code>_analyze</code> API</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Không test bằng _analyze trước khi index</strong> — Phát hiện analyzer sai sau khi đã index hàng triệu doc → phải reindex.</li>
+<li><strong>Dùng edge_ngram cả lúc search</strong> — Kết quả autocomplete nhiễu. Chỉ ngram lúc index.</li>
+<li><strong>Bỏ dấu hoàn toàn (không preserve_original)</strong> — Mất khả năng ưu tiên kết quả đúng dấu; "bán" và "bạn" thành một.</li>
+<li><strong>Quên chuẩn hóa Unicode</strong> — Text NFC và NFD không khớp nhau dù hiển thị giống hệt.</li>
+<li><strong>Stemmer tiếng Anh cho tiếng Việt</strong> — Vô nghĩa, có thể làm sai term. Tiếng Việt không biến hình.</li>
+<li><strong>Synonym quá rộng ở index-time</strong> — Khó cập nhật (phải reindex). Ưu tiên synonym ở search-time.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Luôn thử analyzer bằng <code>_analyze</code> với dữ liệu thật trước khi tạo index</li>
+<li>Dùng multi-field để phục vụ nhiều kiểu search (exact, không dấu, phrase) cho cùng dữ liệu</li>
+<li>Đặt synonym ở search-time để cập nhật không cần reindex</li>
+<li>Tiếng Việt: chuẩn hóa Unicode + lowercase + asciifolding (preserve_original), cân nhắc shingle cho từ ghép</li>
+<li>Autocomplete: edge_ngram ở index-time, standard ở search-time (hoặc dùng field <code>search_as_you_type</code>)</li>
+<li>Pin version plugin phân tích khớp với version Elasticsearch</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html" target="_blank">ES: Text Analysis</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-custom-analyzer.html" target="_blank">ES: Create a Custom Analyzer</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-analyzer.html" target="_blank">ES: search_analyzer</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-icu.html" target="_blank">ES Plugins: ICU Analysis</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-asciifolding-tokenfilter.html" target="_blank">ES: ASCII Folding Token Filter</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="06-mapping-data-types.html">&larr; Bài 06: Mapping &amp; Data Types</a>
+<a href="08-search-dsl.html">Bài 08: Search DSL &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

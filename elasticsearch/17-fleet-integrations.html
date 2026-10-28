@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fleet &amp; Integrations - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kiến trúc</div>
+    <div class="nav-items">
+      <a href="#architecture">Kiến trúc Fleet</a>
+      <a href="#fleet-server">Fleet Server</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Quản lý</div>
+    <div class="nav-items">
+      <a href="#policies">Agent Policies</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#enrollment">Enrollment</a>
+      <a href="#upgrade">Nâng cấp &amp; Sức khỏe</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tự động hóa</div>
+    <div class="nav-items">
+      <a href="#fleet-api">Fleet API</a>
+      <a href="#standalone">Standalone Agent</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html" class="current">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Fleet &amp; Integrations</h1>
+<p class="subtitle">Fleet Server, agent policy, integrations, enrollment, nâng cấp và theo dõi agent tập trung</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/fleet/current/fleet-overview.html" target="_blank">Elastic — Fleet and Elastic Agent</a>, <a href="https://www.elastic.co/guide/en/fleet/current/fleet-server.html" target="_blank">Elastic — Fleet Server</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu kiến trúc Fleet gồm Kibana, Fleet Server, Elastic Agent và Elasticsearch. Triển khai Fleet Server. Tạo agent policy và gắn integrations. Enroll agent bằng enrollment token. Nâng cấp agent hàng loạt và theo dõi sức khỏe của chúng. Tự động hóa bằng Fleet API, và biết khi nào chạy agent standalone.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 13: Bảo Mật</strong> — Service account, service token, CA</li>
+<li><strong>Bài 14: Kibana</strong> — Kibana đã chạy và kết nối cluster</li>
+<li><strong>Bài 16: Beats &amp; Agent</strong> — Elastic Agent là gì</li>
+</ul>
+
+<h2 id="architecture">Kiến Trúc Fleet</h2>
+<div class="flow">
+<span class="flow-step">Kibana (Fleet UI)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Elasticsearch (lưu policy)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Fleet Server</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Elastic Agents</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Elasticsearch (dữ liệu)</span>
+</div>
+<table>
+<tr><th>Thành phần</th><th>Vai trò</th></tr>
+<tr><td>Kibana Fleet app</td><td>Giao diện quản lý: policy, integration, danh sách agent, nâng cấp</td></tr>
+<tr><td>Elasticsearch</td><td>Lưu policy và trạng thái agent trong index hệ thống <code>.fleet-*</code>, đồng thời nhận dữ liệu agent gửi lên</td></tr>
+<tr><td>Fleet Server</td><td>Điểm kết nối của agent: nhận check-in, phát policy mới, cấp API key cho agent</td></tr>
+<tr><td>Elastic Agent</td><td>Chạy trên máy nguồn, nhận policy, thu thập dữ liệu, gửi thẳng tới output (Elasticsearch, Logstash, Kafka)</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Agent không bao giờ gọi Kibana. Agent nói chuyện với Fleet Server để lấy cấu hình (control plane), và gửi dữ liệu thẳng tới output (data plane). Fleet Server chết thì agent vẫn tiếp tục gửi dữ liệu theo policy cuối cùng đã nhận, chỉ không nhận được thay đổi mới.
+</div>
+
+<h2 id="fleet-server">Fleet Server</h2>
+<p>Fleet Server thực chất là một Elastic Agent chạy integration <code>fleet_server</code>. Nó xác thực với Elasticsearch bằng service token của service account <code>elastic/fleet-server</code>.</p>
+<pre><code># Tạo service token cho Fleet Server
+POST /_security/service/elastic/fleet-server/credential/token/fleet-server-01</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code># Cài Fleet Server trên một host Linux
+sudo ./elastic-agent install \
+  --fleet-server-es=https://es01:9200 \
+  --fleet-server-service-token=&lt;service-token&gt; \
+  --fleet-server-policy=fleet-server-policy \
+  --fleet-server-es-ca=/etc/certs/ca.crt \
+  --certificate-authorities=/etc/certs/ca.crt \
+  --fleet-server-cert=/etc/certs/fleet.crt \
+  --fleet-server-cert-key=/etc/certs/fleet.key \
+  --url=https://fleet.internal:8220</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Cổng mặc định <strong>8220</strong>, phục vụ HTTPS. Agent phải tin certificate của Fleet Server</li>
+<li>Khai báo địa chỉ Fleet Server trong Kibana (Fleet → Settings → Fleet server hosts) để agent biết kết nối vào đâu</li>
+<li>Production chạy ít nhất 2 Fleet Server sau load balancer. Một Fleet Server phục vụ được vài nghìn agent tùy phần cứng và tần suất check-in</li>
+</ul>
+
+<h2 id="policies">Agent Policies</h2>
+<p><strong>Agent policy</strong> là tập cấu hình áp cho một nhóm agent: integrations nào, output nào, namespace nào, có thu thập log/metric của chính agent không. Mỗi agent thuộc đúng một policy.</p>
+<table>
+<tr><th>Ví dụ policy</th><th>Integrations</th><th>Áp cho</th></tr>
+<tr><td>linux-web</td><td>System, Nginx</td><td>Máy chủ web</td></tr>
+<tr><td>linux-db</td><td>System, PostgreSQL</td><td>Máy chủ database</td></tr>
+<tr><td>windows-desktop</td><td>System, Windows, Elastic Defend</td><td>Máy trạm nhân viên</td></tr>
+</table>
+<pre><code># Mỗi lần sửa policy, revision tăng lên và mọi agent trong policy nhận bản mới ở lần check-in kế tiếp
+GET kbn:/api/fleet/agent_policies?perPage=20</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Namespace</strong>
+Policy có trường <code>namespace</code>, trở thành phần cuối của tên data stream: <code>logs-nginx.access-<strong>production</strong></code>. Tách namespace theo môi trường (production, staging) hoặc theo team giúp áp ILM và quyền đọc khác nhau cho từng nhóm (Bài 23).
+</div>
+
+<h2 id="integrations">Integrations</h2>
+<p><strong>Integration</strong> là package đóng gói cách thu thập một nguồn dữ liệu, tương tự module của Beats nhưng phong phú hơn: input cho agent, ingest pipeline, index template theo ECS, dashboard, và đôi khi cả rule phát hiện tấn công.</p>
+<ul>
+<li>Catalog có hàng trăm integration: hệ điều hành, web server, database, cloud (AWS, Azure, GCP), mạng, bảo mật</li>
+<li>Integration được version hóa độc lập với Stack, cập nhật được mà không cần nâng cấp Elasticsearch</li>
+<li>Thêm integration vào policy, cấu hình biến (đường dẫn log, host, thông tin đăng nhập), lưu lại là xong</li>
+</ul>
+<pre><code># Cài một integration package vào cluster (template, pipeline, dashboard)
+POST kbn:/api/fleet/epm/packages/nginx
+
+# Thêm integration vào policy (package policy)
+POST kbn:/api/fleet/package_policies
+{
+  "policy_id": "&lt;agent-policy-id&gt;",
+  "package": { "name": "nginx", "version": "&lt;version&gt;" },
+  "name": "nginx-web",
+  "namespace": "production",
+  "inputs": { ... }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Secret trong integration</strong>
+Mật khẩu database hoặc API key của dịch vụ nhập vào integration được gửi xuống agent qua policy. Từ các bản 8.x gần đây, Fleet hỗ trợ lưu một số biến dạng secret riêng, không hiển thị trong policy. Dù vậy, hãy cấp cho tài khoản thu thập metric quyền chỉ đọc tối thiểu.
+</div>
+
+<h2 id="enrollment">Enrollment</h2>
+<p>Agent tham gia Fleet bằng <strong>enrollment token</strong>. Mỗi token gắn với một agent policy, nên token quyết định agent mới nhận cấu hình nào.</p>
+<pre><code># Lấy enrollment token (Fleet → Enrollment tokens, hoặc API)
+GET kbn:/api/fleet/enrollment_api_keys
+
+# Enroll và cài agent dạng service trên Linux
+sudo ./elastic-agent install \
+  --url=https://fleet.internal:8220 \
+  --enrollment-token=&lt;token&gt; \
+  --certificate-authorities=/etc/certs/ca.crt</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Khi enroll, Fleet Server cấp cho agent một API key riêng. Thu hồi agent (unenroll) là vô hiệu hóa key đó</li>
+<li>Enrollment token có thể thu hồi khi bị lộ, agent đã enroll không bị ảnh hưởng</li>
+<li>Trên Kubernetes, agent chạy dạng DaemonSet với token truyền qua Secret</li>
+</ul>
+
+<h2 id="upgrade">Nâng Cấp &amp; Sức Khỏe</h2>
+<table>
+<tr><th>Trạng thái agent</th><th>Ý nghĩa</th></tr>
+<tr><td>Healthy</td><td>Check-in đều đặn, mọi input chạy bình thường</td></tr>
+<tr><td>Unhealthy</td><td>Còn check-in nhưng có input lỗi (sai đường dẫn, sai mật khẩu...)</td></tr>
+<tr><td>Offline</td><td>Không check-in trong một khoảng thời gian (máy tắt, mất mạng)</td></tr>
+<tr><td>Updating</td><td>Đang nhận policy mới hoặc đang nâng cấp</td></tr>
+<tr><td>Inactive</td><td>Offline quá lâu, bị ẩn khỏi danh sách mặc định</td></tr>
+</table>
+<p>Nâng cấp agent từ Kibana: chọn agent (hoặc lọc theo policy), chọn version, đặt <strong>rollout</strong> để nâng cấp dần thay vì cùng lúc. Agent tự tải binary, thay thế và rollback nếu bản mới không khởi động được.</p>
+<pre><code># Nâng cấp hàng loạt theo policy, trải đều trong 1 giờ
+POST kbn:/api/fleet/agents/bulk_upgrade
+{
+  "agents": "policy_id:&lt;agent-policy-id&gt;",
+  "version": "8.15.0",
+  "rollout_duration_seconds": 3600
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Thứ tự nâng cấp</strong>
+Elastic Agent không được mới hơn Fleet Server, và Fleet Server không được mới hơn Elasticsearch/Kibana. Nâng cấp theo thứ tự: Elasticsearch → Kibana → Fleet Server → các agent.
+</div>
+<p>Bật "Collect agent logs and metrics" trong policy để agent gửi log và metric của chính nó lên cluster. Khi agent unhealthy, xem log của nó ngay trong Fleet mà không cần đăng nhập máy nguồn.</p>
+
+<h2 id="fleet-api">Fleet API</h2>
+<p>Mọi thao tác trên Fleet UI đều có API tương ứng. Dùng API để quản lý policy dạng code (Terraform provider của Elastic hoặc script trong CI).</p>
+<pre><code># Tạo agent policy
+curl $AUTH -X POST "http://localhost:5601/api/fleet/agent_policies" \
+  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{
+  "name": "linux-web", "namespace": "production",
+  "monitoring_enabled": ["logs", "metrics"]
+}'
+
+# Liệt kê agent unhealthy hoặc offline
+curl $AUTH "http://localhost:5601/api/fleet/agents?kuery=status:unhealthy%20or%20status:offline" -H 'kbn-xsrf: true'
+
+# Chuyển agent sang policy khác
+curl $AUTH -X POST "http://localhost:5601/api/fleet/agents/&lt;agent-id&gt;/reassign" \
+  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"policy_id":"&lt;new-policy-id&gt;"}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Ký hiệu <code>kbn:/api/...</code> trong các ví dụ trước dùng được trực tiếp trong Kibana Dev Tools Console để gọi API của Kibana.</p>
+
+<h2 id="standalone">Standalone Agent</h2>
+<p>Agent <strong>standalone</strong> không kết nối Fleet, đọc cấu hình từ file <code>elastic-agent.yml</code>. Lấy file mẫu từ Fleet UI (Add agent → Run standalone) để có sẵn cấu hình của integration.</p>
+<table>
+<tr><th></th><th>Fleet-managed</th><th>Standalone</th></tr>
+<tr><td>Đổi cấu hình</td><td>Sửa policy trên Kibana</td><td>Sửa file, tự phân phối (Ansible, GitOps, Helm)</td></tr>
+<tr><td>Cần Fleet Server</td><td>Có</td><td>Không</td></tr>
+<tr><td>Nâng cấp từ xa</td><td>Có</td><td>Không, tự quản lý</td></tr>
+<tr><td>Phù hợp</td><td>Đa số triển khai</td><td>Môi trường bị cô lập mạng, quy trình GitOps nghiêm ngặt, Kubernetes quản lý bằng manifest</td></tr>
+</table>
+
+<h2 id="lab">Bài Lab: Quản Lý 3 Agent Qua Fleet</h2>
+<p>Lab chạy Fleet Server và 3 agent trong Docker, dùng chung cluster có TLS từ Bài 13. Để gọn, Fleet Server trong lab phục vụ HTTP không TLS. Production luôn dùng HTTPS cho Fleet Server.</p>
+
+<h3>Bước 1: Khai báo Fleet trong Kibana</h3>
+<p>Thêm vào phần <code>environment</code> của service <code>kibana</code>, rồi <code>docker compose up -d kibana</code>:</p>
+<pre><code>      - XPACK_FLEET_AGENTS_FLEET_SERVER_HOSTS=["http://fleet-server:8220"]
+      - XPACK_FLEET_AGENTS_ELASTICSEARCH_HOSTS=["https://es01:9200"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Agent cần tin CA của Elasticsearch để gửi dữ liệu. Trong Kibana, vào Fleet → Settings → Outputs → sửa output mặc định, dán nội dung <code>certs/ca/ca.crt</code> vào ô "Elasticsearch CA trusted fingerprint" (dạng SHA-256) hoặc phần "Advanced YAML configuration":</p>
+<pre><code># Lấy fingerprint SHA-256 của CA
+openssl x509 -fingerprint -sha256 -noout -in certs/ca/ca.crt | cut -d= -f2 | tr -d ':'
+
+# Hoặc trong Advanced YAML configuration của output:
+ssl.certificate_authorities: ["/certs/ca/ca.crt"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Service token và Fleet Server</h3>
+<pre><code>source .env
+curl $AUTH -X POST "$ES/_security/service/elastic/fleet-server/credential/token/lab-fleet" \
+  | python -c "import sys,json;print('FLEET_SERVICE_TOKEN='+json.load(sys.stdin)['token']['value'])" &gt;&gt; .env</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>  fleet-server:
+    image: docker.elastic.co/beats/elastic-agent:8.15.0
+    user: root
+    depends_on: [ kibana ]
+    ports: [ "8220:8220" ]
+    environment:
+      - FLEET_SERVER_ENABLE=1
+      - FLEET_SERVER_ELASTICSEARCH_HOST=https://es01:9200
+      - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca/ca.crt
+      - FLEET_SERVER_SERVICE_TOKEN=${FLEET_SERVICE_TOKEN}
+      - FLEET_SERVER_POLICY_ID=fleet-server-policy
+      - FLEET_SERVER_INSECURE_HTTP=1
+      - FLEET_URL=http://fleet-server:8220
+      - KIBANA_FLEET_SETUP=1
+      - KIBANA_FLEET_HOST=http://kibana:5601
+      - KIBANA_FLEET_USERNAME=elastic
+      - KIBANA_FLEET_PASSWORD=${ELASTIC_PASSWORD}
+    volumes:
+      - ./certs:/certs:ro</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>docker compose up -d fleet-server
+docker compose logs -f fleet-server | grep -i "fleet server"
+# Kibana → Fleet → Agents: thấy agent của Fleet Server ở trạng thái Healthy</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Tên biến môi trường theo version</strong>
+Các biến <code>FLEET_SERVER_*</code> và <code>KIBANA_FLEET_*</code> trên đây theo tài liệu container Elastic Agent của dòng 8.x. Nếu Fleet Server không khởi động, đối chiếu trang "Elastic Agent in a container" cho đúng version bạn dùng.
+</div>
+
+<h3>Bước 3: Agent policy với System integration</h3>
+<ol>
+<li>Fleet → Agent policies → Create: tên <code>lab-linux</code>, namespace <code>lab</code>, bật thu thập log và metric của agent</li>
+<li>Mở policy → Add integration → System. Giữ cấu hình mặc định, lưu</li>
+<li>Fleet → Enrollment tokens: copy token của policy <code>lab-linux</code>, lưu vào <code>.env</code> dạng <code>LAB_ENROLL_TOKEN=...</code></li>
+</ol>
+
+<h3>Bước 4: Enroll 3 agent</h3>
+<pre><code>  agent:
+    image: docker.elastic.co/beats/elastic-agent:8.15.0
+    user: root
+    depends_on: [ fleet-server ]
+    environment:
+      - FLEET_ENROLL=1
+      - FLEET_URL=http://fleet-server:8220
+      - FLEET_ENROLLMENT_TOKEN=${LAB_ENROLL_TOKEN}
+      - FLEET_INSECURE=1
+    volumes:
+      - ./certs:/certs:ro</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>docker compose up -d --scale agent=3 agent
+# Fleet → Agents: 3 agent mới thuộc policy lab-linux, trạng thái Healthy sau khoảng 1 phút</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 5: Thay đổi policy và quan sát</h3>
+<ol>
+<li>Thêm integration <strong>Nginx</strong> vào policy <code>lab-linux</code> với đường dẫn log không tồn tại. Quan sát revision của policy tăng, cả 3 agent chuyển Updating rồi Healthy hoặc Unhealthy tùy input</li>
+<li>Mở một agent → tab Logs: đọc log của agent ngay trong Kibana</li>
+<li>Xóa integration Nginx, quan sát agent trở về trạng thái cũ</li>
+</ol>
+<pre><code>curl $AUTH "$ES/_data_stream/*-lab?filter_path=**.name"
+# metrics-system.cpu-lab, metrics-system.memory-lab, logs-system.syslog-lab ...
+curl $AUTH -X GET "http://localhost:5601/api/fleet/agents?kuery=policy_id:*" -H 'kbn-xsrf: true' \
+  | python -c "import sys,json;[print(a['local_metadata']['host']['hostname'],a['status']) for a in json.load(sys.stdin)['items']]"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bốn agent (Fleet Server + 3 agent) xuất hiện trong Fleet. Data stream với namespace <code>lab</code> chứa metric hệ thống từ cả 3 agent. Sửa policy trên Kibana một lần là cả 3 agent nhận cấu hình mới, không cần đăng nhập container nào.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Mô tả luồng control plane và data plane trong Fleet. Fleet Server ngừng hoạt động thì điều gì xảy ra?</li>
+<li>Fleet Server xác thực với Elasticsearch bằng cơ chế nào?</li>
+<li>Agent policy và integration liên hệ với nhau thế nào?</li>
+<li>Namespace của policy ảnh hưởng tới đâu?</li>
+<li>Enrollment token bị lộ thì xử lý thế nào? Agent đã enroll có bị ảnh hưởng không?</li>
+<li>Nêu thứ tự nâng cấp đúng giữa Elasticsearch, Kibana, Fleet Server và agent.</li>
+<li>Khi nào chọn standalone agent thay vì Fleet-managed?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Giải thích kiến trúc Kibana, Fleet Server, Agent, Elasticsearch</li>
+<li>☐ Triển khai Fleet Server bằng service token</li>
+<li>☐ Tạo agent policy với namespace và integration</li>
+<li>☐ Enroll agent bằng enrollment token</li>
+<li>☐ Đọc trạng thái và log của agent trong Fleet</li>
+<li>☐ Nâng cấp agent theo rollout</li>
+<li>☐ Gọi Fleet API để tự động hóa</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Agent không tin CA của Elasticsearch</strong>: agent Healthy nhưng không có dữ liệu. Cấu hình CA hoặc fingerprint ở output.</li>
+<li><strong>Chỉ một Fleet Server</strong>: Fleet Server chết là không triển khai được thay đổi nào.</li>
+<li><strong>Agent mới hơn Fleet Server</strong>: agent không enroll được hoặc không nhận policy.</li>
+<li><strong>Một policy khổng lồ cho mọi máy</strong>: máy nào cũng chạy input không liên quan, sinh lỗi và tốn tài nguyên.</li>
+<li><strong>Nâng cấp toàn bộ agent cùng lúc</strong>: lỗi của bản mới ảnh hưởng toàn hệ thống. Dùng rollout và nâng cấp nhóm nhỏ trước.</li>
+<li><strong>Fleet Server dùng HTTP ở production</strong>: token và API key của agent đi dạng rõ trên mạng.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Ít nhất 2 Fleet Server sau load balancer, certificate do CA nội bộ cấp</li>
+<li>Policy theo vai trò máy (web, db, desktop), namespace theo môi trường</li>
+<li>Bật thu thập log và metric của agent để chẩn đoán từ xa</li>
+<li>Nâng cấp theo thứ tự Stack → Fleet Server → agent, dùng rollout</li>
+<li>Quản lý policy bằng Fleet API hoặc Terraform cho môi trường lớn</li>
+<li>Cảnh báo khi số agent offline vượt ngưỡng (Bài 18)</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/fleet-overview.html" target="_blank">Fleet and Elastic Agent Overview</a></li>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/fleet-server.html" target="_blank">Fleet Server</a></li>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/agent-policy.html" target="_blank">Elastic Agent Policies</a></li>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/elastic-agent-container.html" target="_blank">Run Elastic Agent in a Container</a></li>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/fleet-api-docs.html" target="_blank">Fleet API</a></li>
+<li><a href="https://www.elastic.co/integrations" target="_blank">Elastic Integrations Catalog</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="16-beats-elastic-agent.html">&larr; Bài 16: Beats &amp; Agent</a>
+<a href="18-monitoring-alerting.html">Bài 18: Monitoring &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiến Trúc Elasticsearch - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Node & Cluster</div>
+    <div class="nav-items">
+      <a href="#node-roles">Node Roles</a>
+      <a href="#cluster-state">Cluster State</a>
+      <a href="#discovery">Discovery &amp; Master Election</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Shards</div>
+    <div class="nav-items">
+      <a href="#shard">Shard = Lucene Index</a>
+      <a href="#primary-replica">Primary vs Replica</a>
+      <a href="#routing">Routing</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Flow</div>
+    <div class="nav-items">
+      <a href="#write-flow">Write Path</a>
+      <a href="#read-flow">Read Path</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html" class="current">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Kiến Trúc Elasticsearch</h1>
+<p class="subtitle">Node roles, cluster state, master election, shard — hiểu cách các node phối hợp thành một distributed system</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html" target="_blank">Elastic — Life Inside a Cluster</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html" target="_blank">Elastic — Node Roles</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu các node roles trong một cluster và vai trò của từng loại. Nắm được cluster state là gì và master node quản lý nó thế nào. Giải thích cơ chế discovery và master election. Hiểu quan hệ shard &harr; Lucene index, primary vs replica, và cách routing định tuyến document. Mô tả được write path và read path của một request.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 01: Hệ Thống Phân Tán</strong> — Sharding, replication, quorum, consensus</li>
+<li><strong>Bài 02: Apache Lucene</strong> — Mỗi shard = 1 Lucene index</li>
+<li><strong>Mạng cơ bản</strong> — TCP, HTTP, khái niệm node/cluster</li>
+</ul>
+
+<h2 id="node-roles">Node Roles</h2>
+<p>Một Elasticsearch <strong>cluster</strong> gồm một hoặc nhiều <strong>node</strong> (mỗi node là một tiến trình JVM chạy Elasticsearch). Mỗi node có thể đảm nhận một hoặc nhiều <strong>vai trò (role)</strong>, cấu hình qua <code>node.roles</code> trong <code>elasticsearch.yml</code>.</p>
+
+<table>
+<tr><th>Role</th><th>Ký hiệu</th><th>Trách nhiệm</th></tr>
+<tr><td>master-eligible</td><td><code>master</code></td><td>Ứng cử làm master, quản lý cluster state (tạo/xóa index, theo dõi node, phân bổ shard)</td></tr>
+<tr><td>data</td><td><code>data</code></td><td>Lưu shard, thực thi CRUD, search, aggregations</td></tr>
+<tr><td>data_content / data_hot / data_warm / data_cold / data_frozen</td><td><code>data_*</code></td><td>Data node chuyên biệt theo tier (dùng với ILM)</td></tr>
+<tr><td>ingest</td><td><code>ingest</code></td><td>Chạy ingest pipeline (tiền xử lý document trước khi index)</td></tr>
+<tr><td>coordinating</td><td><em>(mặc định mọi node)</em></td><td>Nhận request, route tới shard, gom kết quả. Node không có role nào = coordinating-only</td></tr>
+<tr><td>ml</td><td><code>ml</code></td><td>Chạy machine learning jobs</td></tr>
+<tr><td>remote_cluster_client</td><td><code>remote_cluster_client</code></td><td>Kết nối remote cluster (CCS/CCR)</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Trong cluster nhỏ (dev, &lt;5 node), một node thường kiêm tất cả role. Khi scale lên production, tách role ra các node chuyên biệt (dedicated master, dedicated data) để một loại workload không làm nghẽn loại khác.
+</div>
+
+<h3>Dedicated Master Nodes</h3>
+<p>Trong cluster lớn, nên có <strong>3 dedicated master-eligible node</strong> không mang data. Lý do: master cần ổn định để quản lý cluster state; nếu master cũng là data node nặng tải, GC pause hoặc search nặng có thể khiến nó mất kết nối → bầu lại master → cluster bất ổn.</p>
+<pre><code># Dedicated master node
+node.roles: [ master ]
+
+# Dedicated data node (hot tier)
+node.roles: [ data_hot, data_content ]
+
+# Coordinating-only node (load balancer nội bộ)
+node.roles: [ ]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="cluster-state">Cluster State</h2>
+<p><strong>Cluster state</strong> là một cấu trúc dữ liệu toàn cục mô tả toàn bộ cluster: danh sách node, mapping của mọi index, vị trí mọi shard, settings, templates... Chỉ <strong>master node</strong> được phép thay đổi cluster state, sau đó publish bản cập nhật tới tất cả node khác.</p>
+
+<ul>
+<li><strong>Nguồn chân lý duy nhất (single source of truth)</strong> — mọi node tham chiếu cùng một cluster state</li>
+<li><strong>Thay đổi tuần tự</strong> — master xử lý các cluster-state update theo thứ tự, tránh race condition</li>
+<li><strong>Publish 2 pha</strong> — master gửi state mới, chờ đủ node xác nhận (quorum) rồi mới commit</li>
+</ul>
+
+<pre><code># Xem cluster state (có thể rất lớn — lọc field)
+GET /_cluster/state/master_node,nodes,routing_table?filter_path=**.name
+
+# Xem cluster health
+GET /_cluster/health</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-amber">
+<strong>Cảnh báo quy mô</strong>
+Cluster state càng lớn (nhiều index/shard) → publish càng chậm → master càng dễ nghẽn. Đây là lý do chính của khuyến nghị "đừng over-shard" (xem Bài 11).
+</div>
+
+<h2 id="discovery">Discovery &amp; Master Election</h2>
+<p><strong>Discovery</strong> là quá trình các node tìm thấy nhau và hình thành cluster. Khi khởi động, node liên hệ danh sách <code>discovery.seed_hosts</code> để tham gia cluster hiện có hoặc bầu master mới.</p>
+
+<h3>Bootstrap cluster lần đầu</h3>
+<pre><code># elasticsearch.yml — chỉ đặt khi khởi tạo cluster LẦN ĐẦU
+cluster.initial_master_nodes: ["node-1", "node-2", "node-3"]
+discovery.seed_hosts: ["10.0.0.1", "10.0.0.2", "10.0.0.3"]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Master Election</h3>
+<p>Từ ES 7.0, Elasticsearch dùng thuật toán consensus riêng (dựa trên Raft-like, gọi là <strong>cluster coordination subsystem</strong>). Để bầu/commit master cần <strong>quorum</strong> = <code>(số master-eligible / 2) + 1</code>.</p>
+<table>
+<tr><th>Số master-eligible</th><th>Quorum</th><th>Chịu được mất</th></tr>
+<tr><td>1</td><td>1</td><td>0 node (không HA)</td></tr>
+<tr><td>2</td><td>2</td><td>0 node (tệ — mất 1 là treo)</td></tr>
+<tr><td>3</td><td>2</td><td>1 node</td></tr>
+<tr><td>5</td><td>3</td><td>2 node</td></tr>
+</table>
+<div class="callout callout-red">
+<strong>Split-brain</strong>
+Số master-eligible chẵn (đặc biệt là 2) dễ gây split-brain hoặc mất HA. Luôn dùng <strong>số lẻ: 3 là chuẩn production</strong>. ES 7+ tự quản lý quorum (voting configuration), không còn <code>minimum_master_nodes</code> thủ công như ES 6.
+</div>
+
+<h2 id="shard">Shard = Lucene Index</h2>
+<p>Khi tạo index, bạn chỉ định số <strong>primary shard</strong>. Mỗi shard là một <strong>Lucene index độc lập</strong> (Bài 02) — đơn vị nhỏ nhất mà ES phân tán và scale.</p>
+<pre><code>PUT /products
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1
+  }
+}
+# → 3 primary + 3 replica = 6 shard tổng, phân bổ trên các data node</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Lưu ý bất biến</strong>
+Số <code>number_of_shards</code> <strong>cố định sau khi tạo index</strong> — muốn đổi phải reindex (hoặc dùng split/shrink API). Ngược lại, <code>number_of_replicas</code> thay đổi động bất cứ lúc nào.
+</div>
+
+<h2 id="primary-replica">Primary vs Replica</h2>
+<ul>
+<li><strong>Primary shard</strong> — nơi document được ghi đầu tiên. Mỗi document thuộc đúng 1 primary shard.</li>
+<li><strong>Replica shard</strong> — bản sao của primary, phục vụ 2 mục đích: <em>high availability</em> (primary chết → replica được promote) và <em>tăng throughput đọc</em> (search chạy song song trên primary + replica).</li>
+</ul>
+<div class="callout callout-green">
+<strong>Quy tắc phân bổ</strong>
+Primary và replica của cùng một shard <strong>không bao giờ nằm trên cùng một node</strong> — nếu không, mất node đó là mất cả hai. Đây là lý do cluster 1 node luôn ở trạng thái <code>yellow</code> khi có replica (replica không thể được cấp phát).
+</div>
+
+<h3>Cluster Health</h3>
+<table>
+<tr><th>Trạng thái</th><th>Ý nghĩa</th></tr>
+<tr><td><span style="color:#16a34a;font-weight:600">green</span></td><td>Tất cả primary và replica đều được cấp phát</td></tr>
+<tr><td><span style="color:#d97706;font-weight:600">yellow</span></td><td>Tất cả primary OK, nhưng có replica chưa cấp phát (vẫn hoạt động, giảm HA)</td></tr>
+<tr><td><span style="color:#dc2626;font-weight:600">red</span></td><td>Có primary chưa cấp phát → mất dữ liệu / một phần index không truy cập được</td></tr>
+</table>
+
+<h2 id="routing">Routing</h2>
+<p>Làm sao ES biết document thuộc shard nào? Qua công thức <strong>routing</strong>:</p>
+<pre><code>shard = hash(routing) % number_of_primary_shards
+# routing mặc định = _id của document</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Vì <code>number_of_primary_shards</code> nằm trong công thức, đổi số primary shard sẽ làm routing sai → đây là lý do thứ hai khiến số primary cố định.</p>
+<p>Custom routing (đưa document liên quan vào cùng shard) giúp tối ưu search:</p>
+<pre><code>PUT /orders/_doc/1?routing=user_42
+{ "user": "user_42", "total": 250 }
+
+# Search chỉ trên shard chứa user_42 → nhanh hơn
+GET /orders/_search?routing=user_42
+{ "query": { "term": { "user": "user_42" } } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="write-flow">Write Path</h2>
+<p>Khi index một document:</p>
+<div class="flow">
+<span class="flow-step">Client → Coordinating node</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Tính routing → Primary shard</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Ghi primary + translog</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Forward song song tới các Replica</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Chờ replica ACK → trả client</span>
+</div>
+<ol>
+<li>Coordinating node nhận request, dùng routing xác định primary shard.</li>
+<li>Primary thực thi ghi, ghi vào <strong>translog</strong> (write-ahead log, đảm bảo durability trước refresh).</li>
+<li>Primary forward operation tới tất cả replica <em>in-sync</em> song song.</li>
+<li>Khi đủ replica ACK (theo <code>wait_for_active_shards</code>), primary trả kết quả về client.</li>
+</ol>
+
+<h2 id="read-flow">Read Path</h2>
+<div class="flow">
+<span class="flow-step">Client → Coordinating node</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Query Phase (scatter tới shard)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Fetch Phase (lấy _source top-N)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Gom &amp; sort → trả client</span>
+</div>
+<ul>
+<li><strong>Query Phase</strong> — coordinating node gửi query tới một bản sao (primary hoặc replica) của mỗi shard. Mỗi shard trả về danh sách doc_id + score của top-N.</li>
+<li><strong>Fetch Phase</strong> — sau khi gom và sort toàn cục, coordinating node fetch <code>_source</code> của đúng những document lọt top-N từ các shard liên quan.</li>
+<li><strong>Adaptive replica selection</strong> — ES chọn bản sao shard phản hồi nhanh nhất, không chỉ round-robin.</li>
+</ul>
+
+<h2 id="lab">Bài Lab: Quan Sát Kiến Trúc Cluster</h2>
+<h3>Yêu cầu</h3>
+<p>Một cluster đang chạy (dùng cluster 3 node từ Bài 01, hoặc single-node Docker).</p>
+
+<h3>Bước 1: Xem các node và role</h3>
+<pre><code>GET /_cat/nodes?v&h=name,node.role,master,heap.percent,cpu
+# Cột node.role: m=master, d=data, i=ingest, c=coordinating...
+# Cột master: dấu * là master hiện tại</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Tạo index và quan sát shard phân bổ</h3>
+<pre><code>PUT /lab-arch
+{ "settings": { "number_of_shards": 3, "number_of_replicas": 1 } }
+
+GET /_cat/shards/lab-arch?v&h=index,shard,prirep,state,node
+# prirep: p=primary, r=replica
+# Quan sát: primary và replica KHÔNG cùng node</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Kiểm tra routing</h3>
+<pre><code>PUT /lab-arch/_doc/hello
+{ "msg": "test routing" }
+
+GET /lab-arch/_doc/hello?_source=false
+# Trả về _shards info → document nằm ở shard nào
+GET /_cat/shards/lab-arch?v</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Xem cluster health chuyển trạng thái</h3>
+<pre><code># Tăng replica lên cao hơn số data node → yellow
+PUT /lab-arch/_settings
+{ "number_of_replicas": 5 }
+GET /_cluster/health/lab-arch
+# status: yellow (replica chưa cấp phát đủ)
+
+# Trả về bình thường
+PUT /lab-arch/_settings
+{ "number_of_replicas": 1 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bạn đã thấy: node mang role gì, master là node nào, shard phân bổ ra sao (primary &ne; replica node), và cluster health phản ứng thế nào khi replica không cấp phát được.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Phân biệt master-eligible, data, ingest, coordinating node. Vì sao nên dùng dedicated master trong cluster lớn?</li>
+<li>Cluster state là gì? Node nào được phép thay đổi nó?</li>
+<li>Vì sao số master-eligible nên là số lẻ? Quorum của 3 node là bao nhiêu?</li>
+<li>Vì sao <code>number_of_shards</code> không đổi được nhưng <code>number_of_replicas</code> thì đổi được?</li>
+<li>Khi nào cluster health là yellow? Khi nào red?</li>
+<li>Mô tả write path của một document từ client đến khi trả kết quả.</li>
+<li>Query Phase và Fetch Phase khác nhau thế nào trong read path?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Liệt kê được các node role và trách nhiệm từng loại</li>
+<li>☐ Giải thích cluster state và vai trò master node</li>
+<li>☐ Hiểu discovery, master election, quorum, split-brain</li>
+<li>☐ Nắm quan hệ shard &harr; Lucene index</li>
+<li>☐ Phân biệt primary/replica và quy tắc phân bổ</li>
+<li>☐ Giải thích công thức routing và custom routing</li>
+<li>☐ Mô tả được write path và read path</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những hiểu lầm phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Dùng 2 master-eligible node</strong> — Tưởng là HA nhưng thực tế mất 1 node là treo cluster. Luôn dùng 3.</li>
+<li><strong>Để cluster.initial_master_nodes mãi mãi</strong> — Chỉ dùng lúc bootstrap lần đầu, giữ lại gây rắc rối khi restart.</li>
+<li><strong>Over-sharding</strong> — Quá nhiều shard nhỏ làm cluster state phình, master nghẽn. Mỗi shard có overhead cố định.</li>
+<li><strong>Nghĩ replica = backup</strong> — Replica là HA runtime, không thay thế snapshot (Bài 20). Xóa nhầm index thì mọi replica cũng mất.</li>
+<li><strong>Đổ mọi request vào 1 node</strong> — Dùng coordinating-only node hoặc client round-robin để phân tải.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Production: 3 dedicated master-eligible node (số lẻ), tách khỏi data node</li>
+<li>Giữ cluster state nhỏ — kiểm soát số index/shard, dùng ILM để rollover</li>
+<li>Dùng <code>_cat/nodes</code>, <code>_cat/shards</code>, <code>_cluster/health</code> để kiểm tra nhanh</li>
+<li>Replica &ge; 1 cho index quan trọng, nhưng không quá nhiều (lãng phí tài nguyên)</li>
+<li>Cân nhắc custom routing khi dữ liệu có khóa phân vùng tự nhiên (user_id, tenant_id)</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html" target="_blank">ES: Life Inside a Cluster</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html" target="_blank">ES: Node Roles</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html" target="_blank">ES: Discovery &amp; Cluster Formation</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html" target="_blank">ES: Reading and Writing Documents</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="02-lucene-fundamentals.html">&larr; Bài 02: Apache Lucene</a>
+<a href="04-installation-deployment.html">Bài 04: Cài Đặt &amp; Triển Khai &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

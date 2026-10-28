@@ -163,6 +163,30 @@ Thêm vào group "AI Engineering" (hoặc group phù hợp):
 { title: "Tên Giáo Trình", url: "{folder}/index.html", desc: "Mô tả ngắn <100 ký tự", icon: '<svg ...>', color: "#hex" }
 ```
 
+## Giới hạn Agent (Timeout & Retry)
+
+Áp dụng cho mọi lần dùng agent `web-researcher` (và subagent khác) trong project này.
+
+### 1. Thời gian chạy tối đa
+
+- Mỗi agent không nên chạy quá **~2 phút (120s)**. Nếu một agent chạy vượt ngưỡng này mà chưa báo xong, coi như **không đáng chờ** — chuyển sang phương án dự phòng thay vì chờ vô thời hạn.
+- Không spawn agent mới để thay thế agent đang treo — chờ nó tự kết thúc (main context không force-stop được subagent), nhưng **không phụ thuộc** vào kết quả của nó.
+
+### 2. Số lần thử lại (retry)
+
+- Trong prompt giao cho agent, yêu cầu rõ: **fetch/thao tác tối đa 3 lần**. Nếu vẫn thất bại, agent phải **dừng và báo cáo trung thực** (theo R2 — không bịa nội dung), không thử lại vô hạn.
+- Ở main context: nếu một batch agent thất bại, **không spawn lại cùng cách** — đổi phương án (xem mục 3).
+
+### 3. Fallback khi timeout / thất bại
+
+Khi agent timeout hoặc báo thất bại fetch, main context tự động chuyển fallback theo thứ tự:
+
+1. **Đổi nguồn** — dùng URL trang con nhỏ hơn thay vì trang tổng hợp lớn (xem memory `feedback_webfetch_large_docs_timeout`).
+2. **Tự fetch** — dùng `curl`/WebFetch kèm `offset` đọc từng khúc < 100k ký tự.
+3. **Viết trực tiếp** — với kiến thức kỹ thuật ổn định, main context viết nội dung từ kiến thức sẵn có + đối chiếu docs, nêu rõ điểm chưa verify được.
+
+Luôn báo cho user biết đã chuyển fallback và lý do, trước khi tiếp tục.
+
 ## Content Page CSS/JS Reference
 
 Dùng trực tiếp khi tạo thẻ mới — không cần đọc lại template file.
