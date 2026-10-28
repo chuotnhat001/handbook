@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lộ trình chuyển đổi - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.roadmap{position:relative;padding-left:2rem;margin:1.5rem 0}
+.roadmap::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#667eea,#10b981)}
+.roadmap-phase{position:relative;margin-bottom:1.5rem;padding:1rem 1.25rem;background:#f8fafc;border:1px solid rgba(102,126,234,.15);border-radius:10px}
+.roadmap-phase::before{content:'';position:absolute;left:-1.65rem;top:1.25rem;width:12px;height:12px;background:#667eea;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #667eea}
+.roadmap-phase.done::before{background:#10b981;box-shadow:0 0 0 2px #10b981}
+.roadmap-num{font-size:.7rem;font-weight:700;color:#667eea;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
+.roadmap-title{font-size:.95rem;font-weight:700;color:#1a1a2e;margin-bottom:.5rem}
+.roadmap-desc{font-size:.85rem;color:#64748b}
+.challenge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.challenge-card{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:1rem}
+.challenge-card h4{font-size:.85rem;font-weight:600;color:#dc2626;margin-bottom:.5rem}
+.challenge-card p{font-size:.82rem;color:#7f1d1d;margin:0}
+.maturity-table th{text-align:center}
+.maturity-table td{text-align:center;font-size:.82rem}
+.maturity-table td:first-child{text-align:left;font-weight:600}
+.level-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.level-1{background:#fee2e2;color:#991b1b}
+.level-2{background:#fef3c7;color:#92400e}
+.level-3{background:#d1fae5;color:#065f46}
+.level-4{background:#dbeafe;color:#1e40af}
+.level-5{background:#e0e7ff;color:#3730a3}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#challenges">Thử thách</a>
+<a href="#roadmap">Lộ trình tiêu chuẩn</a>
+<a href="#maturity">Đo lường trưởng thành</a>
+<a href="#vision">Xây dựng tầm nhìn</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="09-agile-metrics.html">← Trước</a>
+<a href="11-tpbank-principles.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html" class="current">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Lộ trình chuyển đổi Agile</h1>
+<p class="subtitle">Các bước chuyển đổi và đo lường mức trưởng thành Agile</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: SAFe Implementation Roadmap — Bài 10/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Chuyển đổi Agile không phải là dự án có điểm kết thúc — mà là hành trình cải tiến liên tục. Thành công đòi hỏi cam kết từ lãnh đạo, thay đổi văn hóa, và kiên nhẫn. Đo lường mức trưởng thành giúp định hướng và theo dõi tiến độ.
+</div>
+
+<h2 id="challenges">Những thử thách khi chuyển đổi</h2>
+
+<div class="challenge-grid">
+<div class="challenge-card">
+<h4>Kháng cự thay đổi</h4>
+<p>Con người tự nhiên ngại thay đổi, đặc biệt khi đã quen với cách làm cũ và chưa thấy lợi ích rõ ràng.</p>
+</div>
+<div class="challenge-card">
+<h4>Thiếu cam kết lãnh đạo</h4>
+<p>Chuyển đổi thất bại khi lãnh đạo chỉ ủng hộ bằng lời mà không thay đổi hành vi và cách ra quyết định.</p>
+</div>
+<div class="challenge-card">
+<h4>Áp dụng hình thức</h4>
+<p>"Doing Agile" mà không "Being Agile" — chạy ceremonies nhưng thiếu mindset và giá trị cốt lõi.</p>
+</div>
+<div class="challenge-card">
+<h4>Kỳ vọng quá nhanh</h4>
+<p>Thay đổi văn hóa cần thời gian. Kỳ vọng kết quả ngay lập tức dẫn đến thất vọng và bỏ cuộc sớm.</p>
+</div>
+<div class="challenge-card">
+<h4>Thiếu đầu tư đào tạo</h4>
+<p>Giả định mọi người sẽ tự học. Không có coaching và hỗ trợ liên tục dẫn đến hiểu sai và thực hành sai.</p>
+</div>
+<div class="challenge-card">
+<h4>Hệ thống cũ không đổi</h4>
+<p>Team Agile nhưng HR, tài chính, procurement vẫn theo cách cũ — tạo xung đột và cản trở.</p>
+</div>
+</div>
+
+<h2 id="roadmap">Lộ trình chuyển đổi tiêu chuẩn</h2>
+
+<p>SAFe đề xuất một lộ trình 12 bước để triển khai Agile ở quy mô lớn. Dưới đây là phiên bản rút gọn theo các giai đoạn chính:</p>
+
+<div class="roadmap">
+<div class="roadmap-phase">
+<div class="roadmap-num">Giai đoạn 1</div>
+<div class="roadmap-title">Reaching the Tipping Point — Đạt điểm bùng phát</div>
+<div class="roadmap-desc">
+<ul>
+<li>Đào tạo Lean-Agile cho lãnh đạo và change agents</li>
+<li>Xây dựng tính cấp thiết và lý do chuyển đổi (Burning Platform)</li>
+<li>Xác định tầm nhìn và mục tiêu chuyển đổi</li>
+<li>Thiết lập Lean-Agile Center of Excellence (LACE)</li>
+</ul>
+</div>
+</div>
+
+<div class="roadmap-phase">
+<div class="roadmap-num">Giai đoạn 2</div>
+<div class="roadmap-title">Training and Launching ARTs — Đào tạo và khởi động hạm đội</div>
+<div class="roadmap-desc">
+<ul>
+<li>Xác định Value Streams và ARTs</li>
+<li>Đào tạo các vai trò chính (PO, SM, RTE, Architects)</li>
+<li>Chuẩn bị và thực hiện PI Planning đầu tiên</li>
+<li>Khởi động ART pilot với coaching hỗ trợ</li>
+</ul>
+</div>
+</div>
+
+<div class="roadmap-phase">
+<div class="roadmap-num">Giai đoạn 3</div>
+<div class="roadmap-title">Coaching and Improving — Huấn luyện và cải tiến</div>
+<div class="roadmap-desc">
+<ul>
+<li>Coach các team và ART trong 2-3 PI đầu tiên</li>
+<li>Thực hiện Inspect & Adapt, cải tiến liên tục</li>
+<li>Xây dựng Communities of Practice</li>
+<li>Đo lường và theo dõi tiến độ chuyển đổi</li>
+</ul>
+</div>
+</div>
+
+<div class="roadmap-phase">
+<div class="roadmap-num">Giai đoạn 4</div>
+<div class="roadmap-title">Launching More ARTs and Portfolio — Mở rộng</div>
+<div class="roadmap-desc">
+<ul>
+<li>Mở rộng sang các ARTs khác dựa trên bài học từ pilot</li>
+<li>Triển khai Lean Portfolio Management</li>
+<li>Mở rộng Agile đến các chức năng hỗ trợ (HR, Finance...)</li>
+<li>Xây dựng văn hóa học tập và cải tiến toàn tổ chức</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2 id="maturity">Đo lường mức trưởng thành Agile</h2>
+
+<p>Đánh giá mức trưởng thành giúp xác định vị trí hiện tại và định hướng cải tiến. Dưới đây là ví dụ về các cấp độ trưởng thành:</p>
+
+<h3>Mức trưởng thành Team</h3>
+
+<table class="maturity-table">
+<thead>
+<tr><th>Khía cạnh</th><th><span class="level-badge level-1">Level 1</span></th><th><span class="level-badge level-2">Level 2</span></th><th><span class="level-badge level-3">Level 3</span></th><th><span class="level-badge level-4">Level 4</span></th></tr>
+</thead>
+<tbody>
+<tr><td>Sprint Planning</td><td>Không có</td><td>Có nhưng không đều</td><td>Đều đặn, có cam kết</td><td>Hiệu quả, dự đoán tốt</td></tr>
+<tr><td>Daily Standup</td><td>Không có</td><td>Status meeting</td><td>Đúng format, đều đặn</td><td>Tự tổ chức, có giá trị</td></tr>
+<tr><td>Retrospective</td><td>Không có</td><td>Có nhưng ít action</td><td>Có action items</td><td>Cải tiến liên tục</td></tr>
+<tr><td>Backlog</td><td>Không có</td><td>Danh sách task</td><td>User Stories, ưu tiên</td><td>Refined, INVEST</td></tr>
+<tr><td>Collaboration</td><td>Làm riêng lẻ</td><td>Chia task</td><td>Pair programming</td><td>Swarming, T-shape</td></tr>
+</tbody>
+</table>
+
+<h3>Mức trưởng thành Tổ chức</h3>
+
+<table class="maturity-table">
+<thead>
+<tr><th>Khía cạnh</th><th><span class="level-badge level-1">Level 1</span></th><th><span class="level-badge level-3">Level 3</span></th><th><span class="level-badge level-5">Level 5</span></th></tr>
+</thead>
+<tbody>
+<tr><td>Cấu trúc tổ chức</td><td>Phòng ban chức năng</td><td>Một số team liên chức năng</td><td>Tổ chức theo Value Stream</td></tr>
+<tr><td>Quản trị danh mục</td><td>Theo dự án</td><td>Kết hợp dự án và sản phẩm</td><td>Lean Portfolio, WSJF</td></tr>
+<tr><td>Ra quyết định</td><td>Tập trung cấp cao</td><td>Một phần phân tán</td><td>Phân tán với guardrails</td></tr>
+<tr><td>Văn hóa</td><td>Tuân thủ, tránh lỗi</td><td>Thử nghiệm có kiểm soát</td><td>Học từ thất bại, đổi mới</td></tr>
+<tr><td>Đo lường</td><td>Output (tasks done)</td><td>Outcome (value delivered)</td><td>Business Agility metrics</td></tr>
+</tbody>
+</table>
+
+<h2 id="vision">Xây dựng tầm nhìn chuyển đổi</h2>
+
+<p>Một tầm nhìn chuyển đổi rõ ràng giúp tạo động lực và định hướng cho toàn tổ chức. Cấu trúc tham khảo:</p>
+
+<blockquote>
+<strong>[Tên tổ chức]</strong> chuyển đổi để trở thành <strong>[mô tả trạng thái mong muốn]</strong>, có khả năng <strong>[năng lực cốt lõi]</strong>, qua đó tạo ra <strong>[giá trị cho khách hàng và tổ chức]</strong>, đồng thời bảo đảm <strong>[các yêu cầu tuân thủ/an toàn]</strong>.
+</blockquote>
+
+<h3>Ví dụ cho TPBank</h3>
+
+<div class="callout callout-green">
+<strong>Change Vision mẫu</strong>
+TPBank chuyển đổi để trở thành ngân hàng có khả năng <strong>nhận biết sớm, ưu tiên đúng và đưa giá trị đến khách hàng nhanh hơn</strong> thông qua các đội ngũ được trao quyền, liên chức năng và vận hành dựa trên dữ liệu, đồng thời bảo đảm <strong>an toàn và tuân thủ</strong>.
+</div>
+
+<h3>Câu hỏi thảo luận để xây dựng tầm nhìn</h3>
+<ol>
+<li><strong>Những thay đổi nào thực sự cần thiết?</strong> — Để tiếp tục tăng trưởng và cạnh tranh, cần thay đổi điều gì?</li>
+<li><strong>Tính cấp bách như thế nào?</strong> — Áp lực từ khách hàng, đối thủ, công nghệ, quy định? Cửa sổ cơ hội còn bao lâu?</li>
+<li><strong>Nếu không thay đổi?</strong> — Hậu quả với khách hàng, thị phần, năng suất, nhân tài, năng lực cạnh tranh?</li>
+</ol>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng</strong>
+Chuyển đổi Agile không phải là "cài đặt" một framework. Đó là hành trình thay đổi văn hóa, cách nghĩ và cách làm việc của cả tổ chức. Cần kiên nhẫn, cam kết lãnh đạo, và cải tiến liên tục trong nhiều năm.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

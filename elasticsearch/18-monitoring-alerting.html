@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring &amp; Alerting - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thu thập</div>
+    <div class="nav-items">
+      <a href="#stack-monitoring">Stack Monitoring</a>
+      <a href="#monitoring-cluster">Monitoring Cluster riêng</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Metric</div>
+    <div class="nav-items">
+      <a href="#key-metrics">Metric quan trọng</a>
+      <a href="#apis">API chẩn đoán nhanh</a>
+      <a href="#health-report">Health Report</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cảnh báo</div>
+    <div class="nav-items">
+      <a href="#kibana-alerting">Kibana Alerting</a>
+      <a href="#watcher">Watcher</a>
+      <a href="#alert-design">Thiết kế cảnh báo</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html" class="current">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Monitoring &amp; Alerting</h1>
+<p class="subtitle">Stack Monitoring, metric quan trọng, health report, Kibana alerting và Watcher</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/monitor-elasticsearch-cluster.html" target="_blank">Elastic — Monitor a Cluster</a>, <a href="https://www.elastic.co/guide/en/kibana/current/alerting-getting-started.html" target="_blank">Elastic — Kibana Alerting</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Thu thập metric của Elasticsearch, Kibana, Logstash bằng Stack Monitoring và hiểu vì sao nên gửi về một monitoring cluster riêng. Biết nhóm metric nào cần theo dõi và ngưỡng tham khảo. Chẩn đoán nhanh bằng <code>_cat</code>, <code>_nodes/stats</code> và Health Report API. Tạo cảnh báo bằng Kibana Alerting, so sánh với Watcher, và thiết kế cảnh báo ít nhiễu.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 10, 11</strong> — Cluster health, shard allocation, disk watermark</li>
+<li><strong>Bài 14: Kibana</strong> — Đã chạy, có encryption key (bắt buộc cho alerting)</li>
+<li><strong>Bài 16, 17</strong> — Metricbeat hoặc Elastic Agent</li>
+</ul>
+
+<h2 id="stack-monitoring">Stack Monitoring</h2>
+<p><strong>Stack Monitoring</strong> là ứng dụng trong Kibana hiển thị sức khỏe của Elasticsearch, Kibana, Logstash, Beats và agent: heap, CPU, indexing rate, search latency, số shard... theo từng cluster, node và index.</p>
+<table>
+<tr><th>Cách thu thập</th><th>Trạng thái</th><th>Ghi chú</th></tr>
+<tr><td>Elastic Agent + integration Elasticsearch (chế độ Stack Monitoring)</td><td>Khuyến nghị</td><td>Quản lý qua Fleet</td></tr>
+<tr><td>Metricbeat module <code>elasticsearch</code> với <code>xpack.enabled: true</code></td><td>Được hỗ trợ</td><td>Như Lab Bài 16</td></tr>
+<tr><td>Legacy internal collection (<code>xpack.monitoring.collection.enabled</code>)</td><td>Deprecated</td><td>Không dùng cho triển khai mới</td></tr>
+</table>
+<pre><code># metricbeat.yml: module elasticsearch cho Stack Monitoring
+- module: elasticsearch
+  xpack.enabled: true
+  period: 10s
+  hosts: ["https://es01:9200", "https://es02:9200", "https://es03:9200"]
+  username: "remote_monitoring_user"
+  password: "${MONITORING_PASSWORD}"
+  ssl.certificate_authorities: ["/certs/ca/ca.crt"]
+  scope: cluster        # một Metricbeat thu thập cả cluster qua API
+                        # scope: node (mặc định) cần một Metricbeat trên mỗi node</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Dữ liệu được ghi vào data stream <code>.monitoring-es-8-mb</code>, <code>.monitoring-kibana-8-mb</code>... Kibana Stack Monitoring đọc các index này.</p>
+
+<h2 id="monitoring-cluster">Monitoring Cluster Riêng</h2>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Một cluster không thể tự báo cáo đáng tin cậy rằng nó đang chết. Khi cluster production quá tải hoặc red, chính dữ liệu monitoring của nó cũng không ghi được. Gửi monitoring về một cluster nhỏ riêng để vẫn nhìn thấy production lúc nó gặp sự cố.
+</div>
+<div class="flow">
+<span class="flow-step">Production cluster</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Metricbeat / Agent</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Monitoring cluster</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Kibana Stack Monitoring + Alerting</span>
+</div>
+<ul>
+<li>Monitoring cluster có thể nhỏ (1–3 node), có ILM giữ dữ liệu 7–30 ngày</li>
+<li>Version của monitoring cluster nên &ge; version của các cluster được giám sát</li>
+<li>Một monitoring cluster giám sát được nhiều cluster production</li>
+<li>Khi chỉ có một cluster (lab, môi trường nhỏ), gửi về chính nó vẫn hơn không giám sát gì</li>
+</ul>
+
+<h2 id="key-metrics">Metric Quan Trọng</h2>
+<table>
+<tr><th>Nhóm</th><th>Metric</th><th>Ngưỡng tham khảo</th><th>Ý nghĩa khi vượt</th></tr>
+<tr><td>Cluster</td><td>Health status</td><td>Khác green quá vài phút</td><td>Shard chưa cấp phát (Bài 10)</td></tr>
+<tr><td>Cluster</td><td>Pending tasks</td><td>Tăng liên tục</td><td>Master quá tải, cluster state lớn</td></tr>
+<tr><td>JVM</td><td>Heap used %</td><td>Thường xuyên &gt; 85% sau GC</td><td>Áp lực bộ nhớ, sắp chạm circuit breaker</td></tr>
+<tr><td>JVM</td><td>Old GC time/count</td><td>GC dài vài giây hoặc dày đặc</td><td>Node bị treo theo từng đợt, có thể rời cluster</td></tr>
+<tr><td>Node</td><td>CPU %</td><td>&gt; 85–90% kéo dài</td><td>Không đủ năng lực xử lý</td></tr>
+<tr><td>Node</td><td>Disk used %</td><td>&gt; 80%</td><td>Sắp chạm low watermark (Bài 11)</td></tr>
+<tr><td>Indexing</td><td>Indexing rate, latency</td><td>Latency tăng mà rate không tăng</td><td>Nghẽn I/O, merge, refresh quá dày</td></tr>
+<tr><td>Search</td><td>Search rate, query latency</td><td>p95/p99 tăng</td><td>Query tốn kém, cache miss, quá tải</td></tr>
+<tr><td>Thread pool</td><td>Rejected (write, search)</td><td>&gt; 0 và tăng</td><td>Cluster từ chối request, client nhận 429 (Bài 21)</td></tr>
+<tr><td>Shards</td><td>Tổng số shard, shard/node</td><td>Gần <code>max_shards_per_node</code></td><td>Over-sharding (Bài 11)</td></tr>
+</table>
+<div class="callout callout-amber">
+<strong>Heap 75% không phải lúc nào cũng xấu</strong>
+Heap tăng dần rồi giảm mạnh sau mỗi lần GC (hình răng cưa) là bình thường. Điều đáng lo là <strong>mức đáy sau GC</strong> tăng dần theo thời gian, hoặc GC chạy liên tục mà không giải phóng được bộ nhớ.
+</div>
+
+<h2 id="apis">API Chẩn Đoán Nhanh</h2>
+<pre><code># Toàn cảnh
+GET /_cluster/health
+GET /_cat/nodes?v&amp;h=name,role,heap.percent,ram.percent,cpu,load_1m,disk.used_percent&amp;s=heap.percent:desc
+
+# Thread pool: active, queue, rejected
+GET /_cat/thread_pool/write,search?v&amp;h=node_name,name,active,queue,rejected
+
+# Shard và disk
+GET /_cat/allocation?v
+GET /_cat/shards?v&amp;h=index,shard,prirep,state,unassigned.reason&amp;s=state
+
+# Chi tiết từng node: JVM, GC, breaker, indexing, search
+GET /_nodes/stats/jvm,breaker,thread_pool,indices?human&amp;filter_path=nodes.*.name,nodes.*.jvm.mem.heap_used_percent,nodes.*.breakers.parent
+
+# Tác vụ đang chạy lâu
+GET /_tasks?detailed=true&amp;actions=*search*,*reindex*
+GET /_cluster/pending_tasks</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="health-report">Health Report</h2>
+<p>Từ ES 8.7, <strong>Health Report API</strong> tổng hợp sức khỏe theo từng thành phần (indicator), kèm nguyên nhân và hướng xử lý cụ thể. Đây là điểm khởi đầu tốt khi chưa biết cluster đang gặp vấn đề gì.</p>
+<pre><code>GET /_health_report
+
+# Chỉ một indicator, kèm chi tiết
+GET /_health_report/shards_availability?verbose=true</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Indicator</th><th>Kiểm tra</th></tr>
+<tr><td><code>master_is_stable</code></td><td>Master có ổn định hay bị bầu lại liên tục</td></tr>
+<tr><td><code>shards_availability</code></td><td>Shard primary/replica chưa cấp phát</td></tr>
+<tr><td><code>disk</code></td><td>Node vượt watermark</td></tr>
+<tr><td><code>ilm</code>, <code>slm</code></td><td>ILM/SLM bị dừng hoặc policy lỗi</td></tr>
+<tr><td><code>shards_capacity</code></td><td>Sắp chạm giới hạn số shard</td></tr>
+<tr><td><code>repository_integrity</code></td><td>Snapshot repository bị hỏng</td></tr>
+</table>
+<p>Mỗi indicator trả về <code>status</code> (green/yellow/red/unknown), <code>symptom</code>, <code>impacts</code> và <code>diagnosis</code> có trường <code>action</code> mô tả cách sửa.</p>
+
+<h2 id="kibana-alerting">Kibana Alerting</h2>
+<p>Kibana Alerting gồm hai khái niệm:</p>
+<ul>
+<li><strong>Rule</strong>: điều kiện kiểm tra theo chu kỳ (ví dụ: số log lỗi trong 5 phút &gt; 50)</li>
+<li><strong>Connector</strong>: nơi gửi thông báo (email, Slack, Microsoft Teams, PagerDuty, webhook, ghi vào index)</li>
+</ul>
+<table>
+<tr><th>Loại rule</th><th>Dùng cho</th></tr>
+<tr><td>Elasticsearch query</td><td>Query DSL, KQL hoặc ES|QL trả về số document vượt ngưỡng</td></tr>
+<tr><td>Index threshold</td><td>Aggregation (count, avg, max...) vượt ngưỡng, có thể group theo field</td></tr>
+<tr><td>Stack Monitoring rules</td><td>Có sẵn: CPU, disk, heap, cluster health, thread pool rejection, license sắp hết hạn</td></tr>
+<tr><td>Observability rules</td><td>Log threshold, metric threshold, uptime, APM latency/error rate</td></tr>
+<tr><td>Security detection rules</td><td>Phát hiện tấn công (Bài 25)</td></tr>
+</table>
+<pre><code># Tạo rule qua API: cảnh báo khi có hơn 50 lỗi 5xx trong 5 phút
+POST kbn:/api/alerting/rule
+{
+  "name": "Nhiều lỗi 5xx",
+  "rule_type_id": ".es-query",
+  "consumer": "stackAlerts",
+  "schedule": { "interval": "1m" },
+  "params": {
+    "searchType": "esQuery",
+    "index": ["access-logs"],
+    "timeField": "@timestamp",
+    "esQuery": "{\"query\":{\"range\":{\"status_code\":{\"gte\":500}}}}",
+    "timeWindowSize": 5,
+    "timeWindowUnit": "m",
+    "threshold": [50],
+    "thresholdComparator": "&gt;",
+    "size": 0
+  },
+  "actions": [
+    {
+      "id": "&lt;connector-id&gt;",
+      "group": "query matched",
+      "frequency": { "summary": false, "notify_when": "onActionGroupChange", "throttle": null },
+      "params": { "message": "{{rule.name}}: {{context.value}} lỗi 5xx trong 5 phút. {{context.link}}" }
+    }
+  ]
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Điều kiện để Alerting hoạt động</strong>
+Kibana cần <code>xpack.encryptedSavedObjects.encryptionKey</code> (Bài 14) và cluster bật security với TLS trên HTTP. Một số connector (email, Slack, PagerDuty...) chỉ có ở license trả phí; connector ghi vào index và server log có ở bản miễn phí. Đối chiếu trang Elastic Subscriptions cho đúng version.
+</div>
+
+<h2 id="watcher">Watcher</h2>
+<p><strong>Watcher</strong> là hệ thống cảnh báo chạy bên trong Elasticsearch (cần license trả phí). Một watch gồm trigger, input, condition và actions, viết bằng JSON.</p>
+<pre><code>PUT /_watcher/watch/cluster_not_green
+{
+  "trigger": { "schedule": { "interval": "1m" } },
+  "input": { "http": { "request": { "host": "localhost", "port": 9200, "path": "/_cluster/health", "scheme": "https" } } },
+  "condition": { "compare": { "ctx.payload.status": { "not_eq": "green" } } },
+  "throttle_period": "15m",
+  "actions": {
+    "notify": { "webhook": { "method": "POST", "url": "https://hooks.example.com/oncall",
+      "body": "Cluster {{ctx.payload.cluster_name}} đang {{ctx.payload.status}}" } }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th></th><th>Kibana Alerting</th><th>Watcher</th></tr>
+<tr><td>Chạy ở</td><td>Kibana task manager</td><td>Elasticsearch</td></tr>
+<tr><td>Tạo rule</td><td>Giao diện, API, rule có sẵn</td><td>Chỉ JSON qua API</td></tr>
+<tr><td>Linh hoạt</td><td>Theo các loại rule có sẵn</td><td>Rất cao: chuỗi input, transform bằng Painless</td></tr>
+<tr><td>Hướng phát triển</td><td>Hướng chính của Elastic</td><td>Vẫn được hỗ trợ</td></tr>
+</table>
+<p>Triển khai mới nên dùng Kibana Alerting. Dùng Watcher khi cần logic mà rule type có sẵn không biểu diễn được.</p>
+
+<h2 id="alert-design">Thiết Kế Cảnh Báo</h2>
+<div class="callout callout-red">
+<strong>Alert fatigue</strong>
+Cảnh báo nhiều và sai làm đội vận hành bỏ qua cả cảnh báo thật. Mỗi cảnh báo nên trả lời được: điều gì đang hỏng, ảnh hưởng tới ai, và cần làm gì ngay.
+</div>
+<ul>
+<li><strong>Cảnh báo theo triệu chứng</strong> người dùng cảm nhận (tỷ lệ lỗi, latency, cluster red) trước, nguyên nhân (CPU cao) sau</li>
+<li><strong>Có khoảng chờ</strong>: điều kiện kéo dài vài phút mới báo, tránh báo vì một đỉnh nhọn thoáng qua</li>
+<li><strong>Chia mức độ</strong>: critical (gọi người trực), warning (gửi kênh team), info (chỉ lưu)</li>
+<li><strong>Chỉ báo khi đổi trạng thái</strong> (<code>onActionGroupChange</code>), không báo lặp mỗi phút</li>
+<li><strong>Kèm link</strong> tới dashboard hoặc Discover với filter sẵn</li>
+<li><strong>Có runbook</strong>: link tới tài liệu xử lý cho từng cảnh báo</li>
+<li><strong>Giám sát chính hệ thống giám sát</strong>: cảnh báo khi không nhận được dữ liệu monitoring (no data)</li>
+</ul>
+
+<h2 id="lab">Bài Lab: Cảnh Báo Khi Cluster Chuyển Yellow</h2>
+<h3>Bước 1: Bật Stack Monitoring bằng Metricbeat</h3>
+<p>Trong lab, gửi monitoring về chính cluster lab (production nên dùng cluster riêng).</p>
+<pre><code>source .env
+curl $AUTH -X POST "$ES/_security/user/remote_monitoring_user/_password" \
+  -H 'Content-Type: application/json' -d '{"password":"monitoring-lab-password-123"}'
+echo "MONITORING_PASSWORD=monitoring-lab-password-123" &gt;&gt; .env
+
+cat &gt;&gt; beats/metricbeat.yml &lt;&lt;'EOF'
+  - module: elasticsearch
+    xpack.enabled: true
+    period: 10s
+    scope: cluster
+    hosts: ["https://es01:9200"]
+    username: "remote_monitoring_user"
+    password: "${MONITORING_PASSWORD}"
+    ssl.certificate_authorities: ["/certs/ca/ca.crt"]
+EOF</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Kiểm tra vị trí khối vừa thêm</strong>
+Lệnh <code>cat &gt;&gt;</code> nối vào cuối file, tức là sau khối <code>output.elasticsearch</code>. Mở <code>beats/metricbeat.yml</code> và chuyển khối module <code>elasticsearch</code> lên nằm trong danh sách <code>metricbeat.modules</code>, thụt lề giống các module khác. Đồng thời thêm <code>MONITORING_PASSWORD=${MONITORING_PASSWORD}</code> vào <code>environment</code> của service <code>metricbeat</code>, và thêm <code>.monitoring-*</code> vào danh sách index trong API key của Beats (Bài 16).
+</div>
+<pre><code>docker compose up -d --force-recreate metricbeat
+curl $AUTH "$ES/_data_stream/.monitoring-es-8-mb?filter_path=**.name"
+# Kibana → Stack Monitoring: thấy cluster, 3 node, các index</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Connector và rule</h3>
+<ol>
+<li>Stack Management → Connectors → Create: loại <strong>Index</strong>, tên "Alert history", ghi vào index <code>alert-history-lab</code>. Connector này có ở bản miễn phí, phù hợp cho lab</li>
+<li>Stack Management → Rules → Create rule: loại <strong>Elasticsearch query</strong>, data view hoặc index <code>.monitoring-es-8-mb</code>, KQL <code>elasticsearch.cluster.stats.status : "yellow" or elasticsearch.cluster.stats.status : "red"</code>, điều kiện "IS ABOVE 0" trong 2 phút gần nhất, chạy mỗi 1 phút</li>
+<li>Action: connector "Alert history", chạy khi trạng thái thay đổi, nội dung document có <code>{{rule.name}}</code>, <code>{{context.date}}</code>, <code>{{context.hits}}</code></li>
+</ol>
+<p>Stack Monitoring cũng có sẵn rule "Cluster health" (Stack Monitoring → Alerts and rules). Bật nó để so sánh với rule tự tạo.</p>
+
+<h3>Bước 3: Gây ra trạng thái yellow</h3>
+<pre><code># Yêu cầu nhiều replica hơn số node → replica không cấp phát được → yellow
+curl $AUTH -X PUT "$ES/lab-yellow" -H 'Content-Type: application/json' \
+  -d '{"settings":{"number_of_shards":1,"number_of_replicas":5}}'
+curl $AUTH "$ES/_cluster/health?filter_path=status"
+
+# Health Report giải thích nguyên nhân
+curl $AUTH "$ES/_health_report/shards_availability?pretty"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Xác nhận cảnh báo và khôi phục</h3>
+<pre><code># Chờ 1–3 phút cho Metricbeat thu thập và rule chạy
+curl $AUTH "$ES/alert-history-lab/_search?pretty&amp;size=5"
+
+# Khôi phục và kiểm tra rule trở về trạng thái bình thường
+curl $AUTH -X DELETE "$ES/lab-yellow"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Stack Monitoring hiển thị cluster chuyển vàng, Health Report chỉ ra index <code>lab-yellow</code> thiếu replica, rule ghi một document vào <code>alert-history-lab</code>. Sau khi xóa index, rule trở về trạng thái OK và không gửi lặp. Thay connector Index bằng Slack/email/webhook là có cảnh báo thật.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Vì sao nên gửi dữ liệu monitoring về một cluster riêng?</li>
+<li>Kể tên 5 metric quan trọng nhất cần theo dõi và ý nghĩa khi chúng vượt ngưỡng.</li>
+<li>Vì sao heap 75% chưa chắc đã là vấn đề? Bạn nhìn vào đâu để đánh giá?</li>
+<li>Health Report API cung cấp những thông tin gì mà <code>_cluster/health</code> không có?</li>
+<li>Rule và connector trong Kibana Alerting khác nhau thế nào?</li>
+<li>Khi nào dùng Watcher thay vì Kibana Alerting?</li>
+<li>Nêu 4 nguyên tắc giảm alert fatigue.</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Bật Stack Monitoring bằng Metricbeat hoặc Elastic Agent</li>
+<li>☐ Giải thích kiến trúc monitoring cluster riêng</li>
+<li>☐ Đọc được heap, GC, CPU, disk, thread pool rejection</li>
+<li>☐ Dùng <code>_cat</code>, <code>_nodes/stats</code>, <code>_tasks</code> để chẩn đoán nhanh</li>
+<li>☐ Đọc Health Report và làm theo diagnosis</li>
+<li>☐ Tạo rule và connector trong Kibana Alerting</li>
+<li>☐ Thiết kế cảnh báo có mức độ, khoảng chờ và runbook</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Chỉ giám sát bằng chính cluster production</strong>: cluster chết là mất luôn khả năng nhìn thấy.</li>
+<li><strong>Dùng legacy internal collection cho triển khai mới</strong>: đã deprecated, chuyển sang Metricbeat hoặc Agent.</li>
+<li><strong>Cảnh báo heap &gt; 75% tức thời</strong>: báo liên tục theo nhịp GC, không ai còn đọc.</li>
+<li><strong>Không có cảnh báo "no data"</strong>: Metricbeat chết thì mọi rule im lặng, trông như mọi thứ đều ổn.</li>
+<li><strong>Kibana thiếu encryption key</strong>: không tạo hoặc chạy được rule.</li>
+<li><strong>Cảnh báo không có hướng xử lý</strong>: người trực nhận cảnh báo lúc 3 giờ sáng mà không biết làm gì.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Monitoring cluster riêng, nhỏ, có ILM giữ 7–30 ngày</li>
+<li>Thu thập bằng Elastic Agent qua Fleet hoặc Metricbeat với <code>scope: cluster</code></li>
+<li>Bật các rule Stack Monitoring có sẵn trước khi tự viết rule</li>
+<li>Cảnh báo critical cho: cluster red, disk &gt; 85%, thread pool rejection, mất monitoring data</li>
+<li>Mỗi cảnh báo có runbook và link tới dashboard</li>
+<li>Xem lại định kỳ cảnh báo nào hay bị bỏ qua để chỉnh hoặc gỡ</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/monitor-elasticsearch-cluster.html" target="_blank">ES: Monitor a Cluster</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/configuring-metricbeat.html" target="_blank">ES: Collect Monitoring Data with Metricbeat</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/health-api.html" target="_blank">ES: Health API</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/alerting-getting-started.html" target="_blank">Kibana: Alerting and Actions</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/kibana-alerts.html" target="_blank">Kibana: Stack Monitoring Alerts</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-alerting.html" target="_blank">ES: Watcher</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="17-fleet-integrations.html">&larr; Bài 17: Fleet</a>
+<a href="19-performance-tuning.html">Bài 19: Performance &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAFe Principles - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.value-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.5rem 0}
+.value-item{background:#f8fafc;border:1px solid rgba(102,126,234,.15);border-radius:10px;padding:1.25rem}
+.value-item h4{font-size:.9rem;font-weight:700;color:#4c51bf;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.value-item h4 span{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#667eea;color:#fff;border-radius:50%;font-size:.75rem}
+.value-item ul{margin:0;padding-left:1.25rem;font-size:.85rem}
+.value-item li{margin-bottom:.25rem;color:#64748b}
+.principle-list{counter-reset:principle}
+.principle-item{background:#f8fafc;border-left:3px solid #667eea;padding:1rem 1.25rem;margin:1rem 0;border-radius:0 8px 8px 0;counter-increment:principle}
+.principle-item::before{content:"#" counter(principle);font-weight:700;color:#667eea;font-size:.85rem;display:block;margin-bottom:.25rem}
+.principle-item h4{font-size:.92rem;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+.principle-item p{font-size:.85rem;color:#64748b;margin:0}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}.value-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#core-values">4 Core Values</a>
+<a href="#principles">10 Nguyên tắc Lean-Agile</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="03-agile-manifesto.html">← Trước</a>
+<a href="05-value-stream.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html" class="current">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">SAFe Principles</h1>
+<p class="subtitle">Scaled Agile Framework — Các giá trị và nguyên tắc Agile ở quy mô lớn</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: SAFe (Scaled Agile Framework) — Bài 04/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Agile Manifesto ra đời cho quy mô nhỏ (1 team). SAFe (Scaled Agile Framework) mở rộng các nguyên tắc Agile cho quy mô lớn — nhiều team, nhiều sản phẩm, cấp tổ chức — trong khi vẫn giữ tinh thần Agile cốt lõi.
+</div>
+
+<p>Khi tổ chức phát triển với hàng chục hoặc hàng trăm team, cần có framework để đảm bảo sự phối hợp, đồng bộ và nhất quán. SAFe cung cấp cấu trúc này thông qua 4 Core Values và 10 Lean-Agile Principles.</p>
+
+<h2 id="core-values">4 SAFe Core Values</h2>
+
+<div class="value-grid">
+<div class="value-item">
+<h4><span>1</span> Alignment (Hướng về mục tiêu chung)</h4>
+<ul>
+<li>Truyền đạt tầm nhìn, sứ mệnh và chiến lược</li>
+<li>Kết nối chiến lược với thực thi</li>
+<li>Giao tiếp bằng một ngôn ngữ chung</li>
+<li>Liên tục kiểm tra mức độ hiểu biết</li>
+<li>Hiểu rõ khách hàng của bạn</li>
+</ul>
+</div>
+
+<div class="value-item">
+<h4><span>2</span> Transparency (Minh bạch)</h4>
+<ul>
+<li>Tạo môi trường dựa trên sự tin tưởng</li>
+<li>Giao tiếp trực tiếp, cởi mở và trung thực</li>
+<li>Biến sai lầm thành cơ hội học hỏi</li>
+<li>Trực quan hoá công việc</li>
+<li>Cung cấp quyền truy cập dễ dàng vào thông tin cần thiết</li>
+</ul>
+</div>
+
+<div class="value-item">
+<h4><span>3</span> Respect for People (Tôn trọng con người)</h4>
+<ul>
+<li>Trân trọng giá trị của con người</li>
+<li>Đề cao sự đa dạng về con người và quan điểm</li>
+<li>Phát triển con người thông qua huấn luyện và cố vấn</li>
+<li>Chấp nhận quan điểm "Khách hàng của bạn là bất kỳ ai thụ hưởng kết quả công việc của bạn"</li>
+<li>Xây dựng quan hệ đối tác lâu dài dựa trên lợi ích chung</li>
+</ul>
+</div>
+
+<div class="value-item">
+<h4><span>4</span> Relentless Improvement (Cải tiến không ngừng)</h4>
+<ul>
+<li>Tạo cảm giác cấp bách liên tục</li>
+<li>Xây dựng văn hóa giải quyết vấn đề</li>
+<li>Thường xuyên phản chiếu và thích nghi</li>
+<li>Để dữ kiện dẫn dắt các cải tiến</li>
+<li>Cung cấp thời gian và không gian cho đổi mới</li>
+</ul>
+</div>
+</div>
+
+<h2 id="principles">10 Nguyên tắc SAFe Lean-Agile</h2>
+
+<p>Các nguyên tắc này hướng dẫn cách ra quyết định và hành động trong môi trường Agile quy mô lớn:</p>
+
+<div class="principle-list">
+<div class="principle-item">
+<h4>Thiết lập tầm nhìn về hiệu quả kinh tế</h4>
+<p>Mọi quyết định phải được đánh giá dựa trên tác động kinh tế. Hiểu rõ chi phí trì hoãn (Cost of Delay), trade-off giữa tốc độ và chất lượng, và tối ưu hoá cho toàn bộ chuỗi giá trị — không phải từng phần riêng lẻ.</p>
+</div>
+
+<div class="principle-item">
+<h4>Áp dụng tư duy hệ thống</h4>
+<p>Nhìn nhận tổ chức như một hệ thống có các phần tương tác với nhau. Tối ưu cục bộ thường gây hại cho toàn cục. Hiểu các vòng phản hồi, điểm nghẽn và sự phụ thuộc để cải thiện hiệu quả tổng thể.</p>
+</div>
+
+<div class="principle-item">
+<h4>Giả định sự biến động; bảo tồn các phương án lựa chọn</h4>
+<p>Chấp nhận rằng yêu cầu sẽ thay đổi. Thiết kế linh hoạt, giữ nhiều phương án mở càng lâu càng tốt, và ra quyết định vào "thời điểm trách nhiệm cuối cùng" (last responsible moment) thay vì quá sớm.</p>
+</div>
+
+<div class="principle-item">
+<h4>Xây dựng và chuyển giao nhanh, tích hợp quá trình học hỏi</h4>
+<p>Chu kỳ ngắn cho phép học hỏi nhanh từ phản hồi thực tế. Build-Measure-Learn: xây dựng sản phẩm tối thiểu, đo lường kết quả, học hỏi và điều chỉnh. Thất bại nhanh, học nhanh.</p>
+</div>
+
+<div class="principle-item">
+<h4>Thiết lập các mốc dựa trên đánh giá hệ thống hoàn thiện</h4>
+<p>Đánh giá tiến độ dựa trên giá trị thực tế được chuyển giao — sản phẩm hoạt động, tích hợp đầy đủ — không phải tài liệu hay số liệu trung gian. Demo thường xuyên là cách tốt nhất để xác minh tiến độ.</p>
+</div>
+
+<div class="principle-item">
+<h4>Tạo dòng chảy giá trị không bị gián đoạn</h4>
+<p>Xác định và loại bỏ các điểm nghẽn trong dòng chảy giá trị. Giảm kích thước lô (batch size), hạn chế công việc dở dang (WIP), giảm thời gian chờ đợi và handoff giữa các bộ phận.</p>
+</div>
+
+<div class="principle-item">
+<h4>Áp dụng đồng nhịp và đồng bộ với lập kế hoạch liên miền</h4>
+<p>Sử dụng các chu kỳ cố định (cadence) để tạo nhịp độ đều đặn và có thể dự đoán. Đồng bộ hóa giữa các team thông qua các sự kiện lập kế hoạch chung (PI Planning) và điểm tích hợp.</p>
+</div>
+
+<div class="principle-item">
+<h4>Mở khoá động lực nội tại của người lao động tri thức</h4>
+<p>Tạo điều kiện cho ba yếu tố động lực nội tại: Tự chủ (Autonomy) — quyền kiểm soát cách làm việc; Năng lực chuyên môn (Mastery) — cơ hội phát triển; Mục đích (Purpose) — hiểu ý nghĩa công việc.</p>
+</div>
+
+<div class="principle-item">
+<h4>Ra quyết định phân tán</h4>
+<p>Đẩy quyền ra quyết định xuống cấp gần nhất với công việc. Quyết định tập trung cho những việc không thường xuyên, có tác động lâu dài, quy mô kinh tế lớn. Quyết định phân tán cho những việc thường xuyên, khẩn cấp, cần thông tin cục bộ.</p>
+</div>
+
+<div class="principle-item">
+<h4>Sắp xếp nguồn lực theo chuỗi giá trị</h4>
+<p>Tổ chức team theo chuỗi giá trị (Value Stream) thay vì phòng ban chức năng. Team ổn định, liên chức năng, có đủ năng lực để chuyển giao giá trị đầu-cuối mà không phụ thuộc vào team khác.</p>
+</div>
+</div>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+SAFe không phải là "thêm quy trình" vào Agile, mà là cách để giữ tinh thần Agile khi quy mô tăng lên. Các nguyên tắc này giúp tổ chức lớn vẫn có thể linh hoạt, phản hồi nhanh và tập trung vào giá trị khách hàng.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

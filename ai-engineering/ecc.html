@@ -83,6 +83,7 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
     <div class="nav-group-title">Tổng Quan</div>
     <div class="nav-items">
       <a href="#overview">ECC là gì</a>
+      <a href="#whatsnew">Điểm mới v2.2</a>
       <a href="#architecture">Kiến trúc</a>
       <a href="#platforms">Cross-platform</a>
     </div>
@@ -90,9 +91,9 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
   <div class="nav-group">
     <div class="nav-group-title">Thành Phần Chính</div>
     <div class="nav-items">
-      <a href="#agents">Agents (63+)</a>
-      <a href="#skills">Skills (249+)</a>
-      <a href="#rules">Rules (29+)</a>
+      <a href="#agents">Agents (71)</a>
+      <a href="#skills">Skills (311)</a>
+      <a href="#rules">Rules</a>
       <a href="#hooks">Hooks</a>
     </div>
   </div>
@@ -122,10 +123,10 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
 
 <div class="source-box">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
-<span>Nguồn: <a href="https://github.com/affaan-m/ECC" target="_blank">github.com/affaan-m/ECC</a> — MIT License, v2.0.0-rc.1 (April 2026) | 182K+ stars, 170+ contributors</span>
+<span>Nguồn: <a href="https://github.com/affaan-m/ECC" target="_blank">github.com/affaan-m/ECC</a> — MIT License, v2.2.3 (01/10/2026) | ~287.1k stars, 42.6k forks (số liệu 23/10/2026)</span>
 </div>
 
-<p>ECC (viết tắt của <strong>Enhanced Claude Code</strong>) là hệ thống operator toàn diện cho AI coding agents. Thay vì dùng AI agent với prompt mặc định, ECC cung cấp một lớp trung gian giữa developer và AI — bao gồm <strong>63+ agents chuyên biệt</strong>, <strong>249+ skills</strong>, <strong>29+ bộ rules</strong> cho <strong>20+ ngôn ngữ/framework</strong>, và hệ thống hooks tự động — giúp agent hoạt động chính xác, hiệu quả, và an toàn hơn đáng kể.</p>
+<p>ECC (viết tắt của <strong>Enhanced Claude Code</strong>) là hệ thống operator toàn diện cho AI coding agents. Thay vì dùng AI agent với prompt mặc định, ECC cung cấp một lớp trung gian giữa developer và AI — bao gồm <strong>71 agents chuyên biệt</strong>, <strong>311 skills</strong>, <strong>97 commands</strong>, các bộ rules cho <strong>20+ ngôn ngữ/framework</strong>, và hệ thống hooks tự động — giúp agent hoạt động chính xác, hiệu quả, và an toàn hơn đáng kể. (Số liệu theo bản <strong>v2.2.3</strong>, phát hành 01/10/2026.)</p>
 
 <div class="callout callout-blue">
 <strong>Tư duy cốt lõi:</strong> AI agent mạnh nhất khi được cung cấp context đúng vào đúng thời điểm. ECC là lớp "operator system" nằm giữa developer và AI harness — tự động cung cấp agents, skills, rules, và hooks phù hợp cho từng loại task, từng ngôn ngữ, từng giai đoạn của workflow.
@@ -142,24 +143,40 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
 <li><strong>Lãng phí token</strong> — Load toàn bộ context không cần thiết → Chỉ load chiến lược những gì cần</li>
 </ul>
 
+<h2 id="whatsnew">Điểm mới trong v2.2</h2>
+
+<p>Bản phát hành hiện tại là <strong>v2.2.3</strong> (01/10/2026). Dòng 2.2 tập trung vào trải nghiệm cài đặt và bộ nhớ dùng chung giữa các harness:</p>
+
+<ul>
+<li><strong>Guided setup theo manifest</strong> — cài đặt có hướng dẫn trên Claude Code, Codex và Kimi Code, với cơ chế quản lý install-state (ownership), cùng các lệnh <code>doctor</code>, <code>repair</code>, <code>uninstall</code>.</li>
+<li><strong>Mở rộng harness</strong> — cài đặt native cho Antigravity, adapter mỏng cho Pi, và packed-artifact release gate (cổng kiểm thử đóng gói) được test trên Linux, macOS, Windows.</li>
+<li><strong>Plan Canvas</strong> — review kế hoạch (plan) ngay trên trình duyệt: annotate rồi approve/request-changes.</li>
+<li><strong>Unified memory vault</strong> (<code>ecc memory</code>) — kho bộ nhớ hợp nhất, chia sẻ context giữa các harness khác nhau (xem mục Memory bên dưới).</li>
+<li><strong>Itô compute skill family</strong> — nhóm skill cho self-hosted models và custom endpoints.</li>
+</ul>
+
+<div class="callout callout-blue">
+<strong>v2.0.0 — The Agent Harness Operating System (06/2026):</strong> Dòng 2.0 đánh dấu việc ổn định hóa (graduation) các thành phần nền tảng: control-plane substrate, worktree lifecycle service, họ orchestrator <code>orch-*</code>, và cộng đồng Discord. Đây là nền cho khả năng điều phối đa-agent và quản lý worktree của ECC hiện nay.
+</div>
+
 <h2 id="architecture">Kiến trúc tổng thể</h2>
 
 <p>ECC được tổ chức thành <strong>6 core components</strong>, mỗi component đảm nhận một vai trò riêng biệt trong hệ thống:</p>
 
 <table>
 <tr><th>Component</th><th>Thư mục</th><th>Vai trò</th></tr>
-<tr><td><strong>Agents</strong></td><td><code>agents/</code></td><td>63+ subagents chuyên biệt — được ủy quyền cho các tác vụ cụ thể (review code, bảo mật, sửa lỗi build, theo ngôn ngữ...)</td></tr>
-<tr><td><strong>Skills</strong></td><td><code>skills/</code></td><td>249+ định nghĩa workflow — mẫu coding, kiến thức domain, hướng dẫn framework, chiến lược testing</td></tr>
-<tr><td><strong>Rules</strong></td><td><code>rules/</code></td><td>29+ bộ quy tắc bắt buộc — chung cho mọi ngôn ngữ + riêng theo ngôn ngữ, tự động load theo context</td></tr>
+<tr><td><strong>Agents</strong></td><td><code>agents/</code></td><td>71 subagents chuyên biệt — được ủy quyền cho các tác vụ cụ thể (review code, bảo mật, sửa lỗi build, theo ngôn ngữ...)</td></tr>
+<tr><td><strong>Skills</strong></td><td><code>skills/</code></td><td>311 định nghĩa workflow — mẫu coding, kiến thức domain, hướng dẫn framework, chiến lược testing</td></tr>
+<tr><td><strong>Rules</strong></td><td><code>rules/</code></td><td>Bộ quy tắc opt-in — chung cho mọi ngôn ngữ (common/) + riêng theo ngôn ngữ, tự động load theo context</td></tr>
 <tr><td><strong>Hooks</strong></td><td><code>hooks/</code></td><td>Tự động hóa theo sự kiện — kích hoạt tại các điểm lifecycle (SessionStart, PostToolUse, Stop...)</td></tr>
-<tr><td><strong>Commands</strong></td><td><code>commands/</code></td><td>79 slash-commands cũ — duy trì tương thích trong quá trình chuyển sang kiến trúc skills-first</td></tr>
+<tr><td><strong>Commands</strong></td><td><code>commands/</code></td><td>97 slash-command shim được duy trì — tương thích trong quá trình chuyển sang kiến trúc skills-first</td></tr>
 <tr><td><strong>MCP Configs</strong></td><td><code>mcp-configs/</code></td><td>Tích hợp bên ngoài — GitHub, Context7, Exa, Playwright, Sequential Thinking, Memory, Supabase</td></tr>
 </table>
 
 <h3>Cấu trúc thư mục</h3>
 <pre><code>ECC/
-├── agents/               ← 63+ subagents chuyên biệt
-├── skills/               ← 249+ định nghĩa workflow
+├── agents/               ← 71 subagents chuyên biệt
+├── skills/               ← 311 định nghĩa workflow
 │   ├── coding-standards/
 │   ├── backend-patterns/
 │   ├── frontend-patterns/
@@ -189,11 +206,11 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
 │   ├── arkts/            ← HarmonyOS
 │   └── web/
 ├── hooks/                ← Tự động hóa theo sự kiện (hooks.json)
-├── commands/             ← 79 slash-command cũ
+├── commands/             ← 97 slash-command shim
 ├── mcp-configs/          ← Cấu hình máy chủ MCP
 ├── contexts/             ← Context hệ thống động
 ├── config/               ← Tệp cấu hình
-├── ecc2/                 ← ECC 2.0 alpha (Rust control-plane)
+├── ecc2/                 ← ECC 2.0 (Rust control-plane)
 ├── src/                  ← Mã nguồn (AgentShield, state store...)
 ├── tests/                ← 997+ bộ test
 ├── docs/                 ← Tài liệu & hướng dẫn (đa ngôn ngữ)
@@ -259,7 +276,7 @@ blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;backg
 <tr><td>File naming</td><td>Kebab-case</td><td>Ví dụ: <code>python-reviewer.md</code>, <code>backend-patterns.md</code></td></tr>
 </table>
 
-<h2 id="agents">Agents (63+)</h2>
+<h2 id="agents">Agents (71)</h2>
 
 <p>ECC sử dụng <strong>mô hình ủy quyền (delegation model)</strong>: thay vì main agent xử lý mọi thứ, nó ủy quyền task cho subagents chuyên biệt. Mỗi agent có context, chuyên môn, và bộ công cụ riêng — tối ưu cho loại task được giao.</p>
 
@@ -329,7 +346,7 @@ User: "Review this Python file for issues"
 <strong>Chọn model:</strong> Mỗi agent có thể chỉ định model trong frontmatter. Tác vụ đơn giản (tra cứu docs, formatting) dùng model nhẹ hơn (sonnet/haiku). Tác vụ phức tạp (review kiến trúc, phân tích bảo mật) dùng model mạnh hơn (opus). Điều này tối ưu cả chi phí lẫn chất lượng.
 </div>
 
-<h2 id="skills">Skills (249+)</h2>
+<h2 id="skills">Skills (311)</h2>
 
 <p>Skills là bề mặt workflow chính của ECC — mỗi skill là một định nghĩa workflow hoàn chỉnh bao gồm hướng dẫn khi nào dùng, cách thức hoạt động, và ví dụ cụ thể. Skills được tổ chức theo domain và tự động gán dựa trên loại file đang làm việc.</p>
 
@@ -398,10 +415,10 @@ description: API design, database, caching patterns
 </ol>
 
 <div class="callout callout-blue">
-<strong>Gói Skill:</strong> Không phải lúc nào cũng cần tải toàn bộ 249+ skills. ECC hỗ trợ tải chọn lọc — chỉ tải skills liên quan cho project hiện tại, giảm đáng kể lượng token tiêu thụ.
+<strong>Gói Skill:</strong> Không phải lúc nào cũng cần tải toàn bộ 311 skills. ECC hỗ trợ tải chọn lọc — chỉ tải skills liên quan cho project hiện tại, giảm đáng kể lượng token tiêu thụ.
 </div>
 
-<h2 id="rules">Rules (29+)</h2>
+<h2 id="rules">Rules</h2>
 
 <p>Rules là quy tắc bắt buộc tuân theo — được tải tự động và áp dụng liên tục trong suốt session. Khác với skills (workflow theo yêu cầu), rules luôn active và áp đặt tiêu chuẩn cho mọi code được sinh ra.</p>
 
@@ -723,7 +740,7 @@ Session 3: Sửa ESLint "no-unused-vars" → xóa import
 
 <table>
 <tr><th>Chiến lược</th><th>Cách thức</th><th>Khi nào dùng</th></tr>
-<tr><td><strong>Gói Skill</strong></td><td>Chỉ tải nhóm skills cần thiết cho loại project</td><td>Luôn — mặc định không tải 249+ skills cùng lúc</td></tr>
+<tr><td><strong>Gói Skill</strong></td><td>Chỉ tải nhóm skills cần thiết cho loại project</td><td>Luôn — mặc định không tải 311 skills cùng lúc</td></tr>
 <tr><td><strong>Nén chiến lược</strong></td><td>Hook gợi ý <code>/compact</code> mỗi ~50 lần gọi tool</td><td>Session dài, context window đầy</td></tr>
 <tr><td><strong>Hook PreCompact</strong></td><td>Lưu trạng thái quan trọng trước khi nén xóa context</td><td>Tự động khi compact được kích hoạt</td></tr>
 <tr><td><strong>Định tuyến theo loại file</strong></td><td>Gán skills dựa trên file đang chỉnh sửa</td><td>Mọi lúc — .tsx → React skills, .py → Python skills</td></tr>
@@ -739,12 +756,12 @@ Session 3: Sửa ESLint "no-unused-vars" → xóa import
 <li>Thời lượng session và số lần gọi tool</li>
 </ul>
 
-<h2 id="ecc2">ECC 2.0 Alpha — Rust Control-Plane</h2>
+<h2 id="ecc2">ECC 2.0 — Rust Control-Plane</h2>
 
 <p>ECC 2.0 là thế hệ tiếp theo — một <strong>khung điều khiển (control-plane)</strong> viết bằng Rust, quản lý nhiều agent sessions từ một giao diện thống nhất. Đây là "lớp phía trên các harness install riêng lẻ" — lớp điều phối cho multi-session, multi-agent workflows.</p>
 
-<div class="callout callout-amber">
-<strong>Chất lượng alpha:</strong> ECC 2.0 hiện tại là alpha — phù hợp cho thử nghiệm cục bộ, chưa phải bản phát hành chính thức. Core ECC (plugin v1) vẫn là hệ thống chính sẵn sàng cho production.
+<div class="callout callout-green">
+<strong>Đã ổn định (stable) từ v2.0.0:</strong> Dòng 2.0 đã "graduation" chính thức — control-plane substrate, worktree lifecycle service (dịch vụ quản lý vòng đời worktree) và họ orchestrator <code>orch-*</code> nay là thành phần ổn định, không còn ở trạng thái alpha. Core ECC (plugin) vẫn là hệ thống chính sẵn sàng cho production, còn control-plane bổ sung lớp điều phối đa-session.
 </div>
 
 <h3>Architecture</h3>
@@ -757,7 +774,7 @@ Session 3: Sửa ESLint "no-unused-vars" → xóa import
 <tr><td><strong>Chế độ daemon</strong></td><td>Tiến trình nền</td><td>Vận hành headless, tác vụ theo lịch</td></tr>
 </table>
 
-<h3>Current Features (Alpha)</h3>
+<h3>Tính năng hiện có</h3>
 <ul>
 <li><strong>Bảng điều khiển TUI</strong> — Trực quan hóa tất cả sessions đang hoạt động, trạng thái, và output</li>
 <li><strong>Kho trạng thái SQLite</strong> — Quản lý trạng thái bền vững qua các lần khởi động lại</li>
@@ -784,16 +801,18 @@ cargo run -- session resume &lt;session-id&gt;
 cargo run -- daemon start
 cargo run -- daemon stop</code></pre>
 
-<h3>Roadmap — Missing Layers for GA</h3>
-<p>Những thành phần chưa có, cần hoàn thiện trước khi phát hành chính thức:</p>
+<h3>Năng lực điều phối đã hoàn thiện</h3>
+<p>Nhiều năng lực từng nằm trong roadmap pre-GA nay đã có trong các bản 2.x:</p>
 <ul>
-<li><strong>Điều phối multi-agent nâng cao</strong> — Biên đạo phức tạp giữa nhiều agents</li>
-<li><strong>Ủy quyền giữa agents</strong> — Agents ủy quyền cho nhau, kèm tóm tắt</li>
-<li><strong>Giao diện review trực quan</strong> — UI cho diffs và worktrees</li>
-<li><strong>Tương thích harness bên ngoài nâng cao</strong> — Mở rộng ngoài Claude Code</li>
-<li><strong>Lập kế hoạch nhận biết bộ nhớ</strong> — Tích hợp với bộ nhớ dài hạn</li>
-<li><strong>Đóng gói production</strong> — Hạ tầng cài đặt, phân phối binary</li>
+<li><strong>Điều phối multi-agent nâng cao</strong> — Họ orchestrator <code>orch-*</code> và các workflow điều phối nhiều agent (sequential pipelines, PR loops, DAG orchestration).</li>
+<li><strong>Giao diện review trực quan</strong> — <strong>Plan Canvas</strong> review kế hoạch trên trình duyệt (annotate → approve/request-changes).</li>
+<li><strong>Tương thích đa harness</strong> — Mở rộng ngoài Claude Code: Codex, Kimi Code, Antigravity (native), Pi (adapter mỏng).</li>
+<li><strong>Lập kế hoạch nhận biết bộ nhớ</strong> — <strong>Unified memory vault</strong> (<code>ecc memory</code>) chia sẻ context dài hạn giữa các harness.</li>
+<li><strong>Đóng gói production</strong> — <strong>Packed-artifact release gate</strong> được kiểm thử trên Linux, macOS, Windows.</li>
 </ul>
+<div class="callout callout-amber">
+<strong>Lưu ý về độ tương đương (parity):</strong> Core Node.js CLI và installer chạy trên Windows/macOS/Linux, nhưng một số nhánh nâng cao (continuous-learning, GAN, orchestration) vẫn cần Bash hoặc Python; mỗi harness cũng expose API hook/agent/skill khác nhau nên không phải mọi tính năng đều đồng đều trên mọi nền tảng.
+</div>
 
 <h2 id="install">Installation & Configuration</h2>
 
@@ -834,7 +853,7 @@ npx ecc consult
 <tr><th>Profile</th><th>Thành phần</th><th>Trường hợp sử dụng</th></tr>
 <tr><td><code>minimal</code></td><td>Rules + Agents</td><td>Chỉ cần chuẩn mực coding và ủy quyền — nhẹ, ít token overhead</td></tr>
 <tr><td><code>core</code></td><td>Rules + Agents + Hooks</td><td>Thêm tự động hóa — lưu session, kiểm tra chất lượng, thông báo</td></tr>
-<tr><td><code>full</code></td><td>Tất cả (Rules + Agents + Hooks + Skills + Commands + MCP)</td><td>Trải nghiệm đầy đủ — toàn bộ 249+ skills, 79 commands, tích hợp MCP</td></tr>
+<tr><td><code>full</code></td><td>Tất cả (Rules + Agents + Hooks + Skills + Commands + MCP)</td><td>Trải nghiệm đầy đủ — toàn bộ 311 skills, 97 commands, tích hợp MCP</td></tr>
 </table>
 
 <h3>Installer Technical Details</h3>

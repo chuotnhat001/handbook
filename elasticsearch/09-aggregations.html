@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aggregations - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nền tảng</div>
+    <div class="nav-items">
+      <a href="#what-is">Aggregation là gì</a>
+      <a href="#metric">Metric Aggregations</a>
+      <a href="#bucket">Bucket Aggregations</a>
+      <a href="#sub-aggs">Sub-aggregations</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Nâng cao</div>
+    <div class="nav-items">
+      <a href="#pipeline">Pipeline Aggregations</a>
+      <a href="#composite">Composite &amp; Paging</a>
+      <a href="#accuracy">Độ chính xác</a>
+      <a href="#performance">Performance</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html" class="current">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Aggregations &amp; Analytics</h1>
+<p class="subtitle">Metric, bucket, pipeline, composite — biến Elasticsearch thành engine phân tích dữ liệu thời gian thực</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html" target="_blank">Elastic — Aggregations</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-composite-aggregation.html" target="_blank">Elastic — Composite Aggregation</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu aggregation là gì và chạy trên dữ liệu nào. Dùng metric aggregation (avg, sum, cardinality, percentiles) và bucket aggregation (terms, histogram, date_histogram, range). Lồng sub-aggregation, dùng pipeline aggregation, phân trang bucket bằng composite. Hiểu giới hạn độ chính xác của terms và cardinality, cùng các mẹo tối ưu performance.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 06: Mapping</strong> — keyword và doc_values cho aggregate</li>
+<li><strong>Bài 08: Search DSL</strong> — Query/filter giới hạn tập dữ liệu được aggregate</li>
+</ul>
+
+<h2 id="what-is">Aggregation Là Gì</h2>
+<p><strong>Aggregation</strong> tính toán thống kê trên tập document khớp với query, tương tự <code>GROUP BY</code> + hàm tổng hợp trong SQL. Aggregation đọc dữ liệu từ <strong>doc_values</strong> (column store), không phải inverted index.</p>
+<pre><code>GET /orders/_search
+{
+  "size": 0,
+  "query": { "range": { "created_at": { "gte": "now-30d/d" } } },
+  "aggs": {
+    "revenue": { "sum": { "field": "total" } }
+  }
+}
+# size: 0 → không trả hits, chỉ trả kết quả aggregation</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Loại</th><th>Tác dụng</th><th>Tương đương SQL</th></tr>
+<tr><td>Metric</td><td>Tính một giá trị từ các document</td><td><code>SUM</code>, <code>AVG</code>, <code>COUNT(DISTINCT)</code></td></tr>
+<tr><td>Bucket</td><td>Chia document thành các nhóm</td><td><code>GROUP BY</code></td></tr>
+<tr><td>Pipeline</td><td>Tính toán trên kết quả của aggregation khác</td><td>Window function, subquery</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Query quyết định <em>dữ liệu nào</em> được tính, aggregation quyết định <em>tính gì</em>. Cùng một request vừa trả kết quả tìm kiếm vừa trả facet, nhờ vậy search UI có bộ lọc kèm số lượng chỉ với một lần gọi.
+</div>
+
+<h2 id="metric">Metric Aggregations</h2>
+<pre><code>GET /orders/_search
+{
+  "size": 0,
+  "aggs": {
+    "avg_total":     { "avg": { "field": "total" } },
+    "max_total":     { "max": { "field": "total" } },
+    "total_stats":   { "stats": { "field": "total" } },
+    "unique_users":  { "cardinality": { "field": "user_id" } },
+    "latency_pct":   { "percentiles": { "field": "latency_ms", "percents": [50, 95, 99] } },
+    "order_count":   { "value_count": { "field": "order_id" } }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Aggregation</th><th>Trả về</th></tr>
+<tr><td><code>avg</code>, <code>sum</code>, <code>min</code>, <code>max</code></td><td>Một giá trị</td></tr>
+<tr><td><code>stats</code> / <code>extended_stats</code></td><td>count, min, max, avg, sum (+ variance, std_deviation)</td></tr>
+<tr><td><code>cardinality</code></td><td>Số giá trị khác nhau (ước lượng, HyperLogLog++)</td></tr>
+<tr><td><code>percentiles</code></td><td>Phân vị p50/p95/p99 (ước lượng, TDigest)</td></tr>
+<tr><td><code>top_hits</code></td><td>Các document tiêu biểu trong mỗi bucket</td></tr>
+</table>
+
+<h2 id="bucket">Bucket Aggregations</h2>
+<h3>terms — nhóm theo giá trị</h3>
+<pre><code>"aggs": {
+  "by_category": {
+    "terms": { "field": "category", "size": 10, "order": { "_count": "desc" } }
+  }
+}
+# Kết quả: buckets [{ "key": "laptop", "doc_count": 1520 }, ...]</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>histogram &amp; date_histogram</h3>
+<pre><code>"aggs": {
+  "price_ranges": { "histogram": { "field": "price", "interval": 100 } },
+  "orders_per_day": {
+    "date_histogram": {
+      "field": "created_at",
+      "calendar_interval": "1d",
+      "time_zone": "Asia/Ho_Chi_Minh",
+      "min_doc_count": 0
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>calendar_interval vs fixed_interval</strong>
+<code>calendar_interval</code> theo lịch (<code>1d</code>, <code>1w</code>, <code>1M</code>, có xét độ dài tháng và giờ DST). <code>fixed_interval</code> theo khoảng cố định (<code>30m</code>, <code>12h</code>). Luôn đặt <code>time_zone</code>, nếu không bucket "ngày" sẽ cắt theo UTC và lệch 7 tiếng với giờ Việt Nam.
+</div>
+
+<h3>range &amp; filters</h3>
+<pre><code>"aggs": {
+  "price_bands": {
+    "range": { "field": "price", "ranges": [
+      { "key": "rẻ", "to": 200 },
+      { "key": "trung bình", "from": 200, "to": 1000 },
+      { "key": "cao cấp", "from": 1000 }
+    ]}
+  },
+  "status_groups": {
+    "filters": { "filters": {
+      "errors":  { "range": { "status_code": { "gte": 500 } } },
+      "success": { "range": { "status_code": { "lt": 400 } } }
+    }}
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="sub-aggs">Sub-aggregations</h2>
+<p>Bucket có thể chứa aggregation con, tính riêng cho từng bucket:</p>
+<pre><code>GET /orders/_search
+{
+  "size": 0,
+  "aggs": {
+    "by_category": {
+      "terms": { "field": "category", "size": 5 },
+      "aggs": {
+        "revenue":   { "sum": { "field": "total" } },
+        "avg_order": { "avg": { "field": "total" } },
+        "per_month": {
+          "date_histogram": { "field": "created_at", "calendar_interval": "1M" },
+          "aggs": { "revenue": { "sum": { "field": "total" } } }
+        }
+      }
+    }
+  }
+}
+# Doanh thu theo danh mục, và theo tháng trong từng danh mục</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Sắp xếp bucket theo metric con:</p>
+<pre><code>"terms": { "field": "category", "size": 5, "order": { "revenue": "desc" } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="pipeline">Pipeline Aggregations</h2>
+<p>Pipeline aggregation lấy đầu vào là kết quả của aggregation khác qua <code>buckets_path</code>.</p>
+<pre><code>GET /orders/_search
+{
+  "size": 0,
+  "aggs": {
+    "per_day": {
+      "date_histogram": { "field": "created_at", "calendar_interval": "1d" },
+      "aggs": {
+        "revenue": { "sum": { "field": "total" } },
+        "revenue_7d_avg": {
+          "moving_fn": { "buckets_path": "revenue", "window": 7, "script": "MovingFunctions.unweightedAvg(values)" }
+        },
+        "revenue_change": { "derivative": { "buckets_path": "revenue" } },
+        "revenue_running": { "cumulative_sum": { "buckets_path": "revenue" } }
+      }
+    },
+    "best_day": { "max_bucket": { "buckets_path": "per_day&gt;revenue" } }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Pipeline</th><th>Tác dụng</th></tr>
+<tr><td><code>derivative</code></td><td>Chênh lệch so với bucket trước</td></tr>
+<tr><td><code>cumulative_sum</code></td><td>Tổng lũy kế</td></tr>
+<tr><td><code>moving_fn</code></td><td>Trung bình trượt hoặc hàm cửa sổ</td></tr>
+<tr><td><code>max_bucket</code> / <code>avg_bucket</code></td><td>Tìm hoặc tính trên toàn bộ bucket anh em</td></tr>
+<tr><td><code>bucket_selector</code></td><td>Lọc bucket theo điều kiện (như SQL <code>HAVING</code>)</td></tr>
+<tr><td><code>bucket_sort</code></td><td>Sắp xếp và cắt danh sách bucket</td></tr>
+</table>
+<pre><code># HAVING revenue &gt; 10000
+"high_revenue_only": {
+  "bucket_selector": {
+    "buckets_path": { "rev": "revenue" },
+    "script": "params.rev &gt; 10000"
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="composite">Composite Aggregation &amp; Phân Trang Bucket</h2>
+<p><code>terms</code> với <code>size</code> lớn tốn bộ nhớ và không phân trang được. Khi cần duyệt <strong>toàn bộ</strong> tổ hợp bucket (export, đồng bộ sang hệ thống khác), dùng <code>composite</code>:</p>
+<pre><code>GET /orders/_search
+{
+  "size": 0,
+  "aggs": {
+    "user_daily": {
+      "composite": {
+        "size": 1000,
+        "sources": [
+          { "user": { "terms": { "field": "user_id" } } },
+          { "day":  { "date_histogram": { "field": "created_at", "calendar_interval": "1d" } } }
+        ]
+      },
+      "aggs": { "spent": { "sum": { "field": "total" } } }
+    }
+  }
+}
+# Response có "after_key" → truyền vào "after" để lấy trang tiếp:
+# "composite": { "size": 1000, "sources": [...], "after": { "user": "u_981", "day": 1761523200000 } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="accuracy">Độ Chính Xác</h2>
+<h3>terms trên nhiều shard</h3>
+<p>Mỗi shard trả về top <code>shard_size</code> term của riêng nó, coordinating node gộp lại. Một term phổ biến toàn cục nhưng không lọt top ở một shard nào đó có thể bị đếm thiếu.</p>
+<ul>
+<li>Response có <code>doc_count_error_upper_bound</code> và <code>sum_other_doc_count</code> để đánh giá sai số</li>
+<li>Tăng <code>shard_size</code> (mặc định khoảng <code>size × 1.5 + 10</code>) để chính xác hơn, đổi lại tốn tài nguyên</li>
+<li>Index một shard thì kết quả terms chính xác tuyệt đối</li>
+</ul>
+<h3>cardinality &amp; percentiles là ước lượng</h3>
+<pre><code>"unique_users": {
+  "cardinality": { "field": "user_id", "precision_threshold": 3000 }
+}
+# Dưới ngưỡng precision_threshold: gần như chính xác. Tối đa 40000.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Đừng dùng cho số liệu kế toán</strong>
+Cardinality (HyperLogLog++) và percentiles (TDigest) đánh đổi một ít độ chính xác lấy bộ nhớ cố định và tốc độ. Phù hợp cho dashboard và monitoring, không phù hợp cho báo cáo tài chính cần số chính xác tuyệt đối.
+</div>
+
+<h2 id="performance">Performance</h2>
+<ul>
+<li><strong>Luôn <code>size: 0</code></strong> khi chỉ cần aggregation, để bỏ qua fetch phase</li>
+<li><strong>Thu hẹp dữ liệu bằng filter</strong> trước khi aggregate (khoảng thời gian, tenant)</li>
+<li><strong>Aggregate trên keyword/numeric</strong>, không bật <code>fielddata</code> cho field text</li>
+<li><strong>Tránh terms với cardinality cực cao</strong> kèm size lớn, dùng composite</li>
+<li><strong>Request cache</strong>: request <code>size: 0</code> được cache theo shard, hiệu quả cho dashboard trên index ít thay đổi</li>
+<li><strong>Giới hạn số bucket</strong>: <code>search.max_buckets</code> chặn aggregation tạo quá nhiều bucket (bảo vệ heap)</li>
+</ul>
+<pre><code># Lấy mẫu để aggregate nhanh trên dữ liệu rất lớn
+"aggs": {
+  "sample": {
+    "random_sampler": { "probability": 0.1 },
+    "aggs": { "avg_latency": { "avg": { "field": "latency_ms" } } }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="lab">Bài Lab: Dashboard Analytics Cho Access Logs</h2>
+<h3>Bước 1: Tạo index và dữ liệu mẫu</h3>
+<pre><code>PUT /access-logs
+{
+  "mappings": { "properties": {
+    "@timestamp":  { "type": "date" },
+    "path":        { "type": "keyword" },
+    "method":      { "type": "keyword" },
+    "status_code": { "type": "short" },
+    "latency_ms":  { "type": "integer" },
+    "client_ip":   { "type": "ip" },
+    "user_agent":  { "type": "keyword" }
+  }}
+}
+
+POST /access-logs/_bulk?refresh=wait_for
+{"index":{}}
+{"@timestamp":"2026-10-27T08:01:00+07:00","path":"/api/products","method":"GET","status_code":200,"latency_ms":45,"client_ip":"10.0.0.11","user_agent":"Chrome"}
+{"index":{}}
+{"@timestamp":"2026-10-27T08:02:10+07:00","path":"/api/orders","method":"POST","status_code":201,"latency_ms":180,"client_ip":"10.0.0.12","user_agent":"Safari"}
+{"index":{}}
+{"@timestamp":"2026-10-27T09:15:00+07:00","path":"/api/products","method":"GET","status_code":500,"latency_ms":2300,"client_ip":"10.0.0.11","user_agent":"Chrome"}
+{"index":{}}
+{"@timestamp":"2026-10-27T10:30:00+07:00","path":"/api/login","method":"POST","status_code":401,"latency_ms":60,"client_ip":"10.0.0.99","user_agent":"curl"}
+{"index":{}}
+{"@timestamp":"2026-10-27T10:31:00+07:00","path":"/api/products","method":"GET","status_code":200,"latency_ms":52,"client_ip":"10.0.0.13","user_agent":"Firefox"}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Một request cho cả dashboard</h3>
+<pre><code>GET /access-logs/_search
+{
+  "size": 0,
+  "query": { "range": { "@timestamp": { "gte": "2026-10-27T00:00:00+07:00", "lt": "2026-10-28T00:00:00+07:00" } } },
+  "aggs": {
+    "requests_per_hour": {
+      "date_histogram": { "field": "@timestamp", "fixed_interval": "1h", "time_zone": "Asia/Ho_Chi_Minh" },
+      "aggs": {
+        "p95_latency": { "percentiles": { "field": "latency_ms", "percents": [95] } },
+        "errors": { "filter": { "range": { "status_code": { "gte": 500 } } } }
+      }
+    },
+    "top_paths": {
+      "terms": { "field": "path", "size": 5 },
+      "aggs": { "avg_latency": { "avg": { "field": "latency_ms" } } }
+    },
+    "status_classes": {
+      "range": { "field": "status_code", "ranges": [
+        { "key": "2xx", "from": 200, "to": 300 },
+        { "key": "4xx", "from": 400, "to": 500 },
+        { "key": "5xx", "from": 500, "to": 600 }
+      ]}
+    },
+    "unique_clients": { "cardinality": { "field": "client_ip" } },
+    "slowest_request": {
+      "top_hits": { "size": 1, "sort": [{ "latency_ms": "desc" }], "_source": ["path", "latency_ms"] }
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Đọc kết quả</h3>
+<ul>
+<li><code>requests_per_hour</code>: biểu đồ traffic theo giờ, kèm p95 latency và số lỗi 5xx mỗi giờ</li>
+<li><code>top_paths</code>: endpoint được gọi nhiều nhất và độ trễ trung bình</li>
+<li><code>status_classes</code>: tỷ lệ 2xx/4xx/5xx</li>
+<li><code>unique_clients</code>: số IP khác nhau (ước lượng)</li>
+<li><code>slowest_request</code>: request chậm nhất để điều tra</li>
+</ul>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Một request trả đủ dữ liệu cho 5 panel dashboard. Kibana Lens (Bài 14) tạo đúng các aggregation kiểu này dưới nền, nên hiểu chúng giúp bạn debug dashboard chậm.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Ba loại aggregation là gì? Mỗi loại tương ứng với khái niệm SQL nào?</li>
+<li>Vì sao aggregation đọc từ doc_values thay vì inverted index?</li>
+<li>Khác biệt giữa <code>calendar_interval</code> và <code>fixed_interval</code>? Vì sao cần <code>time_zone</code>?</li>
+<li>Vì sao <code>terms</code> aggregation trên nhiều shard có thể sai số? Giảm sai số bằng cách nào?</li>
+<li>Khi nào dùng <code>composite</code> thay cho <code>terms</code>?</li>
+<li>Viết pipeline aggregation tương đương SQL <code>HAVING SUM(total) &gt; 10000</code>.</li>
+<li>Vì sao không nên dùng cardinality cho báo cáo tài chính?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Phân biệt metric, bucket, pipeline aggregation</li>
+<li>☐ Dùng avg/sum/stats/cardinality/percentiles</li>
+<li>☐ Dùng terms, histogram, date_histogram, range, filters</li>
+<li>☐ Lồng sub-aggregation và sort bucket theo metric con</li>
+<li>☐ Dùng derivative, cumulative_sum, moving_fn, bucket_selector</li>
+<li>☐ Phân trang bucket bằng composite + after_key</li>
+<li>☐ Hiểu sai số của terms, cardinality, percentiles</li>
+<li>☐ Áp dụng size: 0, filter trước, request cache</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Aggregate trên field text</strong>: lỗi fielddata disabled. Dùng sub-field <code>.keyword</code>.</li>
+<li><strong>Quên size: 0</strong>: tốn công fetch hits không dùng đến.</li>
+<li><strong>date_histogram không đặt time_zone</strong>: bucket ngày cắt theo UTC, số liệu theo ngày lệch.</li>
+<li><strong>terms size: 100000</strong>: ngốn heap, dễ chạm <code>search.max_buckets</code>. Dùng composite để duyệt hết.</li>
+<li><strong>Coi cardinality là số chính xác</strong>: đó là ước lượng, có sai số khi vượt precision_threshold.</li>
+<li><strong>Lồng quá nhiều tầng terms</strong>: số bucket nhân lên theo cấp số nhân.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Thiết kế mapping với keyword và numeric cho mọi field cần group hoặc tính toán</li>
+<li>Đặt <code>size: 0</code> và filter khoảng thời gian cho mọi request dashboard</li>
+<li>Dùng composite cho export và đồng bộ dữ liệu, terms cho top-N hiển thị</li>
+<li>Đặt <code>time_zone</code> rõ ràng cho date_histogram</li>
+<li>Cân nhắc <code>random_sampler</code> cho phân tích xu hướng trên dữ liệu rất lớn</li>
+<li>Với số liệu tổng hợp lặp lại, cân nhắc transform hoặc rollup sang index tóm tắt (Bài 23)</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html" target="_blank">ES: Aggregations</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html" target="_blank">ES: Terms Aggregation</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-composite-aggregation.html" target="_blank">ES: Composite Aggregation</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline.html" target="_blank">ES: Pipeline Aggregations</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html" target="_blank">ES: Cardinality Aggregation</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="08-search-dsl.html">&larr; Bài 08: Search DSL</a>
+<a href="10-cluster-management.html">Bài 10: Cluster Management &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

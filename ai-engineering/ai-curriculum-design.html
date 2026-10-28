@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Curriculum Design Framework - Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:1rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Trang ch&#x1EE7;
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Framework</div>
+    <div class="nav-items">
+      <a href="#overview">T&#x1ED5;ng quan</a>
+      <a href="#structure">C&#x1EA5;u tr&#xFA;c t&#xE0;i li&#x1EC7;u</a>
+      <a href="#principles">Nguy&#xEA;n t&#x1EAF;c thi&#x1EBF;t k&#x1EBF;</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Prompt Templates</div>
+    <div class="nav-items">
+      <a href="#course-design">Thi&#x1EBF;t k&#x1EBF; kh&#xF3;a h&#x1ECD;c</a>
+      <a href="#curriculum-prompt">M&#x1EDF; r&#x1ED9;ng gi&#xE1;o tr&#xEC;nh</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Tham Kh&#x1EA3;o</div>
+    <div class="nav-items">
+      <a href="#frameworks">Framework tham kh&#x1EA3;o</a>
+      <a href="#best-practices">Best Practices</a>
+      <a href="#resources">T&#xE0;i nguy&#xEA;n</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<main class="main">
+<h1 id="overview">AI Curriculum Design Framework</h1>
+<p class="subtitle">Framework thi&#x1EBF;t k&#x1EBF; gi&#xE1;o tr&#xEC;nh AI cho doanh nghi&#x1EC7;p &#x2014; t&#x1EEB; kh&#xF3;a h&#x1ECD;c t&#x1ED5;ng quan &#x111;&#x1EBF;n t&#xE0;i li&#x1EC7;u &#x111;&#xE0;o t&#x1EA1;o chi ti&#x1EBF;t t&#x1EEB;ng bu&#x1ED5;i</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Ngu&#x1ED3;n: T&#x1ED5;ng h&#x1EE3;p t&#x1EEB; nhi&#x1EC1;u ngu&#x1ED3;n &#x2014; Enterprise AI Training Best Practices 2025-2026</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>T&#x1AF; DUY C&#x1ED0;T L&#xD5;I</strong>
+Framework n&#xE0;y kh&#xF4;ng thi&#x1EBF;t k&#x1EBF; l&#x1EA1;i kh&#xF3;a h&#x1ECD;c &#x2014; ch&#x1EC9; m&#x1EDF; r&#x1ED9;ng n&#x1ED9;i dung t&#x1EEB;ng bu&#x1ED5;i th&#xE0;nh t&#xE0;i li&#x1EC7;u &#x111;&#xE0;o t&#x1EA1;o &#x111;&#x1EA7;y &#x111;&#x1EE7;. B&#x1EAF;t &#x111;&#x1EA7;u t&#x1EEB; v&#x1EA5;n &#x111;&#x1EC1; kinh doanh, l&#xE0;m ng&#x1B0;&#x1EE3;c v&#x1EC1; c&#xF4;ng c&#x1EE5; (kh&#xF4;ng b&#x1EAF;t &#x111;&#x1EA7;u t&#x1EEB; kh&#xE1;i ni&#x1EC7;m k&#x1EF9; thu&#x1EAD;t).
+</div>
+
+<h3>5 Vai tr&#xF2; chuy&#xEA;n gia</h3>
+<table>
+<tr><th>Vai tr&#xF2;</th><th>Tr&#xE1;ch nhi&#x1EC7;m</th></tr>
+<tr><td><strong>AI Solution Architect</strong></td><td>Thi&#x1EBF;t k&#x1EBF; workflow, ki&#x1EBF;n tr&#xFA;c h&#x1EC7; th&#x1ED1;ng AI</td></tr>
+<tr><td><strong>AI Trainer</strong></td><td>Ph&#x1B0;&#x1A1;ng ph&#xE1;p gi&#x1EA3;ng d&#x1EA1;y, b&#xE0;i t&#x1EAD;p th&#x1EF1;c h&#xE0;nh</td></tr>
+<tr><td><strong>Technical Writer</strong></td><td>Bi&#xEA;n so&#x1EA1;n t&#xE0;i li&#x1EC7;u, h&#x1B0;&#x1EDB;ng d&#x1EAB;n chi ti&#x1EBF;t</td></tr>
+<tr><td><strong>Instructional Designer</strong></td><td>Thi&#x1EBF;t k&#x1EBF; tr&#x1EA3;i nghi&#x1EC7;m h&#x1ECD;c t&#x1EAD;p, &#x111;o l&#x1B0;&#x1EDD;ng hi&#x1EC7;u qu&#x1EA3;</td></tr>
+<tr><td><strong>Enterprise Consultant</strong></td><td>Case study doanh nghi&#x1EC7;p, &#x1EE9;ng d&#x1EE5;ng th&#x1EF1;c t&#x1EBF;</td></tr>
+</table>
+
+<h3>M&#x1EE5;c ti&#xEA;u</h3>
+<ul>
+<li>X&#xE2;y d&#x1EF1;ng b&#x1ED9; gi&#xE1;o tr&#xEC;nh ho&#xE0;n ch&#x1EC9;nh cho kh&#xF3;a h&#x1ECD;c AI doanh nghi&#x1EC7;p</li>
+<li>M&#x1ED7;i bu&#x1ED5;i h&#x1ECD;c c&#xF3; &#x111;&#x1EA7;y &#x111;&#x1EE7; 17 th&#xE0;nh ph&#x1EA7;n t&#xE0;i li&#x1EC7;u</li>
+<li>&#x1AF;u ti&#xEA;n th&#x1EF1;c h&#xE0;nh 70%, l&#xFD; thuy&#x1EBF;t 30%</li>
+<li>N&#x1ED9;i dung c&#xF3; th&#x1EC3; d&#xF9;ng tr&#x1EF1;c ti&#x1EBF;p &#x111;&#x1EC3; bi&#xEA;n so&#x1EA1;n slide, gi&#xE1;o tr&#xEC;nh, t&#xE0;i li&#x1EC7;u ph&#xE1;t tay</li>
+</ul>
+
+<h2 id="structure">C&#x1EA5;u tr&#xFA;c t&#xE0;i li&#x1EC7;u m&#x1ED7;i bu&#x1ED5;i</h2>
+<p>M&#x1ED7;i bu&#x1ED5;i h&#x1ECD;c c&#x1EA7;n &#x111;&#x1B0;&#x1EE3;c m&#x1EDF; r&#x1ED9;ng th&#xE0;nh t&#xE0;i li&#x1EC7;u &#x111;&#xE0;o t&#x1EA1;o &#x111;&#x1EA7;y &#x111;&#x1EE7; v&#x1EDB;i 17 th&#xE0;nh ph&#x1EA7;n b&#x1EAF;t bu&#x1ED9;c:</p>
+
+<div class="callout callout-red">
+<strong>B&#x1EAE;T BU&#x1ED8;C</strong>
+T&#x1EA5;t c&#x1EA3; 17 th&#xE0;nh ph&#x1EA7;n ph&#x1EA3;i c&#xF3; trong m&#x1ED7;i bu&#x1ED5;i h&#x1ECD;c. Kh&#xF4;ng &#x111;&#x1B0;&#x1EE3;c b&#x1ECF; qua b&#x1EA5;t k&#x1EF3; th&#xE0;nh ph&#x1EA7;n n&#xE0;o.
+</div>
+
+<ol>
+<li><strong>Learning Objectives</strong> &#x2014; M&#x1EE5;c ti&#xEA;u h&#x1ECD;c t&#x1EAD;p c&#x1EE5; th&#x1EC3;, &#x111;o l&#x1B0;&#x1EDD;ng &#x111;&#x1B0;&#x1EE3;c</li>
+<li><strong>Ki&#x1EBF;n th&#x1EE9;c n&#x1EC1;n</strong> &#x2014; N&#x1EC1;n t&#x1EA3;ng c&#x1EA7;n thi&#x1EBF;t tr&#x1B0;&#x1EDB;c khi v&#xE0;o b&#xE0;i</li>
+<li><strong>N&#x1ED9;i dung chi ti&#x1EBF;t theo t&#x1EEB;ng m&#x1EE5;c</strong> &#x2014; Gi&#x1EA3;i th&#xED;ch s&#xE2;u t&#x1EEB;ng ch&#x1EE7; &#x111;&#x1EC1;</li>
+<li><strong>H&#xEC;nh minh h&#x1ECD;a / s&#x1A1; &#x111;&#x1ED3;</strong> &#x2014; Diagram, flowchart, infographic</li>
+<li><strong>Demo t&#x1EEB;ng b&#x1B0;&#x1EDB;c</strong> &#x2014; H&#x1B0;&#x1EDB;ng d&#x1EAB;n th&#x1EF1;c h&#xE0;nh step-by-step</li>
+<li><strong>Prompt m&#x1EAB;u</strong> &#x2014; C&#xE1;c prompt &#x111;&#xE3; &#x111;&#x1B0;&#x1EE3;c t&#x1ED1;i &#x1B0;u cho t&#x1EEB;ng t&#xEC;nh hu&#x1ED1;ng</li>
+<li><strong>Workflow minh h&#x1ECD;a</strong> &#x2014; Quy tr&#xEC;nh l&#xE0;m vi&#x1EC7;c th&#x1EF1;c t&#x1EBF;</li>
+<li><strong>Best Practices</strong> &#x2014; Kinh nghi&#x1EC7;m t&#x1ED1;t nh&#x1EA5;t t&#x1EEB; th&#x1EF1;c t&#x1EBF;</li>
+<li><strong>Anti-patterns</strong> &#x2014; L&#x1ED7;i th&#x1B0;&#x1EDD;ng g&#x1EB7;p c&#x1EA7;n tr&#xE1;nh</li>
+<li><strong>Case Study doanh nghi&#x1EC7;p</strong> &#x2014; V&#xED; d&#x1EE5; th&#x1EF1;c t&#x1EBF; t&#x1EEB; c&#xE1;c c&#xF4;ng ty</li>
+<li><strong>Checklist gi&#x1EA3;ng vi&#xEA;n</strong> &#x2014; Danh s&#xE1;ch ki&#x1EC3;m tra cho ng&#x1B0;&#x1EDD;i d&#x1EA1;y</li>
+<li><strong>Checklist h&#x1ECD;c vi&#xEA;n</strong> &#x2014; Danh s&#xE1;ch ki&#x1EC3;m tra cho ng&#x1B0;&#x1EDD;i h&#x1ECD;c</li>
+<li><strong>C&#xE2;u h&#x1ECF;i th&#x1EA3;o lu&#x1EAD;n</strong> &#x2014; G&#x1EE3;i m&#x1EDF; t&#x1B0; duy ph&#x1EA3;n bi&#x1EC7;n</li>
+<li><strong>B&#xE0;i t&#x1EAD;p th&#x1EF1;c h&#xE0;nh</strong> &#x2014; Hands-on exercises</li>
+<li><strong>&#x110;&#xE1;p &#xE1;n / h&#x1B0;&#x1EDB;ng d&#x1EAB;n</strong> &#x2014; L&#x1EDD;i gi&#x1EA3;i tham kh&#x1EA3;o</li>
+<li><strong>FAQ</strong> &#x2014; C&#xE2;u h&#x1ECF;i th&#x1B0;&#x1EDD;ng g&#x1EB7;p v&#xE0; gi&#x1EA3;i &#x111;&#xE1;p</li>
+<li><strong>T&#xE0;i li&#x1EC7;u tham kh&#x1EA3;o</strong> &#x2014; Ngu&#x1ED3;n b&#x1ED5; sung &#x111;&#x1EC3; t&#x1EF1; h&#x1ECD;c</li>
+</ol>
+<h2 id="principles">Nguy&#xEA;n t&#x1EAF;c thi&#x1EBF;t k&#x1EBF;</h2>
+
+<div class="callout callout-green">
+<strong>NGUY&#xCA;N T&#x1EAE;C V&#xC0;NG</strong>
+&#x1AF;u ti&#xEA;n th&#x1EF1;c h&#xE0;nh 70%, l&#xFD; thuy&#x1EBF;t 30%. N&#x1ED9;i dung chuy&#xEA;n s&#xE2;u nh&#x1B0;ng d&#x1EC5; hi&#x1EC3;u. M&#x1ED7;i l&#x1EA7;n ch&#x1EC9; sinh t&#xE0;i li&#x1EC7;u cho 1 bu&#x1ED5;i.
+</div>
+
+<h3>Nguy&#xEA;n t&#x1EAF;c c&#x1ED1;t l&#xF5;i</h3>
+<ul>
+<li><strong>Business-first approach:</strong> B&#x1EAF;t &#x111;&#x1EA7;u t&#x1EEB; v&#x1EA5;n &#x111;&#x1EC1; kinh doanh, l&#xE0;m ng&#x1B0;&#x1EE3;c v&#x1EC1; c&#xF4;ng c&#x1EE5; (kh&#xF4;ng b&#x1EAF;t &#x111;&#x1EA7;u t&#x1EEB; kh&#xE1;i ni&#x1EC7;m k&#x1EF9; thu&#x1EAD;t)</li>
+<li><strong>AI literacy over technical expertise:</strong> T&#x1EAD;p trung v&#xE0;o kh&#x1EA3; n&#x103;ng s&#x1EED; d&#x1EE5;ng AI hi&#x1EC7;u qu&#x1EA3;, kh&#xF4;ng y&#xEA;u c&#x1EA7;u bi&#x1EBF;t l&#x1EAD;p tr&#xEC;nh</li>
+<li><strong>Connect to daily work:</strong> K&#x1EBF;t n&#x1ED1;i &#x111;&#xE0;o t&#x1EA1;o v&#x1EDB;i c&#xF4;ng vi&#x1EC7;c h&#xE0;ng ng&#xE0;y &#x111;&#x1EC3; c&#x1EA3;i thi&#x1EC7;n hi&#x1EC7;u su&#x1EA5;t th&#x1EF1;c t&#x1EBF;</li>
+<li><strong>Incremental expansion:</strong> Kh&#xF4;ng thi&#x1EBF;t k&#x1EBF; l&#x1EA1;i kh&#xF3;a h&#x1ECD;c, ch&#x1EC9; m&#x1EDF; r&#x1ED9;ng n&#x1ED9;i dung t&#x1EEB;ng bu&#x1ED5;i</li>
+<li><strong>Ready-to-use output:</strong> T&#xE0;i li&#x1EC7;u c&#xF3; th&#x1EC3; d&#xF9;ng tr&#x1EF1;c ti&#x1EBF;p &#x111;&#x1EC3; bi&#xEA;n so&#x1EA1;n slide, gi&#xE1;o tr&#xEC;nh, t&#xE0;i li&#x1EC7;u ph&#xE1;t tay</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>L&#x1AF;U &#xDD;</strong>
+M&#x1ED7;i l&#x1EA7;n ch&#x1EC9; sinh t&#xE0;i li&#x1EC7;u cho 1 bu&#x1ED5;i h&#x1ECD;c. Kh&#xF4;ng c&#x1ED1; g&#x1EAF;ng l&#xE0;m nhi&#x1EC1;u bu&#x1ED5;i c&#xF9;ng l&#xFA;c &#x2014; ch&#x1EA5;t l&#x1B0;&#x1EE3;ng s&#x1EBD; gi&#x1EA3;m &#x111;&#xE1;ng k&#x1EC3;.
+</div>
+
+<h3>&#x110;&#x1ED1;i t&#x1B0;&#x1EE3;ng m&#x1EE5;c ti&#xEA;u</h3>
+<ul>
+<li>Ng&#x1B0;&#x1EDD;i &#x111;i l&#xE0;m, qu&#x1EA3;n l&#xFD;, ch&#x1EE7; doanh nghi&#x1EC7;p</li>
+<li>Nh&#xE2;n vi&#xEA;n v&#x103;n ph&#xF2;ng mu&#x1ED1;n n&#xE2;ng cao n&#x103;ng l&#x1EF1;c AI</li>
+<li>Kh&#xF4;ng y&#xEA;u c&#x1EA7;u bi&#x1EBF;t l&#x1EAD;p tr&#xEC;nh hay k&#x1EF9; thu&#x1EAD;t</li>
+<li>C&#x1EA7;n k&#x1EBF;t qu&#x1EA3; &#x1EE9;ng d&#x1EE5;ng &#x111;&#x1B0;&#x1EE3;c ngay trong c&#xF4;ng vi&#x1EC7;c</li>
+</ul>
+
+<h2 id="course-design">Thi&#x1EBF;t k&#x1EBF; kh&#xF3;a h&#x1ECD;c (Prompt Template)</h2>
+<p>Prompt template d&#x1B0;&#x1EDB;i &#x111;&#xE2;y d&#xF9;ng &#x111;&#x1EC3; thi&#x1EBF;t k&#x1EBF; m&#x1ED9;t kh&#xF3;a h&#x1ECD;c AI ho&#xE0;n ch&#x1EC9;nh t&#x1EEB; &#x111;&#x1EA7;u:</p>
+
+<pre><code>B&#x1EA1;n l&#xE0; AI Course Designer chuy&#xEA;n thi&#x1EBF;t k&#x1EBF; kh&#xF3;a h&#x1ECD;c AI cho doanh nghi&#x1EC7;p.
+
+H&#xE3;y thi&#x1EBF;t k&#x1EBF; kh&#xF3;a h&#x1ECD;c v&#x1EDB;i c&#x1EA5;u tr&#xFA;c sau:
+
+I. T&#x1ED4;NG QUAN KH&#xD3;A H&#x1ECC;C
+- T&#xEA;n kh&#xF3;a h&#x1ECD;c
+- M&#xF4; t&#x1EA3; ng&#x1EAF;n (2-3 c&#xE2;u)
+- M&#x1EE5;c ti&#xEA;u t&#x1ED5;ng quan
+- K&#x1EBF;t qu&#x1EA3; &#x111;&#x1EA7;u ra (h&#x1ECD;c vi&#xEA;n l&#xE0;m &#x111;&#x1B0;&#x1EE3;c g&#xEC; sau kh&#xF3;a h&#x1ECD;c)
+- &#x110;&#x1ED1;i t&#x1B0;&#x1EE3;ng h&#x1ECD;c vi&#xEA;n
+- &#x110;i&#x1EC1;u ki&#x1EC7;n ti&#xEA;n quy&#x1EBF;t
+
+II. GI&#xC1; TR&#x1ECA; KH&#xD3;A H&#x1ECC;C (5 n&#x103;ng l&#x1EF1;c c&#x1ED1;t l&#xF5;i)
+1. S&#x1EED; d&#x1EE5;ng AI hi&#x1EC7;u qu&#x1EA3; trong c&#xF4;ng vi&#x1EC7;c
+2. Thi&#x1EBF;t k&#x1EBF; AI Workflow cho team/ph&#xF2;ng ban
+3. X&#xE2;y d&#x1EF1;ng AI Agent t&#x1EF1; &#x111;&#x1ED9;ng h&#xF3;a
+4. T&#x1EF1; &#x111;&#x1ED9;ng h&#xF3;a quy tr&#xEC;nh doanh nghi&#x1EC7;p
+5. Tri&#x1EC3;n khai AI to&#xE0;n doanh nghi&#x1EC7;p
+
+III. L&#x1ED8; TR&#xCC;NH (7 bu&#x1ED5;i)
+M&#x1ED7;i bu&#x1ED5;i g&#x1ED3;m:
+- Ch&#x1EE7; &#x111;&#x1EC1; v&#xE0; m&#x1EE5;c ti&#xEA;u
+- Ki&#x1EBF;n th&#x1EE9;c ch&#xED;nh
+- Demo th&#x1EF1;c t&#x1EBF;
+- B&#xE0;i t&#x1EAD;p th&#x1EF1;c h&#xE0;nh
+- Case study doanh nghi&#x1EC7;p
+- Prompt m&#x1EAB;u
+- Checklist ho&#xE0;n th&#xE0;nh
+- K&#x1EBF;t qu&#x1EA3; c&#x1EE5; th&#x1EC3;
+
+IV. T&#xC0;I NGUY&#xCA;N
+- Prompt Library (b&#x1ED9; prompt theo ch&#x1EE7; &#x111;&#x1EC1;)
+- Template (m&#x1EAB;u s&#x1EB5;n d&#xF9;ng)
+- SOP (quy tr&#xEC;nh chu&#x1EA9;n)
+- Workflow (lu&#x1ED3;ng c&#xF4;ng vi&#x1EC7;c)
+- AI Tools (c&#xF4;ng c&#x1EE5; &#x111;&#x1EC1; xu&#x1EA5;t)
+- T&#xE0;i li&#x1EC7;u tham kh&#x1EA3;o
+
+V. D&#x1EF0; &#xC1;N CU&#x1ED0;I KH&#xD3;A
+- Y&#xEA;u c&#x1EA7;u
+- Ti&#xEA;u ch&#xED; &#x111;&#xE1;nh gi&#xE1;
+- M&#x1EAB;u tham kh&#x1EA3;o</code></pre>
+
+<div class="callout callout-green">
+<strong>M&#x1EBA;O</strong>
+&#x110;i&#x1EC1;u ch&#x1EC9;nh s&#x1ED1; bu&#x1ED5;i v&#xE0; n&#x1ED9;i dung t&#xF9;y theo ng&#xE0;nh ngh&#x1EC1; v&#xE0; tr&#xEC;nh &#x111;&#x1ED9; &#x111;&#x1ED1;i t&#x1B0;&#x1EE3;ng. Kh&#xF3;a h&#x1ECD;c cho qu&#x1EA3;n l&#xFD; c&#x1EA5;p cao c&#x1EA7;n t&#x1EAD;p trung v&#xE0;o chi&#x1EBF;n l&#x1B0;&#x1EE3;c, kh&#xF3;a cho nh&#xE2;n vi&#xEA;n c&#x1EA7;n t&#x1EAD;p trung v&#xE0;o th&#x1EF1;c h&#xE0;nh.
+</div>

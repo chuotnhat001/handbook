@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Lucene - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Lucene Core</div>
+    <div class="nav-items">
+      <a href="#what-is">Lucene là gì</a>
+      <a href="#analogy">Ví dụ từ đời sống</a>
+      <a href="#inverted-index">Inverted Index</a>
+      <a href="#segments">Segments &amp; Immutability</a>
+      <a href="#merge">Merge Policy</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Scoring</div>
+    <div class="nav-items">
+      <a href="#tfidf">TF-IDF</a>
+      <a href="#bm25">BM25</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Liên hệ ES</div>
+    <div class="nav-items">
+      <a href="#es-mapping">ES &amp; Lucene</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html" class="current">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Apache Lucene — Nền Tảng Search Engine</h1>
+<p class="subtitle">Inverted index, segments, merge policy, scoring BM25 — hiểu Lucene là hiểu cách Elasticsearch tìm kiếm</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://lucene.apache.org/core/" target="_blank">Apache Lucene Docs</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html" target="_blank">Elastic — Near Real-Time Search</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu Apache Lucene là gì và vai trò nền tảng của nó trong Elasticsearch. Giải thích cấu trúc inverted index. Hiểu segments, immutability và merge process. Nắm được cơ chế scoring: TF-IDF và BM25. Liên hệ Lucene concepts với ES operations.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 01: Hệ Thống Phân Tán</strong> — Hiểu sharding (mỗi shard = 1 Lucene index)</li>
+<li><strong>Data structures cơ bản</strong> — Hash maps, sorted arrays, trees</li>
+<li><strong>Khái niệm full-text search</strong> — Tìm kiếm trong nội dung text, không chỉ exact match</li>
+</ul>
+
+<h2 id="what-is">Lucene Là Gì</h2>
+<p>Apache Lucene là một <strong>thư viện search engine mã nguồn mở</strong> viết bằng Java, được Doug Cutting tạo ra năm 1999. Lucene không phải là một ứng dụng hoàn chỉnh — nó là thư viện cấp thấp mà các hệ thống khác xây dựng phía trên.</p>
+
+<h3>Mối quan hệ với Elasticsearch</h3>
+<table>
+<tr><th>Lucene</th><th>Elasticsearch</th></tr>
+<tr><td>Thư viện Java (library)</td><td>Distributed system chạy trên nhiều nodes</td></tr>
+<tr><td>Xử lý 1 index trên 1 máy</td><td>Quản lý nhiều shards trên nhiều máy</td></tr>
+<tr><td>Không có REST API</td><td>REST API hoàn chỉnh</td></tr>
+<tr><td>Không có replication</td><td>Automatic replication</td></tr>
+<tr><td>Single-threaded indexing</td><td>Concurrent, distributed indexing</td></tr>
+</table>
+
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Mỗi Elasticsearch shard = 1 Lucene index. Khi bạn hiểu Lucene hoạt động thế nào, bạn hiểu được behavior của từng shard — và từ đó hiểu toàn bộ cluster.
+</div>
+
+<h2 id="analogy">Ví Dụ Từ Đời Sống — Index Sách Giáo Khoa</h2>
+<p>Mở bất kỳ cuốn sách giáo khoa nào, lật đến trang cuối — bạn sẽ thấy phần <strong>"Chỉ mục" (Index)</strong>:</p>
+<pre><code>Algorithm .......... 12, 45, 78, 156
+Binary search ...... 23, 89
+Database ........... 34, 67, 112, 145
+Hash table ......... 56, 90</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Thay vì đọc từng trang để tìm "Database", bạn tra chỉ mục → nhảy thẳng đến trang 34, 67, 112, 145. Đây chính xác là cách <strong>inverted index</strong> hoạt động:</p>
+<ul>
+<li><strong>Term</strong> = từ khóa ("Database")</li>
+<li><strong>Postings list</strong> = danh sách vị trí (trang 34, 67, 112, 145 → trong Lucene là document IDs)</li>
+</ul>
+<p>Khác biệt: index sách giáo khoa được tạo thủ công bởi người biên soạn. Lucene tự động xây dựng inverted index cho <em>mọi</em> từ trong <em>mọi</em> document.</p>
+
+<h2 id="inverted-index">Inverted Index</h2>
+<p>Inverted index là cấu trúc dữ liệu cốt lõi cho full-text search. Gọi là "inverted" vì nó <strong>đảo ngược</strong> mối quan hệ: thay vì "document → chứa từ nào", nó lưu "từ → xuất hiện trong documents nào".</p>
+
+<h3>Cấu trúc</h3>
+<p>Giả sử có 3 documents:</p>
+<pre><code>Doc 1: "Elasticsearch is a search engine"
+Doc 2: "Lucene powers Elasticsearch search"
+Doc 3: "A distributed search engine"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Inverted index sẽ là:</p>
+<table>
+<tr><th>Term</th><th>Document Frequency</th><th>Postings List [doc_id: positions]</th></tr>
+<tr><td>a</td><td>2</td><td>[1: [3]], [3: [0]]</td></tr>
+<tr><td>distributed</td><td>1</td><td>[3: [1]]</td></tr>
+<tr><td>elasticsearch</td><td>2</td><td>[1: [0]], [2: [2]]</td></tr>
+<tr><td>engine</td><td>2</td><td>[1: [5]], [3: [3]]</td></tr>
+<tr><td>is</td><td>1</td><td>[1: [1]]</td></tr>
+<tr><td>lucene</td><td>1</td><td>[2: [0]]</td></tr>
+<tr><td>powers</td><td>1</td><td>[2: [1]]</td></tr>
+<tr><td>search</td><td>3</td><td>[1: [4]], [2: [3]], [3: [2]]</td></tr>
+</table>
+
+<h3>Thành phần của Inverted Index</h3>
+<ul>
+<li><strong>Term Dictionary</strong> — Sorted list tất cả unique terms, thường lưu dạng FST (Finite State Transducer) để tìm nhanh</li>
+<li><strong>Postings List</strong> — Mỗi term có danh sách document IDs chứa term đó, kèm frequency và positions</li>
+<li><strong>Stored Fields</strong> — Giá trị gốc của document (để trả về trong kết quả, như _source trong ES)</li>
+<li><strong>Doc Values</strong> — Column-oriented storage cho sorting và aggregations</li>
+</ul>
+
+<h3>Tại sao inverted index nhanh?</h3>
+<p>Tìm kiếm "search engine" chỉ cần:</p>
+<ol>
+<li>Lookup term "search" → postings [1, 2, 3]</li>
+<li>Lookup term "engine" → postings [1, 3]</li>
+<li>Intersect → [1, 3] (cả hai term đều xuất hiện)</li>
+</ol>
+<p>Complexity: O(log N) cho mỗi term lookup + O(min(m,n)) cho intersection. Không cần scan toàn bộ documents.</p>
+
+<h2 id="segments">Segments &amp; Immutability</h2>
+<p>Lucene index không phải là một cấu trúc dữ liệu duy nhất — nó là <strong>tập hợp nhiều segments</strong>.</p>
+
+<h3>Segment là gì?</h3>
+<p>Mỗi segment là một mini inverted index hoàn chỉnh và <strong>immutable</strong> (không thể thay đổi sau khi tạo).</p>
+
+<div class="flow">
+<span class="flow-step">New Docs</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">In-Memory Buffer</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Refresh (1s)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">New Segment</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Searchable!</span>
+</div>
+
+<h3>Tại sao immutable?</h3>
+<ul>
+<li><strong>Không cần locking</strong> — Nhiều threads đọc đồng thời mà không conflict</li>
+<li><strong>OS file system cache hiệu quả</strong> — File không đổi → OS cache được maximize</li>
+<li><strong>Compression tốt hơn</strong> — Dữ liệu cố định → nén tối ưu một lần</li>
+<li><strong>Đơn giản hóa concurrency</strong> — Write-once, read-many pattern</li>
+</ul>
+
+<h3>Hệ quả của immutability</h3>
+<table>
+<tr><th>Operation</th><th>Cách Lucene thực hiện</th></tr>
+<tr><td>Insert document</td><td>Thêm vào segment mới</td></tr>
+<tr><td>Delete document</td><td>Đánh dấu "deleted" trong .del file (không xóa thật)</td></tr>
+<tr><td>Update document</td><td>= Delete cũ + Insert mới (2 operations)</td></tr>
+</table>
+
+<h3>Near Real-Time Search</h3>
+<p>ES mặc định <strong>refresh mỗi 1 giây</strong> — tạo segment mới từ buffer, làm documents mới searchable. Đây là "near real-time" (NRT): document indexed nhưng chưa searchable cho đến lần refresh tiếp theo.</p>
+<pre><code># Kiểm tra refresh interval
+GET /my-index/_settings?filter_path=**.refresh_interval
+
+# Force refresh ngay lập tức
+POST /my-index/_refresh</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Commit Point</h3>
+<p>Commit point = file liệt kê tất cả segments hiện tại. Khi Lucene "commit" (flush), dữ liệu được persist xuống disk an toàn. Trước commit, dữ liệu ở translog (write-ahead log) để phòng crash.</p>
+
+<h2 id="merge">Merge Policy</h2>
+<p>Vấn đề: mỗi giây tạo 1 segment → tích lũy hàng nghìn segments nhỏ → search phải scan qua tất cả segments → chậm dần.</p>
+
+<h3>Segment Merging</h3>
+<p>Lucene tự động <strong>merge các segments nhỏ thành segments lớn hơn</strong> trong background:</p>
+<div class="flow">
+<span class="flow-step">Seg 1 (10 docs)</span>
+<span class="flow-arrow">+</span>
+<span class="flow-step">Seg 2 (15 docs)</span>
+<span class="flow-arrow">+</span>
+<span class="flow-step">Seg 3 (12 docs)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Merged Seg (37 docs)</span>
+</div>
+
+<h3>Lợi ích của merge</h3>
+<ul>
+<li>Giảm số segments → search nhanh hơn</li>
+<li>Loại bỏ deleted documents thực sự (reclaim disk space)</li>
+<li>Tối ưu hóa cấu trúc index</li>
+</ul>
+
+<h3>Tiered Merge Policy (ES default)</h3>
+<p>ES sử dụng tiered merge: segments được nhóm theo size tier, merge xảy ra trong cùng tier. Configurable:</p>
+<pre><code>PUT /my-index/_settings
+{
+  "index.merge.policy.max_merged_segment": "5gb",
+  "index.merge.policy.segments_per_tier": 10
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Force Merge</h3>
+<p>Cho read-only indices (ví dụ: logs cũ), có thể force merge xuống 1 segment:</p>
+<pre><code>POST /old-logs-2024/_forcemerge?max_num_segments=1</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Cảnh báo</strong>
+Không force merge trên index đang actively write — sẽ tạo segments rất lớn, tốn I/O và có thể ảnh hưởng performance.
+</div>
+
+<h2 id="tfidf">TF-IDF — Scoring Cổ Điển</h2>
+<p>Khi search trả về nhiều documents, cần <strong>xếp hạng</strong> (ranking) theo mức độ liên quan (relevance). TF-IDF là thuật toán scoring cổ điển:</p>
+
+<h3>Term Frequency (TF)</h3>
+<p>Từ xuất hiện <strong>nhiều lần trong document</strong> → document đó likely liên quan hơn.</p>
+<pre><code>TF(t, d) = số lần term t xuất hiện trong document d</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Inverse Document Frequency (IDF)</h3>
+<p>Từ xuất hiện <strong>ít documents</strong> → có giá trị phân biệt cao hơn. "the" xuất hiện khắp nơi → ít giá trị. "elasticsearch" xuất hiện ít → rất có giá trị.</p>
+<pre><code>IDF(t) = log(N / DF(t))
+// N = tổng documents, DF = số documents chứa term t</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Kết hợp</h3>
+<pre><code>Score = TF(t, d) × IDF(t)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Ví dụ: document có "elasticsearch" 5 lần (TF cao) và "elasticsearch" chỉ xuất hiện trong 10/10000 documents (IDF cao) → score rất cao.</p>
+
+<h2 id="bm25">BM25 — Scoring Hiện Đại (ES Default)</h2>
+<p>BM25 (Best Matching 25) là <strong>cải tiến của TF-IDF</strong>, trở thành scoring mặc định của Elasticsearch từ version 5.0.</p>
+
+<h3>Cải tiến chính</h3>
+<table>
+<tr><th>Vấn đề TF-IDF</th><th>BM25 giải quyết</th></tr>
+<tr><td>TF tăng không giới hạn (từ xuất hiện 100 lần → score gấp 100 lần so với 1 lần)</td><td>TF bão hòa (saturation) — sau ngưỡng nhất định, thêm occurrences ít ảnh hưởng</td></tr>
+<tr><td>Không normalize theo document length</td><td>Document ngắn chứa term = relevant hơn document dài chứa cùng term</td></tr>
+</table>
+
+<h3>Công thức BM25</h3>
+<pre><code>score(D, Q) = Σ IDF(qi) × [ f(qi, D) × (k1 + 1) ] / [ f(qi, D) + k1 × (1 - b + b × |D|/avgdl) ]
+
+Trong đó:
+- f(qi, D) = term frequency của qi trong document D
+- |D| = document length
+- avgdl = average document length
+- k1 = saturation parameter (default 1.2)
+- b = length normalization (default 0.75)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Tham số có thể tune</h3>
+<ul>
+<li><strong>k1 (default 1.2)</strong> — Kiểm soát TF saturation. k1 cao = TF ảnh hưởng nhiều hơn. k1=0 = bỏ qua TF hoàn toàn.</li>
+<li><strong>b (default 0.75)</strong> — Kiểm soát document length normalization. b=1 = normalize hoàn toàn. b=0 = bỏ qua length.</li>
+</ul>
+<pre><code>PUT /my-index
+{
+  "settings": {
+    "index.similarity.default": {
+      "type": "BM25",
+      "k1": 1.2,
+      "b": 0.75
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="es-mapping">Elasticsearch &amp; Lucene</h2>
+<table>
+<tr><th>ES Concept</th><th>Lucene Equivalent</th><th>Ghi chú</th></tr>
+<tr><td>Index (ES)</td><td>Nhiều Lucene indices</td><td>1 ES index = N shards = N Lucene indices</td></tr>
+<tr><td>Shard</td><td>1 Lucene Index</td><td>Đơn vị cơ bản của search</td></tr>
+<tr><td>Document</td><td>Lucene Document</td><td>Đơn vị indexing</td></tr>
+<tr><td>Mapping field</td><td>Lucene Field</td><td>Mỗi field có inverted index riêng</td></tr>
+<tr><td>Refresh</td><td>Reopen IndexReader</td><td>Mở segment mới cho search</td></tr>
+<tr><td>Flush</td><td>Commit</td><td>Persist segments to disk</td></tr>
+<tr><td>Merge</td><td>Segment merge</td><td>Background optimization</td></tr>
+<tr><td>_source</td><td>Stored Fields</td><td>Original JSON document</td></tr>
+<tr><td>Doc values</td><td>Doc Values</td><td>Column store cho sort/aggs</td></tr>
+</table>
+
+<div class="flow">
+<span class="flow-step">ES Index</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Shard 0 (Lucene)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Segment A + Segment B + ...</span>
+</div>
+
+<h2 id="lab">Bài Lab: Khám Phá Inverted Index Với _analyze API</h2>
+<h3>Yêu cầu</h3>
+<p>Elasticsearch cluster đang chạy (dùng cluster từ Lab Bài 01 hoặc single-node Docker).</p>
+
+<h3>Bước 1: Xem analyzer xử lý text</h3>
+<pre><code>POST _analyze
+{
+  "analyzer": "standard",
+  "text": "Elasticsearch is a Distributed search Engine!"
+}
+# Kết quả: ["elasticsearch", "is", "a", "distributed", "search", "engine"]
+# → lowercase, loại bỏ punctuation</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Tạo index và index documents</h3>
+<pre><code>PUT /lucene-lab
+{
+  "settings": { "number_of_shards": 1, "number_of_replicas": 0 }
+}
+
+POST /lucene-lab/_bulk
+{"index":{"_id":"1"}}
+{"title":"Elasticsearch is a search engine","body":"Built on Apache Lucene"}
+{"index":{"_id":"2"}}
+{"title":"Lucene powers search","body":"Lucene is the core library"}
+{"index":{"_id":"3"}}
+{"title":"Distributed search at scale","body":"Elasticsearch distributes Lucene indices"}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Kiểm tra scoring với explain</h3>
+<pre><code>GET /lucene-lab/_search
+{
+  "explain": true,
+  "query": {
+    "match": { "title": "search engine" }
+  }
+}
+# Xem BM25 scoring breakdown: TF, IDF, field length</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Xem segment info</h3>
+<pre><code>GET /lucene-lab/_segments
+# Quan sát: num_docs, size, num_committed_segments</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 5: Force merge và so sánh</h3>
+<pre><code>POST /lucene-lab/_forcemerge?max_num_segments=1
+GET /lucene-lab/_segments
+# Giờ chỉ còn 1 segment</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bạn đã thấy: analyzer tokenize text thế nào, BM25 scoring giải thích relevance ra sao, và segments merge lại với nhau. Đây là nền tảng cho mọi search operation trong ES.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Inverted index "inverted" so với cái gì? Tại sao cấu trúc này nhanh cho full-text search?</li>
+<li>Tại sao Lucene segments là immutable? Liệt kê 3 lợi ích.</li>
+<li>Khi bạn "delete" document trong ES, chuyện gì thực sự xảy ra ở Lucene level?</li>
+<li>Giải thích sự khác biệt giữa refresh và flush trong ES.</li>
+<li>BM25 cải tiến gì so với TF-IDF? Tại sao cần TF saturation?</li>
+<li>Khi nào nên dùng force merge? Khi nào không?</li>
+<li>1 ES index với 5 primary shards = bao nhiêu Lucene indices?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Giải thích được inverted index hoạt động thế nào</li>
+<li>☐ Hiểu term dictionary, postings list, stored fields, doc values</li>
+<li>☐ Mô tả được lifecycle: buffer → refresh → segment → merge</li>
+<li>☐ Hiểu immutability và hệ quả (delete = mark, update = delete + insert)</li>
+<li>☐ Giải thích TF-IDF và tại sao BM25 tốt hơn</li>
+<li>☐ Biết tune k1 và b trong BM25</li>
+<li>☐ Map được ES concepts (index, shard, refresh, flush) sang Lucene</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những hiểu lầm phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Nghĩ delete xóa dữ liệu ngay</strong> — Thực tế chỉ mark deleted, dữ liệu bị xóa thật khi segment merge</li>
+<li><strong>Refresh = flush</strong> — Refresh chỉ mở segment mới cho search (in-memory). Flush = commit to disk (durability).</li>
+<li><strong>Quá nhiều force merge trên active index</strong> — Gây I/O storm, block indexing, ảnh hưởng cluster</li>
+<li><strong>Bỏ qua BM25 parameters</strong> — Defaults hoạt động tốt 90% cases, nhưng biết tune k1/b quan trọng cho specific use cases</li>
+<li><strong>Nghĩ indexing = searchable ngay lập tức</strong> — Cần đợi refresh (default 1s). Đây là "near real-time", không phải "real-time"</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Hiểu refresh interval: giảm xuống nếu cần near-real-time hơn, tăng lên nếu ưu tiên indexing throughput</li>
+<li>Force merge chỉ trên read-only indices (time-based data đã rollover)</li>
+<li>Dùng <code>_analyze</code> API để debug tokenization trước khi tạo complex mappings</li>
+<li>Sử dụng <code>explain: true</code> để hiểu tại sao document A ranked cao hơn B</li>
+<li>Mặc định BM25 params (k1=1.2, b=0.75) tốt cho hầu hết cases — chỉ tune khi có evidence cụ thể</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://lucene.apache.org/core/" target="_blank">Apache Lucene Official Docs</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html" target="_blank">ES: Near Real-Time Search</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-similarity.html" target="_blank">ES: Similarity Module (BM25)</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-forcemerge.html" target="_blank">ES: Force Merge API</a></li>
+<li><a href="https://nlp.stanford.edu/IR-book/information-retrieval-book.html" target="_blank">Introduction to Information Retrieval</a> — Stanford (free online)</li>
+</ul>
+
+<div class="prev-next">
+<a href="01-distributed-systems.html">&larr; Bài 01: Hệ Thống Phân Tán</a>
+<a href="03-elasticsearch-architecture.html">Bài 03: Kiến Trúc Elasticsearch &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

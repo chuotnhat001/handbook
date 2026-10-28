@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Agility - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.capability-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.capability-card{background:#f8fafc;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:1rem}
+.capability-card h4{font-size:.85rem;font-weight:600;color:#4c51bf;margin-bottom:.5rem}
+.capability-card p{font-size:.82rem;color:#64748b;margin:0}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#vuca">Môi trường VUCA</a>
+<a href="#challenges">Thách thức TPBank</a>
+<a href="#definition">Định nghĩa Business Agility</a>
+<a href="#capabilities">5 năng lực cốt lõi</a>
+<a href="#enablers">Luồng gió mới</a>
+<a href="#examples">Ví dụ thực tế</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<span></span>
+<a href="02-agile-mindset.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html" class="current">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Business Agility</h1>
+<p class="subtitle">Khả năng thích ứng nhanh để tạo giá trị trong môi trường kinh doanh biến động</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: <a href="#">TPBank Workshop - Leading With Business Agility</a> — Bài 01/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Business Agility không chỉ là áp dụng Scrum hay Kanban — đó là khả năng của toàn tổ chức để cảm nhận, phản ứng và thích ứng nhanh chóng với thay đổi, đồng thời duy trì hiệu quả kinh doanh.
+</div>
+
+<h2 id="vuca">Môi trường VUCA</h2>
+
+<p>Chúng ta đang sống trong thế giới <strong>VUCA</strong> — một môi trường đặc trưng bởi:</p>
+
+<ul>
+<li><strong>Volatility (Biến động)</strong>: Thay đổi nhanh và không thể dự đoán</li>
+<li><strong>Uncertainty (Bất định)</strong>: Thiếu khả năng tiên đoán tương lai</li>
+<li><strong>Complexity (Phức tạp)</strong>: Nhiều yếu tố kết nối và tương tác</li>
+<li><strong>Ambiguity (Mơ hồ)</strong>: Thiếu rõ ràng về nguyên nhân và kết quả</li>
+</ul>
+
+<p>Trong môi trường này, các kế hoạch dài hạn dễ nhanh chóng mất hiệu lực. Tổ chức cần khả năng thích ứng thay vì chỉ dựa vào dự báo.</p>
+
+<h2 id="challenges">Thách thức đặt ra cho TPBank</h2>
+
+<table>
+<thead>
+<tr><th>Bối cảnh</th><th>Thách thức cụ thể</th></tr>
+</thead>
+<tbody>
+<tr><td>Kỳ vọng khách hàng thay đổi nhanh</td><td>Khách hàng mong muốn trải nghiệm đơn giản, tức thời, cá nhân hóa và xuyên suốt các kênh</td></tr>
+<tr><td>Cạnh tranh vượt ra ngoài ngân hàng</td><td>Fintech, Big Tech và các ngân hàng số tạo áp lực về tốc độ, trải nghiệm và chi phí</td></tr>
+<tr><td>AI và dữ liệu phát triển nhanh</td><td>Cơ hội đổi mới lớn nhưng đòi hỏi dữ liệu tốt, năng lực mới và kiểm soát rủi ro phù hợp</td></tr>
+<tr><td>Quy định và tuân thủ ngày càng cao</td><td>Cần vừa đổi mới nhanh, vừa bảo đảm an toàn, bảo mật và tuân thủ</td></tr>
+<tr><td>Rủi ro công nghệ và an ninh mạng</td><td>Các quyết định sản phẩm phải tích hợp quản trị rủi ro ngay từ đầu</td></tr>
+<tr><td>Nhu cầu kinh doanh biến động</td><td>Cần phân bổ lại nguồn lực kịp thời khi kế hoạch mất hiệu lực</td></tr>
+<tr><td>Hệ sinh thái sản phẩm liên kết</td><td>Một thay đổi liên quan nhiều khối: kinh doanh, công nghệ, vận hành, dữ liệu, rủi ro và pháp chế</td></tr>
+</tbody>
+</table>
+
+<h2 id="definition">Business Agility là gì?</h2>
+
+<blockquote>
+Business Agility là khả năng của một tổ chức để <strong>thích ứng nhanh chóng</strong> với những thay đổi của thị trường và môi trường một cách <strong>hiệu quả và tiết kiệm chi phí</strong>.
+</blockquote>
+
+<p>Đây không chỉ là việc áp dụng các phương pháp Agile trong phát triển phần mềm, mà là sự chuyển đổi toàn diện về cách tổ chức vận hành, ra quyết định và tạo giá trị.</p>
+
+<h2 id="capabilities">5 Năng lực cốt lõi</h2>
+
+<div class="capability-grid">
+<div class="capability-card">
+<h4>1. Năng lực thích ứng (Adaptive Capacity)</h4>
+<p>Khả năng sớm nhận biết và nhanh chóng ứng phó với những thay đổi từ bên trong hoặc bên ngoài. Chủ động đón nhận và tận dụng thay đổi thay vì chống lại.</p>
+</div>
+<div class="capability-card">
+<h4>2. Tính linh hoạt (Flexibility)</h4>
+<p>Ưu tiên sự linh hoạt hơn các cấu trúc và quy trình cứng nhắc. Tạo điều kiện để đội ngũ nhanh chóng điều chỉnh, đổi mới và giải quyết vấn đề một cách sáng tạo.</p>
+</div>
+<div class="capability-card">
+<h4>3. Tốc độ (Speed)</h4>
+<p>Khả năng ra quyết định và hành động nhanh. Chủ động giảm thiểu rào cản, sự quan liêu và thời gian chờ đợi để sớm tạo ra kết quả.</p>
+</div>
+<div class="capability-card">
+<h4>4. Khả năng phục hồi (Resilience)</h4>
+<p>Khả năng đứng vững, nhanh chóng phục hồi sau khó khăn hoặc thất bại, đồng thời học hỏi để trở nên mạnh mẽ hơn.</p>
+</div>
+<div class="capability-card">
+<h4>5. Văn hóa học tập (Learning Culture)</h4>
+<p>Nuôi dưỡng tinh thần học hỏi và cải tiến liên tục. Coi trọng thử nghiệm, phản hồi, chia sẻ kiến thức và phát triển lặp dựa trên kết quả thực tế.</p>
+</div>
+</div>
+
+<h2 id="enablers">Các luồng gió mới cho Business Agility</h2>
+
+<h3>Digital Transformation</h3>
+<p>Các công cụ kỹ thuật số có thể tự động hóa các công việc thường ngày, giải phóng tài nguyên cho công việc mang tính chiến lược hơn, cho phép ra quyết định theo thời gian thực và hỗ trợ cộng tác.</p>
+
+<h3>Lean Movement</h3>
+<p>Nhằm mục đích giảm bớt bất cứ thứ gì không mang lại giá trị cho khách hàng, giúp tổ chức trở nên linh hoạt và phản ứng nhanh hơn.</p>
+
+<h3>DevSecOps</h3>
+<p>Nhằm mục đích cung cấp phần mềm nhanh hơn và đáng tin cậy hơn. Được đặc trưng bởi những thay đổi thường xuyên, gia tăng sự hợp tác chặt chẽ giữa nhóm phát triển và vận hành với mục đích chuyển giao giá trị nhanh cho khách hàng.</p>
+
+<h3>Agile Scrum</h3>
+<p>Nhấn mạnh việc thiết lập nhóm liên chức năng, tự chủ, ổn định lâu dài, tương tác, nhận phản hồi liên tục từ khách hàng và các bên liên quan. Chuyển giao sản phẩm nhanh.</p>
+
+<h3>Remote Work & Work Flexibility</h3>
+<p>Cho phép các tổ chức khai thác nguồn nhân tài toàn cầu, thích ứng với khối lượng công việc thay đổi dễ dàng hơn và ứng phó hiệu quả hơn với các sự kiện bất ngờ.</p>
+
+<h2 id="examples">Ví dụ thực tế từ các công ty hàng đầu</h2>
+
+<h3>Amazon</h3>
+<p>Sử dụng phân tích dữ liệu nâng cao và AI để dự đoán nhu cầu của khách hàng và điều chỉnh các dịch vụ, phát triển chuỗi cung ứng và quy trình giao hàng hiệu quả cao.</p>
+
+<h3>Netflix</h3>
+<p>Tập trung mạnh vào phản hồi của khách hàng và ra quyết định dựa trên dữ liệu. Thường xuyên cập nhật nền tảng dựa trên hành vi và phản hồi của người dùng.</p>
+
+<h3>Spotify</h3>
+<p>Đã phát triển một cơ cấu tổ chức độc đáo — được gọi là "mô hình Spotify" — nhấn mạnh vào các nhóm tự quản, đa chức năng. Điều này cho phép đổi mới nhanh chóng.</p>
+
+<h3>Toyota</h3>
+<p>Việc sử dụng các kỹ thuật sản xuất tinh gọn (Lean Manufacturing) đã cho phép giảm lãng phí và phản ứng nhanh chóng với những thay đổi của thị trường.</p>
+
+<h3>GitLab</h3>
+<p>Hoạt động với mô hình làm việc hoàn toàn từ xa và linh hoạt. Điều này cho phép thích ứng nhanh chóng với những thay đổi, khai thác tài năng và hiểu biết sâu sắc của đội ngũ phân bổ trên toàn cầu.</p>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Business Agility không phải là đích đến mà là hành trình liên tục. Mỗi tổ chức cần tìm ra con đường riêng phù hợp với bối cảnh, văn hóa và mục tiêu của mình.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

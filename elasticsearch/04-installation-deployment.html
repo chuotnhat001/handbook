@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cài Đặt &amp; Triển Khai - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Chuẩn bị</div>
+    <div class="nav-items">
+      <a href="#system-reqs">Yêu cầu hệ thống</a>
+      <a href="#versions">Phiên bản</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Triển khai</div>
+    <div class="nav-items">
+      <a href="#docker-single">Docker single-node</a>
+      <a href="#docker-compose">Docker Compose multi-node</a>
+      <a href="#kubernetes">Kubernetes (ECK)</a>
+      <a href="#bare-metal">Linux bare-metal</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cấu hình & Bảo mật</div>
+    <div class="nav-items">
+      <a href="#config">elasticsearch.yml</a>
+      <a href="#security-default">Security mặc định</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html" class="current">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Cài Đặt &amp; Triển Khai Elasticsearch</h1>
+<p class="subtitle">Docker, Docker Compose, Kubernetes (ECK), bare-metal — từ single-node dev đến cluster production</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html" target="_blank">Elastic — Install Elasticsearch</a>, <a href="https://www.elastic.co/guide/en/cloud-on-k8s/current/index.html" target="_blank">Elastic — ECK</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Triển khai được Elasticsearch bằng Docker single-node, Docker Compose multi-node, Kubernetes (ECK operator) và Linux bare-metal. Nắm các cấu hình bắt buộc (vm.max_map_count, JVM heap). Hiểu cơ chế security bật mặc định từ ES 8.x (TLS tự sinh, enrollment token). Chẩn đoán được các lỗi deploy phổ biến (bootstrap checks).
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 03: Kiến Trúc ES</strong> — Node roles, cluster, discovery</li>
+<li><strong>Docker &amp; Docker Compose</strong> — image, container, volume, network</li>
+<li><strong>Linux cơ bản</strong> — systemd, sysctl, biến môi trường</li>
+</ul>
+
+<h2 id="system-reqs">Yêu Cầu Hệ Thống</h2>
+<table>
+<tr><th>Thành phần</th><th>Khuyến nghị</th></tr>
+<tr><td>RAM</td><td>Tối thiểu 4GB cho dev; production 32-64GB/node</td></tr>
+<tr><td>JVM Heap</td><td>50% RAM, không quá ~31GB (compressed oops)</td></tr>
+<tr><td>Disk</td><td>SSD/NVMe — Elasticsearch rất nhạy với I/O latency</td></tr>
+<tr><td>vm.max_map_count</td><td>Tối thiểu <code>262144</code> (bắt buộc, bootstrap check)</td></tr>
+<tr><td>File descriptors</td><td>Tối thiểu <code>65535</code></td></tr>
+</table>
+<div class="callout callout-amber">
+<strong>Bootstrap checks</strong>
+Khi chạy ở chế độ production (network.host không phải loopback), ES chuyển bootstrap checks từ warning sang <strong>bắt buộc</strong> — không đạt là node không khởi động. Đây là cơ chế "bảo vệ bạn khỏi chính mình" trước khi lên production.
+</div>
+
+<h2 id="versions">Phiên Bản</h2>
+<p>Elasticsearch dùng versioning theo dòng lớn (major): 7.x, 8.x, 9.x. Dòng <strong>8.x</strong> là bản ổn định được dùng rộng rãi, với security bật mặc định. Dòng <strong>9.x</strong> là thế hệ mới hơn.</p>
+<div class="callout callout-blue">
+<strong>Lưu ý về version</strong>
+Luôn tra version mới nhất tại <a href="https://www.elastic.co/downloads/elasticsearch" target="_blank">elastic.co/downloads</a> và pin đúng tag thay vì <code>:latest</code>. Trong bài này tôi dùng ví dụ tag <code>8.15.0</code> làm minh họa — thay bằng version thực tế bạn chọn. Elasticsearch, Kibana và các Beats phải <strong>cùng major/minor version</strong>.
+</div>
+
+<h2 id="docker-single">Docker Single-Node</h2>
+<p>Cách nhanh nhất để chạy thử. Từ ES 8.x, security bật mặc định nên lần đầu chạy sẽ in ra mật khẩu <code>elastic</code> và enrollment token.</p>
+<pre><code># Tạo network riêng
+docker network create elastic
+
+# Chạy single-node (thay 8.15.0 bằng version thực tế)
+docker run --name es01 --net elastic \
+  -p 9200:9200 \
+  -e "discovery.type=single-node" \
+  -e "ES_JAVA_OPTS=-Xms2g -Xmx2g" \
+  -m 4GB \
+  docker.elastic.co/elasticsearch/elasticsearch:8.15.0</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Lấy mật khẩu &amp; kiểm tra</h3>
+<pre><code># Reset mật khẩu user elastic (nếu cần)
+docker exec -it es01 bin/elasticsearch-reset-password -u elastic
+
+# Copy CA cert ra ngoài
+docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .
+
+# Gọi thử (HTTPS + basic auth)
+curl --cacert http_ca.crt -u elastic https://localhost:9200</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Dev nhanh, không TLS</strong>
+Nếu chỉ học và muốn bỏ qua security cho đơn giản, thêm <code>-e "xpack.security.enabled=false"</code>. <strong>Tuyệt đối không</strong> làm vậy ở production.
+</div>
+
+<h2 id="docker-compose">Docker Compose Multi-Node</h2>
+<p>Dựng cluster 3 node để học về shard/replica thật. File <code>docker-compose.yml</code> rút gọn:</p>
+<pre><code>services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+    volumes: [ "data01:/usr/share/elasticsearch/data" ]
+    ports: [ "9200:9200" ]
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    volumes: [ "data02:/usr/share/elasticsearch/data" ]
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    volumes: [ "data03:/usr/share/elasticsearch/data" ]
+
+volumes:
+  data01: {}
+  data02: {}
+  data03: {}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>docker compose up -d
+docker compose ps
+# Kiểm tra cluster hình thành
+curl "http://localhost:9200/_cat/nodes?v"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-red">
+<strong>Vì sao file này tắt security</strong>
+Khi node có cấu hình discovery (multi-node), ES 8.x không tự sinh certificate. Nếu để security bật mà chưa cấu hình transport TLS, bootstrap check sẽ chặn node khởi động. File trên tắt security để dựng lab nhanh và <strong>chỉ dùng cho lab cục bộ</strong>. Cluster multi-node có security cần sinh certificate trước, xem file compose chính thức trong tài liệu Elastic "Install Elasticsearch with Docker" (dùng một container <code>setup</code> chạy <code>elasticsearch-certutil</code>).
+</div>
+<div class="callout callout-amber">
+<strong>Nhắc lại từ Bài 03</strong>
+<code>cluster.initial_master_nodes</code> chỉ dùng lúc bootstrap lần đầu. Sau khi cluster đã hình thành, nên gỡ bỏ để tránh rắc rối khi restart.
+</div>
+
+<h2 id="kubernetes">Kubernetes — ECK Operator</h2>
+<p><strong>ECK (Elastic Cloud on Kubernetes)</strong> là operator chính thức, quản lý vòng đời ES/Kibana trên K8s qua Custom Resource Definitions (CRD).</p>
+<pre><code># Cài CRDs và operator
+kubectl create -f https://download.elastic.co/downloads/eck/2.14.0/crds.yaml
+kubectl apply -f https://download.elastic.co/downloads/eck/2.14.0/operator.yaml
+
+# Khai báo một cluster 3 node bằng CRD
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: quickstart
+spec:
+  version: 8.15.0
+  nodeSets:
+  - name: default
+    count: 3
+    config:
+      node.store.allow_mmap: false
+EOF
+
+# Lấy mật khẩu elastic do operator tự sinh
+kubectl get secret quickstart-es-elastic-user \
+  -o go-template='{{.data.elastic | base64decode}}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Ngoài ECK, có thể dùng <strong>Helm chart</strong> chính thức của Elastic cho các setup tùy biến hơn. ECK được khuyến nghị vì tự động hóa TLS, rolling upgrade, và scaling.</p>
+
+<h2 id="bare-metal">Linux Bare-Metal (systemd)</h2>
+<pre><code># 1. Cài qua package (Debian/Ubuntu) — thêm repo Elastic trước
+sudo apt-get install elasticsearch
+
+# 2. Cấu hình bắt buộc trên host
+sudo sysctl -w vm.max_map_count=262144
+echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
+
+# 3. Bật và khởi động service
+sudo systemctl daemon-reload
+sudo systemctl enable elasticsearch.service
+sudo systemctl start elasticsearch.service
+
+# 4. Mật khẩu elastic in ra khi cài, hoặc reset:
+sudo /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Cũng có thể cài từ bản <strong>archive (tar.gz/zip)</strong> — giải nén, chạy <code>bin/elasticsearch</code>; phù hợp khi không có quyền root hoặc cần nhiều instance trên một host.</p>
+
+<h2 id="config">Cấu Hình <code>elasticsearch.yml</code></h2>
+<pre><code># config/elasticsearch.yml
+cluster.name: my-production-cluster
+node.name: node-1
+node.roles: [ master, data ]
+
+# Network — đặt IP thật để các node thấy nhau (kích hoạt production mode)
+network.host: 10.0.0.1
+http.port: 9200
+
+# Discovery
+discovery.seed_hosts: ["10.0.0.1", "10.0.0.2", "10.0.0.3"]
+cluster.initial_master_nodes: ["node-1", "node-2", "node-3"]
+
+# Data & log path
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>JVM heap đặt trong <code>config/jvm.options</code> hoặc file trong <code>jvm.options.d/</code>:</p>
+<pre><code># jvm.options.d/heap.options
+-Xms16g
+-Xmx16g
+# Quy tắc: Xms = Xmx, = 50% RAM, không quá ~31GB</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="security-default">Security Mặc Định (ES 8.x+)</h2>
+<p>Từ ES 8.0, khi khởi động lần đầu Elasticsearch tự động:</p>
+<ul>
+<li><strong>Sinh TLS certificates</strong> — mã hóa cả HTTP layer và inter-node transport</li>
+<li><strong>Tạo mật khẩu ngẫu nhiên</strong> cho user <code>elastic</code> (in ra console/log một lần duy nhất)</li>
+<li><strong>Sinh enrollment token</strong> — dùng để Kibana hoặc node mới join cluster an toàn</li>
+</ul>
+<pre><code># Sinh enrollment token cho Kibana
+bin/elasticsearch-create-enrollment-token -s kibana
+
+# Sinh token cho node mới join cluster
+bin/elasticsearch-create-enrollment-token -s node</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+ES 8.x biến "secure by default" thành mặc định: không còn chuyện vô tình để cluster mở toang ra internet không mật khẩu. Chi tiết TLS/RBAC xem Bài 13.
+</div>
+
+<h2 id="lab">Bài Lab: Triển Khai Cluster 3 Node Trên Docker Compose</h2>
+<h3>Mục tiêu</h3>
+<p>Dựng cluster 3 node, xác minh nó hình thành đúng, index thử dữ liệu và quan sát shard phân bổ.</p>
+
+<h3>Bước 1: Chuẩn bị host</h3>
+<pre><code># Linux/WSL2
+sudo sysctl -w vm.max_map_count=262144
+# macOS Docker Desktop: đặt trong Settings → Resources (RAM ≥ 6GB)</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Khởi động bằng file compose ở trên</h3>
+<pre><code>docker compose up -d
+# Chờ ~30-60s cho cluster hình thành
+docker compose logs -f es01 | grep -i "started"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: Xác minh cluster</h3>
+<pre><code>curl "http://localhost:9200/_cluster/health?pretty"
+# Mong đợi: "number_of_nodes": 3, "status": "green"
+
+curl "http://localhost:9200/_cat/nodes?v&amp;h=name,node.role,master"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Index thử và quan sát shard</h3>
+<pre><code>curl -X PUT "http://localhost:9200/lab-deploy" \
+  -H 'Content-Type: application/json' \
+  -d '{"settings":{"number_of_shards":3,"number_of_replicas":1}}'
+
+curl "http://localhost:9200/_cat/shards/lab-deploy?v"
+# 3 primary + 3 replica trải trên 3 node, primary ≠ replica node</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Cluster health <code>green</code>, 3 node, shard phân bổ hợp lý (primary và replica không cùng node). Bạn giờ có một môi trường lab thật để dùng cho các bài sau.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Vì sao <code>vm.max_map_count</code> phải &ge; 262144? Điều gì xảy ra nếu không đạt ở production mode?</li>
+<li>Bootstrap checks là gì? Khi nào chúng chuyển từ warning sang bắt buộc?</li>
+<li>Quy tắc đặt JVM heap? Vì sao không vượt ~31GB?</li>
+<li>ES 8.x tự động làm gì về security khi khởi động lần đầu?</li>
+<li>Enrollment token dùng để làm gì?</li>
+<li>So sánh ECK operator và Helm chart — khi nào chọn cái nào?</li>
+<li>Vì sao ES, Kibana và Beats phải cùng version?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Triển khai được single-node bằng Docker</li>
+<li>☐ Dựng được cluster 3 node bằng Docker Compose</li>
+<li>☐ Hiểu ECK operator trên Kubernetes</li>
+<li>☐ Cài được bare-metal + systemd, đặt vm.max_map_count</li>
+<li>☐ Cấu hình đúng elasticsearch.yml và JVM heap</li>
+<li>☐ Hiểu security mặc định ES 8.x và enrollment token</li>
+<li>☐ Chẩn đoán được lỗi bootstrap check cơ bản</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi deploy phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Quên vm.max_map_count</strong> — Node crash với "max virtual memory areas vm.max_map_count [65530] is too low". Fix bằng sysctl.</li>
+<li><strong>Heap quá lớn (&gt;31GB)</strong> — Mất compressed ordinary object pointers → lãng phí RAM, GC chậm hơn. Giữ dưới 31GB.</li>
+<li><strong>Dùng tag <code>:latest</code></strong> — Deploy không reproducible, dễ lệch version giữa các node. Luôn pin version cụ thể.</li>
+<li><strong>Để initial_master_nodes mãi mãi</strong> — Chỉ dùng lúc bootstrap. Giữ lại gây rắc rối khi cluster đã hình thành.</li>
+<li><strong>Tắt security ở production</strong> — <code>xpack.security.enabled=false</code> chỉ cho dev cục bộ. Production để mở là mời gọi tấn công/ransomware.</li>
+<li><strong>Không đặt memlock / swap</strong> — Để OS swap heap của ES ra disk làm performance sụp đổ. Dùng <code>bootstrap.memory_lock=true</code>.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Dev/học: Docker single-node hoặc Compose 3 node. Production: ECK trên K8s hoặc bare-metal có cấu hình kỹ</li>
+<li>Pin version chính xác, giữ ES/Kibana/Beats đồng bộ version</li>
+<li>JVM heap = 50% RAM, &le; 31GB; bật <code>bootstrap.memory_lock</code>, tắt swap</li>
+<li>Đặt <code>vm.max_map_count=262144</code> vĩnh viễn qua <code>/etc/sysctl.conf</code></li>
+<li>Giữ security bật; quản lý secret qua keystore (<code>bin/elasticsearch-keystore</code>), không hardcode</li>
+<li>Dùng dedicated volume/SSD cho <code>path.data</code>, tách khỏi OS disk</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html" target="_blank">ES: Install Elasticsearch</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html" target="_blank">ES: Install with Docker</a></li>
+<li><a href="https://www.elastic.co/guide/en/cloud-on-k8s/current/index.html" target="_blank">Elastic Cloud on Kubernetes (ECK)</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html" target="_blank">ES: Bootstrap Checks</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/advanced-configuration.html" target="_blank">ES: JVM Heap &amp; Advanced Config</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="03-elasticsearch-architecture.html">&larr; Bài 03: Kiến Trúc Elasticsearch</a>
+<a href="05-index-document-crud.html">Bài 05: Index &amp; Document CRUD &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

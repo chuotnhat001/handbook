@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troubleshooting - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Quy trình</div>
+    <div class="nav-items">
+      <a href="#method">Quy trình chẩn đoán</a>
+      <a href="#toolbox">Bộ công cụ</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Sự cố thường gặp</div>
+    <div class="nav-items">
+      <a href="#red-cluster">Cluster Red</a>
+      <a href="#circuit-breaker">Circuit Breaker</a>
+      <a href="#rejections">Thread Pool Rejection</a>
+      <a href="#high-cpu">CPU cao &amp; Hot Threads</a>
+      <a href="#slow-queries">Query chậm</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Khẩn cấp</div>
+    <div class="nav-items">
+      <a href="#last-resort">Biện pháp cuối cùng</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html" class="current">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Troubleshooting</h1>
+<p class="subtitle">Unassigned shard, circuit breaker, thread pool rejection, hot threads, slow log — quy trình chẩn đoán có hệ thống</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/troubleshooting.html" target="_blank">Elastic — Troubleshooting</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/circuit-breaker-errors.html" target="_blank">Elastic — Circuit Breaker Errors</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Áp dụng một quy trình chẩn đoán có thứ tự thay vì thử ngẫu nhiên. Dùng thành thạo bộ công cụ: Health Report, allocation explain, <code>_cat</code>, nodes stats, hot threads, tasks, slow log. Xử lý các sự cố phổ biến: cluster red, circuit breaker, thread pool rejection, CPU cao, query chậm. Biết các biện pháp cuối cùng và cái giá của chúng.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 10, 11</strong> — Allocation explain, disk watermark</li>
+<li><strong>Bài 18</strong> — Metric quan trọng, Health Report</li>
+<li><strong>Bài 19</strong> — Profile API, slow log, cache</li>
+<li><strong>Bài 20</strong> — Snapshot và restore</li>
+</ul>
+
+<h2 id="method">Quy Trình Chẩn Đoán</h2>
+<div class="flow">
+<span class="flow-step">Triệu chứng</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Phạm vi</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Thay đổi gần đây</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Bằng chứng</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Giả thuyết</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Sửa &amp; xác minh</span>
+</div>
+<ol>
+<li><strong>Triệu chứng</strong>: chính xác là gì? "Search chậm" là p95 tăng từ 100 ms lên 3 s, hay timeout hoàn toàn?</li>
+<li><strong>Phạm vi</strong>: toàn cluster, một node, một index, hay một loại query?</li>
+<li><strong>Thay đổi gần đây</strong>: deploy mới, đổi mapping, tăng traffic, nâng cấp version, thêm dashboard? Phần lớn sự cố bắt nguồn từ một thay đổi</li>
+<li><strong>Bằng chứng</strong>: thu thập từ API và log trước khi sửa. Restart làm mất bằng chứng</li>
+<li><strong>Giả thuyết</strong>: một nguyên nhân cụ thể, kiểm chứng được</li>
+<li><strong>Sửa và xác minh</strong>: một thay đổi mỗi lần, xác nhận triệu chứng biến mất, ghi lại nguyên nhân gốc</li>
+</ol>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Restart node thường làm triệu chứng tạm biến mất mà không sửa nguyên nhân, đồng thời xóa hot threads, task đang chạy, và trạng thái heap. Thu thập bằng chứng trước, restart sau, và chỉ khi có lý do.
+</div>
+
+<h2 id="toolbox">Bộ Công Cụ</h2>
+<table>
+<tr><th>Câu hỏi</th><th>Công cụ</th></tr>
+<tr><td>Cluster có vấn đề gì?</td><td><code>GET /_health_report</code></td></tr>
+<tr><td>Shard nào chưa cấp phát, vì sao?</td><td><code>GET /_cat/shards?v&amp;h=index,shard,prirep,state,unassigned.reason</code>, <code>GET /_cluster/allocation/explain</code></td></tr>
+<tr><td>Node nào quá tải?</td><td><code>GET /_cat/nodes?v&amp;h=name,heap.percent,cpu,load_1m,disk.used_percent</code></td></tr>
+<tr><td>Đang bị từ chối request?</td><td><code>GET /_cat/thread_pool/write,search?v&amp;h=node_name,name,active,queue,rejected</code></td></tr>
+<tr><td>Bộ nhớ đi đâu?</td><td><code>GET /_nodes/stats/breaker,jvm</code>, <code>GET /_cat/fielddata?v</code></td></tr>
+<tr><td>CPU đang làm gì?</td><td><code>GET /_nodes/hot_threads</code></td></tr>
+<tr><td>Thao tác nào chạy lâu?</td><td><code>GET /_tasks?detailed=true</code>, <code>GET /_cluster/pending_tasks</code></td></tr>
+<tr><td>Query nào chậm?</td><td>Search slow log, Profile API (Bài 19)</td></tr>
+<tr><td>Chuyện gì đã xảy ra?</td><td>Log của node: <code>&lt;cluster_name&gt;.log</code>, GC log, kernel log (OOM killer)</td></tr>
+</table>
+<p>Elastic cung cấp <strong>support-diagnostics</strong>, công cụ thu thập toàn bộ output của các API trên vào một file zip. Rất hữu ích khi cần gửi bằng chứng cho đồng nghiệp hoặc bộ phận hỗ trợ.</p>
+
+<h2 id="red-cluster">Cluster Red</h2>
+<p>Red nghĩa là có <strong>primary shard</strong> chưa được cấp phát: một phần dữ liệu không đọc/ghi được.</p>
+<pre><code># 1. Index nào red
+GET /_cat/indices?v&amp;health=red
+
+# 2. Shard nào và lý do
+GET /_cat/shards?v&amp;h=index,shard,prirep,state,unassigned.reason&amp;s=state
+
+# 3. Giải thích chi tiết
+GET /_cluster/allocation/explain
+{ "index": "orders-2026.10", "shard": 0, "primary": true }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th><code>unassigned.reason</code> / decider</th><th>Nguyên nhân thường gặp</th><th>Hướng xử lý</th></tr>
+<tr><td><code>NODE_LEFT</code></td><td>Node chứa primary rời cluster và không còn replica</td><td>Đưa node quay lại. Dữ liệu vẫn trên disk của nó</td></tr>
+<tr><td><code>disk_threshold</code></td><td>Mọi node phù hợp đều vượt watermark</td><td>Giải phóng disk, thêm node (Bài 11)</td></tr>
+<tr><td><code>filter</code>, <code>awareness</code></td><td>Rule allocation không cho node nào nhận shard</td><td>Sửa hoặc gỡ rule</td></tr>
+<tr><td><code>max_retry</code></td><td>Cấp phát lỗi 5 lần (thường do lỗi khác đã được sửa)</td><td><code>POST /_cluster/reroute?retry_failed=true</code></td></tr>
+<tr><td><code>ALLOCATION_FAILED</code> với lỗi corrupt</td><td>Dữ liệu shard trên disk hỏng</td><td>Restore từ snapshot (Bài 20)</td></tr>
+<tr><td>Không node nào có bản sao hợp lệ</td><td>Mất tất cả node chứa shard</td><td>Restore từ snapshot. Biện pháp cuối: xem mục cuối bài</td></tr>
+</table>
+
+<h2 id="circuit-breaker">Circuit Breaker</h2>
+<p><strong>Circuit breaker</strong> từ chối request trước khi nó làm cạn heap và gây OutOfMemoryError. Client nhận lỗi HTTP 429 <code>circuit_breaking_exception</code>.</p>
+<table>
+<tr><th>Breaker</th><th>Bảo vệ</th><th>Giới hạn mặc định</th></tr>
+<tr><td><code>parent</code></td><td>Tổng bộ nhớ của mọi breaker và heap thực tế</td><td>95% heap</td></tr>
+<tr><td><code>request</code></td><td>Cấu trúc dữ liệu tạm của một request (aggregation buckets)</td><td>60% heap</td></tr>
+<tr><td><code>fielddata</code></td><td>Fielddata cache</td><td>40% heap</td></tr>
+<tr><td><code>in_flight_requests</code></td><td>Kích thước request đang truyền tới (bulk lớn)</td><td>100% heap</td></tr>
+</table>
+<pre><code>GET /_nodes/stats/breaker?human&amp;filter_path=nodes.*.name,nodes.*.breakers.*.estimated_size,nodes.*.breakers.*.tripped
+GET /_cat/fielddata?v&amp;s=size:desc</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Thông báo lỗi cho biết breaker nào bị chạm và request cần bao nhiêu bộ nhớ, ví dụ: <code>[parent] Data too large, data for [&lt;http_request&gt;] would be [16gb], which is larger than the limit of [15.2gb]</code>.</p>
+<div class="callout callout-amber">
+<strong>Đừng nâng giới hạn breaker</strong>
+Breaker bị chạm là triệu chứng của heap thật sự đang thiếu. Nâng giới hạn chỉ đổi lỗi 429 lấy OutOfMemoryError và node chết. Tìm nguyên nhân: aggregation quá nhiều bucket, bulk quá lớn, fielddata trên field text, quá nhiều shard trên node, hoặc heap quá nhỏ cho workload.
+</div>
+
+<h2 id="rejections">Thread Pool Rejection</h2>
+<p>Mỗi loại thao tác có thread pool với hàng đợi giới hạn. Khi hàng đợi đầy, request mới bị từ chối với HTTP 429 <code>es_rejected_execution_exception</code>.</p>
+<pre><code>GET /_cat/thread_pool/write,search,get?v&amp;h=node_name,name,size,active,queue,queue_size,rejected,completed</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li><strong>write rejected</strong>: client gửi nhanh hơn cluster index được. Có thể do một node chậm hơn các node khác (hot spot), hoặc mọi node đều đã chạm trần (Bài 19)</li>
+<li><strong>search rejected</strong>: quá nhiều search đồng thời, hoặc search chậm làm thread bị chiếm lâu</li>
+<li>Rejection chỉ trên một node: kiểm tra phân bổ shard có lệch không (một node giữ nhiều primary shard đang ghi)</li>
+</ul>
+<div class="callout callout-blue">
+<strong>429 là backpressure, không phải lỗi cần che giấu</strong>
+Client nên retry với exponential backoff khi nhận 429. Các client chính thức, Beats, Logstash đều làm vậy. Tăng <code>queue_size</code> chỉ làm request chờ lâu hơn và tốn thêm heap, không tăng năng lực xử lý.
+</div>
+
+<h2 id="high-cpu">CPU Cao &amp; Hot Threads</h2>
+<pre><code># Những thread tốn CPU nhất trên mỗi node, kèm stack trace
+GET /_nodes/hot_threads?threads=5&amp;interval=500ms
+GET /_nodes/es02/hot_threads</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Output là văn bản. Đọc tên thread và các dòng stack trace đầu tiên để biết CPU đang dành cho việc gì:</p>
+<table>
+<tr><th>Tên thread chứa</th><th>Đang làm</th><th>Hướng tìm hiểu</th></tr>
+<tr><td><code>[search]</code></td><td>Thực thi query</td><td>Slow log, Profile API, query wildcard/regex/script</td></tr>
+<tr><td><code>[write]</code></td><td>Index document</td><td>Ingest pipeline nặng, mapping phức tạp, analyzer tốn kém</td></tr>
+<tr><td><code>Lucene Merge Thread</code></td><td>Gộp segment</td><td>Refresh quá dày, force merge trên index đang ghi</td></tr>
+<tr><td><code>[management]</code>, <code>[generic]</code></td><td>Tác vụ quản trị, recovery</td><td>Recovery, rebalance, snapshot đang chạy</td></tr>
+<tr><td>GC (thấy qua <code>_nodes/stats/jvm</code>)</td><td>Thu gom rác</td><td>Áp lực heap, xem mục circuit breaker</td></tr>
+</table>
+<pre><code># Tìm và hủy task gây tải
+GET /_tasks?actions=*search*&amp;detailed=true&amp;group_by=parents
+POST /_tasks/&lt;node_id&gt;:&lt;task_id&gt;/_cancel</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="slow-queries">Query Chậm</h2>
+<ol>
+<li><strong>Tìm query</strong>: slow log (Bài 19), hoặc <code>_tasks</code> với <code>detailed=true</code> trong lúc nó đang chạy</li>
+<li><strong>Xác định ai gửi</strong>: dùng header <code>X-Opaque-Id</code> từ ứng dụng, nó xuất hiện trong slow log và tasks</li>
+<li><strong>Profile</strong>: chạy lại query với <code>"profile": true</code> để thấy clause tốn kém</li>
+<li><strong>Đối chiếu nguyên nhân phổ biến</strong>:
+<ul>
+<li>Wildcard đầu chuỗi, regex, fuzzy trên field lớn</li>
+<li>Script query hoặc script field trên nhiều document</li>
+<li>Aggregation terms với cardinality cao, lồng nhiều tầng</li>
+<li>Deep pagination</li>
+<li>Khoảng thời gian rất rộng trên index không có ILM</li>
+<li>Query chạm quá nhiều shard nhỏ</li>
+</ul>
+</li>
+</ol>
+<pre><code># Ứng dụng gắn định danh vào request
+curl -H "X-Opaque-Id: orders-service/search-page" "$ES/orders/_search" ...
+
+# Đặt timeout để một query không chiếm tài nguyên mãi
+GET /orders/_search
+{ "timeout": "5s", "query": { ... } }
+
+# Chặn query tốn kém trên toàn cluster
+PUT /_cluster/settings
+{ "persistent": { "search.allow_expensive_queries": false } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="last-resort">Biện Pháp Cuối Cùng</h2>
+<div class="callout callout-red">
+<strong>Các thao tác dưới đây chấp nhận mất dữ liệu</strong>
+Chỉ dùng khi không còn snapshot để restore, đã thử mọi cách đưa node chứa dữ liệu quay lại, và người chịu trách nhiệm về dữ liệu đã đồng ý. Ghi lại lý do và thời điểm thực hiện.
+</div>
+<table>
+<tr><th>Thao tác</th><th>Tác dụng</th><th>Cái giá</th></tr>
+<tr><td><code>allocate_stale_primary</code></td><td>Dùng một bản sao cũ (stale) làm primary</td><td>Mất mọi thao tác ghi mà bản sao đó chưa nhận được</td></tr>
+<tr><td><code>allocate_empty_primary</code></td><td>Tạo primary rỗng cho shard</td><td><strong>Mất toàn bộ dữ liệu</strong> của shard đó</td></tr>
+<tr><td><code>elasticsearch-node unsafe-bootstrap</code> / <code>detach-cluster</code></td><td>Dựng lại cluster khi mất vĩnh viễn đa số master</td><td>Có thể mất cluster state và dữ liệu. Chỉ làm khi node đã dừng</td></tr>
+</table>
+<pre><code># Phải truyền accept_data_loss: true. Đó là chủ đích.
+POST /_cluster/reroute
+{
+  "commands": [
+    { "allocate_stale_primary": {
+        "index": "orders-2026.10", "shard": 0, "node": "es02", "accept_data_loss": true } }
+  ]
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="lab">Bài Lab: Gây Lỗi, Chẩn Đoán &amp; Sửa</h2>
+<p>Mỗi kịch bản dưới đây: tạo lỗi, chẩn đoán chỉ bằng API, rồi sửa. Dùng cluster lab có security từ Bài 13 (<code>source .env</code> để có <code>$ES</code>, <code>$AUTH</code>).</p>
+
+<h3>Kịch bản 1: Index red do allocation rule</h3>
+<pre><code>curl $AUTH -X PUT "$ES/lab-red" -H 'Content-Type: application/json' -d '{
+  "settings": { "number_of_shards": 1, "number_of_replicas": 0,
+    "index.routing.allocation.require._name": "node-khong-ton-tai" } }'
+curl $AUTH "$ES/_cluster/health?filter_path=status"            # red
+
+# Chẩn đoán
+curl $AUTH "$ES/_cat/shards/lab-red?v&amp;h=index,shard,prirep,state,unassigned.reason"
+curl $AUTH "$ES/_cluster/allocation/explain?pretty" -H 'Content-Type: application/json' \
+  -d '{"index":"lab-red","shard":0,"primary":true}' | grep -A3 '"decider" : "filter"'
+
+# Sửa
+curl $AUTH -X PUT "$ES/lab-red/_settings" -H 'Content-Type: application/json' \
+  -d '{"index.routing.allocation.require._name": null}'
+curl $AUTH "$ES/_cluster/health?filter_path=status"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Kịch bản 2: Circuit breaker</h3>
+<pre><code># Hạ tạm request breaker xuống rất thấp để mô phỏng heap thiếu (CHỈ cho lab)
+curl $AUTH -X PUT "$ES/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"indices.breaker.request.limit":"1kb"}}'
+
+curl $AUTH "$ES/access-logs,lab-orders/_search?size=0" -H 'Content-Type: application/json' -d '{
+  "aggs": { "x": { "terms": { "field": "_index", "size": 1000 } } } }'
+# Mong đợi 429 circuit_breaking_exception: [request] Data too large ...
+
+curl $AUTH "$ES/_nodes/stats/breaker?filter_path=nodes.*.breakers.request.tripped&amp;pretty"
+
+# Sửa: trả breaker về mặc định
+curl $AUTH -X PUT "$ES/_cluster/settings" -H 'Content-Type: application/json' \
+  -d '{"persistent":{"indices.breaker.request.limit":null}}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Kịch bản 3: Query chậm và hot threads</h3>
+<pre><code># Bật slow log ngưỡng thấp cho index lab
+curl $AUTH -X PUT "$ES/access-logs/_settings" -H 'Content-Type: application/json' \
+  -d '{"index.search.slowlog.threshold.query.info":"0ms"}'
+
+# Gửi một query tốn kém, có định danh
+curl $AUTH -H "X-Opaque-Id: lab/slow-query" "$ES/access-logs/_search?size=0" -H 'Content-Type: application/json' -d '{
+  "query": { "script": { "script": "doc[\"latency_ms\"].value * 2 &gt; 100" } } }'
+
+# Hot threads trong lúc chạy (cluster lab ít dữ liệu nên có thể không bắt kịp)
+curl $AUTH "$ES/_nodes/hot_threads?threads=3"
+
+# Tìm query trong slow log theo định danh X-Opaque-Id
+docker compose exec es01 sh -c 'grep "lab/slow-query" logs/*_index_search_slowlog.json | tail -n 1'
+
+# Sửa: trả slow log về ngưỡng hợp lý
+curl $AUTH -X PUT "$ES/access-logs/_settings" -H 'Content-Type: application/json' \
+  -d '{"index.search.slowlog.threshold.query.info":null}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Slow log nằm trên node chứa shard</strong>
+Slow log được ghi trên node thực thi shard, không phải node nhận request. Nếu không thấy ở <code>es01</code>, xem <code>GET /_cat/shards/access-logs?v</code> để biết shard nằm ở node nào. Tên file và field trong log có thể khác nhau giữa các version, mở file để xem đúng cấu trúc.
+</div>
+
+<h3>Kịch bản 4: Mất node chứa primary</h3>
+<pre><code>curl $AUTH -X PUT "$ES/lab-noderisk" -H 'Content-Type: application/json' -d '{
+  "settings": { "number_of_shards": 1, "number_of_replicas": 0 } }'
+NODE=$(curl -s $AUTH "$ES/_cat/shards/lab-noderisk?h=node" | tr -d '[:space:]')
+echo "Primary nằm ở $NODE"
+docker compose stop "$NODE"         # dừng node chứa primary (chọn node không phải es01 nếu có thể)
+
+curl $AUTH "$ES/_cat/shards/lab-noderisk?v&amp;h=shard,prirep,state,unassigned.reason"   # NODE_LEFT
+docker compose start "$NODE"
+curl $AUTH "$ES/_cluster/health/lab-noderisk?wait_for_status=green&amp;timeout=2m&amp;filter_path=status"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Nếu node chứa primary là es01</strong>
+<code>$ES</code> trỏ vào es01 qua cổng 9200, nên dừng es01 thì lệnh curl tiếp theo không kết nối được. Khi đó tạo lại index với <code>"index.routing.allocation.exclude._name": "es01"</code> rồi làm lại kịch bản.
+</div>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bạn đã thấy bốn loại sự cố, đọc được lý do chính xác từ API (decider <code>filter</code>, breaker <code>request</code>, slow log có <code>X-Opaque-Id</code>, reason <code>NODE_LEFT</code>), và sửa mà không cần restart cluster hay đoán mò. Kịch bản 4 cho thấy vì sao index quan trọng cần ít nhất một replica.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Vì sao nên thu thập bằng chứng trước khi restart node?</li>
+<li>Cluster red: bạn chạy những lệnh nào, theo thứ tự nào?</li>
+<li>Phân biệt <code>circuit_breaking_exception</code> và <code>es_rejected_execution_exception</code>. Cả hai cùng trả HTTP mấy?</li>
+<li>Vì sao nâng giới hạn breaker hoặc queue_size thường không giải quyết được vấn đề?</li>
+<li>Đọc hot threads thấy phần lớn là <code>Lucene Merge Thread</code>. Bạn nghi ngờ điều gì?</li>
+<li><code>X-Opaque-Id</code> giúp gì khi điều tra query chậm?</li>
+<li>Khác biệt giữa <code>allocate_stale_primary</code> và <code>allocate_empty_primary</code>? Khi nào mới được dùng?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Áp dụng quy trình triệu chứng → phạm vi → thay đổi → bằng chứng → giả thuyết → sửa</li>
+<li>☐ Chẩn đoán cluster red bằng _cat/shards và allocation explain</li>
+<li>☐ Đọc thông báo circuit breaker và tìm nguyên nhân dùng heap</li>
+<li>☐ Phát hiện thread pool rejection và hiểu backpressure</li>
+<li>☐ Đọc hot threads, tìm và hủy task</li>
+<li>☐ Truy vết query chậm bằng slow log, X-Opaque-Id, Profile API</li>
+<li>☐ Biết cái giá của các biện pháp cuối cùng</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Restart ngay khi có sự cố</strong>: mất bằng chứng, nguyên nhân gốc vẫn còn và lặp lại.</li>
+<li><strong>Đổi nhiều thứ cùng lúc</strong>: không biết thay đổi nào đã sửa được lỗi, hay thay đổi nào gây lỗi mới.</li>
+<li><strong>Nâng giới hạn breaker, queue_size, max_shards</strong>: che triệu chứng, đổi lỗi nhẹ lấy lỗi nặng.</li>
+<li><strong>Dùng allocate_empty_primary khi còn snapshot</strong>: mất dữ liệu không cần thiết.</li>
+<li><strong>Không đọc log của node</strong>: nhiều nguyên nhân (OOM, disk lỗi, mạng) chỉ xuất hiện trong log.</li>
+<li><strong>Không ghi lại sau sự cố</strong>: đội vận hành gặp lại đúng sự cố đó mà không có tài liệu.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Viết runbook cho từng loại sự cố phổ biến, liên kết từ cảnh báo (Bài 18)</li>
+<li>Bắt ứng dụng gửi <code>X-Opaque-Id</code> để truy vết nguồn gốc request</li>
+<li>Thu thập log và slow log của Elasticsearch về monitoring cluster</li>
+<li>Bật <code>search.allow_expensive_queries: false</code> và đặt timeout cho search ở cluster dùng chung</li>
+<li>Giữ replica &ge; 1 và snapshot thường xuyên để không bao giờ cần đến biện pháp cuối cùng</li>
+<li>Viết postmortem không đổ lỗi sau mỗi sự cố lớn</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/troubleshooting.html" target="_blank">ES: Troubleshooting</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/red-yellow-cluster-status.html" target="_blank">ES: Red or Yellow Cluster Status</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/circuit-breaker-errors.html" target="_blank">ES: Circuit Breaker Errors</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rejected-requests.html" target="_blank">ES: Rejected Requests</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-hot-threads.html" target="_blank">ES: Nodes Hot Threads API</a></li>
+<li><a href="https://github.com/elastic/support-diagnostics" target="_blank">Elastic support-diagnostics</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="20-snapshot-restore.html">&larr; Bài 20: Snapshot &amp; Restore</a>
+<a href="22-cross-cluster.html">Bài 22: Cross-Cluster &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

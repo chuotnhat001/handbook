@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Streams &amp; TSDS - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Data Streams</div>
+    <div class="nav-items">
+      <a href="#data-streams">Data Stream là gì</a>
+      <a href="#naming">Naming Scheme</a>
+      <a href="#operations">Thao tác</a>
+      <a href="#dsl">Data Stream Lifecycle</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">TSDS</div>
+    <div class="nav-items">
+      <a href="#tsds">Time Series Data Stream</a>
+      <a href="#downsampling">Downsampling</a>
+      <a href="#synthetic-source">Synthetic _source</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html" class="current">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Data Streams &amp; TSDS</h1>
+<p class="subtitle">Data stream, naming scheme, TSDS, dimension và metric, downsampling, synthetic _source</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/data-streams.html" target="_blank">Elastic — Data Streams</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tsds.html" target="_blank">Elastic — Time Series Data Stream</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu data stream gồm những gì và khác index alias ra sao. Đặt tên data stream theo naming scheme của Elastic. Thao tác với data stream: ghi, rollover, cập nhật mapping, sửa và xóa document. Cấu hình retention bằng data stream lifecycle. Dùng Time Series Data Stream (TSDS) với dimension và metric, giảm dung lượng bằng downsampling và synthetic <code>_source</code>.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 06: Mapping</strong> — Field type, doc_values</li>
+<li><strong>Bài 09: Aggregations</strong> — date_histogram, metric aggregation</li>
+<li><strong>Bài 12: ILM</strong> — Rollover, phase, index template</li>
+</ul>
+
+<h2 id="data-streams">Data Stream Là Gì</h2>
+<p><strong>Data stream</strong> là một tên logic dùng để ghi và đọc dữ liệu time-series append-only. Phía sau là một chuỗi <strong>backing index</strong> ẩn, mỗi lần rollover sinh thêm một backing index mới.</p>
+<div class="flow">
+<span class="flow-step">logs-app-default</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">.ds-logs-app-default-2026.10.01-000001</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">...-000002</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">...-000003 (write index)</span>
+</div>
+<ul>
+<li><strong>Ghi</strong> luôn đi vào backing index mới nhất (write index)</li>
+<li><strong>Đọc</strong> trải trên mọi backing index</li>
+<li>Bắt buộc có field <code>@timestamp</code> kiểu <code>date</code> hoặc <code>date_nanos</code></li>
+<li>Chỉ cho phép <code>op_type=create</code>: không index đè document cùng <code>_id</code> qua tên data stream</li>
+<li>Được tạo từ <strong>index template</strong> có khối <code>"data_stream": {}</code></li>
+</ul>
+<table>
+<tr><th></th><th>Data stream</th><th>Index alias + rollover</th></tr>
+<tr><td>Thiết lập</td><td>Chỉ cần index template, tự tạo khi ghi lần đầu</td><td>Template + bootstrap index + <code>rollover_alias</code></td></tr>
+<tr><td>Ghi đè theo ID</td><td>Không (phải nhắm vào backing index)</td><td>Có</td></tr>
+<tr><td><code>@timestamp</code></td><td>Bắt buộc</td><td>Không bắt buộc</td></tr>
+<tr><td>Phù hợp</td><td>Log, metric, event, trace</td><td>Dữ liệu có thời gian nhưng cần cập nhật thường xuyên</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Data stream mã hóa một giả định vào hệ thống: dữ liệu này chỉ thêm mới, không sửa. Khi giả định đúng (log, metric), Elasticsearch có thể tự quản lý rollover, retention và tối ưu lưu trữ thay bạn.
+</div>
+
+<h2 id="naming">Naming Scheme</h2>
+<p>Elastic Agent, Fleet integrations và nhiều Beats dùng quy ước đặt tên:</p>
+<pre><code>&lt;type&gt;-&lt;dataset&gt;-&lt;namespace&gt;
+
+logs-nginx.access-production
+metrics-system.cpu-default
+traces-apm-default
+synthetics-http-staging</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Phần</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+<tr><td><code>type</code></td><td>Loại dữ liệu</td><td><code>logs</code>, <code>metrics</code>, <code>traces</code>, <code>synthetics</code></td></tr>
+<tr><td><code>dataset</code></td><td>Nguồn và cấu trúc dữ liệu</td><td><code>nginx.access</code>, <code>orders.app</code></td></tr>
+<tr><td><code>namespace</code></td><td>Nhóm do người dùng định nghĩa</td><td><code>production</code>, <code>staging</code>, <code>team-payments</code></td></tr>
+</table>
+<p>Lợi ích của quy ước này:</p>
+<ul>
+<li>Elasticsearch có sẵn index template cho <code>logs-*-*</code> và <code>metrics-*-*</code> (mapping theo ECS, lifecycle mặc định)</li>
+<li>Phân quyền theo namespace: role đọc <code>logs-*-team-payments</code> chỉ thấy log của team Payments</li>
+<li>Retention khác nhau theo namespace: <code>production</code> giữ 90 ngày, <code>staging</code> giữ 7 ngày</li>
+</ul>
+<div class="callout callout-amber">
+<strong>Dấu gạch ngang trong dataset</strong>
+Dataset và namespace không được chứa dấu <code>-</code> vì nó là ký tự phân cách. Dùng dấu chấm (<code>orders.app</code>) hoặc gạch dưới. Tên data stream cũng phải viết thường.
+</div>
+
+<h2 id="operations">Thao Tác Với Data Stream</h2>
+<h3>Tạo template và ghi</h3>
+<pre><code>PUT /_index_template/logs-orders
+{
+  "index_patterns": ["logs-orders.app-*"],
+  "data_stream": {},
+  "priority": 200,
+  "composed_of": ["logs@mappings", "logs@settings"],
+  "template": {
+    "mappings": { "properties": {
+      "order.id":    { "type": "keyword" },
+      "order.total": { "type": "scaled_float", "scaling_factor": 100 }
+    } }
+  }
+}
+
+POST /logs-orders.app-default/_doc
+{ "@timestamp": "2026-10-28T08:00:00Z", "message": "order created", "order": { "id": "ORD-1", "total": 120 } }
+
+GET /_data_stream/logs-orders.app-default</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p><code>priority</code> cao hơn template có sẵn <code>logs</code> (priority 100) để template của bạn được chọn. Component template <code>logs@mappings</code>, <code>logs@settings</code> có sẵn từ ES 8.x, giúp kế thừa cấu hình chuẩn.</p>
+
+<h3>Rollover và cập nhật mapping</h3>
+<pre><code># Rollover thủ công (bình thường do ILM hoặc lifecycle làm)
+POST /logs-orders.app-default/_rollover
+
+# Thêm field mới: sửa template, rồi cập nhật mapping của write index hiện tại
+PUT /_index_template/logs-orders  ...  (thêm field customer.tier)
+PUT /logs-orders.app-default/_mapping
+{ "properties": { "customer.tier": { "type": "keyword" } } }
+
+# Đổi type của field có sẵn: chỉ áp dụng cho backing index mới.
+# Sửa template, rồi rollover. Backing index cũ giữ mapping cũ.</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Sửa và xóa document</h3>
+<pre><code># Theo query: chạy trên mọi backing index
+POST /logs-orders.app-default/_update_by_query
+{ "query": { "term": { "order.id": "ORD-1" } },
+  "script": { "source": "ctx._source.message = 'order created (corrected)'" } }
+
+POST /logs-orders.app-default/_delete_by_query
+{ "query": { "range": { "@timestamp": { "lt": "2026-01-01" } } } }
+
+# Theo ID: phải nhắm vào đúng backing index (lấy từ _index trong kết quả search)
+DELETE /.ds-logs-orders.app-default-2026.10.28-000001/_doc/&lt;id&gt;</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code># Chuyển index thường đã có thành data stream (cần alias và template phù hợp)
+POST /_data_stream/_migrate/legacy-logs
+
+# Xóa data stream: xóa luôn mọi backing index
+DELETE /_data_stream/logs-orders.app-default</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="dsl">Data Stream Lifecycle</h2>
+<p>Từ ES 8.14, ngoài ILM còn có <strong>data stream lifecycle</strong>: cấu hình đơn giản hơn, khai báo bằng retention thay vì từng phase. Elasticsearch tự quyết định thời điểm rollover và tự tối ưu (force merge) backing index cũ.</p>
+<pre><code># Trong index template
+"template": {
+  "lifecycle": { "data_retention": "30d" }
+}
+
+# Hoặc đặt trực tiếp cho data stream đã có
+PUT /_data_stream/logs-orders.app-default/_lifecycle
+{ "data_retention": "30d" }
+
+GET /logs-orders.app-default/_lifecycle/explain</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th></th><th>Data stream lifecycle</th><th>ILM</th></tr>
+<tr><td>Cấu hình</td><td>Một con số retention (và downsampling)</td><td>Từng phase, từng action</td></tr>
+<tr><td>Data tiers (hot/warm/cold)</td><td>Không</td><td>Có</td></tr>
+<tr><td>Searchable snapshot, shrink</td><td>Không</td><td>Có</td></tr>
+<tr><td>Phù hợp</td><td>Chỉ cần "giữ N ngày rồi xóa"</td><td>Cần chuyển tier, tối ưu chi phí theo giai đoạn</td></tr>
+</table>
+<p>Khi một backing index có cả hai, ILM được ưu tiên (có thể đổi bằng setting <code>index.lifecycle.prefer_ilm</code>).</p>
+
+<h2 id="tsds">Time Series Data Stream</h2>
+<p><strong>TSDS</strong> là data stream tối ưu cho metric: mỗi document là một mẫu đo của một chuỗi thời gian (time series) xác định bởi các <strong>dimension</strong>.</p>
+<table>
+<tr><th>Khái niệm</th><th>Mapping</th><th>Ví dụ</th></tr>
+<tr><td>Dimension</td><td><code>"time_series_dimension": true</code> (keyword, ip, số nguyên)</td><td><code>host.name</code>, <code>pod.name</code>, <code>region</code></td></tr>
+<tr><td>Gauge</td><td><code>"time_series_metric": "gauge"</code></td><td>CPU %, nhiệt độ, số kết nối đang mở</td></tr>
+<tr><td>Counter</td><td><code>"time_series_metric": "counter"</code></td><td>Tổng request từ lúc khởi động, tổng byte đã gửi</td></tr>
+</table>
+<pre><code>PUT /_index_template/metrics-node
+{
+  "index_patterns": ["metrics-node.stats-*"],
+  "data_stream": {},
+  "priority": 200,
+  "template": {
+    "settings": {
+      "index.mode": "time_series",
+      "index.routing_path": ["host.name", "region"]
+    },
+    "mappings": { "properties": {
+      "@timestamp":      { "type": "date" },
+      "host.name":       { "type": "keyword", "time_series_dimension": true },
+      "region":          { "type": "keyword", "time_series_dimension": true },
+      "cpu.pct":         { "type": "double",  "time_series_metric": "gauge" },
+      "memory.used":     { "type": "long",    "time_series_metric": "gauge" },
+      "requests.total":  { "type": "long",    "time_series_metric": "counter" }
+    } }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<h3>TSDS khác data stream thường ở đâu</h3>
+<ul>
+<li><strong>Routing theo dimension</strong>: mọi mẫu của cùng một time series nằm trong cùng shard, sắp xếp liền nhau theo thời gian → nén rất tốt</li>
+<li><strong><code>_id</code> sinh từ dimension + <code>@timestamp</code></strong>: gửi trùng một mẫu đo bị từ chối, không sinh dữ liệu trùng</li>
+<li><strong>Synthetic <code>_source</code></strong> bật mặc định (xem dưới)</li>
+<li><strong>Cửa sổ thời gian</strong>: mỗi backing index nhận document trong một khoảng thời gian xác định (<code>index.time_series.start_time</code>/<code>end_time</code>). Document quá cũ hoặc quá xa trong tương lai so với khoảng đang nhận sẽ bị từ chối</li>
+</ul>
+<div class="callout callout-amber">
+<strong>Cardinality của dimension</strong>
+Mỗi tổ hợp giá trị dimension là một time series. Dùng giá trị thay đổi liên tục (request id, user id, timestamp dạng chuỗi) làm dimension sẽ sinh hàng triệu time series chỉ có một điểm, mất toàn bộ lợi ích nén. Dimension là "đo cái gì", không phải "mỗi lần đo là gì".
+</div>
+<pre><code># Tỷ lệ tăng của counter (từ ES 8.x, dùng cho TSDS)
+GET /metrics-node.stats-default/_search
+{
+  "size": 0,
+  "aggs": { "per_host": { "time_series": {},
+    "aggs": { "req_rate": { "rate": { "field": "requests.total", "unit": "second" } } } } }
+}
+
+# ES|QL có hỗ trợ tốt cho time series ở các bản gần đây
+POST /_query
+{ "query": "FROM metrics-node.stats-* | STATS avg_cpu = AVG(cpu.pct) BY host.name, bucket = BUCKET(@timestamp, 5 minutes)" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="downsampling">Downsampling</h2>
+<p><strong>Downsampling</strong> gộp các mẫu đo của một time series trong mỗi khoảng thời gian thành một document tóm tắt. Metric dạng gauge giữ <code>min</code>, <code>max</code>, <code>sum</code>, <code>value_count</code> (tính lại được trung bình); counter giữ giá trị cuối.</p>
+<table>
+<tr><th>Độ tuổi dữ liệu</th><th>Độ phân giải</th><th>Số document mỗi time series mỗi ngày</th></tr>
+<tr><td>0–7 ngày</td><td>10 giây (gốc)</td><td>8.640</td></tr>
+<tr><td>7–30 ngày</td><td>5 phút</td><td>288</td></tr>
+<tr><td>30–365 ngày</td><td>1 giờ</td><td>24</td></tr>
+</table>
+<pre><code># Qua data stream lifecycle
+PUT /_data_stream/metrics-node.stats-default/_lifecycle
+{
+  "data_retention": "365d",
+  "downsampling": [
+    { "after": "7d",  "fixed_interval": "5m" },
+    { "after": "30d", "fixed_interval": "1h" }
+  ]
+}
+
+# Hoặc qua ILM: action "downsample" ở phase warm/cold
+"warm": { "min_age": "7d", "actions": { "downsample": { "fixed_interval": "5m" } } }
+
+# Thủ công trên một backing index (index phải read-only)
+PUT /.ds-metrics-node.stats-default-2026.10.01-000001/_block/write
+POST /.ds-metrics-node.stats-default-2026.10.01-000001/_downsample/metrics-node-5m-2026.10.01
+{ "fixed_interval": "5m" }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Query không cần thay đổi</strong>
+Dashboard query trên data stream tiếp tục hoạt động sau downsampling. Aggregation <code>avg</code>, <code>max</code> trên dữ liệu đã gộp vẫn cho kết quả đúng; <code>date_histogram</code> chỉ cần interval không nhỏ hơn độ phân giải của dữ liệu đã gộp.
+</div>
+
+<h2 id="synthetic-source">Synthetic _source</h2>
+<p>Bình thường Elasticsearch lưu nguyên văn JSON gốc trong <code>_source</code>, chiếm phần lớn dung lượng index. <strong>Synthetic <code>_source</code></strong> không lưu bản gốc mà dựng lại nó từ doc_values và stored field khi cần.</p>
+<pre><code>PUT /_index_template/logs-compact
+{
+  "index_patterns": ["logs-compact-*"],
+  "data_stream": {},
+  "template": {
+    "settings": { "index.mapping.source.mode": "synthetic" }
+  }
+}
+# Phiên bản cũ hơn dùng mapping: "mappings": { "_source": { "mode": "synthetic" } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th>Ưu</th><th>Đánh đổi</th></tr>
+<tr><td>Giảm đáng kể dung lượng lưu trữ</td><td><code>_source</code> dựng lại có thể khác bản gốc: field sắp xếp lại, mảng có thể bị sắp xếp và bỏ trùng, định dạng số/ngày được chuẩn hóa</td></tr>
+<tr><td>Bật mặc định cho TSDS</td><td>Đọc <code>_source</code> chậm hơn một chút vì phải dựng lại</td></tr>
+<tr><td>Dùng được cho log (LogsDB index mode, ES 8.17+)</td><td>Cần license trả phí ngoài TSDS (đối chiếu Elastic Subscriptions cho đúng version)</td></tr>
+</table>
+<div class="callout callout-amber">
+<strong>Khi nào không dùng</strong>
+Nếu bạn cần trả về chính xác từng byte của document gốc (ví dụ lưu trữ phục vụ kiểm toán, hoặc dùng reindex để chuyển dữ liệu mà phải giữ nguyên định dạng), hãy giữ <code>_source</code> chuẩn.
+</div>
+
+<h2 id="lab">Bài Lab: Ingest Metric Với TSDS + Downsampling</h2>
+<h3>Bước 1: Template TSDS</h3>
+<pre><code>source .env
+curl $AUTH -X PUT "$ES/_index_template/metrics-lab.node" -H 'Content-Type: application/json' -d '{
+  "index_patterns": ["metrics-lab.node-*"],
+  "data_stream": {},
+  "priority": 200,
+  "template": {
+    "settings": { "index.mode": "time_series", "index.routing_path": ["host.name"], "number_of_replicas": 0 },
+    "mappings": { "properties": {
+      "@timestamp":     { "type": "date" },
+      "host.name":      { "type": "keyword", "time_series_dimension": true },
+      "cpu.pct":        { "type": "double",  "time_series_metric": "gauge" },
+      "requests.total": { "type": "long",    "time_series_metric": "counter" }
+    } }
+  }
+}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Sinh 2 giờ dữ liệu cho 3 host, mỗi 10 giây</h3>
+<pre><code>python - &lt;&lt;'PY' &gt; metrics.ndjson
+import datetime, json, random
+now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+start = now - datetime.timedelta(hours=2)
+total = {"web-1": 0, "web-2": 0, "db-1": 0}
+t = start
+while t &lt; now:
+    for host in total:
+        total[host] += random.randint(50, 150)
+        print(json.dumps({"create": {}}))
+        print(json.dumps({"@timestamp": t.strftime("%Y-%m-%dT%H:%M:%SZ"), "host.name": host,
+                          "cpu.pct": round(random.uniform(10, 90), 2), "requests.total": total[host]}))
+    t += datetime.timedelta(seconds=10)
+PY
+wc -l metrics.ndjson     # khoảng 4.320 dòng = 2.160 document
+
+curl $AUTH -s -X POST "$ES/metrics-lab.node-default/_bulk?refresh=true" \
+  -H 'Content-Type: application/x-ndjson' --data-binary @metrics.ndjson | python -c "import sys,json;print('errors:',json.load(sys.stdin)['errors'])"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Dữ liệu nằm ngoài cửa sổ thời gian</strong>
+TSDS mới tạo nhận dữ liệu trong khoảng mặc định vài giờ quanh thời điểm hiện tại (<code>index.look_back_time</code>, mặc định 2 giờ). Script trên sinh đúng 2 giờ trở về trước. Nếu <code>errors: true</code> với lỗi timestamp nằm ngoài khoảng, rút ngắn khoảng sinh dữ liệu xuống 1 giờ 50 phút.
+</div>
+
+<h3>Bước 3: Thử gửi trùng và truy vấn</h3>
+<pre><code># Gửi lại đúng một mẫu đã có → bị từ chối 409 vì _id sinh từ dimension + @timestamp
+head -n 2 metrics.ndjson | curl $AUTH -s -X POST "$ES/metrics-lab.node-default/_bulk" \
+  -H 'Content-Type: application/x-ndjson' --data-binary @- | python -m json.tool | grep -E '"status"|"type"'
+
+curl $AUTH "$ES/metrics-lab.node-default/_search?size=0&amp;pretty" -H 'Content-Type: application/json' -d '{
+  "aggs": { "per_host": { "terms": { "field": "host.name" },
+    "aggs": { "cpu": { "avg": { "field": "cpu.pct" } } } } } }'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Downsampling thủ công và so sánh</h3>
+<pre><code>BACKING=$(curl -s $AUTH "$ES/_data_stream/metrics-lab.node-default" | python -c "import sys,json;print(json.load(sys.stdin)['data_streams'][0]['indices'][0]['index_name'])")
+echo $BACKING
+
+# Rollover để backing index hiện tại không còn là write index, rồi chặn ghi
+curl $AUTH -X POST "$ES/metrics-lab.node-default/_rollover"
+curl $AUTH -X PUT "$ES/$BACKING/_block/write"
+curl $AUTH -X POST "$ES/$BACKING/_downsample/lab-node-5m" -H 'Content-Type: application/json' -d '{"fixed_interval":"5m"}'
+
+curl $AUTH "$ES/_cat/indices/$BACKING,lab-node-5m?v&amp;h=index,docs.count,store.size"
+curl $AUTH "$ES/lab-node-5m/_search?size=1&amp;pretty&amp;sort=@timestamp"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 5: Cấu hình tự động cho lần sau</h3>
+<pre><code>curl $AUTH -X PUT "$ES/_data_stream/metrics-lab.node-default/_lifecycle" -H 'Content-Type: application/json' -d '{
+  "data_retention": "30d",
+  "downsampling": [ { "after": "1d", "fixed_interval": "5m" }, { "after": "7d", "fixed_interval": "1h" } ]
+}'
+curl $AUTH "$ES/metrics-lab.node-default/_lifecycle/explain?pretty"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Index gốc có khoảng 2.160 document, index downsample 5 phút còn khoảng 72 (3 host × 24 khoảng 5 phút). Document sau downsampling chứa <code>cpu.pct</code> dạng <code>min/max/sum/value_count</code>. Mẫu gửi trùng bị từ chối với 409. Từ giờ data stream tự downsampling và tự xóa sau 30 ngày.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Data stream gồm những thành phần nào? Ghi và đọc đi vào backing index nào?</li>
+<li>Vì sao không ghi đè document theo ID qua tên data stream được? Làm thế nào để sửa một document?</li>
+<li>Giải thích naming scheme <code>type-dataset-namespace</code> và lợi ích khi phân quyền.</li>
+<li>Khi nào chọn data stream lifecycle, khi nào chọn ILM?</li>
+<li>Dimension và metric trong TSDS khác nhau thế nào? Vì sao không dùng request id làm dimension?</li>
+<li>Downsampling giữ lại những giá trị nào của gauge? Vì sao vẫn tính được trung bình?</li>
+<li>Synthetic <code>_source</code> tiết kiệm dung lượng bằng cách nào, và đánh đổi gì?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Tạo data stream qua index template</li>
+<li>☐ Đặt tên theo naming scheme của Elastic</li>
+<li>☐ Rollover, cập nhật mapping, update/delete by query trên data stream</li>
+<li>☐ Cấu hình data stream lifecycle với retention</li>
+<li>☐ Viết mapping TSDS với dimension, gauge, counter</li>
+<li>☐ Downsampling qua lifecycle, ILM và thủ công</li>
+<li>☐ Biết khi nào dùng và không dùng synthetic <code>_source</code></li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Thiếu @timestamp</strong>: document bị từ chối khi ghi vào data stream.</li>
+<li><strong>Template priority thấp hơn template có sẵn</strong>: data stream được tạo với mapping mặc định thay vì mapping của bạn.</li>
+<li><strong>Dùng dấu gạch ngang trong dataset</strong>: phá vỡ naming scheme, quyền theo pattern không khớp.</li>
+<li><strong>Dimension có cardinality cao</strong>: TSDS mất khả năng nén, cluster tốn tài nguyên.</li>
+<li><strong>Gửi dữ liệu cũ vào TSDS</strong>: bị từ chối vì nằm ngoài cửa sổ thời gian của backing index.</li>
+<li><strong>Downsampling quá sớm</strong>: mất độ phân giải cần cho điều tra sự cố gần đây.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Dùng data stream cho mọi dữ liệu log, metric, event append-only</li>
+<li>Theo naming scheme để tận dụng template có sẵn và phân quyền theo namespace</li>
+<li>Kế thừa component template <code>logs@*</code>, <code>metrics@*</code> thay vì viết lại toàn bộ</li>
+<li>Metric dùng TSDS, chọn dimension có cardinality hợp lý</li>
+<li>Downsampling theo nhu cầu điều tra: giữ độ phân giải gốc đủ lâu để xử lý sự cố</li>
+<li>Data stream lifecycle cho retention đơn giản, ILM khi cần data tiers</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/data-streams.html" target="_blank">ES: Data Streams</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/data-stream-lifecycle.html" target="_blank">ES: Data Stream Lifecycle</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tsds.html" target="_blank">ES: Time Series Data Stream</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/downsampling.html" target="_blank">ES: Downsampling</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-source-field.html#synthetic-source" target="_blank">ES: Synthetic _source</a></li>
+<li><a href="https://www.elastic.co/guide/en/fleet/current/data-streams.html" target="_blank">Fleet: Data Streams Naming Scheme</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="22-cross-cluster.html">&larr; Bài 22: Cross-Cluster</a>
+<a href="24-comparison-alternatives.html">Bài 24: So Sánh &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

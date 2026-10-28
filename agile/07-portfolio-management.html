@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản trị danh mục - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.formula-box{background:#f8fafc;border:1px solid rgba(102,126,234,.2);border-radius:10px;padding:1.25rem;margin:1.5rem 0;text-align:center}
+.formula-title{font-size:.85rem;font-weight:600;color:#4c51bf;margin-bottom:1rem}
+.formula{font-size:1.1rem;font-weight:700;color:#1a1a2e;margin-bottom:1rem}
+.formula-desc{font-size:.82rem;color:#64748b}
+.kanban-flow{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin:1.5rem 0;padding:1rem;background:#f8fafc;border-radius:10px}
+.kanban-col{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:6px;padding:.5rem .75rem;font-size:.8rem;font-weight:600;color:#4a5568;min-width:80px;text-align:center}
+.kanban-col.active{background:#667eea;color:#fff;border-color:#667eea}
+.kanban-arrow{color:#94a3b8;font-size:1rem}
+.wip-badge{display:inline-block;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600;margin-left:4px}
+.anti-pattern{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:1rem;margin:1rem 0}
+.anti-pattern h4{color:#dc2626;font-size:.88rem;margin-bottom:.5rem}
+.anti-pattern p{font-size:.85rem;color:#7f1d1d;margin:0}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}.kanban-flow{flex-direction:column}.kanban-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#anti-patterns">Lỗi thường gặp</a>
+<a href="#wsjf">Phương pháp WSJF</a>
+<a href="#kanban">Portfolio Kanban</a>
+<a href="#mvp">Luồng MVP</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="06-agile-roles.html">← Trước</a>
+<a href="08-empowerment.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html" class="current">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Quản trị danh mục</h1>
+<p class="subtitle">WSJF, Portfolio Kanban và ưu tiên đầu tư hiệu quả</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: SAFe Principle #6 — Bài 07/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Mục tiêu của quản trị danh mục là <strong>chuyển giao nhiều giá trị nhất trong khoảng thời gian ngắn nhất</strong>. Điều này đòi hỏi một hệ thống ưu tiên minh bạch, dựa trên dữ liệu, và liên tục cập nhật.
+</div>
+
+<h2 id="anti-patterns">Lỗi thường gặp khi thiết lập độ ưu tiên</h2>
+
+<p>Trước khi học cách làm đúng, cần nhận diện các anti-pattern phổ biến:</p>
+
+<div class="anti-pattern">
+<h4>HiPPO — Highest Paid Person's Opinion</h4>
+<p>"Người được trả lương cao nhất đưa ra quyết định." Ví dụ: "Senior VP nói chúng ta phải làm dự án này."</p>
+</div>
+
+<div class="anti-pattern">
+<h4>Squeaky Wheel — Ai kêu to nhất</h4>
+<p>Người có tiếng nói lớn nhất hoặc hứa hẹn nhiều nhất về doanh thu. Ví dụ: "Đầu tư vào dự án của tôi và chúng ta sẽ kiếm được một tỷ đô!"</p>
+</div>
+
+<div class="anti-pattern">
+<h4>ROI đơn thuần</h4>
+<p>Quyết định chỉ dựa trên lợi nhuận mà không xem xét các yếu tố khác (rủi ro, cơ hội, thời gian). Ví dụ: "ROI cho thấy lợi nhuận 30%, nên ta làm thôi."</p>
+</div>
+
+<h2 id="wsjf">Phương pháp WSJF</h2>
+
+<p><strong>WSJF</strong> (Weighted Shortest Job First) là phương pháp ưu tiên dựa trên kinh tế học — ưu tiên công việc có thể mang lại giá trị cao nhất trong thời gian ngắn nhất.</p>
+
+<div class="formula-box">
+<div class="formula-title">Công thức WSJF</div>
+<div class="formula">WSJF = Cost of Delay ÷ Job Duration</div>
+<div class="formula-desc">Công việc có WSJF cao nhất được ưu tiên làm trước</div>
+</div>
+
+<h3>Các thành phần của Cost of Delay</h3>
+
+<table>
+<thead>
+<tr><th>Yếu tố</th><th>Mô tả</th><th>Câu hỏi đặt ra</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>User-Business Value</strong></td>
+<td>Giá trị mang lại cho người dùng hoặc kinh doanh</td>
+<td>Khách hàng sẵn sàng trả bao nhiêu? Tác động doanh thu thế nào?</td>
+</tr>
+<tr>
+<td><strong>Time Criticality</strong></td>
+<td>Tính khẩn cấp về thời gian</td>
+<td>Có deadline cứng không? Giá trị giảm theo thời gian không?</td>
+</tr>
+<tr>
+<td><strong>Risk Reduction</strong></td>
+<td>Giảm rủi ro kinh doanh hoặc kỹ thuật</td>
+<td>Giảm được rủi ro gì? Nghiêm trọng đến đâu?</td>
+</tr>
+<tr>
+<td><strong>Opportunity Enablement</strong></td>
+<td>Mở ra cơ hội mới</td>
+<td>Có mở đường cho sáng kiến khác không? Tạo lợi thế cạnh tranh?</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Cách tính WSJF</h3>
+
+<table>
+<thead>
+<tr><th>Epic</th><th>Business Value</th><th>Time Criticality</th><th>Risk/Opportunity</th><th>Job Size</th><th>WSJF</th></tr>
+</thead>
+<tbody>
+<tr><td>Epic A</td><td>8</td><td>5</td><td>3</td><td>5</td><td><strong>3.2</strong></td></tr>
+<tr><td>Epic B</td><td>5</td><td>8</td><td>5</td><td>3</td><td><strong>6.0</strong></td></tr>
+<tr><td>Epic C</td><td>3</td><td>3</td><td>8</td><td>8</td><td><strong>1.75</strong></td></tr>
+</tbody>
+</table>
+
+<p>Trong ví dụ trên, Epic B có WSJF cao nhất (6.0) nên được ưu tiên làm trước, dù Business Value không cao bằng Epic A.</p>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng</strong>
+WSJF là công cụ hỗ trợ ra quyết định, không phải thay thế judgment. Các con số cần được thảo luận và đồng thuận, không phải áp đặt từ một cá nhân.
+</div>
+
+<h2 id="kanban">Portfolio Kanban</h2>
+
+<p>Portfolio Kanban là công cụ trực quan để theo dõi và quản lý luồng công việc cấp danh mục (Epic level).</p>
+
+<div class="kanban-flow">
+<div class="kanban-col">Funnel</div>
+<div class="kanban-arrow">→</div>
+<div class="kanban-col">Reviewing <span class="wip-badge">WIP 3</span></div>
+<div class="kanban-arrow">→</div>
+<div class="kanban-col">Analyzing <span class="wip-badge">WIP 3</span></div>
+<div class="kanban-arrow">→</div>
+<div class="kanban-col active">Ready</div>
+<div class="kanban-arrow">→</div>
+<div class="kanban-col">Implementing</div>
+<div class="kanban-arrow">→</div>
+<div class="kanban-col">Done</div>
+</div>
+
+<h3>Giải thích các cột</h3>
+
+<table>
+<thead>
+<tr><th>Cột</th><th>Mục đích</th><th>Điều kiện kéo sang</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Funnel</strong></td><td>Tất cả ý tưởng, cơ hội được ghi lại</td><td>Epic Owner sẵn sàng</td></tr>
+<tr><td><strong>Reviewing</strong></td><td>Hiểu sâu hơn về Epic, tạo business case</td><td>Epic Owner có nguồn lực</td></tr>
+<tr><td><strong>Analyzing</strong></td><td>Phân tích giải pháp, ước tính chi phí, tính WSJF</td><td>LPM chấp thuận</td></tr>
+<tr><td><strong>Ready</strong></td><td>Epic đã sẵn sàng, chờ hạm đội có capacity</td><td>Hạm đội có nguồn lực và ngân sách</td></tr>
+<tr><td><strong>Implementing</strong></td><td>Đang triển khai MVP hoặc tính năng đầy đủ</td><td>Giả thuyết MVP được chứng minh</td></tr>
+<tr><td><strong>Done</strong></td><td>Epic hoàn thành hoặc không còn là ưu tiên</td><td>Epic không còn cần theo dõi</td></tr>
+</tbody>
+</table>
+
+<h3>Lợi ích của Portfolio Kanban</h3>
+<ul>
+<li><strong>Minh bạch:</strong> Mọi người đều thấy trạng thái các sáng kiến lớn</li>
+<li><strong>Giới hạn WIP:</strong> Đảm bảo phân tích có trách nhiệm, ngăn quá tải</li>
+<li><strong>Ra quyết định dựa trên dữ liệu:</strong> WSJF, cost/benefit rõ ràng</li>
+<li><strong>Thúc đẩy hợp tác:</strong> Các bên liên quan cùng nhìn vào một bảng</li>
+</ul>
+
+<h2 id="mvp">Luồng kiểm tra MVP — Kiểm soát rủi ro</h2>
+
+<p>Trước khi đầu tư lớn vào một Epic, cần kiểm tra giả thuyết qua MVP (Minimum Viable Product):</p>
+
+<blockquote>
+Build → Measure → Learn → Quyết định Pivot hay Persevere
+</blockquote>
+
+<h3>Quy trình MVP</h3>
+<ol>
+<li><strong>Tạo Epic và Hypothesis:</strong> Định nghĩa rõ giả thuyết cần kiểm tra</li>
+<li><strong>Build MVP:</strong> Xây dựng sản phẩm tối thiểu để kiểm tra giả thuyết</li>
+<li><strong>Measure:</strong> Thu thập dữ liệu từ MVP</li>
+<li><strong>Learn:</strong> Phân tích kết quả</li>
+<li><strong>Quyết định:</strong>
+<ul>
+<li><strong>Persevere:</strong> Giả thuyết đúng → tiếp tục phát triển đầy đủ</li>
+<li><strong>Pivot:</strong> Giả thuyết sai → thay đổi hướng đi</li>
+<li><strong>Stop:</strong> Không khả thi → dừng lại, không lãng phí thêm nguồn lực</li>
+</ul>
+</li>
+</ol>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Quản trị danh mục hiệu quả = Ưu tiên đúng (WSJF) + Trực quan hóa (Kanban) + Kiểm tra giả thuyết (MVP). Ba công cụ này kết hợp giúp tổ chức đầu tư nguồn lực vào những việc có giá trị cao nhất và rủi ro được kiểm soát.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

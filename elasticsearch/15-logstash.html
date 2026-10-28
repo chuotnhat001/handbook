@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logstash - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Kiến trúc</div>
+    <div class="nav-items">
+      <a href="#architecture">Input → Filter → Output</a>
+      <a href="#when">Khi nào dùng Logstash</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Filters</div>
+    <div class="nav-items">
+      <a href="#grok-dissect">Grok &amp; Dissect</a>
+      <a href="#mutate-date">Mutate, Date, GeoIP</a>
+      <a href="#conditionals">Điều kiện &amp; Tag</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Vận hành</div>
+    <div class="nav-items">
+      <a href="#output">Output tới ES</a>
+      <a href="#queues">Persistent Queue &amp; DLQ</a>
+      <a href="#multi-pipeline">Nhiều Pipeline &amp; Monitoring</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html" class="current">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Logstash — Data Pipeline</h1>
+<p class="subtitle">Input → Filter → Output, grok, dissect, mutate, date, persistent queue, dead letter queue</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/logstash/current/index.html" target="_blank">Elastic — Logstash Reference</a>, <a href="https://www.elastic.co/guide/en/logstash/current/persistent-queues.html" target="_blank">Elastic — Persistent Queues</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Hiểu kiến trúc input → filter → output của Logstash và khi nào nên dùng nó thay vì ingest pipeline. Bóc tách log bằng grok và dissect, chuẩn hóa bằng mutate, date, geoip. Rẽ nhánh xử lý bằng điều kiện. Gửi dữ liệu an toàn tới Elasticsearch có TLS. Bảo vệ dữ liệu bằng persistent queue và dead letter queue. Chạy nhiều pipeline và theo dõi chúng.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 05: Document CRUD</strong> — Bulk API</li>
+<li><strong>Bài 13: Bảo Mật</strong> — API key, CA certificate</li>
+<li><strong>Regex cơ bản</strong></li>
+</ul>
+
+<h2 id="architecture">Kiến Trúc: Input → Filter → Output</h2>
+<p>Logstash là engine xử lý dữ liệu chạy trên JVM. Mỗi <strong>pipeline</strong> gồm ba tầng, mỗi tầng là một chuỗi plugin:</p>
+<div class="flow">
+<span class="flow-step">Input (beats, kafka, file, jdbc...)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Queue</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Filter (grok, mutate, date...)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step">Output (elasticsearch, kafka, s3...)</span>
+</div>
+<pre><code># pipeline/apache.conf
+input {
+  beats { port =&gt; 5044 }
+}
+filter {
+  grok { match =&gt; { "message" =&gt; "%{COMBINEDAPACHELOG}" } }
+}
+output {
+  elasticsearch { hosts =&gt; ["https://es01:9200"] }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Input đọc dữ liệu và tạo <strong>event</strong> (một document JSON có các field)</li>
+<li>Các <strong>worker thread</strong> lấy event từ queue theo batch, chạy toàn bộ filter rồi output</li>
+<li><code>pipeline.workers</code> (mặc định bằng số CPU) và <code>pipeline.batch.size</code> (mặc định 125) quyết định throughput</li>
+</ul>
+
+<h2 id="when">Khi Nào Dùng Logstash</h2>
+<table>
+<tr><th>Nhu cầu</th><th>Ingest pipeline (trong ES)</th><th>Logstash</th></tr>
+<tr><td>Parse log đơn giản (grok, date, rename)</td><td>Đủ dùng, không cần thêm thành phần</td><td>Được</td></tr>
+<tr><td>Đọc từ Kafka, JDBC, S3, syslog, HTTP poller</td><td>Không</td><td>Có hàng trăm input plugin</td></tr>
+<tr><td>Gửi tới nhiều đích (ES + Kafka + S3)</td><td>Không</td><td>Có</td></tr>
+<tr><td>Buffer khi Elasticsearch quá tải hoặc bảo trì</td><td>Không</td><td>Persistent queue</td></tr>
+<tr><td>Enrich bằng tra cứu DB, HTTP, file dịch</td><td>Hạn chế (enrich processor)</td><td>Linh hoạt</td></tr>
+<tr><td>Vận hành</td><td>Không thêm hạ tầng</td><td>Thêm một tầng cần monitor, scale, nâng cấp</td></tr>
+</table>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Nếu nguồn dữ liệu là Beats/Elastic Agent và đích chỉ là Elasticsearch, ingest pipeline thường là lựa chọn đơn giản hơn. Dùng Logstash khi cần nguồn hoặc đích ngoài Elastic, xử lý phức tạp, hoặc một lớp đệm giữa nguồn và cluster.
+</div>
+
+<h2 id="grok-dissect">Grok &amp; Dissect</h2>
+<h3>Grok: bóc tách bằng pattern regex có tên</h3>
+<pre><code>Log: 2026-10-28 08:15:42 ERROR [order-service] Payment timeout after 3000ms user=u_42
+
+filter {
+  grok {
+    match =&gt; { "message" =&gt; "%{TIMESTAMP_ISO8601:log_time} %{LOGLEVEL:level} \[%{DATA:service}\] %{GREEDYDATA:msg} user=%{WORD:user_id}" }
+    tag_on_failure =&gt; ["_grok_failed"]
+  }
+}
+# → log_time, level=ERROR, service=order-service, msg=..., user_id=u_42</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Cú pháp <code>%{PATTERN:field}</code>, ép kiểu bằng <code>%{NUMBER:bytes:int}</code>. Logstash có sẵn pattern cho Apache, Nginx, syslog, Java stack trace...</p>
+<pre><code># Pattern tự định nghĩa
+grok {
+  pattern_definitions =&gt; { "ORDER_ID" =&gt; "ORD-[0-9]{8}" }
+  match =&gt; { "message" =&gt; "order %{ORDER_ID:order_id} created" }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Dissect: tách theo dấu phân cách, không dùng regex</h3>
+<pre><code>Log: 2026-10-28T08:15:42Z|INFO|checkout|200|153
+
+filter {
+  dissect {
+    mapping =&gt; { "message" =&gt; "%{ts}|%{level}|%{service}|%{status}|%{latency_ms}" }
+    convert_datatype =&gt; { "status" =&gt; "int" "latency_ms" =&gt; "int" }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<table>
+<tr><th></th><th>Grok</th><th>Dissect</th></tr>
+<tr><td>Cơ chế</td><td>Regex</td><td>Dấu phân cách cố định</td></tr>
+<tr><td>Tốc độ</td><td>Chậm hơn, có thể rất chậm với pattern xấu</td><td>Nhanh</td></tr>
+<tr><td>Phù hợp</td><td>Log không đều định dạng</td><td>Log có cấu trúc cố định</td></tr>
+</table>
+<div class="callout callout-amber">
+<strong>Grok chậm</strong>
+<code>GREEDYDATA</code> và <code>DATA</code> đặt sai chỗ khiến regex quay lui (backtracking) rất nhiều, đặc biệt khi không khớp. Neo pattern bằng <code>^</code>, dùng pattern cụ thể nhất có thể, và cân nhắc dissect trước rồi mới grok phần còn lại. Thử pattern bằng Grok Debugger trong Kibana Dev Tools (Bài 14).
+</div>
+
+<h2 id="mutate-date">Mutate, Date, GeoIP</h2>
+<pre><code>filter {
+  # Đặt @timestamp theo thời gian trong log, không theo thời điểm Logstash nhận
+  date {
+    match =&gt; [ "log_time", "yyyy-MM-dd HH:mm:ss", "ISO8601" ]
+    timezone =&gt; "Asia/Ho_Chi_Minh"
+    target =&gt; "@timestamp"
+  }
+
+  mutate {
+    rename       =&gt; { "msg" =&gt; "[event][message]" }
+    convert      =&gt; { "latency_ms" =&gt; "integer" }
+    lowercase    =&gt; [ "level" ]
+    remove_field =&gt; [ "log_time" ]
+    add_field    =&gt; { "[event][dataset]" =&gt; "orders.app" }
+  }
+
+  # Tra vị trí địa lý từ IP (dùng database GeoLite2 đi kèm)
+  geoip {
+    source =&gt; "client_ip"
+    target =&gt; "client.geo"
+  }
+
+  # Che dữ liệu nhạy cảm trước khi lưu
+  mutate {
+    gsub =&gt; [ "[event][message]", "\b\d{12,19}\b", "[REDACTED]" ]
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Đặt tên field theo ECS</strong>
+Elastic Common Schema (ECS) quy ước tên field chung (<code>@timestamp</code>, <code>log.level</code>, <code>service.name</code>, <code>client.ip</code>, <code>http.response.status_code</code>...). Theo ECS giúp dashboard và rule bảo mật có sẵn của Elastic hoạt động ngay với dữ liệu của bạn.
+</div>
+
+<h2 id="conditionals">Điều Kiện &amp; Tag</h2>
+<pre><code>filter {
+  if [service] == "payment" {
+    mutate { add_tag =&gt; ["pci"] }
+  }
+
+  if [level] in ["error", "fatal"] {
+    mutate { add_field =&gt; { "alert" =&gt; "true" } }
+  } else if [level] == "debug" {
+    drop { }                       # bỏ log debug, không gửi đi
+  }
+
+  if "_grok_failed" in [tags] {
+    mutate { add_field =&gt; { "[event][original]" =&gt; "%{message}" } }
+  }
+}
+
+output {
+  if "pci" in [tags] {
+    elasticsearch { index =&gt; "logs-payment-%{+YYYY.MM.dd}" ... }
+  } else {
+    elasticsearch { data_stream =&gt; "true" ... }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Tham chiếu field lồng nhau bằng <code>[parent][child]</code>, chèn giá trị field vào chuỗi bằng <code>%{field}</code>, ngày tháng bằng <code>%{+YYYY.MM.dd}</code>.</p>
+
+<h2 id="output">Output Tới Elasticsearch</h2>
+<pre><code>output {
+  elasticsearch {
+    hosts =&gt; ["https://es01:9200", "https://es02:9200", "https://es03:9200"]
+    ssl_enabled =&gt; true
+    ssl_certificate_authorities =&gt; ["/usr/share/logstash/certs/ca/ca.crt"]
+    api_key =&gt; "${ES_API_KEY}"     # dạng id:api_key, đọc từ keystore hoặc biến môi trường
+
+    # Ghi vào data stream logs-orders.app-default
+    data_stream =&gt; "true"
+    data_stream_type =&gt; "logs"
+    data_stream_dataset =&gt; "orders.app"
+    data_stream_namespace =&gt; "default"
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Output tự gom event thành bulk request và phân tải qua các host</li>
+<li>Lỗi tạm thời (429, 503, mất kết nối) được retry vô hạn với backoff, nên Logstash tự chậm lại khi cluster quá tải (backpressure)</li>
+<li>Lỗi vĩnh viễn (400 mapping conflict) không retry được: event bị bỏ, trừ khi bật dead letter queue</li>
+</ul>
+<pre><code># Lưu secret vào keystore của Logstash
+bin/logstash-keystore create
+bin/logstash-keystore add ES_API_KEY</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>API key cho Logstash cần quyền ghi vào data stream đích, ví dụ privileges <code>create_doc</code> và <code>auto_configure</code> trên <code>logs-*-*</code> (Bài 13).</p>
+
+<h2 id="queues">Persistent Queue &amp; Dead Letter Queue</h2>
+<h3>Persistent queue (PQ)</h3>
+<p>Mặc định Logstash dùng <strong>memory queue</strong>: Logstash crash là mất các event đang nằm trong bộ nhớ. <strong>Persistent queue</strong> ghi event xuống disk trước khi xử lý.</p>
+<pre><code># logstash.yml (hoặc theo từng pipeline trong pipelines.yml)
+queue.type: persisted
+queue.max_bytes: 4gb        # đầy thì input bị chặn (backpressure)
+path.queue: /var/lib/logstash/queue</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Chịu được Logstash restart hoặc crash mà không mất event đã nhận</li>
+<li>Hấp thụ đột biến traffic khi Elasticsearch chậm</li>
+<li>Không thay thế được bộ đệm ở nguồn: Logstash hỏng disk thì vẫn mất dữ liệu trong PQ. Với yêu cầu không mất dữ liệu, đặt Kafka phía trước</li>
+</ul>
+
+<h3>Dead letter queue (DLQ)</h3>
+<p>Event bị Elasticsearch từ chối vĩnh viễn (400, 404) được ghi vào DLQ thay vì bị bỏ, để xử lý lại sau.</p>
+<pre><code># logstash.yml
+dead_letter_queue.enable: true
+dead_letter_queue.max_bytes: 1gb
+
+# Pipeline riêng đọc lại DLQ, sửa lỗi rồi gửi lại
+input {
+  dead_letter_queue {
+    path =&gt; "/usr/share/logstash/data/dead_letter_queue"
+    pipeline_id =&gt; "main"
+    commit_offsets =&gt; true
+  }
+}
+filter {
+  # [@metadata][dead_letter_queue][reason] chứa lý do bị từ chối
+  mutate { convert =&gt; { "status" =&gt; "string" } }
+}
+output { elasticsearch { ... } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="multi-pipeline">Nhiều Pipeline &amp; Monitoring</h2>
+<pre><code># config/pipelines.yml
+- pipeline.id: apache
+  path.config: "/usr/share/logstash/pipeline/apache.conf"
+  pipeline.workers: 4
+  queue.type: persisted
+- pipeline.id: orders
+  path.config: "/usr/share/logstash/pipeline/orders.conf"
+  pipeline.workers: 2</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Tách pipeline theo nguồn dữ liệu giúp một nguồn chậm không làm nghẽn nguồn khác, và cấu hình workers, queue riêng cho từng loại. Pipeline có thể chuyển event cho nhau qua <code>pipeline { send_to =&gt; ["orders"] }</code> và <code>pipeline { address =&gt; "orders" }</code> (pipeline-to-pipeline).</p>
+<pre><code># Monitoring API (cổng 9600)
+curl "http://localhost:9600/_node/stats/pipelines?pretty"
+# Xem events.in/out, duration_in_millis của từng plugin để tìm filter chậm
+
+# Kiểm tra cú pháp cấu hình trước khi khởi động
+bin/logstash -f pipeline/apache.conf --config.test_and_exit</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Đặt <code>id</code> cho mỗi plugin (<code>grok { id =&gt; "parse_apache" ... }</code>) để số liệu monitoring dễ đọc. Kibana Stack Monitoring (Bài 18) hiển thị cùng số liệu này dạng biểu đồ.</p>
+
+<h2 id="lab">Bài Lab: Pipeline Xử Lý Apache Access Log + Enrichment</h2>
+<h3>Bước 1: Dữ liệu mẫu</h3>
+<pre><code>mkdir -p logstash/pipeline logstash/data-in
+cat &gt; logstash/data-in/access.log &lt;&lt;'EOF'
+203.113.152.10 - - [28/Oct/2026:08:15:42 +0700] "GET /api/products?page=2 HTTP/1.1" 200 5120 "-" "Mozilla/5.0 Chrome/129.0"
+8.8.8.8 - - [28/Oct/2026:08:15:43 +0700] "POST /api/orders HTTP/1.1" 201 312 "https://shop.example/cart" "Mozilla/5.0 Safari/17.0"
+113.161.70.5 - - [28/Oct/2026:08:16:01 +0700] "GET /api/products/9999 HTTP/1.1" 404 98 "-" "curl/8.5.0"
+203.113.152.10 - - [28/Oct/2026:08:16:05 +0700] "GET /api/checkout HTTP/1.1" 500 210 "-" "Mozilla/5.0 Chrome/129.0"
+this line is not an apache log
+EOF</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Pipeline</h3>
+<pre><code>cat &gt; logstash/pipeline/apache.conf &lt;&lt;'EOF'
+input {
+  file {
+    path =&gt; "/data-in/access.log"
+    start_position =&gt; "beginning"
+    sincedb_path =&gt; "/dev/null"     # chỉ cho lab: đọc lại từ đầu mỗi lần chạy
+  }
+}
+filter {
+  grok {
+    id =&gt; "parse_apache"
+    match =&gt; { "message" =&gt; "%{COMBINEDAPACHELOG}" }
+    tag_on_failure =&gt; ["_grok_failed"]
+  }
+  if "_grok_failed" not in [tags] {
+    date {
+      match =&gt; [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
+      target =&gt; "@timestamp"
+    }
+    geoip {
+      source =&gt; "[source][address]"
+      target =&gt; "[source]"
+      ecs_compatibility =&gt; "v8"
+    }
+    useragent {
+      source =&gt; "[user_agent][original]"
+      target =&gt; "[user_agent]"
+    }
+    if [http][response][status_code] &gt;= 500 {
+      mutate { add_tag =&gt; ["server_error"] }
+    }
+    mutate { remove_field =&gt; [ "timestamp" ] }
+  }
+}
+output {
+  elasticsearch {
+    hosts =&gt; ["https://es01:9200"]
+    ssl_enabled =&gt; true
+    ssl_certificate_authorities =&gt; ["/usr/share/logstash/certs/ca/ca.crt"]
+    api_key =&gt; "${ES_API_KEY}"
+    data_stream =&gt; "true"
+    data_stream_dataset =&gt; "apache.access"
+  }
+  stdout { codec =&gt; rubydebug { metadata =&gt; false } }
+}
+EOF</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Tên field theo ECS</strong>
+Từ Logstash 8, <code>COMBINEDAPACHELOG</code> mặc định sinh field theo ECS: <code>source.address</code>, <code>http.request.method</code>, <code>url.original</code>, <code>http.response.status_code</code>, <code>user_agent.original</code>... Chạy lần đầu với output <code>stdout</code> để xem đúng tên field ở version của bạn trước khi viết điều kiện.
+</div>
+
+<h3>Bước 3: API key và container Logstash</h3>
+<pre><code>source .env
+curl $AUTH -X POST "$ES/_security/api_key" -H 'Content-Type: application/json' -d '{
+  "name": "logstash-lab", "expiration": "7d",
+  "role_descriptors": { "ls_writer": { "cluster": ["monitor"],
+    "indices": [{ "names": ["logs-*-*"], "privileges": ["create_doc","auto_configure"] }] } }
+}'
+# Ghi "id:api_key" (KHÔNG phải giá trị encoded) vào .env:
+echo "LS_API_KEY=&lt;id&gt;:&lt;api_key&gt;" &gt;&gt; .env</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>  logstash:
+    image: docker.elastic.co/logstash/logstash:8.15.0
+    depends_on: [ es01 ]
+    environment:
+      - ES_API_KEY=${LS_API_KEY}
+      - xpack.monitoring.enabled=false
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logstash/data-in:/data-in:ro
+      - ./certs:/usr/share/logstash/certs:ro</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>docker compose up -d logstash
+docker compose logs -f logstash     # xem event dạng rubydebug</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Kiểm tra kết quả</h3>
+<pre><code>curl $AUTH "$ES/logs-apache.access-default/_search?pretty&amp;size=1&amp;q=tags:server_error"
+curl $AUTH "$ES/logs-apache.access-default/_search?pretty&amp;size=0" -H 'Content-Type: application/json' -d '{
+  "aggs": { "countries": { "terms": { "field": "source.geo.country_iso_code" } } }
+}'
+curl $AUTH "$ES/logs-apache.access-default/_count?q=tags:_grok_failed"
+curl "http://localhost:9600/_node/stats/pipelines/main?pretty" 2&gt;/dev/null || \
+  docker compose exec logstash curl -s localhost:9600/_node/stats/pipelines?pretty</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Data stream <code>logs-apache.access-default</code> có 5 document. 4 dòng hợp lệ có <code>@timestamp</code> theo thời gian trong log, vị trí địa lý từ IP công khai và thông tin trình duyệt. Request 500 mang tag <code>server_error</code>. Dòng rác mang tag <code>_grok_failed</code> nhưng không bị mất, nên bạn vẫn điều tra được.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Mô tả luồng xử lý event qua input, queue, filter, output.</li>
+<li>Khi nào chọn ingest pipeline, khi nào chọn Logstash?</li>
+<li>So sánh grok và dissect. Vì sao một pattern grok có thể làm chậm cả pipeline?</li>
+<li>Vì sao cần filter <code>date</code> thay vì giữ <code>@timestamp</code> mặc định?</li>
+<li>Persistent queue bảo vệ trước sự cố nào và không bảo vệ trước sự cố nào?</li>
+<li>Event bị Elasticsearch trả lỗi 400 đi đâu nếu không có DLQ?</li>
+<li>Vì sao nên tách nhiều pipeline thay vì một pipeline lớn có nhiều điều kiện?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Viết pipeline đủ ba tầng input, filter, output</li>
+<li>☐ Bóc tách log bằng grok và dissect</li>
+<li>☐ Chuẩn hóa thời gian, kiểu dữ liệu, tên field theo ECS</li>
+<li>☐ Dùng điều kiện, tag và drop</li>
+<li>☐ Gửi tới Elasticsearch qua TLS bằng API key trong keystore</li>
+<li>☐ Bật persistent queue và dead letter queue</li>
+<li>☐ Cấu hình pipelines.yml và đọc monitoring API</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Không dùng filter date</strong>: <code>@timestamp</code> là lúc Logstash nhận, sai lệch khi log đến trễ hoặc khi đọc lại log cũ.</li>
+<li><strong>Bỏ qua tag _grok_failed</strong>: dòng không khớp pattern lặng lẽ đi vào index với field thiếu.</li>
+<li><strong>Memory queue cho dữ liệu quan trọng</strong>: restart hoặc crash là mất event.</li>
+<li><strong>API key hoặc mật khẩu trong file .conf</strong>: dùng keystore hoặc biến môi trường.</li>
+<li><strong>sincedb_path =&gt; "/dev/null" ở production</strong>: mỗi lần restart đọc lại toàn bộ file, sinh dữ liệu trùng.</li>
+<li><strong>Một pipeline khổng lồ cho mọi nguồn</strong>: một nguồn lỗi làm nghẽn tất cả.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Ưu tiên ingest pipeline khi đủ dùng, chỉ thêm Logstash khi có lý do cụ thể</li>
+<li>Đặt <code>id</code> cho mọi plugin, theo dõi duration của từng filter</li>
+<li>Dùng dissect cho phần có cấu trúc cố định, grok cho phần còn lại</li>
+<li>Bật persistent queue cho pipeline quan trọng, đặt Kafka phía trước khi yêu cầu không được mất dữ liệu</li>
+<li>Kiểm tra cấu hình bằng <code>--config.test_and_exit</code> trong CI trước khi triển khai</li>
+<li>Theo ECS khi đặt tên field</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/logstash/current/index.html" target="_blank">Logstash Reference</a></li>
+<li><a href="https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html" target="_blank">Logstash: Grok Filter</a></li>
+<li><a href="https://www.elastic.co/guide/en/logstash/current/plugins-outputs-elasticsearch.html" target="_blank">Logstash: Elasticsearch Output</a></li>
+<li><a href="https://www.elastic.co/guide/en/logstash/current/persistent-queues.html" target="_blank">Logstash: Persistent Queues</a></li>
+<li><a href="https://www.elastic.co/guide/en/logstash/current/dead-letter-queues.html" target="_blank">Logstash: Dead Letter Queues</a></li>
+<li><a href="https://www.elastic.co/guide/en/ecs/current/index.html" target="_blank">Elastic Common Schema</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="14-kibana.html">&larr; Bài 14: Kibana</a>
+<a href="16-beats-elastic-agent.html">Bài 16: Beats &amp; Agent &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

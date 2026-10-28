@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kibana - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Cài đặt</div>
+    <div class="nav-items">
+      <a href="#setup">Kết nối với ES</a>
+      <a href="#data-views">Data Views</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Khám phá</div>
+    <div class="nav-items">
+      <a href="#discover">Discover &amp; KQL</a>
+      <a href="#lens">Lens</a>
+      <a href="#dashboards">Dashboards &amp; Canvas</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Quản trị</div>
+    <div class="nav-items">
+      <a href="#spaces">Spaces &amp; Phân quyền</a>
+      <a href="#saved-objects">Saved Objects</a>
+      <a href="#dev-tools">Dev Tools</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html" class="current">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Kibana — Visualization &amp; Management</h1>
+<p class="subtitle">Data view, Discover, KQL, Lens, Dashboard, Spaces, saved objects, Dev Tools</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank">Elastic — Kibana Guide</a>, <a href="https://www.elastic.co/guide/en/kibana/current/kuery-query.html" target="_blank">Elastic — KQL</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Kết nối Kibana với cluster đã bật security. Tạo data view và khám phá dữ liệu trong Discover bằng KQL. Dựng visualization bằng Lens và ghép thành dashboard. Tách môi trường làm việc bằng Spaces và phân quyền theo role. Export/import saved objects để đưa dashboard giữa các môi trường. Dùng Dev Tools Console thành thạo.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 08, 09</strong> — Query DSL và aggregation (Kibana sinh chúng dưới nền)</li>
+<li><strong>Bài 13: Bảo Mật</strong> — Cluster lab có TLS, user <code>kibana_system</code>, role</li>
+</ul>
+
+<h2 id="setup">Kết Nối Kibana Với Elasticsearch</h2>
+<p>Kibana là ứng dụng Node.js, giao diện web cho Elasticsearch. Kibana không lưu dữ liệu riêng: mọi cấu hình (dashboard, data view, rule) đều lưu trong các index hệ thống của Elasticsearch.</p>
+<pre><code># kibana.yml
+server.host: "0.0.0.0"
+server.publicBaseUrl: "https://kibana.example.com"
+elasticsearch.hosts: [ "https://es01:9200", "https://es02:9200" ]
+elasticsearch.username: "kibana_system"
+elasticsearch.ssl.certificateAuthorities: [ "/usr/share/kibana/config/certs/ca/ca.crt" ]
+
+# Khóa mã hóa saved objects (bắt buộc cho alerting và connector), dài tối thiểu 32 ký tự
+xpack.encryptedSavedObjects.encryptionKey: "&lt;32+ ký tự ngẫu nhiên&gt;"</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code># Lưu mật khẩu vào keystore của Kibana, không để trong kibana.yml
+bin/kibana-keystore create
+bin/kibana-keystore add elasticsearch.password
+
+# Sinh sẵn 3 khóa mã hóa
+bin/kibana-encryption-keys generate</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Version phải khớp</strong>
+Kibana phải cùng version với Elasticsearch (Bài 04). Kibana mới hơn cluster sẽ từ chối khởi động. Khi nâng cấp, nâng Elasticsearch trước, Kibana sau.
+</div>
+<p>Với cluster mới cài ES 8.x một node, cách nhanh nhất là dùng <strong>enrollment token</strong>: mở Kibana, dán token sinh bởi <code>bin/elasticsearch-create-enrollment-token -s kibana</code>, Kibana tự nhận CA và cấu hình kết nối.</p>
+
+<h2 id="data-views">Data Views</h2>
+<p><strong>Data view</strong> (trước đây gọi là index pattern) cho Kibana biết cần đọc index hoặc data stream nào, và field nào là trường thời gian.</p>
+<pre><code># Tạo data view qua API (tiện cho automation)
+curl $AUTH -X POST "http://localhost:5601/api/data_views/data_view" \
+  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{
+  "data_view": { "title": "logs-*", "name": "Logs", "timeFieldName": "@timestamp" }
+}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<ul>
+<li>Pattern dùng wildcard: <code>logs-*</code>, <code>logs-app-*,logs-web-*</code>, hoặc cross-cluster <code>remote:logs-*</code> (Bài 22)</li>
+<li>Chọn đúng time field để bộ chọn thời gian trên mọi màn hình hoạt động</li>
+<li>Có thể thêm <strong>runtime field</strong> ngay trong data view, tính khi truy vấn, không cần reindex</li>
+</ul>
+
+<h2 id="discover">Discover &amp; KQL</h2>
+<p><strong>Discover</strong> là nơi khám phá document thô: lọc theo thời gian, tìm kiếm, chọn cột, xem chi tiết từng document.</p>
+<h3>KQL (Kibana Query Language)</h3>
+<table>
+<tr><th>Mục đích</th><th>KQL</th></tr>
+<tr><td>Khớp giá trị</td><td><code>status_code: 500</code></td></tr>
+<tr><td>Nhiều giá trị</td><td><code>method: (GET or POST)</code></td></tr>
+<tr><td>Kết hợp</td><td><code>status_code &gt;= 500 and path: "/api/orders"</code></td></tr>
+<tr><td>Phủ định</td><td><code>not user_agent: curl</code></td></tr>
+<tr><td>Field tồn tại</td><td><code>error.message: *</code></td></tr>
+<tr><td>Wildcard</td><td><code>path: /api/prod*</code></td></tr>
+<tr><td>Field lồng nhau (nested)</td><td><code>items: { sku: "A1" and qty &gt; 2 }</code></td></tr>
+</table>
+<div class="callout callout-blue">
+<strong>KQL, Lucene query hay ES|QL</strong>
+KQL là mặc định và đủ dùng cho hầu hết việc lọc. Lucene query syntax hỗ trợ regex và fuzzy (<code>name:labtop~</code>). <strong>ES|QL</strong> (Elasticsearch Query Language, có từ 8.11) là ngôn ngữ dạng pipe, cho phép biến đổi và tổng hợp ngay trong Discover:
+<code>FROM logs-* | WHERE status_code &gt;= 500 | STATS errors = COUNT(*) BY path | SORT errors DESC</code>
+</div>
+<p>Ngoài thanh tìm kiếm, <strong>filter pill</strong> (bấm vào giá trị field để thêm filter) dịch sang <code>bool.filter</code> trong Query DSL, có thể ghim (pin) để giữ khi chuyển màn hình.</p>
+
+<h2 id="lens">Lens</h2>
+<p><strong>Lens</strong> là trình tạo visualization kéo-thả: kéo field vào khung, Lens gợi ý loại biểu đồ và sinh aggregation tương ứng (Bài 09).</p>
+<table>
+<tr><th>Mục đích</th><th>Loại biểu đồ</th><th>Aggregation bên dưới</th></tr>
+<tr><td>Xu hướng theo thời gian</td><td>Line, area, bar (trục X là thời gian)</td><td><code>date_histogram</code> + metric</td></tr>
+<tr><td>So sánh nhóm</td><td>Bar ngang</td><td><code>terms</code> + metric</td></tr>
+<tr><td>Tỷ lệ</td><td>Pie, donut, treemap</td><td><code>terms</code></td></tr>
+<tr><td>Một con số quan trọng</td><td>Metric</td><td><code>sum</code>, <code>avg</code>, <code>cardinality</code></td></tr>
+<tr><td>Phân bố hai chiều</td><td>Heat map</td><td>hai bucket lồng nhau</td></tr>
+<tr><td>Bảng chi tiết</td><td>Table</td><td>nhiều bucket + metric</td></tr>
+</table>
+<ul>
+<li><strong>Formula</strong>: tính chỉ số từ nhiều metric, ví dụ tỷ lệ lỗi <code>count(kql='status_code &gt;= 500') / count()</code></li>
+<li><strong>Time shift</strong>: so sánh với kỳ trước (<code>1w</code>) ngay trên cùng biểu đồ</li>
+<li><strong>Inspect</strong>: xem request Elasticsearch mà Lens gửi đi. Đây là công cụ debug dashboard chậm</li>
+</ul>
+
+<h2 id="dashboards">Dashboards &amp; Canvas</h2>
+<p><strong>Dashboard</strong> ghép nhiều panel (Lens, saved search, Markdown, map) dùng chung bộ chọn thời gian và filter.</p>
+<ul>
+<li><strong>Controls</strong>: dropdown hoặc slider ở đầu dashboard để người xem tự lọc (môi trường, service, khu vực)</li>
+<li><strong>Drilldown</strong>: bấm vào một điểm dữ liệu để mở dashboard khác hoặc Discover với filter tương ứng</li>
+<li><strong>Chia sẻ</strong>: link có trạng thái, nhúng iframe, hoặc báo cáo PDF/PNG định kỳ (reporting cần license trả phí)</li>
+</ul>
+<p><strong>Canvas</strong> dựng trang trình bày tự do theo pixel, phù hợp cho màn hình treo tường hoặc báo cáo có bố cục riêng. Với nhu cầu dashboard thông thường, Dashboard + Lens nhanh và dễ bảo trì hơn.</p>
+<div class="callout callout-amber">
+<strong>Dashboard chậm</strong>
+Mỗi panel là một hoặc nhiều request. Dashboard 30 panel trên khoảng thời gian 90 ngày có thể đè nặng cluster. Giảm số panel, đặt khoảng thời gian mặc định ngắn, và dùng Inspect để tìm panel tốn kém nhất.
+</div>
+
+<h2 id="spaces">Spaces &amp; Phân Quyền</h2>
+<p><strong>Space</strong> chia Kibana thành các không gian riêng: mỗi space có dashboard, data view, saved object riêng. Ví dụ: space cho team Payments, space cho team SRE.</p>
+<p>Quyền trong Kibana cấu hình qua role của Elasticsearch, gồm hai phần:</p>
+<ul>
+<li><strong>Index privileges</strong>: được đọc dữ liệu index nào (Bài 13)</li>
+<li><strong>Kibana privileges</strong>: trong space nào, được dùng tính năng gì, mức <code>read</code> hay <code>all</code></li>
+</ul>
+<pre><code># Role cho team Payments: xem dashboard trong space "payments", chỉ đọc log của mình
+curl $AUTH -X PUT "http://localhost:5601/api/security/role/payments_viewer" \
+  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{
+  "elasticsearch": {
+    "indices": [ { "names": ["logs-payments-*"], "privileges": ["read","view_index_metadata"] } ]
+  },
+  "kibana": [
+    { "spaces": ["payments"], "base": [], "feature": { "dashboard": ["read"], "discover": ["read"] } }
+  ]
+}'</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-red">
+<strong>Space không phải ranh giới bảo mật dữ liệu</strong>
+Space chỉ tách các đối tượng của Kibana. Nếu role có quyền <code>read</code> trên <code>logs-*</code>, người dùng vẫn đọc được mọi log, từ bất kỳ space nào, qua Dev Tools hoặc API. Ranh giới dữ liệu phải đặt ở index privileges hoặc document level security.
+</div>
+
+<h2 id="saved-objects">Saved Objects</h2>
+<p>Dashboard, visualization, data view, saved search đều là <strong>saved object</strong>. Chúng có thể export ra file NDJSON và import sang Kibana khác, giúp đưa dashboard từ staging lên production hoặc quản lý bằng Git.</p>
+<pre><code># Export dashboard kèm mọi object nó tham chiếu
+curl $AUTH -X POST "http://localhost:5601/api/saved_objects/_export" \
+  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
+  -d '{"objects":[{"type":"dashboard","id":"&lt;dashboard-id&gt;"}],"includeReferencesDeep":true}' \
+  -o access-logs-dashboard.ndjson
+
+# Import vào space "payments", ghi đè nếu đã có
+curl $AUTH -X POST "http://localhost:5601/s/payments/api/saved_objects/_import?overwrite=true" \
+  -H 'kbn-xsrf: true' --form file=@access-logs-dashboard.ndjson</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Các ví dụ dùng biến <code>$AUTH</code> từ Lab Bài 13 và Kibana lab chạy HTTP ở cổng 5601. Production nên bật TLS cho Kibana (<code>server.ssl.*</code>) và đổi sang <code>https://</code>. Mọi request ghi tới Kibana API cần header <code>kbn-xsrf</code> để chống CSRF. Thêm tiền tố <code>/s/&lt;space-id&gt;</code> để thao tác trong space không phải mặc định.</p>
+
+<h2 id="dev-tools">Dev Tools</h2>
+<p><strong>Console</strong> trong Dev Tools là nơi gửi request REST tới Elasticsearch với autocomplete, định dạng JSON, và lịch sử. Toàn bộ ví dụ dạng <code>GET /index/_search</code> trong giáo trình này chạy trực tiếp được ở đây.</p>
+<ul>
+<li><code>Ctrl/Cmd + Enter</code>: chạy request tại con trỏ</li>
+<li>Menu "Copy as cURL": chuyển request sang lệnh curl để dùng trong script</li>
+<li><strong>Search Profiler</strong>: trực quan hóa Profile API (Bài 19)</li>
+<li><strong>Grok Debugger</strong>: thử pattern grok trước khi đưa vào Logstash hoặc ingest pipeline (Bài 15)</li>
+<li><strong>Painless Lab</strong>: thử script Painless</li>
+</ul>
+<p>Console chạy với quyền của người dùng đang đăng nhập, nên role giới hạn quyền vẫn áp dụng.</p>
+
+<h2 id="lab">Bài Lab: Dashboard Monitoring Cho Web Application</h2>
+<h3>Bước 1: Thêm Kibana vào docker-compose.yml</h3>
+<p>Đặt mật khẩu cho <code>kibana_system</code> và thêm vào <code>.env</code>:</p>
+<pre><code>source .env
+curl $AUTH -X POST "$ES/_security/user/kibana_system/_password" \
+  -H 'Content-Type: application/json' -d '{"password":"kibana-lab-password-123"}'
+echo "KIBANA_PASSWORD=kibana-lab-password-123" &gt;&gt; .env
+echo "KIBANA_ENC_KEY=$(openssl rand -hex 32)" &gt;&gt; .env</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+    depends_on: [ es01 ]
+    ports: [ "5601:5601" ]
+    environment:
+      - ELASTICSEARCH_HOSTS=https://es01:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENC_KEY}
+    volumes:
+      - ./certs:/usr/share/kibana/config/certs</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code>docker compose up -d kibana
+docker compose logs -f kibana | grep -i "available"
+# Mở http://localhost:5601, đăng nhập bằng user elastic</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Nạp dữ liệu access log</h3>
+<p>Trong Dev Tools Console, chạy lại phần tạo index và bulk của Lab Bài 09 (<code>access-logs</code>), rồi thêm nhiều bản ghi hơn để biểu đồ có hình dạng. Nếu dùng Kibana sample data (Home → Add data → Sample web logs), bạn có sẵn khoảng 14.000 bản ghi web log.</p>
+
+<h3>Bước 3: Data view và Discover</h3>
+<ol>
+<li>Stack Management → Data Views → Create: tên <code>Access Logs</code>, pattern <code>access-logs</code>, time field <code>@timestamp</code></li>
+<li>Mở Discover, chọn data view, đặt khoảng thời gian bao quanh dữ liệu</li>
+<li>Thử KQL: <code>status_code &gt;= 500</code>, rồi <code>path: "/api/products" and latency_ms &gt; 1000</code></li>
+<li>Thêm cột <code>path</code>, <code>status_code</code>, <code>latency_ms</code>, lưu thành saved search "Lỗi 5xx"</li>
+</ol>
+
+<h3>Bước 4: Bốn panel bằng Lens</h3>
+<table>
+<tr><th>Panel</th><th>Cấu hình</th></tr>
+<tr><td>Requests theo thời gian</td><td>Bar, trục X <code>@timestamp</code>, trục Y Count, breakdown theo <code>status_code</code> (top 5)</td></tr>
+<tr><td>Tỷ lệ lỗi</td><td>Metric, Formula: <code>count(kql='status_code &gt;= 500') / count()</code>, định dạng phần trăm</td></tr>
+<tr><td>P95 latency</td><td>Line, trục Y: Percentile 95 của <code>latency_ms</code></td></tr>
+<tr><td>Top endpoint chậm</td><td>Bar ngang, Top 10 <code>path</code> theo Average <code>latency_ms</code></td></tr>
+</table>
+<p>Lưu cả bốn vào dashboard "Web App Monitoring", thêm saved search "Lỗi 5xx" ở cuối. Thêm control dạng options list cho field <code>method</code>.</p>
+
+<h3>Bước 5: Space, role và export</h3>
+<ol>
+<li>Tạo space <code>sre</code>, copy dashboard sang space này (Stack Management → Saved Objects → Copy to space)</li>
+<li>Tạo role chỉ <code>read</code> dashboard trong space <code>sre</code> và <code>read</code> index <code>access-logs</code>, gán cho một user mới, đăng nhập thử bằng cửa sổ ẩn danh</li>
+<li>Export dashboard ra NDJSON bằng API ở mục Saved Objects</li>
+</ol>
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Dashboard hiển thị đủ 4 panel và đổi theo bộ chọn thời gian. User mới chỉ thấy space <code>sre</code>, mở được dashboard nhưng không sửa được. File NDJSON chứa dashboard, các visualization và data view. Bấm Inspect trên panel P95 để thấy aggregation <code>percentiles</code> mà Lens sinh ra.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Kibana lưu dashboard và cấu hình ở đâu?</li>
+<li>Vì sao cần <code>xpack.encryptedSavedObjects.encryptionKey</code>?</li>
+<li>Viết KQL tìm request POST tới <code>/api/orders</code> có latency trên 500 ms, loại trừ user agent curl.</li>
+<li>Khi nào dùng ES|QL thay vì KQL?</li>
+<li>Vì sao Space không phải ranh giới bảo mật dữ liệu? Đặt ranh giới đó ở đâu?</li>
+<li>Làm sao đưa một dashboard từ staging sang production?</li>
+<li>Bạn tìm panel làm dashboard chậm bằng cách nào?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Kết nối Kibana tới cluster có TLS bằng <code>kibana_system</code> và keystore</li>
+<li>☐ Tạo data view với time field đúng</li>
+<li>☐ Lọc dữ liệu bằng KQL và filter pill trong Discover</li>
+<li>☐ Dựng visualization bằng Lens, dùng Formula và Inspect</li>
+<li>☐ Ghép dashboard có control và saved search</li>
+<li>☐ Tạo space và role có Kibana privileges</li>
+<li>☐ Export và import saved objects qua API</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Kibana đăng nhập bằng user elastic</strong>: dùng <code>kibana_system</code> hoặc service account <code>elastic/kibana</code>.</li>
+<li><strong>Không đặt encryption key</strong>: mỗi lần restart sinh key mới, rule và connector đã lưu không giải mã được.</li>
+<li><strong>Dùng Space để chia dữ liệu giữa khách hàng</strong>: người dùng vẫn đọc được index qua API.</li>
+<li><strong>Dashboard mặc định khoảng 1 năm</strong>: mỗi lần mở dashboard tạo tải lớn lên cluster.</li>
+<li><strong>Sửa dashboard trực tiếp trên production</strong>: không có lịch sử thay đổi. Quản lý NDJSON bằng Git.</li>
+<li><strong>Chọn sai time field trong data view</strong>: bộ lọc thời gian cho kết quả lệch hoặc rỗng.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Chạy ít nhất 2 instance Kibana sau load balancer cho production, dùng chung encryption key</li>
+<li>Đặt <code>server.publicBaseUrl</code> để link trong cảnh báo và báo cáo trỏ đúng địa chỉ</li>
+<li>Mỗi team một space, quyền dữ liệu đặt ở index privileges</li>
+<li>Lưu saved objects dạng NDJSON trong Git, import tự động khi triển khai</li>
+<li>Giữ dashboard gọn, khoảng thời gian mặc định ngắn, kiểm tra request bằng Inspect</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank">Kibana Guide</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/kuery-query.html" target="_blank">Kibana: KQL</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/lens.html" target="_blank">Kibana: Lens</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/xpack-spaces.html" target="_blank">Kibana: Spaces</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/current/saved-objects-api.html" target="_blank">Kibana: Saved Objects API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/esql.html" target="_blank">ES|QL</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="13-security.html">&larr; Bài 13: Bảo Mật</a>
+<a href="15-logstash.html">Bài 15: Logstash &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>

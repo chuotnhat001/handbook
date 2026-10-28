@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tổ chức theo chuỗi giá trị - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.compare-box{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+.compare-item{background:#f8fafc;border-radius:10px;padding:1.25rem;border:1px solid rgba(0,0,0,.06)}
+.compare-item.bad{border-color:#fca5a5;background:#fef2f2}
+.compare-item.good{border-color:#86efac;background:#f0fdf4}
+.compare-item h4{font-size:.88rem;font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.compare-item.bad h4{color:#dc2626}
+.compare-item.good h4{color:#16a34a}
+.compare-item ul{margin:0;padding-left:1.25rem;font-size:.85rem}
+.compare-item li{margin-bottom:.25rem;color:#64748b}
+.model-diagram{background:#f8fafc;border:1px solid rgba(102,126,234,.15);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.model-title{font-weight:700;font-size:.9rem;color:#4c51bf;margin-bottom:1rem;text-align:center}
+.model-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.model-box{background:#667eea;color:#fff;padding:.5rem 1rem;border-radius:6px;font-size:.82rem;font-weight:600;text-align:center;min-width:100px}
+.model-box.portfolio{background:#8b5cf6}
+.model-box.art{background:#3b82f6}
+.model-box.team{background:#10b981}
+.model-arrow{color:#94a3b8;font-size:1.2rem}
+.model-desc{font-size:.82rem;color:#64748b;flex:1}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}.compare-box{grid-template-columns:1fr}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#problems">Vấn đề mô hình cũ</a>
+<a href="#value-stream">Chuỗi giá trị</a>
+<a href="#art">Agile Release Train</a>
+<a href="#team">Mô hình tiểu đội</a>
+<a href="#benefits">Lợi ích</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="04-safe-principles.html">← Trước</a>
+<a href="06-agile-roles.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html" class="current">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Tổ chức theo chuỗi giá trị</h1>
+<p class="subtitle">Agile Release Train và mô hình hạm đội liên chức năng</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: SAFe Principle #10 — Bài 05/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Thay vì tổ chức theo phòng ban chức năng (IT, Business, QA...) và chạy dự án, hãy tổ chức nguồn lực theo chuỗi giá trị (Value Stream) — đưa việc vào team sản phẩm thay vì đưa người vào dự án.
+</div>
+
+<h2 id="problems">Vấn đề của mô hình tổ chức truyền thống</h2>
+
+<p>Mô hình tổ chức theo phòng ban chức năng và quản lý theo dự án tạo ra nhiều vấn đề:</p>
+
+<div class="compare-box">
+<div class="compare-item bad">
+<h4>❌ Các vấn đề cấu trúc</h4>
+<ul>
+<li>Nhiều tầng lớp quản lý trong quá trình thực hiện công việc</li>
+<li>Quy trình phức tạp — nhiều chữ ký, nhiều tầng phê duyệt</li>
+<li>Ra quyết định chậm — chủ yếu bởi CBQL và lãnh đạo</li>
+<li>Không phát huy được tiềm năng của nhân viên</li>
+<li>Hạn chế khả năng phối hợp hợp tác và sáng tạo</li>
+<li>Áp lực lớn cho CBQL và lãnh đạo</li>
+</ul>
+</div>
+<div class="compare-item bad">
+<h4>❌ Ảnh hưởng từ đa dự án</h4>
+<ul>
+<li><strong>Tốc độ chậm:</strong> Mỗi dự án qua nhiều phòng ban, quy trình phức tạp</li>
+<li><strong>Quá tải:</strong> 20-30 dự án đồng thời, mất cơ hội thị trường</li>
+<li><strong>Thiếu tập trung:</strong> Nhân sự tham gia 3-5 dự án, giảm năng suất</li>
+<li><strong>Tư duy cục bộ:</strong> Khó đảm bảo nhất quán và phát triển dài hạn</li>
+<li><strong>Tốn tài nguyên:</strong> DevOps, môi trường riêng cho mỗi dự án</li>
+<li><strong>Quản lý khó khăn:</strong> Ước lượng, lập kế hoạch phức tạp</li>
+</ul>
+</div>
+</div>
+
+<h2 id="value-stream">Tổ chức nguồn lực theo chuỗi giá trị</h2>
+
+<blockquote>
+"Chúng ta không bỏ đi mô hình phân cấp, nhưng tạo thêm mô hình mạng lưới cho phạm vi công việc đòi hỏi tốc độ, linh hoạt, phối hợp hợp tác liên ngành cao — Second Operating System!"
+<br>— John P. Kotter, "Accelerate"
+</blockquote>
+
+<p><strong>Chuỗi giá trị (Value Stream)</strong> là dòng chảy các bước và hoạt động mà tổ chức sử dụng để tạo ra giá trị cho khách hàng. Thay vì chia theo chức năng, tổ chức nguồn lực xoay quanh các chuỗi giá trị này.</p>
+
+<div class="model-diagram">
+<div class="model-title">Cấu trúc tổ chức theo chuỗi giá trị</div>
+<div class="model-row">
+<div class="model-box portfolio">Portfolio</div>
+<div class="model-arrow">→</div>
+<div class="model-desc">Quản lý danh mục các sáng kiến, cấp phát ngân sách theo chuỗi giá trị thay vì theo dự án</div>
+</div>
+<div class="model-row">
+<div class="model-box art">Value Stream / ART</div>
+<div class="model-arrow">→</div>
+<div class="model-desc">Hạm đội (Agile Release Train) — đủ khả năng để hoàn thành nhiệm vụ mà không phụ thuộc hạm đội khác</div>
+</div>
+<div class="model-row">
+<div class="model-box team">Agile Team</div>
+<div class="model-arrow">→</div>
+<div class="model-desc">Tiểu đội — 3-9 người, liên chức năng, tự chủ, ổn định lâu dài theo sản phẩm</div>
+</div>
+</div>
+
+<h2 id="art">Agile Release Train (ART) — Mô hình hạm đội</h2>
+
+<p>ART là một đội ngũ lớn gồm nhiều Agile Team (5-12 team), được tổ chức xung quanh một chuỗi giá trị để chuyển giao giải pháp hoàn chỉnh.</p>
+
+<h3>Đặc điểm của ART</h3>
+<ul>
+<li><strong>Liên chức năng:</strong> Đủ khả năng để hoàn thành nhiệm vụ mà không phụ thuộc vào hạm đội khác</li>
+<li><strong>Nhân sự ổn định lâu dài:</strong> Theo sản phẩm hay giải pháp, không phải theo dự án</li>
+<li><strong>Quy mô:</strong> Thường 50-125 người</li>
+<li><strong>Chu kỳ:</strong> Làm việc theo Program Increment (PI) — thường 8-12 tuần</li>
+</ul>
+
+<h3>Các vai trò chính trong ART</h3>
+
+<table>
+<thead>
+<tr><th>Vai trò</th><th>Trách nhiệm chính</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Business Owner</strong></td><td>Trách nhiệm kinh doanh, ROI, quản trị và tuân thủ. Liên kết tầm nhìn với kế hoạch thực thi.</td></tr>
+<tr><td><strong>Product Management</strong></td><td>Khám phá nhu cầu thị trường, xác định chiến lược sản phẩm, quản lý ART Backlog.</td></tr>
+<tr><td><strong>RTE (Release Train Engineer)</strong></td><td>Lãnh đạo phục vụ, huấn luyện viên, điều phối các sự kiện cấp ART, tối ưu dòng chảy giá trị.</td></tr>
+<tr><td><strong>System Architect</strong></td><td>Xây dựng tầm nhìn kiến trúc, đảm bảo chất lượng kỹ thuật, hỗ trợ DevOps.</td></tr>
+</tbody>
+</table>
+
+<h2 id="team">Mô hình tiểu đội (Agile Team)</h2>
+
+<p>Tiểu đội là đơn vị cơ bản trong tổ chức Agile — nhóm nhỏ, liên chức năng, tự chủ và ổn định.</p>
+
+<h3>Đặc điểm tiểu đội</h3>
+<ul>
+<li><strong>Quân số:</strong> 3-9 người</li>
+<li><strong>Ổn định:</strong> Nhân sự lâu dài theo sản phẩm</li>
+<li><strong>Tự chủ:</strong> Lập kế hoạch, theo dõi tiến độ, ra quyết định để đạt mục tiêu</li>
+<li><strong>Liên chức năng:</strong> Đủ khả năng biến yêu cầu thành sản phẩm mà không phụ thuộc team khác</li>
+<li><strong>Phát triển T-shape:</strong> Kiến thức kỹ năng liên tục mở rộng</li>
+<li><strong>Colocation:</strong> Ngồi cùng vị trí, giao tiếp trực tiếp (hoặc remote collaboration hiệu quả)</li>
+</ul>
+
+<h3>Các vai trò trong tiểu đội</h3>
+
+<table>
+<thead>
+<tr><th>Vai trò</th><th>Trách nhiệm chính</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Product Owner (PO)</strong></td><td>Tối đa hóa giá trị team cung cấp, quản lý Team Backlog, kết nối với khách hàng và các bên liên quan.</td></tr>
+<tr><td><strong>Scrum Master (SM)</strong></td><td>Lãnh đạo phục vụ, huấn luyện team, cải tiến quy trình, loại bỏ rào cản, tối ưu dòng chảy công việc.</td></tr>
+<tr><td><strong>Development Team</strong></td><td>Thực hiện công việc, tự tổ chức, cam kết và chịu trách nhiệm về kết quả.</td></tr>
+</tbody>
+</table>
+
+<h2 id="benefits">Lợi ích của mô hình tổ chức theo chuỗi giá trị</h2>
+
+<div class="compare-box">
+<div class="compare-item good">
+<h4>✓ Về tổ chức</h4>
+<ul>
+<li>Đưa việc vào team sản phẩm thay vì đưa người vào dự án</li>
+<li>Cấp phát ngân sách theo chuỗi giá trị thay vì theo dự án</li>
+<li>Kiến trúc Agile team và hạm đội chuẩn</li>
+<li>Nhân sự mỗi team ổn định và lâu dài</li>
+</ul>
+</div>
+<div class="compare-item good">
+<h4>✓ Về vận hành</h4>
+<ul>
+<li>Team tự quản (Self-organizing) — liên chức năng giảm thiểu phụ thuộc lẫn nhau</li>
+<li>Trao quyền tự chủ hướng về mục tiêu chung</li>
+<li>Giảm thời gian chờ đợi và handoff</li>
+<li>Tăng tốc độ chuyển giao giá trị</li>
+</ul>
+</div>
+</div>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Chuyển từ "quản lý dự án" sang "quản lý sản phẩm" — team ổn định, liên chức năng, được trao quyền để chủ động tạo ra giá trị. Đây là nền tảng cho Business Agility ở quy mô lớn.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

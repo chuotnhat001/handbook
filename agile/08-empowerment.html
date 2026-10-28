@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trao quyền & Ra quyết định - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.motivation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
+.motivation-card{background:#f8fafc;border:1px solid rgba(102,126,234,.15);border-radius:10px;padding:1.25rem;text-align:center}
+.motivation-icon{width:48px;height:48px;margin:0 auto .75rem;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.motivation-icon svg{width:24px;height:24px;color:#fff}
+.motivation-title{font-weight:700;font-size:.9rem;color:#1a1a2e;margin-bottom:.5rem}
+.motivation-desc{font-size:.82rem;color:#64748b}
+.decision-compare{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+.decision-col{background:#f8fafc;border-radius:10px;padding:1.25rem}
+.decision-col h4{font-size:.9rem;font-weight:700;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08)}
+.decision-col.centralized h4{color:#dc2626}
+.decision-col.decentralized h4{color:#16a34a}
+.decision-col ul{margin:0;padding-left:1.25rem;font-size:.85rem}
+.decision-col li{margin-bottom:.35rem;color:#4a5568}
+.empowerment-flow{display:flex;align-items:center;justify-content:center;gap:1rem;margin:1.5rem 0;flex-wrap:wrap}
+.flow-box{background:#667eea;color:#fff;padding:.75rem 1.25rem;border-radius:8px;font-weight:600;font-size:.85rem;text-align:center}
+.flow-box.passive{background:#94a3b8}
+.flow-arrow{font-size:1.5rem;color:#94a3b8}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}.motivation-grid{grid-template-columns:1fr}.decision-compare{grid-template-columns:1fr}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#motivation">Động lực nội tại</a>
+<a href="#decision">Mô hình ra quyết định</a>
+<a href="#empowerment">Trao quyền thực chất</a>
+<a href="#guardrails">Guardrails</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="07-portfolio-management.html">← Trước</a>
+<a href="09-agile-metrics.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html" class="current">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Trao quyền & Ra quyết định</h1>
+<p class="subtitle">Mô hình ra quyết định phân tán, guardrails và động lực nội tại</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: SAFe Principle #8, #9 — Bài 08/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+Trao quyền không phải là "bỏ mặc" — mà là <strong>trao quyền có trách nhiệm</strong>: xác định rõ phạm vi tự chủ, cung cấp guardrails (ranh giới), và yêu cầu trách nhiệm giải trình. Mục tiêu là mở khóa động lực nội tại và tăng tốc độ ra quyết định.
+</div>
+
+<h2 id="motivation">Động lực nội tại — Ba yếu tố kích hoạt</h2>
+
+<p>Theo Daniel Pink, người lao động tri thức được thúc đẩy bởi ba yếu tố nội tại, không phải chỉ lương thưởng:</p>
+
+<div class="motivation-grid">
+<div class="motivation-card">
+<div class="motivation-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M12 4v1m6.364 1.636l-.707.707M20 12h-1m-1.636 6.364l-.707-.707M12 20v-1m-6.364-1.636l.707-.707M4 12h1m1.636-6.364l.707.707"/></svg>
+</div>
+<div class="motivation-title">Autonomy (Tự chủ)</div>
+<div class="motivation-desc">Khả năng tự định hướng, có quyền kiểm soát những gì mình làm, cách thực hiện công việc, và ai cần làm việc với.</div>
+</div>
+
+<div class="motivation-card">
+<div class="motivation-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+</div>
+<div class="motivation-title">Mastery (Năng lực)</div>
+<div class="motivation-desc">Mong muốn hoàn thiện hơn những gì mình làm và cải thiện năng lực cá nhân và nhóm liên tục.</div>
+</div>
+
+<div class="motivation-card">
+<div class="motivation-icon" style="background:linear-gradient(135deg,#10b981,#059669)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<div class="motivation-title">Purpose (Mục đích)</div>
+<div class="motivation-desc">Mong muốn làm điều gì đó quan trọng và có ý nghĩa. Hiểu được tầm quan trọng của công việc mình làm.</div>
+</div>
+</div>
+
+<p>Khi ba yếu tố này được đáp ứng, đội ngũ sẽ tự chủ động, sáng tạo và cam kết — thay vì chỉ tuân thủ và chờ chỉ đạo.</p>
+
+<h2 id="decision">Mô hình ra quyết định phân tán</h2>
+
+<p>Không phải mọi quyết định đều cần tập trung, và không phải mọi quyết định đều nên phân tán. SAFe Principle #9 hướng dẫn cách phân loại:</p>
+
+<div class="decision-compare">
+<div class="decision-col centralized">
+<h4>Giữ quyền tập trung khi...</h4>
+<ul>
+<li><strong>Ít thường xuyên:</strong> Quyết định chiến lược, chính sách lớn</li>
+<li><strong>Hiệu quả lâu dài:</strong> Đã quyết định, ít có khả năng thay đổi</li>
+<li><strong>Quy mô kinh tế lớn:</strong> Ảnh hưởng kinh tế lớn cho tổ chức</li>
+<li>Ví dụ: Chính sách cho đối tác, chính sách lương thưởng</li>
+</ul>
+</div>
+<div class="decision-col decentralized">
+<h4>Trao quyền khi...</h4>
+<ul>
+<li><strong>Thường xuyên:</strong> Quyết định diễn ra hàng ngày hay định kỳ</li>
+<li><strong>Khẩn cấp:</strong> Trả giá đắt nếu trì hoãn</li>
+<li><strong>Yêu cầu thông tin cục bộ:</strong> Cần thông tin cụ thể về khách hàng hay sản phẩm</li>
+<li>Ví dụ: Thay đổi team backlog, chốt thỏa thuận với khách hàng</li>
+</ul>
+</div>
+</div>
+
+<h2 id="empowerment">Trao quyền thực chất</h2>
+
+<p>Trao quyền không phải là một hành động đơn lẻ mà là quá trình chuyển đổi từ văn hóa mệnh lệnh sang văn hóa tự chủ:</p>
+
+<div class="empowerment-flow">
+<div class="flow-box passive">Mệnh lệnh, áp đặt, kiểm soát</div>
+<div class="flow-arrow">→</div>
+<div class="flow-box">Trao quyền + Phát triển năng lực</div>
+<div class="flow-arrow">→</div>
+<div class="flow-box" style="background:#10b981">Tự chủ, chủ động, trách nhiệm</div>
+</div>
+
+<h3>Điều kiện để trao quyền thành công</h3>
+
+<table>
+<thead>
+<tr><th>Yếu tố</th><th>Mô tả</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Mục tiêu rõ ràng</strong></td><td>Team hiểu rõ WHAT (mục tiêu cần đạt) và WHY (tại sao quan trọng)</td></tr>
+<tr><td><strong>Năng lực phù hợp</strong></td><td>Team có đủ kỹ năng và kiến thức để ra quyết định tốt</td></tr>
+<tr><td><strong>Thông tin đầy đủ</strong></td><td>Team được tiếp cận thông tin cần thiết để ra quyết định</td></tr>
+<tr><td><strong>Guardrails rõ ràng</strong></td><td>Biết rõ ranh giới: điều gì được phép, điều gì cần escalate</td></tr>
+<tr><td><strong>Trách nhiệm giải trình</strong></td><td>Trao quyền đi kèm với trách nhiệm về kết quả</td></tr>
+<tr><td><strong>An toàn tâm lý</strong></td><td>Được phép thử nghiệm và thất bại trong phạm vi hợp lý</td></tr>
+</tbody>
+</table>
+
+<h2 id="guardrails">Guardrails — Ranh giới và điều kiện</h2>
+
+<p><strong>Guardrails</strong> là các ranh giới và điều kiện xác định phạm vi tự chủ của mỗi vai trò. Không phải để kiểm soát, mà để tạo sự rõ ràng và an toàn khi ra quyết định.</p>
+
+<h3>Ví dụ Guardrails theo vai trò</h3>
+
+<table>
+<thead>
+<tr><th>Vai trò</th><th>Được quyền tự quyết</th><th>Guardrails</th><th>Khi nào escalate</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Product Owner</strong></td>
+<td>Quản lý nội dung và thứ tự Team Backlog; xác định MVP; chấp nhận hoặc từ chối kết quả</td>
+<td>Không thay đổi business outcome; không vượt ngân sách/năng lực; không loại bỏ yêu cầu pháp lý</td>
+<td>Thay đổi mục tiêu quý; xung đột ưu tiên liên sản phẩm; cần thêm nguồn lực</td>
+</tr>
+<tr>
+<td><strong>Development Team</strong></td>
+<td>Lựa chọn giải pháp kỹ thuật; ước lượng; lập kế hoạch Sprint; phân chia công việc</td>
+<td>Tuân thủ acceptance criteria, Definition of Done, kiến trúc, bảo mật, coding standards</td>
+<td>Ngoại lệ kiến trúc; phụ thuộc ngoài team; mục tiêu không khả thi</td>
+</tr>
+<tr>
+<td><strong>Scrum Master</strong></td>
+<td>Thiết kế và facilitation các sự kiện Agile; điều chỉnh cách thức làm việc; bảo vệ team</td>
+<td>Không quyết định backlog, giải pháp kỹ thuật hoặc đánh giá hiệu suất cá nhân</td>
+<td>Impediment vượt quyền team; xung đột kéo dài; vi phạm working agreement</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Ma trận quyền quyết định (RACI-style)</h3>
+
+<p>Sử dụng ma trận để làm rõ ai D (Decide), A (Approve), R (Recommend), C (Consult), I (Inform) cho từng loại quyết định:</p>
+
+<table>
+<thead>
+<tr><th>Quyết định</th><th>BO</th><th>PO/PM</th><th>Team</th><th>SM</th><th>Architect</th></tr>
+</thead>
+<tbody>
+<tr><td>Xác định Business Outcome</td><td><strong>D/A</strong></td><td>R</td><td>C</td><td>I</td><td>C</td></tr>
+<tr><td>Xếp thứ tự Product Backlog</td><td>C</td><td><strong>D/A</strong></td><td>C</td><td>I</td><td>C</td></tr>
+<tr><td>Lựa chọn giải pháp kỹ thuật</td><td>I</td><td>C</td><td><strong>D/A</strong></td><td>I</td><td>C</td></tr>
+<tr><td>Phê duyệt ngoại lệ kiến trúc</td><td>I</td><td>C</td><td>R</td><td>I</td><td><strong>D/A</strong></td></tr>
+<tr><td>Cải tiến cách làm việc của team</td><td>I</td><td>C</td><td><strong>D</strong></td><td><strong>A</strong></td><td>I</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-amber">
+<strong>Lưu ý quan trọng</strong>
+Guardrails cần được thảo luận và đồng thuận, không phải áp đặt từ trên xuống. Team phải hiểu và chấp nhận các ranh giới để có thể tự tin ra quyết định trong phạm vi đó.
+</div>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Trao quyền = Quyền tự chủ + Guardrails rõ ràng + Trách nhiệm giải trình. Mục tiêu không phải là loại bỏ kiểm soát, mà là đẩy quyền ra quyết định xuống cấp gần nhất với công việc — nơi có thông tin tốt nhất và phản hồi nhanh nhất.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

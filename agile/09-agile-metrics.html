@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ thống đo lường - Agile Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:16px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:.95rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.85rem;color:#4a5568;font-style:italic}
+.nav-footer{padding:1rem 1.25rem;border-top:1px solid rgba(102,126,234,.15);display:flex;justify-content:space-between;font-size:.8rem}
+.nav-footer a{color:#4c51bf;text-decoration:none;display:flex;align-items:center;gap:4px}
+.nav-footer a:hover{text-decoration:underline}
+.metric-category{background:#f8fafc;border:1px solid rgba(102,126,234,.15);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.metric-header{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.metric-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.metric-icon svg{width:24px;height:24px;color:#fff}
+.metric-title{font-size:1.1rem;font-weight:700;color:#1a1a2e}
+.metric-subtitle{font-size:.82rem;color:#64748b}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1rem}
+.metric-item{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:.75rem 1rem}
+.metric-name{font-weight:600;font-size:.85rem;color:#4c51bf;margin-bottom:.25rem}
+.metric-desc{font-size:.8rem;color:#64748b}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+<a href="index.html" class="nav-home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+Agile Handbook
+</a>
+<div class="nav-scroll">
+<div class="nav-group">
+<div class="nav-group-title">Nội dung</div>
+<div class="nav-items">
+<a href="#overview" class="active">Tổng quan</a>
+<a href="#flow">Flow Metrics</a>
+<a href="#outcome">Outcome Metrics</a>
+<a href="#competency">Competency Metrics</a>
+<a href="#balance">Cân bằng đo lường</a>
+</div>
+</div>
+</div>
+<div class="nav-footer">
+<a href="08-empowerment.html">← Trước</a>
+<a href="10-transformation.html">Tiếp theo →</a>
+</div>
+</nav>
+
+<aside class="aside">
+<div class="aside-title">Agile Handbook</div>
+<div class="level-label">Nền tảng</div>
+<a href="01-business-agility.html">Business Agility</a>
+<a href="02-agile-mindset.html">Agile Mindset</a>
+<a href="03-agile-manifesto.html">Agile Manifesto</a>
+<a href="04-safe-principles.html">SAFe Principles</a>
+<div class="level-label">Vận hành</div>
+<a href="05-value-stream.html">Chuỗi giá trị</a>
+<a href="06-agile-roles.html">Các vai trò Agile</a>
+<a href="07-portfolio-management.html">Quản trị danh mục</a>
+<a href="08-empowerment.html">Trao quyền</a>
+<div class="level-label">Chuyển đổi</div>
+<a href="09-agile-metrics.html" class="current">Đo lường</a>
+<a href="10-transformation.html">Lộ trình</a>
+<a href="11-tpbank-principles.html">Nguyên tắc TPBank</a>
+</aside>
+
+<main class="main">
+<h1 id="overview">Hệ thống đo lường</h1>
+<p class="subtitle">Flow Metrics, Outcome Metrics và Competency Metrics</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.25a4.5 4.5 0 001.242 7.244"/></svg>
+<span>Nguồn: SAFe Measure and Grow — Bài 09/11</span>
+</div>
+
+<div class="callout callout-blue">
+<strong>Tư duy cốt lõi</strong>
+"Bạn không thể cải tiến những gì bạn không đo lường." Nhưng trong Agile, đo lường không phải để kiểm soát — mà để <strong>học hỏi và cải tiến</strong>. Ba loại metrics cần cân bằng: Flow (tốc độ), Outcomes (kết quả), và Competency (năng lực).
+</div>
+
+<h2 id="flow">Flow Metrics — Đo lường dòng chảy</h2>
+
+<p>Flow metrics đo lường mức độ hiệu quả của tổ chức trong việc chuyển giao giá trị từ ý tưởng đến khách hàng.</p>
+
+<div class="metric-category">
+<div class="metric-header">
+<div class="metric-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+</div>
+<div>
+<div class="metric-title">Flow Metrics</div>
+<div class="metric-subtitle">Tốc độ và hiệu quả của dòng chảy giá trị</div>
+</div>
+</div>
+
+<div class="metric-grid">
+<div class="metric-item">
+<div class="metric-name">Flow Distribution</div>
+<div class="metric-desc">Phân bổ công việc theo loại: Features, Defects, Risks, Technical Debt</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Flow Velocity</div>
+<div class="metric-desc">Số lượng items hoàn thành trong một khoảng thời gian</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Flow Time</div>
+<div class="metric-desc">Thời gian từ khi bắt đầu đến khi hoàn thành một item</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Flow Load</div>
+<div class="metric-desc">Số lượng công việc đang tiến hành (WIP)</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Flow Efficiency</div>
+<div class="metric-desc">Tỷ lệ thời gian làm việc thực / tổng thời gian (bao gồm chờ đợi)</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Flow Predictability</div>
+<div class="metric-desc">Mức độ dự đoán được của delivery so với cam kết</div>
+</div>
+</div>
+</div>
+
+<h3>Ý nghĩa của Flow Metrics</h3>
+
+<table>
+<thead>
+<tr><th>Metric</th><th>Tín hiệu tốt</th><th>Tín hiệu cần cải tiến</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Flow Distribution</strong></td><td>Cân bằng Features và Debt</td><td>Quá nhiều Defects hoặc Debt</td></tr>
+<tr><td><strong>Flow Velocity</strong></td><td>Ổn định hoặc tăng dần</td><td>Giảm liên tục hoặc biến động lớn</td></tr>
+<tr><td><strong>Flow Time</strong></td><td>Ngắn và dự đoán được</td><td>Dài và biến động</td></tr>
+<tr><td><strong>Flow Load</strong></td><td>Dưới capacity, ổn định</td><td>Quá tải, WIP tăng liên tục</td></tr>
+<tr><td><strong>Flow Efficiency</strong></td><td>&gt;25% (tốt), &gt;40% (xuất sắc)</td><td>&lt;15% (quá nhiều chờ đợi)</td></tr>
+<tr><td><strong>Flow Predictability</strong></td><td>&gt;80% deliver đúng cam kết</td><td>&lt;60% (thiếu tin cậy)</td></tr>
+</tbody>
+</table>
+
+<h2 id="outcome">Outcome Metrics — Đo lường kết quả</h2>
+
+<p>Outcome metrics đảm bảo rằng những nỗ lực của tổ chức thực sự mang lại lợi ích kinh doanh mong muốn.</p>
+
+<div class="metric-category">
+<div class="metric-header">
+<div class="metric-icon" style="background:linear-gradient(135deg,#10b981,#059669)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<div>
+<div class="metric-title">Outcome Metrics</div>
+<div class="metric-subtitle">Kết quả kinh doanh và giá trị khách hàng</div>
+</div>
+</div>
+
+<div class="metric-grid">
+<div class="metric-item">
+<div class="metric-name">Customer Satisfaction</div>
+<div class="metric-desc">NPS, CSAT, feedback score</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Revenue Growth</div>
+<div class="metric-desc">Tăng trưởng doanh thu từ sản phẩm mới/cải tiến</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Time to Market</div>
+<div class="metric-desc">Thời gian từ ý tưởng đến khi ra thị trường</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Market Share</div>
+<div class="metric-desc">Thị phần và vị thế cạnh tranh</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Employee Engagement</div>
+<div class="metric-desc">Mức độ gắn kết và hài lòng của nhân viên</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Cost Efficiency</div>
+<div class="metric-desc">Chi phí trên mỗi đơn vị giá trị tạo ra</div>
+</div>
+</div>
+</div>
+
+<h3>Ví dụ KPIs cho ngân hàng</h3>
+
+<table>
+<thead>
+<tr><th>Chuỗi giá trị</th><th>KPIs mẫu</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Tín dụng doanh nghiệp</strong></td><td>Dư nợ cho vay, Thu nhập lãi thuần, Tỷ lệ nợ xấu, Thời gian phê duyệt hồ sơ</td></tr>
+<tr><td><strong>Thanh toán & Quản lý dòng tiền</strong></td><td>Tăng trưởng CASA, Khối lượng giao dịch, Thu nhập phí dịch vụ, Tỷ lệ xử lý tự động (STP)</td></tr>
+<tr><td><strong>Tài trợ thương mại</strong></td><td>Khối lượng giao dịch, Thời gian xử lý, Tỷ lệ lỗi, Tỷ lệ tuân thủ quy định</td></tr>
+</tbody>
+</table>
+
+<h2 id="competency">Competency Metrics — Đo lường năng lực</h2>
+
+<p>Competency metrics đánh giá mức độ trưởng thành của tổ chức trong các lĩnh vực năng lực cần thiết để đạt Business Agility.</p>
+
+<div class="metric-category">
+<div class="metric-header">
+<div class="metric-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+</div>
+<div>
+<div class="metric-title">Competency Metrics</div>
+<div class="metric-subtitle">Năng lực tổ chức và mức độ trưởng thành Agile</div>
+</div>
+</div>
+
+<div class="metric-grid">
+<div class="metric-item">
+<div class="metric-name">Team Agility</div>
+<div class="metric-desc">Năng lực Agile của các team: ceremonies, practices, collaboration</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Technical Agility</div>
+<div class="metric-desc">CI/CD, automated testing, code quality, DevOps maturity</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Product Agility</div>
+<div class="metric-desc">Customer-centricity, design thinking, product discovery</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Enterprise Agility</div>
+<div class="metric-desc">Lean portfolio management, organizational design, Agile HR</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Leadership Agility</div>
+<div class="metric-desc">Servant leadership, coaching culture, psychological safety</div>
+</div>
+<div class="metric-item">
+<div class="metric-name">Cultural Agility</div>
+<div class="metric-desc">Learning culture, innovation mindset, continuous improvement</div>
+</div>
+</div>
+</div>
+
+<h2 id="balance">Cân bằng hệ thống đo lường</h2>
+
+<p>Ba loại metrics cần được cân bằng để tránh tối ưu cục bộ:</p>
+
+<table>
+<thead>
+<tr><th>Nếu chỉ đo...</th><th>Rủi ro...</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Flow metrics</strong></td><td>Chuyển giao nhanh nhưng không đúng thứ khách hàng cần</td></tr>
+<tr><td><strong>Outcome metrics</strong></td><td>Tập trung kết quả ngắn hạn, bỏ qua năng lực dài hạn</td></tr>
+<tr><td><strong>Competency metrics</strong></td><td>Chạy theo "process compliance" mà quên giá trị thực</td></tr>
+</tbody>
+</table>
+
+<h3>Nguyên tắc đo lường trong Agile</h3>
+
+<ul>
+<li><strong>Đo để học, không phải để phạt:</strong> Metrics là công cụ học hỏi và cải tiến, không phải để đánh giá hiệu suất cá nhân</li>
+<li><strong>Minh bạch:</strong> Mọi người đều có thể xem và hiểu các metrics</li>
+<li><strong>Team sở hữu:</strong> Team tự đo lường và tự cải tiến, không phải bị đo lường từ bên ngoài</li>
+<li><strong>Cân bằng:</strong> Kết hợp leading indicators (dự báo) và lagging indicators (kết quả)</li>
+<li><strong>Đơn giản:</strong> Chỉ đo những gì thực sự cần thiết để ra quyết định</li>
+</ul>
+
+<div class="callout callout-amber">
+<strong>Cảnh báo: Goodhart's Law</strong>
+"Khi một chỉ số trở thành mục tiêu, nó không còn là một chỉ số tốt." Tránh biến metrics thành KPI cá nhân — điều này sẽ dẫn đến gaming và mất ý nghĩa của việc đo lường.
+</div>
+
+<div class="callout callout-green">
+<strong>Điểm mấu chốt</strong>
+Hệ thống đo lường Agile = Flow (tốc độ chuyển giao) + Outcomes (kết quả kinh doanh) + Competency (năng lực tổ chức). Cả ba cần cân bằng và phục vụ mục đích học hỏi, cải tiến — không phải kiểm soát.
+</div>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var defined=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){defined.observe(el)});
+</script>
+</body>
+</html>

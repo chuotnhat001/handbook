@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index &amp; Document CRUD - Elasticsearch Handbook</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.7;min-height:100vh;font-size:17px}
+.layout{display:flex;min-height:100vh}
+.nav{width:260px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;background:#f0f4ff;border-right:1px solid rgba(102,126,234,.15);font-size:.83rem}
+.nav-home{display:flex;align-items:center;gap:8px;padding:.75rem 1.25rem;color:#4c51bf;text-decoration:none;font-weight:700;font-size:.88rem;border-bottom:1px solid rgba(102,126,234,.15);flex-shrink:0}
+.nav-home:hover{color:#667eea;background:rgba(102,126,234,.08)}
+.nav-home svg{width:16px;height:16px}
+.nav-scroll{flex:1;overflow-y:auto;padding:1rem 0}
+.nav-group{margin-bottom:.25rem}
+.nav-group-title{display:flex;align-items:center;gap:6px;padding:.5rem 1.25rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4c51bf}
+.nav-items{padding:0 .75rem .5rem 1.25rem}
+.nav-items a{display:block;padding:.35rem .7rem;color:#2d3748;text-decoration:none;border-radius:6px;margin-bottom:2px;line-height:1.4;font-size:.82rem;font-weight:500;transition:all .15s}
+.nav-items a:hover{background:rgba(102,126,234,.12);color:#4c51bf}
+.nav-items a.active{background:#667eea;color:#fff;font-weight:600}
+pre{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#e2e8f0;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .2s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:rgba(255,255,255,.25)}
+.copy-btn.copied{background:#48bb78;border-color:#48bb78;color:#fff}
+.main{flex:1;margin-left:260px;margin-right:220px;padding:2rem 2.5rem 4rem;max-width:860px}
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem;color:#1a1a2e}
+.subtitle{color:#555b6e;font-size:.9rem;margin-bottom:2rem}
+h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(0,0,0,.08);color:#1a1a2e}
+h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:#1a1a2e}
+p{margin-bottom:.75rem;font-size:1rem;color:#1a1a2e}
+ul,ol{margin:.5rem 0 1rem 1.5rem;font-size:1rem}
+li{margin-bottom:.3rem}
+strong{font-weight:600}
+code{font-family:'SF Mono','Cascadia Code','Consolas',monospace;font-size:.85rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+pre{background:#1a1a2e;color:#e2e8f0;padding:1rem 1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0;font-size:.85rem;line-height:1.65;border:1px solid rgba(0,0,0,.1)}
+pre code{background:none;padding:0;color:inherit;border:none}
+.callout{border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;font-size:.92rem;border-left:3px solid}
+.callout strong{display:block;margin-bottom:4px;font-size:.82rem}
+.callout-blue{background:#e6f1fb;color:#185fa5;border-color:#185fa5}
+.callout-green{background:#eaf3de;color:#3b6d11;border-color:#3b6d11}
+.callout-amber{background:#faeeda;color:#854f0b;border-color:#854f0b}
+.callout-red{background:#fcebeb;color:#a32d2d;border-color:#a32d2d}
+.source-box{display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#f0f4ff 0%,#e8eeff 100%);border:1px solid rgba(102,126,234,.25);border-radius:10px;padding:.75rem 1.1rem;margin:0 0 2rem;font-size:.85rem}
+.source-box svg{width:18px;height:18px;color:#4c51bf;flex-shrink:0}
+.source-box a{color:#4c51bf;font-weight:600;text-decoration:none}
+.source-box a:hover{text-decoration:underline}
+.source-box span{color:#555b6e}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+th,td{text-align:left;padding:.5rem .75rem;border:1px solid rgba(0,0,0,.08)}
+th{background:#f1f3f5;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:#555b6e}
+blockquote{border-left:3px solid #667eea;padding:.75rem 1rem;margin:1rem 0;background:#f0f4ff;border-radius:0 8px 8px 0;font-size:.92rem;color:#4a5568;font-style:italic}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.flow-step{background:#2563eb;color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:#94a3b8;font-size:1.1rem}
+.prev-next{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)}
+.prev-next a{color:#4c51bf;text-decoration:none;font-size:.85rem;font-weight:500}
+.prev-next a:hover{text-decoration:underline}
+.aside{width:220px;position:fixed;top:0;right:0;bottom:0;display:flex;flex-direction:column;background:#fafbff;border-left:1px solid rgba(102,126,234,.12);font-size:.78rem;overflow-y:auto;padding:1rem 0}
+.aside-title{padding:.6rem 1rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#4c51bf}
+.aside a{display:block;padding:.25rem 1rem;color:#64748b;text-decoration:none;line-height:1.4;transition:all .15s}
+.aside a:hover{color:#4c51bf;background:rgba(102,126,234,.06)}
+.aside a.current{color:#4c51bf;font-weight:600;background:rgba(102,126,234,.1);border-right:3px solid #667eea}
+.aside .level-label{padding:.4rem 1rem .15rem;font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+@media(max-width:1024px){.aside{display:none}.main{margin-right:0}}
+@media(max-width:768px){html{font-size:20px}.nav{display:none}.main{margin-left:0;margin-right:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M9 21V9h6v12"/></svg>
+    Elasticsearch Handbook
+  </a>
+  <div class="nav-scroll">
+  <div class="nav-group">
+    <div class="nav-group-title">Mục tiêu</div>
+    <div class="nav-items">
+      <a href="#objectives">Mục tiêu học tập</a>
+      <a href="#prerequisites">Kiến thức tiên quyết</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">CRUD cơ bản</div>
+    <div class="nav-items">
+      <a href="#index-api">Index (Create)</a>
+      <a href="#get-api">Get (Read)</a>
+      <a href="#update-api">Update</a>
+      <a href="#delete-api">Delete</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Hàng loạt</div>
+    <div class="nav-items">
+      <a href="#bulk">Bulk API</a>
+      <a href="#reindex">Reindex API</a>
+      <a href="#by-query">Update/Delete by Query</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Concurrency</div>
+    <div class="nav-items">
+      <a href="#versioning">Versioning &amp; OCC</a>
+      <a href="#refresh">Refresh</a>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Thực hành</div>
+    <div class="nav-items">
+      <a href="#lab">Bài Lab</a>
+      <a href="#review">Câu hỏi ôn tập</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#mistakes">Lỗi thường gặp</a>
+      <a href="#best-practices">Best Practices</a>
+    </div>
+  </div>
+  </div>
+</nav>
+<aside class="aside">
+  <div class="aside-title">Elasticsearch Handbook</div>
+  <div class="level-label">Nền tảng</div>
+  <a href="01-distributed-systems.html">01. Hệ Thống Phân Tán</a>
+  <a href="02-lucene-fundamentals.html">02. Apache Lucene</a>
+  <div class="level-label">ES Core</div>
+  <a href="03-elasticsearch-architecture.html">03. Kiến Trúc ES</a>
+  <a href="04-installation-deployment.html">04. Cài Đặt &amp; Triển Khai</a>
+  <a href="05-index-document-crud.html" class="current">05. Index &amp; Document</a>
+  <a href="06-mapping-data-types.html">06. Mapping &amp; Types</a>
+  <div class="level-label">Search</div>
+  <a href="07-text-analysis.html">07. Text Analysis</a>
+  <a href="08-search-dsl.html">08. Search DSL</a>
+  <a href="09-aggregations.html">09. Aggregations</a>
+  <div class="level-label">Cluster Ops</div>
+  <a href="10-cluster-management.html">10. Cluster Management</a>
+  <a href="11-shard-allocation.html">11. Shard Allocation</a>
+  <a href="12-index-lifecycle.html">12. Index Lifecycle</a>
+  <div class="level-label">Security</div>
+  <a href="13-security.html">13. Bảo Mật</a>
+  <div class="level-label">Elastic Stack</div>
+  <a href="14-kibana.html">14. Kibana</a>
+  <a href="15-logstash.html">15. Logstash</a>
+  <a href="16-beats-elastic-agent.html">16. Beats &amp; Agent</a>
+  <a href="17-fleet-integrations.html">17. Fleet</a>
+  <div class="level-label">Operations</div>
+  <a href="18-monitoring-alerting.html">18. Monitoring</a>
+  <a href="19-performance-tuning.html">19. Performance</a>
+  <a href="20-snapshot-restore.html">20. Snapshot &amp; Restore</a>
+  <a href="21-troubleshooting.html">21. Troubleshooting</a>
+  <div class="level-label">Advanced</div>
+  <a href="22-cross-cluster.html">22. Cross-Cluster</a>
+  <a href="23-data-streams-tsds.html">23. Data Streams</a>
+  <a href="24-comparison-alternatives.html">24. So Sánh</a>
+  <a href="25-case-studies.html">25. Case Studies</a>
+</aside>
+<main class="main">
+<h1 id="overview">Index &amp; Document CRUD</h1>
+<p class="subtitle">Index, Get, Update, Delete, Bulk, Reindex — thao tác document và tối ưu throughput ghi</p>
+
+<div class="source-box">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+<span>Nguồn: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html" target="_blank">Elastic — Document APIs</a>, <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html" target="_blank">Elastic — Bulk API</a></span>
+</div>
+
+<h2 id="objectives">Mục Tiêu Học Tập</h2>
+<div class="callout callout-blue">
+<strong>Sau khi hoàn thành bài này, bạn sẽ:</strong>
+Thực hiện CRUD document bằng Index/Get/Update/Delete API. Dùng Bulk API để ghi hàng loạt hiệu quả. Copy/transform dữ liệu bằng Reindex API. Xử lý cập nhật/xóa theo query. Hiểu versioning và optimistic concurrency control để tránh ghi đè mất dữ liệu.
+</div>
+
+<h2 id="prerequisites">Kiến Thức Tiên Quyết</h2>
+<ul>
+<li><strong>Bài 03: Kiến Trúc ES</strong> — Routing, primary/replica, write path</li>
+<li><strong>Bài 02: Lucene</strong> — Update = delete + insert; refresh &ne; flush</li>
+<li><strong>REST/JSON</strong> — HTTP methods, request body JSON</li>
+</ul>
+
+<h2 id="index-api">Index API — Tạo / Ghi Đè Document</h2>
+<p>"Index" (động từ) = đưa document vào Elasticsearch. Có hai cách chỉ định ID:</p>
+<pre><code># 1. ID tường minh (PUT) — ghi đè nếu đã tồn tại
+PUT /products/_doc/1
+{ "name": "Laptop", "price": 1200, "in_stock": true }
+
+# 2. ID tự sinh (POST) — luôn tạo document mới
+POST /products/_doc
+{ "name": "Mouse", "price": 25 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>op_type=create — chỉ tạo, không ghi đè</h3>
+<pre><code># Lỗi 409 nếu _id đã tồn tại (dùng khi cần đảm bảo không ghi đè)
+PUT /products/_create/1
+{ "name": "Laptop", "price": 1200 }
+
+# Tương đương:
+PUT /products/_doc/1?op_type=create
+{ "name": "Laptop", "price": 1200 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<p>Response trả về <code>_version</code>, <code>_seq_no</code>, <code>_primary_term</code>, và <code>result</code> (<code>created</code> hoặc <code>updated</code>).</p>
+
+<h2 id="get-api">Get API — Đọc Document</h2>
+<pre><code># Lấy toàn bộ document
+GET /products/_doc/1
+
+# Chỉ kiểm tra tồn tại (HEAD → 200/404)
+HEAD /products/_doc/1
+
+# _source filtering — chỉ lấy field cần
+GET /products/_doc/1?_source=name,price
+GET /products/_doc/1?_source_excludes=description</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Get là real-time</strong>
+Khác với search (near real-time, chờ refresh), Get API đọc được document <strong>ngay sau khi index</strong> — nó kiểm tra translog trước khi segment được refresh.
+</div>
+
+<h2 id="update-api">Update API — Cập Nhật Một Phần</h2>
+<pre><code># Partial update — chỉ gửi field thay đổi (merge vào document hiện có)
+POST /products/_update/1
+{ "doc": { "price": 1100 } }
+
+# Scripted update — tăng giảm, thao tác động
+POST /products/_update/1
+{
+  "script": {
+    "source": "ctx._source.price -= params.discount",
+    "params": { "discount": 100 }
+  }
+}
+
+# Upsert — update nếu có, insert nếu chưa
+POST /products/_update/1
+{
+  "doc": { "price": 999 },
+  "doc_as_upsert": true
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-amber">
+<strong>Update thực chất là gì?</strong>
+Ở Lucene level (Bài 02), update = <strong>lấy document cũ → merge → xóa bản cũ (mark deleted) → index bản mới</strong>. Nó không "sửa tại chỗ". Vì vậy update thường xuyên trên cùng document tạo nhiều deleted docs chờ merge.
+</div>
+
+<h2 id="delete-api">Delete API</h2>
+<pre><code># Xóa theo ID
+DELETE /products/_doc/1
+# Response result: "deleted" (hoặc "not_found")</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="bulk">Bulk API — Ghi Hàng Loạt</h2>
+<p>Gửi từng request riêng cho hàng nghìn document là cực chậm (mỗi request một round-trip HTTP). Bulk API gộp nhiều thao tác vào <strong>một request</strong>.</p>
+<h3>Định dạng NDJSON</h3>
+<p>Bulk dùng newline-delimited JSON: mỗi thao tác gồm <strong>2 dòng</strong> (action metadata + body), riêng <code>delete</code> chỉ 1 dòng. <strong>Mỗi dòng kết thúc bằng newline</strong>, kể cả dòng cuối.</p>
+<pre><code>POST /_bulk
+{ "index":  { "_index": "products", "_id": "1" } }
+{ "name": "Laptop", "price": 1200 }
+{ "create": { "_index": "products", "_id": "2" } }
+{ "name": "Mouse", "price": 25 }
+{ "update": { "_index": "products", "_id": "1" } }
+{ "doc": { "price": 1100 } }
+{ "delete": { "_index": "products", "_id": "3" } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Tư duy cốt lõi</strong>
+Bulk là chìa khóa của indexing throughput. Mỗi bulk request độc lập — một action lỗi không làm hỏng các action khác (kiểm tra <code>errors: true</code> trong response và duyệt từng item).
+</div>
+<h3>Kích thước batch</h3>
+<ul>
+<li>Bắt đầu từ <strong>1.000–5.000 document</strong> hoặc <strong>5–15 MB</strong> mỗi batch, rồi tinh chỉnh theo benchmark</li>
+<li>Batch quá lớn → áp lực heap, dễ bị circuit breaker. Quá nhỏ → mất lợi ích gộp request</li>
+<li>Dùng nhiều thread/client song song để bão hòa cluster</li>
+</ul>
+
+<h2 id="reindex">Reindex API — Copy / Transform Index</h2>
+<p>Reindex copy document từ index này sang index khác — dùng khi đổi mapping, đổi số shard, hoặc transform dữ liệu.</p>
+<pre><code># Cơ bản
+POST /_reindex
+{
+  "source": { "index": "products-v1" },
+  "dest":   { "index": "products-v2" }
+}
+
+# Có filter + transform bằng script
+POST /_reindex
+{
+  "source": {
+    "index": "products-v1",
+    "query": { "range": { "price": { "gte": 100 } } }
+  },
+  "dest": { "index": "products-v2" },
+  "script": { "source": "ctx._source.price *= 1.1" }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<pre><code># Remote reindex — từ cluster khác
+POST /_reindex
+{
+  "source": {
+    "remote": { "host": "https://old-cluster:9200", "username": "elastic", "password": "***" },
+    "index": "products"
+  },
+  "dest": { "index": "products" }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-blue">
+<strong>Chạy nền với task</strong>
+Reindex lớn nên chạy async: thêm <code>?wait_for_completion=false</code> → trả về task id, theo dõi qua <code>GET /_tasks/&lt;task_id&gt;</code>.
+</div>
+
+<h2 id="by-query">Update / Delete by Query</h2>
+<pre><code># Cập nhật hàng loạt theo điều kiện
+POST /products/_update_by_query
+{
+  "query": { "term": { "in_stock": false } },
+  "script": { "source": "ctx._source.status = 'discontinued'" }
+}
+
+# Xóa theo điều kiện
+POST /products/_delete_by_query
+{ "query": { "range": { "price": { "lt": 10 } } } }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="versioning">Versioning &amp; Optimistic Concurrency Control</h2>
+<p>Khi nhiều client cùng cập nhật một document, có nguy cơ <strong>lost update</strong> (ghi đè mất thay đổi của nhau). ES dùng <strong>optimistic concurrency control (OCC)</strong>: mỗi document mang <code>_seq_no</code> và <code>_primary_term</code>, client gửi kèm giá trị mình đã đọc; nếu không khớp → lỗi 409.</p>
+<pre><code># 1. Đọc document, ghi nhớ _seq_no và _primary_term
+GET /products/_doc/1
+# → "_seq_no": 5, "_primary_term": 1
+
+# 2. Ghi có điều kiện — chỉ thành công nếu document chưa đổi
+PUT /products/_doc/1?if_seq_no=5&if_primary_term=1
+{ "name": "Laptop", "price": 1050 }
+# Nếu ai đó đã sửa trước → 409 version_conflict_engine_exception</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+<div class="callout callout-green">
+<strong>Vì sao không dùng _version thủ công nữa?</strong>
+ES &ge; 6.7 khuyến nghị <code>if_seq_no</code> + <code>if_primary_term</code> thay cho external <code>version</code> cũ — chúng phản ánh đúng thứ tự thao tác trên primary shard, an toàn hơn trong môi trường phân tán.
+</div>
+
+<h2 id="refresh">Refresh Parameter</h2>
+<p>Nhắc lại từ Bài 02: document chỉ searchable sau refresh (mặc định 1s). Tham số <code>refresh</code> kiểm soát hành vi này khi ghi:</p>
+<table>
+<tr><th>Giá trị</th><th>Ý nghĩa</th></tr>
+<tr><td><code>false</code> (mặc định)</td><td>Không ép refresh — chờ chu kỳ refresh thường. Throughput cao nhất.</td></tr>
+<tr><td><code>wait_for</code></td><td>Chờ đến refresh tiếp theo rồi mới trả response (không ép refresh ngay)</td></tr>
+<tr><td><code>true</code></td><td>Ép refresh ngay lập tức. Tốn kém — tránh dùng trong vòng lặp ghi nóng.</td></tr>
+</table>
+<pre><code>PUT /products/_doc/1?refresh=wait_for
+{ "name": "Laptop", "price": 1200 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h2 id="lab">Bài Lab: Import 10k Documents &amp; Benchmark Bulk vs Single</h2>
+<h3>Mục tiêu</h3>
+<p>So sánh thời gian index 10.000 document theo 2 cách: từng request vs bulk.</p>
+
+<h3>Bước 1: Tạo index</h3>
+<pre><code>PUT /lab-bulk
+{ "settings": { "number_of_shards": 1, "number_of_replicas": 0, "refresh_interval": "-1" } }
+# Tắt refresh trong lúc bulk load → nhanh hơn</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 2: Script bulk (bash + curl)</h3>
+<pre><code># Dùng cluster lab Bài 04 (security tắt, http).
+# Cluster có security: thêm -k -u elastic và đổi sang https://
+# Sinh file NDJSON 10k docs
+python3 - &lt;&lt;'PY' &gt; bulk.ndjson
+for i in range(10000):
+    print('{"index":{"_id":"%d"}}' % i)
+    print('{"n":%d,"name":"item-%d","price":%d}' % (i, i, i % 500))
+PY
+
+# Load một phát bằng bulk
+time curl -s -H 'Content-Type: application/x-ndjson' \
+  -XPOST 'http://localhost:9200/lab-bulk/_bulk?refresh=wait_for' \
+  --data-binary @bulk.ndjson &gt; /dev/null</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 3: So sánh với single request</h3>
+<pre><code># Index 1000 docs từng cái một (chỉ để đo — sẽ chậm rõ rệt)
+time for i in $(seq 1 1000); do
+  curl -s -XPOST 'http://localhost:9200/lab-single/_doc' \
+    -H 'Content-Type: application/json' -d "{\"n\":$i}" &gt; /dev/null
+done</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<h3>Bước 4: Bật lại refresh &amp; kiểm tra</h3>
+<pre><code>PUT /lab-bulk/_settings
+{ "refresh_interval": "1s" }
+POST /lab-bulk/_refresh
+GET /lab-bulk/_count
+# Mong đợi: count = 10000</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+<div class="callout callout-green">
+<strong>Xác minh thành công</strong>
+Bulk load 10k docs nhanh hơn single request hàng chục đến hàng trăm lần. Bạn cũng thấy <code>refresh_interval: -1</code> trong lúc load giúp tăng throughput — một kỹ thuật chuẩn cho initial bulk load.
+</div>
+
+<h2 id="review">Câu Hỏi Ôn Tập</h2>
+<ol>
+<li>Khác biệt giữa <code>PUT /_doc/1</code> và <code>POST /_doc</code>? Khi nào dùng <code>op_type=create</code>?</li>
+<li>Vì sao Get API là real-time còn search thì near real-time?</li>
+<li>Ở Lucene level, update một document thực chất gồm những bước nào?</li>
+<li>Giải thích định dạng NDJSON của Bulk API. Vì sao bulk nhanh hơn single request?</li>
+<li>Khi nào dùng Reindex API? Làm sao chạy reindex lớn mà không block?</li>
+<li>Optimistic concurrency control hoạt động thế nào với if_seq_no/if_primary_term?</li>
+<li>So sánh <code>refresh=true</code>, <code>wait_for</code>, <code>false</code>. Vì sao không nên <code>refresh=true</code> trong vòng lặp ghi?</li>
+</ol>
+
+<h2 id="checklist">Checklist Kiến Thức</h2>
+<ul>
+<li>☐ Thực hiện Index/Get/Update/Delete thành thạo</li>
+<li>☐ Phân biệt auto-id vs explicit id, op_type=create</li>
+<li>☐ Dùng partial update, scripted update, upsert</li>
+<li>☐ Viết bulk request đúng định dạng NDJSON</li>
+<li>☐ Reindex với query filter + script, chạy async</li>
+<li>☐ Dùng update/delete by query</li>
+<li>☐ Áp dụng OCC với if_seq_no + if_primary_term</li>
+<li>☐ Hiểu tham số refresh và ảnh hưởng performance</li>
+</ul>
+
+<h2 id="mistakes">Lỗi Thường Gặp</h2>
+<div class="callout callout-amber">
+<strong>Những lỗi phổ biến:</strong>
+<ul style="margin-top:6px">
+<li><strong>Index từng document trong vòng lặp</strong> — Dùng Bulk API. Single request cho khối lượng lớn là chống chỉ định.</li>
+<li><strong>Quên newline cuối file NDJSON</strong> — Bulk request lỗi parse. Mỗi dòng (kể cả dòng cuối) phải kết thúc bằng <code>\n</code>.</li>
+<li><strong>refresh=true sau mỗi ghi</strong> — Tạo vô số segment nhỏ, giết performance. Để ES tự refresh theo chu kỳ.</li>
+<li><strong>Không xử lý version conflict</strong> — Bỏ qua 409 → mất cập nhật. Phải retry với giá trị _seq_no mới.</li>
+<li><strong>Update liên tục cùng document</strong> — Sinh nhiều deleted docs, tốn merge. Cân nhắc gom thay đổi hoặc thiết kế lại.</li>
+<li><strong>Không tắt refresh khi bulk load khởi tạo</strong> — Đặt <code>refresh_interval: -1</code> trong lúc load lớn, bật lại sau.</li>
+</ul>
+</div>
+
+<h2 id="best-practices">Best Practices &amp; Tài Liệu Tham Khảo</h2>
+<h3>Best Practices</h3>
+<ul>
+<li>Luôn dùng Bulk API cho ghi khối lượng lớn; tinh chỉnh batch size bằng benchmark</li>
+<li>Khởi tạo load lớn: <code>refresh_interval: -1</code> + <code>number_of_replicas: 0</code>, bật lại sau khi xong</li>
+<li>Dùng OCC (if_seq_no/if_primary_term) cho mọi update có cạnh tranh; retry khi 409</li>
+<li>Reindex lớn chạy async với <code>wait_for_completion=false</code>, theo dõi qua Tasks API</li>
+<li>Kiểm tra <code>errors</code> trong bulk response và xử lý từng item lỗi riêng</li>
+<li>Prefer upsert cho logic "tạo hoặc cập nhật" thay vì get-rồi-ghi hai bước</li>
+</ul>
+
+<h3>Tài liệu tham khảo</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html" target="_blank">ES: Document APIs</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html" target="_blank">ES: Bulk API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html" target="_blank">ES: Reindex API</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/optimistic-concurrency-control.html" target="_blank">ES: Optimistic Concurrency Control</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/tune-for-indexing-speed.html" target="_blank">ES: Tune for Indexing Speed</a></li>
+</ul>
+
+<div class="prev-next">
+<a href="04-installation-deployment.html">&larr; Bài 04: Cài Đặt &amp; Triển Khai</a>
+<a href="06-mapping-data-types.html">Bài 06: Mapping &amp; Data Types &rarr;</a>
+</div>
+</main>
+</div>
+<script>
+function copyCode(btn){var pre=btn.parentElement;var code=pre.querySelector('code');navigator.clipboard.writeText(code.innerText).then(function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied')},2000)})}
+document.querySelectorAll('.nav-items a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var el=document.getElementById(this.getAttribute('href').slice(1));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}})});
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){document.querySelectorAll('.nav-items a.active').forEach(function(a){a.classList.remove('active')});var link=document.querySelector('.nav-items a[href="#'+entry.target.id+'"]');if(link)link.classList.add('active')}})},{threshold:0.3,rootMargin:'-80px 0px -60% 0px'});
+document.querySelectorAll('h2[id],h3[id]').forEach(function(el){observer.observe(el)});
+</script>
+</body>
+</html>
